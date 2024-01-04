@@ -1,0 +1,141 @@
+#mulanbay配置
+mulanbay:
+  #节点编号(应用场景：调度)
+  nodeId: mulanbay_node
+  version: 5.0.0
+  #命名空间，主要是缓存使用
+  namespace: mulanbay
+  picture:
+    #图片路径（头像使用）
+    baseUrl: http://localhost:99/avatar
+  #线程池
+  threadPool:
+    corePoolSize: 20
+    queueSize: 1024
+    maximumPoolSize: 200
+  #缓存配置是否采用内存(false表示用redis)
+  configCache:
+    byMemoryCache: false
+  #持久层列表查询缓存
+  persistent:
+    page:
+      #最大的每页数量
+      maxPageSize: 20
+      list:
+        #列表数据是否缓存
+        cache: false
+      total:
+        #总记录值是否缓存
+        cache: false
+      #需要缓存的bean，多个以英文逗号分隔，如果是全部则直接用* 表示
+      cacheBeans: SystemLog
+  #安全相关
+  security:
+    #图形验证码类型
+    captchaType: math
+    login:
+      # 登录是否需要持久
+      persist: true
+      # 最大失败次数
+      maxFail: 5
+    password:
+      #MD5密码的盐值
+      salt: mysalt
+    # token配置
+    token:
+      # 令牌取值位置:header / cookie
+      way: header
+      # 令牌自定义标识
+      header: Authorization
+      # 令牌密钥
+      secret: abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz
+      # 令牌有效期（默认30分钟）
+      expireTime: 1800
+      # 验证令牌有效期（默认20分钟）
+      verifyTime: 1200
+    UnDefineFunc:
+      #是否跳过未定义的功能点（新功能调试使用）
+      skip: false
+  log:
+    #是否记录系统日志
+    sysLog: true
+    #是否记录操作日志
+    operLog: true
+  notify:
+    message:
+      #期望发送时间
+      expectSendTime: 09:00
+      #是否需要提醒表单验证类的错误代码
+      validateError: false
+      #表单验证类的错误代码最小值
+      minErrorCode: 10000000
+      send:
+        #消息最大发送失败次数
+        maxFail: 3
+        #消息发送是否需要锁定
+        lock: false
+
+# hibernate相关
+hibernate:
+  dialect: org.hibernate.dialect.MySQLDialect
+  show_sql: false
+
+spring:
+  # 数据库相关
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/pms?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 8
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 1
+      #    password: 123456 #默认为空
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20  # 最大连接数，负值表示没有限制，默认8
+          max-wait: -1    # 最大阻塞等待时间，负值表示没限制，默认-1
+          max-idle: 8     # 最大空闲连接，默认8
+          min-idle: 0     # 最小空闲连接，默认0
+  #jsckson
+  jackson:
+    #时间的json格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    # 解决spring json解析相差8个小时的时区问题（针对POST方法，且时间为yyyy-MM-dd模式）
+    time-zone: GMT+8
+  #加载本地配置文件
+  profiles:
+    include: local
+  servlet:
+    #文件上传限制
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 1024MB
+
+
+#服务
+server:
+  servlet:
+    #启动项目名
+    context-path: /api
+  ##配置tomcat端口，针对内置的tomcat
+  port: 8080
+  #绑定ip地址,只能由设置的地址进入访问
+  address: 127.0.0.1
+  tomcat:
+    threads:
+      max: 500
+      min-spare: 100

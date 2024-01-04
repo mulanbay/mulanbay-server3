@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.mulanbay</groupId>
+        <artifactId>mulanbay</artifactId>
+        <version>5.0</version>
+    </parent>
+
+    <groupId>cn.mulanbay</groupId>
+    <artifactId>mulanbay-schedule</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!--mulanbay项目-->
+        <dependency>
+            <groupId>cn.mulanbay</groupId>
+            <artifactId>mulanbay-common</artifactId>
+            <version>${mulanbay.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.mulanbay</groupId>
+            <artifactId>mulanbay-business</artifactId>
+            <version>${mulanbay.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.mulanbay</groupId>
+            <artifactId>mulanbay-persistent</artifactId>
+            <version>${mulanbay.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <!--spring依赖-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <!--hibernate依赖-->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
+        <!--quartz依赖-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>

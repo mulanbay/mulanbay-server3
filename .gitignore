@@ -1,0 +1,12 @@
+### Mac OS ###
+.DS_Store
+
+target
+*.iml
+*.idea
+*.log
+*.class
+logs/
+
+### local config ###
+application-local.yml
