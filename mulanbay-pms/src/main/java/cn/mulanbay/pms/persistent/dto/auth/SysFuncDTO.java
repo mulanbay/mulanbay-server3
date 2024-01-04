@@ -10,25 +10,43 @@ import java.math.BigInteger;
  */
 public class SysFuncDTO {
 
-    private BigInteger funcId;
+    private Long funcId;
 
-    private BigInteger pid;
+    private Long pid;
 
     private String funcName;
 
-    public BigInteger getFuncId() {
+    public SysFuncDTO(Long funcId, String funcName) {
+        this.funcId = funcId;
+        this.funcName = funcName;
+    }
+
+    /**
+     * 构造器中的顺序要和查询的列顺序要一致
+     * 必须需要一个包括所有查询列的构造器
+     * @param funcId
+     * @param pid
+     * @param funcName
+     */
+    public SysFuncDTO(Long funcId, Long pid, String funcName) {
+        this.funcId = funcId;
+        this.pid = pid;
+        this.funcName = funcName;
+    }
+
+    public Long getFuncId() {
         return funcId;
     }
 
-    public void setFuncId(BigInteger funcId) {
+    public void setFuncId(Long funcId) {
         this.funcId = funcId;
     }
 
-    public BigInteger getPid() {
+    public Long getPid() {
         return pid;
     }
 
-    public void setPid(BigInteger pid) {
+    public void setPid(Long pid) {
         this.pid = pid;
     }
 

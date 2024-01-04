@@ -7,13 +7,6 @@ import java.util.List;
 
 public class TreeBean {
 
-    /**
-     * 根节点的编号
-     */
-    public static final Object ROOT_ID = 0;
-
-    public static final String ROOT_NAME = "根";
-
     private Object id;
 
     private Object pid;
@@ -29,17 +22,6 @@ public class TreeBean {
     private Attribute attributes;
 
     List<TreeBean> children;
-
-    /**
-     * 创建根节点
-     * @return
-     */
-    public static TreeBean createRoot(){
-        TreeBean root = new TreeBean();
-        root.setId(ROOT_ID);
-        root.setText(ROOT_NAME);
-        return root;
-    }
 
     public Object getId() {
         return id;

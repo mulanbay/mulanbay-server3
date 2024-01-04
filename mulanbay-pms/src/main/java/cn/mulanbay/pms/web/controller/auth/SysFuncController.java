@@ -55,10 +55,12 @@ public class SysFuncController extends BaseController {
                 TreeBean treeBean = new TreeBean();
                 treeBean.setId(sfb.getFuncId());
                 treeBean.setText(sfb.getFuncName());
-                treeBean.setPid(sfb.getPid() == null ? null : sfb.getPid().toString());
+                treeBean.setPid(sfb.getPid());
                 treeBeans.add(treeBean);
             }
-            TreeBean root = TreeBean.createRoot();
+            TreeBean root = new TreeBean();
+            root.setId(0L);
+            root.setText("根");
             TreeBean result = TreeBeanUtil.changToTree(root, treeBeans);
             List<TreeBean> resultList = new ArrayList<TreeBean>();
             resultList.add(result);

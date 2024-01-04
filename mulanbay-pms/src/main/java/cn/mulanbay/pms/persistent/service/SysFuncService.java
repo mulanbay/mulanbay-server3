@@ -22,7 +22,8 @@ public class SysFuncService extends BaseHibernateDao {
      */
     public List<SysFuncDTO> getMenu() {
         try {
-            String sql = "select func_id as funcId,func_name as funcName,pid from sys_func where func_data_type=?1 or func_data_type =?2 order by pid,order_index ";
+            //查询的列顺序要和SysFuncDTO构造器中的顺序一致
+            String sql = "select func_id as funcId,pid as pid,func_name as funcName from sys_func where func_data_type=?1 or func_data_type =?2 order by pid,order_index ";
             return this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE,
                     SysFuncDTO.class, FunctionDataType.M.ordinal(), FunctionDataType.C.ordinal());
         } catch (BaseException e) {

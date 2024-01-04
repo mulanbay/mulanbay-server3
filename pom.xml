@@ -30,31 +30,6 @@
         <kaptcha.version>2.3.2</kaptcha.version>
         <jwt.version>0.12.3</jwt.version>
 
-        <jackson.version>2.11.2</jackson.version>
-        <mysql-connector-java.version>8.0.20</mysql-connector-java.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
-        <commons-beanutils.version>1.9.2</commons-beanutils.version>
-        <junit.version>4.11</junit.version>
-        <commons-pool.version>1.5.6</commons-pool.version>
-        <commons-fileupload.version>1.3.1</commons-fileupload.version>
-        <commons-lang3.version>3.3.2</commons-lang3.version>
-        <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
-        <javax.servlet.jsp.jstl-api.version>1.2.1</javax.servlet.jsp.jstl-api.version>
-        <hamcrest-core.version>1.3</hamcrest-core.version>
-        <validation-api.version>2.0.1.Final</validation-api.version>
-        <poi.version>3.13</poi.version>
-        <slf4j-api.version>1.7.30</slf4j-api.version>
-        <javax.mail.version>1.5.2</javax.mail.version>
-        <fst.version>1.58</fst.version>
-        <kryo-shaded.version>3.0.0</kryo-shaded.version>
-        <slf4j-jdk14.version>1.6.6</slf4j-jdk14.version>
-        <hibernate-ehcache.version>5.4.21.Final</hibernate-ehcache.version>
-        <spring-session.version>2.3.1.RELEASE</spring-session.version>
-        <spring-data-redis.version>2.3.4.RELEASE</spring-data-redis.version>
-        <mail.version>1.4.7</mail.version>
-        <oshi-core.version>4.2.1</oshi-core.version>
-        <jna.version>5.4.0</jna.version>
-        <HikariCP.version>3.4.5</HikariCP.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -64,7 +39,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.1.3</version>
+                <version>3.2.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
