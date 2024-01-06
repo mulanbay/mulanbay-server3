@@ -153,21 +153,26 @@ public class MainController extends BaseController {
     }
 
     /**
-     * 我的信息
+     * 获取用户信息
      *
      * @return
      */
     @RequestMapping(value = "/myInfo", method = RequestMethod.GET)
-    public ResultBean myInfo(UserCommonReq uc) {
-        Long userId = uc.getUserId();
-        User user = baseService.getObject(User.class, userId);
-        MyInfoVo res = new MyInfoVo();
-        res.setUsername(user.getUsername());
-        res.setNickname(user.getNickname());
-        res.setVersion(version);
-        res.setTodayCalendars(0);
-        res.setAvatar(user.getAvatar());
-        return callback(res);
+    public ResultBean myInfo() {
+        LoginUser loginUser = tokenHandler.getLoginUser(request);
+        Long roleId = loginUser.getRoleId();
+        Long userId = loginUser.getUserId();
+        MyInfoVo user = new MyInfoVo();
+        user.setUsername(loginUser.getUser().getUsername());
+        user.setNickname(loginUser.getUser().getNickname());
+        user.setVersion(version);
+        Map map = new HashMap();
+        map.put("user", user);
+        map.put("roles", new String[]{"admin"});
+        List<String> perms = authService.selectRoleFPermsList(roleId);
+        Collections.sort(perms);
+        map.put("permissions", perms);
+        return callback(map);
     }
 
 
@@ -299,5 +304,6 @@ public class MainController extends BaseController {
         }
         return component;
     }
+
 
 }

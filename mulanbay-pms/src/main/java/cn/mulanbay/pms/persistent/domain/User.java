@@ -263,6 +263,10 @@ public class User implements java.io.Serializable {
         this.remark = remark;
     }
 
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
     }

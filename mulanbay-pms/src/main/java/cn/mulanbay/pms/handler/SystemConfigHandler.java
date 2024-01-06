@@ -29,6 +29,10 @@ public class SystemConfigHandler extends BaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(SystemConfigHandler.class);
 
+    private static String SYS_FUNC_KEY="sys_func";
+
+    private static String ROLE_FUNC_KEY="role_function";
+
     private String hostIpAddress;
 
     @Value("${mulanbay.nodeId}")
@@ -87,8 +91,8 @@ public class SystemConfigHandler extends BaseHandler {
             }
         }
         if (!byMemoryCache) {
-            cacheHandler.delete("system_function");
-            cacheHandler.setHash("system_function", functionMap, 0);
+            cacheHandler.delete(SYS_FUNC_KEY);
+            cacheHandler.setHash(SYS_FUNC_KEY, functionMap, 0);
         }
         logger.debug("初始化了" + urlMapSize + "条功能点记录");
     }
@@ -115,8 +119,8 @@ public class SystemConfigHandler extends BaseHandler {
             roleFunctionMap.put(rfKey, "1");
         }
         if (!byMemoryCache) {
-            cacheHandler.delete("role_function");
-            cacheHandler.setHash("role_function", roleFunctionMap, 0);
+            cacheHandler.delete(ROLE_FUNC_KEY);
+            cacheHandler.setHash(ROLE_FUNC_KEY, roleFunctionMap, 0);
         }
         logger.debug("初始化了" + list.size() + "条角色功能点记录");
     }
@@ -149,7 +153,7 @@ public class SystemConfigHandler extends BaseHandler {
         if (byMemoryCache) {
             return functionMap.get(key);
         } else {
-            return cacheHandler.getHash("system_function", key, SysFunc.class);
+            return cacheHandler.getHash(SYS_FUNC_KEY, key, SysFunc.class);
         }
     }
 
@@ -177,7 +181,7 @@ public class SystemConfigHandler extends BaseHandler {
         if (byMemoryCache) {
             s = roleFunctionMap.get(rfKey);
         } else {
-            s = cacheHandler.getHash("role_function", rfKey, String.class);
+            s = cacheHandler.getHash(ROLE_FUNC_KEY, rfKey, String.class);
         }
         boolean b = (s == null ? false : true);
         logger.debug("角色是否授权,key:" + rfKey + ",auth:" + b);

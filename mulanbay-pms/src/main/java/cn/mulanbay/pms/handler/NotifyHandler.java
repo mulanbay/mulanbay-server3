@@ -11,12 +11,12 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsErrorCode;
 import cn.mulanbay.pms.persistent.domain.ErrorCodeDefine;
-import cn.mulanbay.pms.persistent.domain.SystemMonitorUser;
+import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.UserMessage;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.persistent.enums.MessageType;
-import cn.mulanbay.pms.persistent.service.SystemMonitorUserService;
+import cn.mulanbay.pms.persistent.service.MonitorUserService;
 import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     BaseService baseService;
 
     @Autowired
-    SystemMonitorUserService systemMonitorUserService;
+    MonitorUserService systemMonitorUserService;
 
     @Autowired
     SystemConfigHandler systemConfigHandler;
@@ -161,13 +161,13 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             if (expectSendTime == null) {
                 return;
             }
-            List<SystemMonitorUser> userList = systemMonitorUserService.selectListByType(ec.getBussType());
+            List<MonitorUser> userList = systemMonitorUserService.selectListByType(ec.getBussType());
             if (StringUtil.isEmpty(userList)) {
                 logger.warn("业务类型[" + ec.getBussType().getName() + "]没有配置系统监控人员");
                 return;
             }
             title += "(code=" + code + ")";
-            for (SystemMonitorUser smu : userList) {
+            for (MonitorUser smu : userList) {
                 //限流判断
                 boolean check = this.checkErrorCodeLimit(ec, smu.getUserId());
                 if (check) {

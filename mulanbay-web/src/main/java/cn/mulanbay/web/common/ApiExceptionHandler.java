@@ -82,7 +82,8 @@ public class ApiExceptionHandler {
 		Errors errors = be.getBindingResult();
 		ValidateError ve = this.getValidateError(errors);
 		//默认选择第一个
-		rb.setCode(ve.getCode());
+		//rb.setCode(ve.getCode());
+		rb.setCode(-3);
 		rb.setMessage(ve.getErrorInfo());
 		//rb.setData(es);
 		if(doSystemLog()){

@@ -42,7 +42,7 @@ public class BaseHibernateDao {
 	public static final int NO_PAGE_SIZE = 0;
 
 	/**
-	 * Hibernate的变量绑定开始序号
+	 * Hibernate的变量绑定开始序号,6.x需要从1开始
 	 * @link <a href="https://docs.jboss.org/hibernate/orm/6.4/querylanguage/html_single/Hibernate_Query_Language.html">the-label</a>
 	 */
 	public static final int START_OPL = 1;
@@ -430,6 +430,7 @@ public class BaseHibernateDao {
 				return result;
 			}
 		} catch (Exception e) {
+			logger.error("执行sql异常,HQL:\n"+hql);
 			throw OPUtil.handleException(e);
 		}
 	}

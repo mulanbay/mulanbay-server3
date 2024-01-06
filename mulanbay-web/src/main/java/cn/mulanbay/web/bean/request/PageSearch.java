@@ -1,5 +1,6 @@
 package cn.mulanbay.web.bean.request;
 
+import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.QueryBuilder;
 
@@ -19,7 +20,7 @@ public class PageSearch extends QueryBuilder {
 	/**
 	 * 单页显示条数
 	 */
-	protected Integer pageSize;
+	protected Integer pageSize = BaseHibernateDao.DEFAULT_PAGE_SIZE;
 
 	/**
 	 * 是否需要总页数，移动端可以不需要这个

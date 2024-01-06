@@ -41,26 +41,7 @@ public class MessageHandler extends BaseHandler {
 	public ValidateError getErrorInfo(String key) {
 		ValidateError ve = new ValidateError();
 		ve.setField(key);
-		if (key == null || key.isEmpty()) {
-			ve.setErrorInfo("错误信息未定义");
-		} else {
-			if (key.indexOf("{") >= 0) {
-				// key加大挂号为了可以直接页面使用
-				key = key.substring(1, key.length() - 1);
-			}
-			ve.setField(key);
-			String ms = getConfigMessage(key);
-			if (ms == null || ms.isEmpty()) {
-				ve.setErrorInfo("未定义code:"+key);
-				ve.setCode(-1);
-			} else {
-				String[] s = ms.split(",");
-				ve.setErrorInfo(s[1]);
-				int errorCode = Integer.valueOf(s[0]);
-				ve.setCode(errorCode);
-			}
-
-		}
+		ve.setErrorInfo(key);
 		return ve;
 	}
 

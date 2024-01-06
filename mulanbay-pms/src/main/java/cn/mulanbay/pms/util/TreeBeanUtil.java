@@ -2,6 +2,7 @@ package cn.mulanbay.pms.util;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.persistent.enums.AccountType;
 import cn.mulanbay.pms.persistent.enums.EnumIdType;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 
@@ -32,7 +33,8 @@ public class TreeBeanUtil {
             int index = enumClass.indexOf(".");
             if (index < 0) {
                 //没有全路径的使用默认包
-                enumClass = "cn.mulanbay.pms.persistent.enums." + enumClass;
+                String packageName = AccountType.class.getPackage().getName();
+                enumClass = packageName+"." + enumClass;
             }
             Class<Enum> ec = (Class<Enum>) Class.forName(enumClass);
             Method toName = ec.getMethod("getName");

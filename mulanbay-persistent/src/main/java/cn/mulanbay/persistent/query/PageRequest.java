@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static cn.mulanbay.persistent.dao.BaseHibernateDao.DEFAULT_PAGE_SIZE;
 import static cn.mulanbay.persistent.dao.BaseHibernateDao.START_OPL;
 
 /**
@@ -33,7 +34,7 @@ public class PageRequest {
 	 */
 	int page = NO_PAGE;
 
-	int pageSize;
+	int pageSize = DEFAULT_PAGE_SIZE;
 
 	/**
 	 * 获取对象（HQL模式下有效）

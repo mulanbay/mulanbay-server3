@@ -17,8 +17,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "system_monitor_user")
-public class SystemMonitorUser implements Serializable {
+@Table(name = "monitor_user")
+public class MonitorUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -125,8 +125,8 @@ public class SystemMonitorUser implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof SystemMonitorUser) {
-            SystemMonitorUser bean = (SystemMonitorUser) other;
+        if (other instanceof MonitorUser) {
+            MonitorUser bean = (MonitorUser) other;
             return bean.getId().equals(this.getId());
         }else {
             return false;

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -101,7 +102,7 @@ public class WebConfig {
      * @return
      */
     @Bean
-    public RedisDistributedLock redisDistributedLock(RedisTemplate redisTemplate) {
+    public RedisDistributedLock redisDistributedLock(@Qualifier("redisTemplate") RedisTemplate redisTemplate) {
         return new RedisDistributedLock(redisTemplate);
     }
 

@@ -6,8 +6,8 @@ import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.dto.auth.SysFuncDTO;
 import cn.mulanbay.pms.persistent.enums.FunctionDataType;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,4 +32,21 @@ public class SysFuncService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 删除功能点
+     * @param rootId
+     */
+    public void deleteFunctions(Long rootId) {
+        try {
+            StringBuffer sb = new StringBuffer();
+            sb.append("delete FROM sys_func WHERE func_id in ");
+            sb.append("(select func_id from ");
+            sb.append("(SELECT func_id FROM sys_func WHERE FIND_IN_SET(func_id, getFuncChildren("+rootId+"))) as aa ");
+            sb.append(") ");
+            this.execSqlUpdate(sb.toString());
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除功能点异常", e);
+        }
+    }
 }

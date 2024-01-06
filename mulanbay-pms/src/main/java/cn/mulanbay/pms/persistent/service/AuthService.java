@@ -279,8 +279,8 @@ public class AuthService extends BaseHibernateDao {
     public List<String> selectRoleFPermsList(Long roleId) {
         try {
             String hql = """
-                    SELECT perms FROM system_function where perms is not null and
-                    (permission_auth=0 or (permission_auth=1 and id in (select function_id from role_function where role_id =?1)) )
+                    SELECT perms FROM SysFunc where perms is not null and
+                    (permissionAuth=false or (permissionAuth=true and id in (select functionId from RoleFunction where roleId =?1)) )
                     """;
             List<String> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,String.class, roleId);
             return list;
@@ -290,21 +290,4 @@ public class AuthService extends BaseHibernateDao {
         }
     }
 
-    /**
-     * 删除功能点
-     * @param rootId
-     */
-    public void deleteFunctions(Long rootId) {
-        try {
-            StringBuffer sb = new StringBuffer();
-            sb.append("delete FROM system_function WHERE id in ");
-            sb.append("(select id from ");
-            sb.append("(SELECT id FROM system_function WHERE FIND_IN_SET(id, getFunctionChild("+rootId+"))) as aa ");
-            sb.append(") ");
-            this.execSqlUpdate(sb.toString());
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
-                    "删除功能点异常", e);
-        }
-    }
 }

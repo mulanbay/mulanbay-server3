@@ -64,3 +64,13 @@ ALTER TABLE `user_message`
 
 ALTER TABLE `system_monitor_user`
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `system_monitor_user` RENAME TO `monitor_user` ;
+
+ALTER TABLE `dict_group`
+    CHANGE COLUMN `id` `group_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `group_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ;
+
+ALTER TABLE `dict_item`
+    CHANGE COLUMN `id` `item_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `item_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ;

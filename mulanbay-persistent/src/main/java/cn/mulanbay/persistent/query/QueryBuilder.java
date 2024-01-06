@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static cn.mulanbay.persistent.dao.BaseHibernateDao.START_OPL;
+
 /**
  * 通用查询的查询类构建规则类
  *
@@ -21,7 +23,7 @@ public class QueryBuilder {
      * @return
      */
     public PageRequest buildQuery(){
-        return build(this,0);
+        return build(this,START_OPL);
     }/**
      * 创建查询
      * @return

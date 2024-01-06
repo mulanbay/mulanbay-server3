@@ -4,7 +4,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
-import cn.mulanbay.pms.persistent.domain.SystemMonitorUser;
+import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.enums.MonitorBussType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class SystemMonitorUserService extends BaseHibernateDao {
+public class MonitorUserService extends BaseHibernateDao {
 
 
     /**
@@ -28,10 +28,10 @@ public class SystemMonitorUserService extends BaseHibernateDao {
      * @param bussType
      * @return
      */
-    public List<SystemMonitorUser> selectListByType(MonitorBussType bussType) {
+    public List<MonitorUser> selectListByType(MonitorBussType bussType) {
         try {
-            String hql = "from SystemMonitorUser where bussType=0 or bussType=?1";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,SystemMonitorUser.class, bussType);
+            String hql = "from MonitorUser where bussType=0 or bussType=?1";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE, MonitorUser.class, bussType);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取系统监控用户配置异常", e);
@@ -44,10 +44,10 @@ public class SystemMonitorUserService extends BaseHibernateDao {
      * @param userId
      * @return
      */
-    public List<SystemMonitorUser> selectList(Long userId) {
+    public List<MonitorUser> selectList(Long userId) {
         try {
-            String hql = "from SystemMonitorUser where userId=?1";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,SystemMonitorUser.class, userId);
+            String hql = "from MonitorUser where userId=?1";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE, MonitorUser.class, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取系统监控用户配置异常", e);
