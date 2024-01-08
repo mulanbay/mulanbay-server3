@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public class CommonBeanDeleteReq implements BindUser {
+public class CommonDeleteForm implements BindUser {
 
     @NotEmpty(message = "主键编号不能为空")
     private String ids;

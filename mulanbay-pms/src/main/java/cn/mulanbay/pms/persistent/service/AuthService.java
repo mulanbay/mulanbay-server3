@@ -6,6 +6,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.persistent.dto.auth.RoleFunctionDTO;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -330,6 +331,31 @@ public class AuthService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
                     "新增用户异常", e);
+        }
+    }
+
+
+    /**
+     * 获取角色功能点列表
+     *
+     * @param roleId
+     * @return
+     */
+    public List<RoleFunctionDTO> selectRoleFunctionList(Long roleId) {
+        try {
+            String sql = """
+                    select sf.func_id as funcId,sf.func_name as funcName,sf.pid as pid,rf.function_id as roleFunctionId
+                    from sys_func sf
+                    left join role_function rf
+                    on sf.func_id = rf.function_id
+                    and rf.role_id=?1
+                    where sf.permission_auth=1 order by sf.pid,sf.order_index
+                    """;
+            List<RoleFunctionDTO> list = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE, RoleFunctionDTO.class, roleId);
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取角色功能点列表异常", e);
         }
     }
 

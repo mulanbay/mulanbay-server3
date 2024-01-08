@@ -11,7 +11,7 @@ import cn.mulanbay.pms.persistent.domain.DictItem;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
-import cn.mulanbay.pms.web.bean.req.CommonBeanDeleteReq;
+import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemSH;
 import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemForm;
@@ -130,7 +130,7 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ResultBean delete(@RequestBody @Valid CommonBeanDeleteReq deleteRequest) {
+    public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
         return callback(null);
     }

@@ -2,23 +2,32 @@ package cn.mulanbay.pms.web.controller.auth;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.*;
+import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.FileUtil;
+import cn.mulanbay.common.util.MimeTypeUtils;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.common.PmsErrorCode;
-import cn.mulanbay.pms.handler.*;
-import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.handler.SystemConfigHandler;
+import cn.mulanbay.pms.handler.ThreadPoolHandler;
+import cn.mulanbay.pms.handler.TokenHandler;
+import cn.mulanbay.pms.persistent.domain.Role;
+import cn.mulanbay.pms.persistent.domain.User;
+import cn.mulanbay.pms.persistent.domain.UserLevel;
+import cn.mulanbay.pms.persistent.domain.UserSet;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import cn.mulanbay.pms.persistent.enums.AuthType;
-import cn.mulanbay.pms.persistent.service.*;
+import cn.mulanbay.pms.persistent.service.AuthService;
+import cn.mulanbay.pms.persistent.service.FamilyService;
+import cn.mulanbay.pms.persistent.service.UserLevelService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
-import cn.mulanbay.pms.web.bean.req.CommonBeanDeleteReq;
+import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.user.*;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonReq;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.auth.user.UserProfileVo;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -94,13 +103,13 @@ public class UserController extends BaseController {
     /**
      * 获取用户角色树
      *
-     * @param urt
+     * @param userId
      * @return
      */
     @RequestMapping(value = "/userRoleTree")
-    public ResultBean userRoleTree(UserRoleSH urt) {
+    public ResultBean userRoleTree(@RequestParam(name = "userId") Long userId) {
         try {
-            List<UserRoleDTO> urList = authService.selectUserRoleBeanList(urt.getUserId());
+            List<UserRoleDTO> urList = authService.selectUserRoleBeanList(userId);
             List<TreeBean> list = new ArrayList<TreeBean>();
             for (UserRoleDTO ur : urList) {
                 TreeBean tb = new TreeBean();
@@ -111,21 +120,16 @@ public class UserController extends BaseController {
                 }
                 list.add(tb);
             }
-            Boolean b = urt.getSeparate();
-            if (b != null && b) {
-                Map map = new HashMap<>();
-                map.put("treeData", list);
-                List checkedKeys = new ArrayList();
-                for (UserRoleDTO sf : urList) {
-                    if (sf.getUserRoleId() != null) {
-                        checkedKeys.add(sf.getRoleId());
-                    }
+            Map map = new HashMap<>();
+            map.put("treeData", list);
+            List checkedKeys = new ArrayList();
+            for (UserRoleDTO sf : urList) {
+                if (sf.getUserRoleId() != null) {
+                    checkedKeys.add(sf.getRoleId());
                 }
-                map.put("checkedKeys", checkedKeys);
-                return callback(map);
-            } else {
-                return callback(TreeBeanUtil.addRoot(list, urt.getNeedRoot()));
             }
+            map.put("checkedKeys", checkedKeys);
+            return callback(map);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取用户角色树异常",
                     e);
@@ -230,7 +234,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ResultBean delete(@RequestBody @Valid CommonBeanDeleteReq deleteRequest) {
+    public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ss = deleteRequest.getIds().split(",");
         for(String s : ss){
             authService.deleteUser(Long.valueOf(s));
@@ -340,7 +344,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/offline", method = RequestMethod.POST)
-    public ResultBean offline(@RequestBody @Valid UserCommonReq ucr) {
+    public ResultBean offline(@RequestBody @Valid UserCommonFrom ucr) {
         return callback(null);
     }
 
@@ -350,7 +354,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteUserData", method = RequestMethod.POST)
-    public ResultBean deleteUserData(@RequestBody @Valid UserCommonReq ucr) {
+    public ResultBean deleteUserData(@RequestBody @Valid UserCommonFrom ucr) {
         threadPoolHandler.pushThread(new Runnable() {
             @Override
             public void run() {
@@ -366,7 +370,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/initUserData", method = RequestMethod.POST)
-    public ResultBean initUserData(@RequestBody @Valid UserCommonReq ucr) {
+    public ResultBean initUserData(@RequestBody @Valid UserCommonFrom ucr) {
         threadPoolHandler.pushThread(new Runnable() {
             @Override
             public void run() {
@@ -382,7 +386,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getResidentCity", method = RequestMethod.GET)
-    public ResultBean getResidentCity(UserCommonReq ucr) {
+    public ResultBean getResidentCity(UserCommonFrom ucr) {
         UserSet us = baseService.getObject(UserSet.class,ucr.getUserId());
         return callback(us.getResidentCity());
     }

@@ -14,7 +14,7 @@ import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.SysFuncService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
-import cn.mulanbay.pms.web.bean.req.CommonBeanDeleteReq;
+import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncForm;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncSH;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncTreeReq;
@@ -239,7 +239,7 @@ public class SysFuncController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ResultBean delete(@RequestBody @Valid CommonBeanDeleteReq deleteRequest) {
+    public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         Long[] ids = NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(","));
         for(Long id : ids){
             sysFuncService.deleteFunctions(id);

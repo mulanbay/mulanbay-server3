@@ -6,18 +6,13 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.enums.MonitorBussType;
 import cn.mulanbay.pms.persistent.service.MonitorUserService;
-import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.auth.user.MonitorUserForm;
-import cn.mulanbay.pms.web.bean.req.auth.user.UserRoleSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,13 +37,13 @@ public class MonitorUserController extends BaseController {
     /**
      * 获取用户系统监控树
      *
-     * @param urt
+     * @param userId
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(UserRoleSH urt) {
+    public ResultBean tree(@RequestParam(name = "userId") Long userId) {
         try {
-            List<MonitorUser> urList = monitorUserService.selectList(urt.getUserId());
+            List<MonitorUser> urList = monitorUserService.selectList(userId);
             List<TreeBean> treeBeans = new ArrayList<>();
             List checkedKeys = new ArrayList();
             for (MonitorBussType sfb : MonitorBussType.values()) {
@@ -64,15 +59,10 @@ public class MonitorUserController extends BaseController {
                 }
                 treeBeans.add(treeBean);
             }
-            Boolean b = urt.getSeparate();
-            if (b != null && b) {
-                Map map = new HashMap<>();
-                map.put("treeData", treeBeans);
-                map.put("checkedKeys", checkedKeys);
-                return callback(map);
-            } else {
-                return callback(TreeBeanUtil.addRoot(treeBeans, urt.getNeedRoot()));
-            }
+            Map map = new HashMap<>();
+            map.put("treeData", treeBeans);
+            map.put("checkedKeys", checkedKeys);
+            return callback(map);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取用户系统监控树异常",
                     e);

@@ -10,7 +10,7 @@ import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.DictService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
-import cn.mulanbay.pms.web.bean.req.CommonBeanDeleteReq;
+import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.config.dictGroup.DictGroupForm;
 import cn.mulanbay.pms.web.bean.req.config.dictGroup.DictGroupSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
@@ -131,7 +131,7 @@ public class DictGroupController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public ResultBean delete(@RequestBody @Valid CommonBeanDeleteReq deleteRequest) {
+    public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ss = deleteRequest.getIds().split(",");
         for(String s : ss){
             dictService.deleteDictGroup(Long.valueOf(s));

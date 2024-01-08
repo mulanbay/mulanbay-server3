@@ -16,7 +16,7 @@ import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.main.LoginReq;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonReq;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.res.main.MyInfoVo;
 import cn.mulanbay.pms.web.bean.res.main.RouterMetaVo;
 import cn.mulanbay.pms.web.bean.res.main.RouterVo;
@@ -149,7 +149,7 @@ public class MainController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ResultBean logout(UserCommonReq uc) {
+    public ResultBean logout(UserCommonFrom uc) {
         tokenHandler.deleteLoginUser(request);
         if (uc.getUserId() != null) {
             authService.deleteLastLoginToken(uc.getUserId());
