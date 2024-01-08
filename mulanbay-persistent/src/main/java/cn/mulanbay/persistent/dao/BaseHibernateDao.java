@@ -192,6 +192,7 @@ public class BaseHibernateDao {
 		try {
 			getSession().persist(obj);
 		} catch (Exception e) {
+			logger.error("保持对象失败，Object="+ JsonUtil.beanToJson(obj));
 			throw OPUtil.handleException(e);
 		}
 	}

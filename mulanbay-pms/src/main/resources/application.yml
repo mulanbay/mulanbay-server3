@@ -8,6 +8,8 @@ mulanbay:
   picture:
     #图片路径（头像使用）
     baseUrl: http://localhost:99/avatar
+    #本地存放文件夹地址
+    folder: ./picture
   #线程池
   threadPool:
     corePoolSize: 20

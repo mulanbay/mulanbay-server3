@@ -143,6 +143,11 @@ public class MainController extends BaseController {
         return token;
     }
 
+    /**
+     * 登出
+     * @param uc
+     * @return
+     */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ResultBean logout(UserCommonReq uc) {
         tokenHandler.deleteLoginUser(request);
@@ -153,7 +158,7 @@ public class MainController extends BaseController {
     }
 
     /**
-     * 获取用户信息
+     * 获取用户信息（全局接口）
      *
      * @return
      */

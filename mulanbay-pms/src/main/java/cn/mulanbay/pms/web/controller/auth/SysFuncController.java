@@ -15,9 +15,9 @@ import cn.mulanbay.pms.persistent.service.SysFuncService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonBeanDeleteReq;
-import cn.mulanbay.pms.web.bean.req.auth.SysFuncForm;
-import cn.mulanbay.pms.web.bean.req.auth.SysFuncSH;
-import cn.mulanbay.pms.web.bean.req.auth.SysFuncTreeReq;
+import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncForm;
+import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncSH;
+import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncTreeReq;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
@@ -193,7 +193,7 @@ public class SysFuncController extends BaseController {
     public ResultBean create(@RequestBody @Valid SysFuncForm formRequest) {
         checkFormBean(formRequest);
         SysFunc bean = new SysFunc();
-        BeanCopy.copyProperties(formRequest, bean, true);
+        BeanCopy.copy(formRequest, bean, true);
         if (formRequest.getParentId() != null) {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);
@@ -223,7 +223,7 @@ public class SysFuncController extends BaseController {
     public ResultBean edit(@RequestBody @Valid SysFuncForm formRequest) {
         checkFormBean(formRequest);
         SysFunc bean = baseService.getObject(beanClass, formRequest.getFuncId());
-        BeanCopy.copyProperties(formRequest, bean, true);
+        BeanCopy.copy(formRequest, bean, true);
         if (formRequest.getParentId() != null) {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);

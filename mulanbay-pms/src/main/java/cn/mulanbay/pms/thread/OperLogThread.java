@@ -105,7 +105,7 @@ public class OperLogThread extends BaseLogThread {
     private void addParaNotFoundSystemLog(OperLog log) {
         //有可能在request的InputStream里面
         SysLog systemLog = new SysLog();
-        BeanCopy.copyProperties(log, systemLog);
+        BeanCopy.copy(log, systemLog);
         systemLog.setLogLevel(LogLevel.WARNING);
         systemLog.setTitle("获取不到请求参数信息");
         systemLog.setContent("获取不到请求参数信息");

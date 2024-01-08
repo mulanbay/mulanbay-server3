@@ -6,6 +6,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -289,5 +290,48 @@ public class AuthService extends BaseHibernateDao {
                     "获取角色功能点的按钮列表列表", e);
         }
     }
+
+    /**
+     * 获取用户角色列表
+     *
+     * @param userId
+     * @return
+     */
+    public List<UserRoleDTO> selectUserRoleBeanList(Long userId) {
+        try {
+            String sql = """
+                    select r.role_id as roleId,r.role_name as roleName,ur.role_id as userRoleId
+                    from role r
+                    left join user_role ur
+                    on r.role_id = ur.role_id
+                    and ur.user_id=?1
+                    order by r.role_id
+                    """;
+            List<UserRoleDTO> list = this.getEntityListSI(sql, NO_PAGE, NO_PAGE_SIZE, UserRoleDTO.class, userId);
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取用户角色列表异常", e);
+        }
+    }
+
+
+    /**
+     * 新增用户
+     *
+     * @param user
+     * @param us
+     */
+    public void createUser(User user, UserSet us) {
+        try {
+            this.saveEntity(user);
+            us.setUserId(user.getUserId());
+            this.saveEntity(us);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
+                    "新增用户异常", e);
+        }
+    }
+
 
 }

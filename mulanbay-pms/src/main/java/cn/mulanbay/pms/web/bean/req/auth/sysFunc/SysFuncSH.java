@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.web.bean.req.auth;
+package cn.mulanbay.pms.web.bean.req.auth.sysFunc;
 
 import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter;

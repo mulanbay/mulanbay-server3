@@ -18,10 +18,7 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +95,7 @@ public class DictGroupController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid DictGroupForm formRequest) {
         DictGroup bean = new DictGroup();
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -110,7 +107,7 @@ public class DictGroupController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(Long groupId) {
+    public ResultBean get(@RequestParam(name = "groupId") Long groupId) {
         DictGroup bean = baseService.getObject(beanClass, groupId);
         return callback(bean);
     }
@@ -123,7 +120,7 @@ public class DictGroupController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid DictGroupForm formRequest) {
         DictGroup bean = baseService.getObject(beanClass, formRequest.getGroupId());
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         baseService.updateObject(bean);
         return callback(null);
     }

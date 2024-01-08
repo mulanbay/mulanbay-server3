@@ -18,10 +18,7 @@ import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemForm;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +90,7 @@ public class DictItemController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid DictItemForm formRequest) {
         DictItem bean = new DictItem();
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         DictGroup group = baseService.getObject(DictGroup.class, formRequest.getGroupId());
         bean.setGroup(group);
         baseService.saveObject(bean);
@@ -107,7 +104,7 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(Long itemId) {
+    public ResultBean get(@RequestParam(name = "itemId") Long itemId) {
         DictItem bean = baseService.getObject(beanClass, itemId);
         return callback(bean);
     }
@@ -120,7 +117,7 @@ public class DictItemController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid DictItemForm formRequest) {
         DictItem bean = baseService.getObject(beanClass, formRequest.getItemId());
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         DictGroup group = baseService.getObject(DictGroup.class, formRequest.getGroupId());
         bean.setGroup(group);
         baseService.updateObject(bean);

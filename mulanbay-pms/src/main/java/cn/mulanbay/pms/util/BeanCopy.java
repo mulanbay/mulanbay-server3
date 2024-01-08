@@ -33,9 +33,9 @@ public class BeanCopy extends BeanUtils {
 	 * @param target
 	 * @throws BeansException
 	 */
-	public static void copyProperties(Object source, Object target)
+	public static void copy(Object source, Object target)
 			throws BeansException {
-		copyProperties(source,target,true);
+		copy(source,target,true);
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class BeanCopy extends BeanUtils {
 	 * @param copyNull source的空字段需不需要复制
 	 * @throws BeansException
 	 */
-	public static void copyProperties(Object source, Object target,boolean copyNull)
+	public static void copy(Object source, Object target, boolean copyNull)
 			throws BeansException {
 		Assert.notNull(source, "Source must not be null");
 		Assert.notNull(target, "Target must not be null");

@@ -11,6 +11,11 @@ public class Constant {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
 
     /**
+     * 默认的用户等级
+     */
+    public static final int USER_LEVEL=3;
+
+    /**
      * 最大月份数
      */
     public static final int MAX_MONTH = 12;

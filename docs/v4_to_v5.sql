@@ -74,3 +74,10 @@ ALTER TABLE `dict_group`
 ALTER TABLE `dict_item`
     CHANGE COLUMN `id` `item_id` BIGINT NOT NULL AUTO_INCREMENT ,
     CHANGE COLUMN `name` `item_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ;
+
+ALTER TABLE `level_config` RENAME TO  `user_level` ;
+ALTER TABLE `user_level`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `user_set`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
