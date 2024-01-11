@@ -34,7 +34,7 @@ public class OperLogFlowSH extends PageSearch implements FullEndDateTime {
     @Query(fieldName = "sysFunc.beanName", op = Parameter.Operator.EQ)
     private String beanName;
 
-    @NotNull(message = "类名不能为空")
+    @NotNull(message = "操作类型不能为空")
     @Query(fieldName = "sysFunc.funcType", op = Parameter.Operator.IN)
     private List<FunctionType> funcTypes;
 

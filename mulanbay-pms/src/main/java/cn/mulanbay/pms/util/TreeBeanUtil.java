@@ -45,9 +45,9 @@ public class TreeBeanUtil {
             for (Enum obj : objs) {
                 TreeBean tb = new TreeBean();
                 if (idType == EnumIdType.ORDINAL) {
-                    tb.setId(String.valueOf(obj.ordinal()));
+                    tb.setId(obj.ordinal());
                 } else if (idType == EnumIdType.VALUE) {
-                    tb.setId(String.valueOf(toValue.invoke(obj)));
+                    tb.setId(toValue.invoke(obj));
                 } else if (idType == EnumIdType.FIELD) {
                     tb.setId(obj.name());
                 } else {

@@ -3,9 +3,11 @@ package cn.mulanbay.pms.web.bean.req.log.operLog;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.web.bean.request.PageSearch;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -16,9 +18,11 @@ public class OperLogDateStatSH extends PageSearch implements DateStatSH,FullEndD
     @Query(fieldName = "ol.user_id", op = Parameter.Operator.EQ)
     public Long userId;
 
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "ol.occur_end_time", op = Parameter.Operator.GTE)
     private Date startDate;
 
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "ol.occur_end_time", op = Parameter.Operator.LTE)
     private Date endDate;
 

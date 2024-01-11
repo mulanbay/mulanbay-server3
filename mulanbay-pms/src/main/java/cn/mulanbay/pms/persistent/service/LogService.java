@@ -141,7 +141,7 @@ public class LogService extends BaseHibernateDao {
                     select syt.*,sf.func_name,sf.pid from
                     (SELECT sys_func_id as funcId,count(0) as totalCount FROM oper_log
                      {query_para}
-                     group by sys_func) as syt,
+                     group by sys_func_id) as syt,
                      sys_func sf where syt.funcId = sf.func_id and sf.tree_stat=1
                      ) as rr
                      left join sys_func pp
@@ -179,7 +179,7 @@ public class LogService extends BaseHibernateDao {
             String query_para = pr.getParameterString();
             sql = sql.replace("{query_para}",query_para);
             List args = pr.getParameterValueList();
-            List<OperLogStat> list = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE, OperLogStat.class, args.toArray());
+            List<OperLogStat> list = this.getEntityListSI(sql,sf.getPage(),sf.getPageSize(), OperLogStat.class, args.toArray());
             return list;
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -198,11 +198,11 @@ public class LogService extends BaseHibernateDao {
             String sql = """
                     select indexValue,count(0) as totalCount
                     from (
-                    select as {date_group_field} as indexValue
-                    FROM operation_log ol,system_function sf
-                    where ol.system_function_id = sf.id
+                    select {date_group_field} as indexValue
+                    FROM oper_log ol,sys_func sf
+                    where ol.sys_func_id = sf.func_id
                     {query_para}
-                    ) tt group by indexValue
+                    ) as tt group by indexValue
                     order by indexValue
                     """;
             PageRequest pr = sf.buildQuery();

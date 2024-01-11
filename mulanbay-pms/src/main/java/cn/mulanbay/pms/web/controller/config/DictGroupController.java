@@ -1,47 +1,51 @@
-package cn.mulanbay.pms.web.controller.system;
+package cn.mulanbay.pms.web.controller.config;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.DictGroup;
 import cn.mulanbay.pms.persistent.domain.DictItem;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.service.DictService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
+import cn.mulanbay.pms.web.bean.req.config.dictGroup.DictGroupForm;
+import cn.mulanbay.pms.web.bean.req.config.dictGroup.DictGroupSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
-import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemSH;
-import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemForm;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 数据字典项
+ * 数据字典组
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @RestController
-@RequestMapping("/dictItem")
-public class DictItemController extends BaseController {
+@RequestMapping("/dictGroup")
+public class DictGroupController extends BaseController {
 
-    private static Class<DictItem> beanClass = DictItem.class;
+    private static Class<DictGroup> beanClass = DictGroup.class;
+
+    @Autowired
+    DictService dictService;
 
     /**
-     * 获取数据字典项树
+     * 获取数据组树
      *
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(DictItemSH sf) {
+    public ResultBean tree(DictGroupSH sf) {
         try {
             sf.setStatus(CommonStatus.ENABLE);
             sf.setPage(PageRequest.NO_PAGE);
@@ -49,19 +53,21 @@ public class DictItemController extends BaseController {
             pr.setBeanClass(beanClass);
             Sort sort = new Sort("orderIndex", Sort.ASC);
             pr.addSort(sort);
-            List<DictItem> gtList = baseService.getBeanList(pr);
+            List<DictGroup> gtList = baseService.getBeanList(pr);
             List<TreeBean> list = new ArrayList<TreeBean>();
-            for (DictItem gt : gtList) {
+            for (DictGroup gt : gtList) {
                 TreeBean tb = new TreeBean();
-                String code = gt.getCode();
-                code = (code == null ? gt.getItemName() : code);
-                tb.setId(code);
-                tb.setText(gt.getItemName());
+                if ("code".equals(sf.getIdField())) {
+                    tb.setId(gt.getCode());
+                } else {
+                    tb.setId(gt.getGroupId());
+                }
+                tb.setText(gt.getGroupName());
                 list.add(tb);
             }
             return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取数据字典项树异常",
+            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取数据组树异常",
                     e);
         }
     }
@@ -73,12 +79,12 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultBean list(DictItemSH sf) {
+    public ResultBean list(DictGroupSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort sort = new Sort("orderIndex", Sort.ASC);
+        Sort sort = new Sort("orderIndex", Sort.DESC);
         pr.addSort(sort);
-        PageResult<DictItem> qr = baseService.getBeanResult(pr);
+        PageResult<DictGroup> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }
 
@@ -88,12 +94,24 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResultBean create(@RequestBody @Valid DictItemForm formRequest) {
-        DictItem bean = new DictItem();
+    public ResultBean create(@RequestBody @Valid DictGroupForm formRequest) {
+        DictGroup bean = new DictGroup();
         BeanCopy.copy(formRequest, bean);
-        DictGroup group = baseService.getObject(DictGroup.class, formRequest.getGroupId());
-        bean.setGroup(group);
         baseService.saveObject(bean);
+        return callback(null);
+    }
+
+    /**
+     * 以此为模版创建
+     *
+     * @return
+     */
+    @RequestMapping(value = "/copy", method = RequestMethod.POST)
+    public ResultBean copy(@RequestBody @Valid DictGroupForm formRequest) {
+        DictGroup bean = new DictGroup();
+        BeanCopy.copy(formRequest, bean);
+        List<DictItem> itemList = dictService.getItemList(bean.getGroupId());
+        dictService.copyDict(bean,itemList);
         return callback(null);
     }
 
@@ -104,8 +122,8 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(@RequestParam(name = "itemId") Long itemId) {
-        DictItem bean = baseService.getObject(beanClass, itemId);
+    public ResultBean get(@RequestParam(name = "groupId") Long groupId) {
+        DictGroup bean = baseService.getObject(beanClass, groupId);
         return callback(bean);
     }
 
@@ -115,11 +133,9 @@ public class DictItemController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ResultBean edit(@RequestBody @Valid DictItemForm formRequest) {
-        DictItem bean = baseService.getObject(beanClass, formRequest.getItemId());
+    public ResultBean edit(@RequestBody @Valid DictGroupForm formRequest) {
+        DictGroup bean = baseService.getObject(beanClass, formRequest.getGroupId());
         BeanCopy.copy(formRequest, bean);
-        DictGroup group = baseService.getObject(DictGroup.class, formRequest.getGroupId());
-        bean.setGroup(group);
         baseService.updateObject(bean);
         return callback(null);
     }
@@ -131,7 +147,10 @@ public class DictItemController extends BaseController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
-        baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
+        String[] ss = deleteRequest.getIds().split(",");
+        for(String s : ss){
+            dictService.deleteDictGroup(Long.valueOf(s));
+        }
         return callback(null);
     }
 

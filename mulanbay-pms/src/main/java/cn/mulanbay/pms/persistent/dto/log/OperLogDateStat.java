@@ -8,10 +8,10 @@ import java.math.BigInteger;
 public class OperLogDateStat implements DateStat, CalendarDateStat {
 
     // 月份
-    private Long indexValue;
+    private Number indexValue;
     private Long totalCount;
 
-    public OperLogDateStat(Long indexValue, Long totalCount) {
+    public OperLogDateStat(Number indexValue, Long totalCount) {
         this.indexValue = indexValue;
         this.totalCount = totalCount;
     }
@@ -21,11 +21,11 @@ public class OperLogDateStat implements DateStat, CalendarDateStat {
         return indexValue==null ? null : indexValue.intValue();
     }
 
-    public Long getIndexValue() {
+    public Number getIndexValue() {
         return indexValue;
     }
 
-    public void setIndexValue(Long indexValue) {
+    public void setIndexValue(Number indexValue) {
         this.indexValue = indexValue;
     }
 

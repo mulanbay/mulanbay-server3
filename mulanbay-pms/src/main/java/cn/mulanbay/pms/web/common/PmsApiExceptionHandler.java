@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.common;
 
+import cn.mulanbay.common.util.MapUtil;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+
+import java.util.Map;
 
 /**
  * 异常处理类
@@ -67,8 +70,9 @@ public class PmsApiExceptionHandler extends ApiExceptionHandler {
                 log.setMethod(method);
                 log.setIpAddress(IPUtil.getIpAddress(request));
                 log.setExceptionClassName(exceptionClass.getName());
-                //多线程环境下会导致有时获取不到?,需要克隆
-                log.setParaMap(request.getParameterMap());
+                //需要转换为通用的单项模式
+                Map<String, String[]> pm = request.getParameterMap();
+                log.setParaMap(MapUtil.changeRequestMapToNormalMap(pm));
             }
             log.setUserId(userId);
             log.setUsername(userName);

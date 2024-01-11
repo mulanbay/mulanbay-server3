@@ -165,8 +165,11 @@ public class PageRequest {
 	}
 
 	public String getParameterString() {
-		StringBuffer sb = new StringBuffer();
 		boolean hasPara = this.hasParameter();
+		if(!hasPara){
+			return "";
+		}
+		StringBuffer sb = new StringBuffer();
 		if(needWhere&&hasPara){
 			sb.append(" where ");
 		}

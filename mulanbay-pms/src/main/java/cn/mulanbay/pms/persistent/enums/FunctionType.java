@@ -8,7 +8,12 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum FunctionType {
 
-    CREATE(0, "新增"), EDIT(1, "修改"), DELETE(2, "删除"), SEARCH(3, "查询"), STAT(4, "统计"), OTHER(5, "其他");
+    CREATE(0, "新增"),
+    EDIT(1, "修改"),
+    DELETE(2, "删除"),
+    SEARCH(3, "查询"),
+    STAT(4, "统计"),
+    OTHER(5, "其他");
 
     private int value;
 
