@@ -98,9 +98,6 @@ public class SysFuncController extends BaseController {
             root.setId(0L);
             root.setText("根");
             root.setChildren(getFunctionTree2(root, gtList));
-            if (cts.getNeedRoot() == null || cts.getNeedRoot() == false) {
-                root.setId(null);
-            }
             list.add(root);
             return callback(list);
         } catch (Exception e) {

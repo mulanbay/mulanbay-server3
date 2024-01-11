@@ -235,8 +235,7 @@ public class ErrorCodeDefine implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof ErrorCodeDefine) {
-            ErrorCodeDefine bean = (ErrorCodeDefine) other;
+        if (other instanceof ErrorCodeDefine bean) {
             return bean.getCode().equals(this.getCode());
         }else {
             return false;

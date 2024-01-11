@@ -47,6 +47,8 @@ public class ErrorCode {
 	public final static int GET_CACHE_ERROR =17;
 	// 系统级别 end
 
+	public final static int FORM_VALID_ERROR =18;
+
 	public final static int FIELD_VALIDATE_ERROR = 10000;
 
 	public final static int USER_NOTFOUND = 10001;

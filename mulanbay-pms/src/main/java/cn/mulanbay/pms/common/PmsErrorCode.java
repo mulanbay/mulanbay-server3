@@ -51,6 +51,8 @@ public class PmsErrorCode {
      */
     public static final int CREATE_TREE_ERROR = 1010010;
 
+    public static final int CLASS_NOT_FOUND = 1010011;
+
     /** 通用类 end **/
 
     /**

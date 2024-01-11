@@ -290,8 +290,7 @@ public class User implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof User) {
-            User bean = (User) other;
+        if (other instanceof User bean) {
             return bean.getUserId().equals(this.getUserId());
         }else {
             return false;

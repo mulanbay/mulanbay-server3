@@ -30,7 +30,7 @@ public class OperLog implements java.io.Serializable {
     private Long userId;
 
     @Column(name = "username", nullable = false, length = 32)
-    private String userName;
+    private String username;
 
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
@@ -121,12 +121,12 @@ public class OperLog implements java.io.Serializable {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public SysFunc getSysFunc() {
@@ -276,8 +276,7 @@ public class OperLog implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof OperLog) {
-            OperLog bean = (OperLog) other;
+        if (other instanceof OperLog bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

@@ -191,8 +191,7 @@ public class UserSet implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UserSet) {
-            UserSet bean = (UserSet) other;
+        if (other instanceof UserSet bean) {
             return bean.getUserId().equals(this.getUserId());
         }else {
             return false;

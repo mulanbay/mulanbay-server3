@@ -114,8 +114,7 @@ public class DictItem implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof DictItem) {
-            DictItem bean = (DictItem) other;
+        if (other instanceof DictItem bean) {
             return bean.getItemId().equals(this.getItemId());
         }else {
             return false;

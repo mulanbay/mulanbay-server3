@@ -129,7 +129,7 @@ public class RequestInterceptor extends BaseInterceptor {
             LoginUser loginUser = tokenHandler.getLoginUser(request);
             if (loginUser != null) {
                 log.setUserId(loginUser.getUserId());
-                log.setUserName(loginUser.getUsername());
+                log.setUsername(loginUser.getUsername());
             }
             log.setOccurEndTime(new Date());
             String cacheKey = CacheKey.getKey(CacheKey.USER_OPERATE_OP, request.getRequestedSessionId(), url);

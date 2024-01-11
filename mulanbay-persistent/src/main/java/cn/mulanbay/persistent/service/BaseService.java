@@ -150,7 +150,6 @@ public class BaseService extends BaseHibernateDao {
 	/**
 	 * 获取对象
 	 * @param clazz
-	 * @param beanName
 	 * @param id
 	 * @param idField
 	 * @return
@@ -159,7 +158,7 @@ public class BaseService extends BaseHibernateDao {
 	public <T> T getObject(Class<T> clazz, Serializable id,String idField) {
 		try {
 			String beanName = clazz.getSimpleName();
-			String hql="from "+beanName+" where "+idField+"=?0 ";
+			String hql="from "+beanName+" where "+idField+"=?1 ";
 			return this.getEntity(hql,clazz,id);
 		} catch (BaseException e) {
 			throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取对象["+clazz+"],id["+id+"]失败！",e);

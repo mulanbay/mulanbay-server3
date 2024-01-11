@@ -103,8 +103,7 @@ public class DictGroup implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof DictGroup) {
-            DictGroup bean = (DictGroup) other;
+        if (other instanceof DictGroup bean) {
             return bean.getGroupId().equals(this.getGroupId());
         }else {
             return false;

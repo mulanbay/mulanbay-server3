@@ -67,8 +67,7 @@ public class UserRole implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UserRole) {
-            UserRole bean = (UserRole) other;
+        if (other instanceof UserRole bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

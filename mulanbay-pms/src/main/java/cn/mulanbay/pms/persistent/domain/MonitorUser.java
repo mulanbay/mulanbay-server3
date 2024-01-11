@@ -125,8 +125,7 @@ public class MonitorUser implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof MonitorUser) {
-            MonitorUser bean = (MonitorUser) other;
+        if (other instanceof MonitorUser bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

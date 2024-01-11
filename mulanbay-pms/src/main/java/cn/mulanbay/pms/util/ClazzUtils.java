@@ -1,5 +1,10 @@
 package cn.mulanbay.pms.util;
 
+import cn.mulanbay.common.exception.ApplicationException;
+import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.persistent.domain.User;
+import cn.mulanbay.pms.persistent.enums.AccountType;
+import cn.mulanbay.schedule.domain.TaskTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,4 +152,23 @@ public class ClazzUtils {
         return result;
     }
 
+    /**
+     * 获取Class
+     * @param beanName
+     * @return
+     */
+    public static Class getClass(String beanName){
+        try {
+            String packageName;
+            if(beanName.startsWith("Task")){
+                packageName = TaskTrigger.class.getPackage().getName();
+            }else{
+                packageName = User.class.getPackage().getName();
+            }
+            String fullName = packageName+"." + beanName;
+            return Class.forName(fullName);
+        } catch (Exception e) {
+            throw new ApplicationException(PmsErrorCode.CLASS_NOT_FOUND,e);
+        }
+    }
 }

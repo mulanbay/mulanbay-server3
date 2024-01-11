@@ -6,14 +6,11 @@ import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.business.handler.lock.RedisDistributedLock;
 import cn.mulanbay.business.processor.ConfigPropertiesProcessor;
 import cn.mulanbay.schedule.impl.ScheduleLockHandler;
-import cn.mulanbay.web.conveter.StringToDateConverter;
-import cn.mulanbay.web.conveter.StringToStringConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,9 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -31,9 +26,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * SpringMVC相关配置
@@ -159,15 +152,5 @@ public class WebConfig {
         list.add(MediaType.APPLICATION_JSON);
         mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
         return mappingJackson2HttpMessageConverter;
-    }
-
-    @Bean
-    public ConversionServiceFactoryBean conversionService() {
-        ConversionServiceFactoryBean cs = new ConversionServiceFactoryBean();
-        Set<Converter> converters = new HashSet<>();
-        converters.add(new StringToDateConverter());
-        converters.add(new StringToStringConverter());
-        cs.setConverters(converters);
-        return cs;
     }
 }

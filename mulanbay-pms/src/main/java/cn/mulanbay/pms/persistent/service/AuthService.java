@@ -32,7 +32,7 @@ public class AuthService extends BaseHibernateDao {
      */
     public void deleteUser(Long userId) {
         try {
-            String hql = "delete from UserSetting where userId = ?1  ";
+            String hql = "delete from UserSet where userId = ?1  ";
             this.updateEntities(hql,userId);
 
             String hql2 = "delete from User where id = ?1  ";

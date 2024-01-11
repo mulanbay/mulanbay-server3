@@ -76,7 +76,7 @@ public class OperLogThread extends BaseLogThread {
             log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurEndTime().getTime());
             if (log.getUserId() == null) {
                 log.setUserId(0L);
-                log.setUserName("未知");
+                log.setUsername("未知");
             }
             BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
             baseService.saveObject(log);

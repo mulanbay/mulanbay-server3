@@ -134,8 +134,7 @@ public class FamilyUser implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof FamilyUser) {
-            FamilyUser bean = (FamilyUser) other;
+        if (other instanceof FamilyUser bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

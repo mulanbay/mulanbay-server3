@@ -173,8 +173,7 @@ public class UserLevel implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UserLevel) {
-            UserLevel bean = (UserLevel) other;
+        if (other instanceof UserLevel bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

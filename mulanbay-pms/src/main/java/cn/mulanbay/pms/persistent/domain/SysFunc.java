@@ -609,8 +609,7 @@ public class SysFunc implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof SysFunc) {
-            SysFunc bean = (SysFunc) other;
+        if (other instanceof SysFunc bean) {
             return bean.getFuncId().equals(this.getFuncId());
         }else {
             return false;

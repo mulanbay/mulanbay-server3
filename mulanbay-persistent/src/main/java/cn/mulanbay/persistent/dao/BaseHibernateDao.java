@@ -694,7 +694,13 @@ public class BaseHibernateDao {
 			for (Object object : objects) {
 				query.setParameter(i++, object);
 			}
-			return (T) query.getSingleResult();
+			List<T> list = query.getResultList();
+			if(list==null||list.isEmpty()){
+				return null;
+			}else{
+				return list.get(0);
+			}
+			//return (T) query.getSingleResult();
 		} catch (NoResultException e) {
 			logger.error("未找到数据",e);
 			return null;

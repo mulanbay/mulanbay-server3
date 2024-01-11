@@ -68,8 +68,7 @@ public class RoleFunction implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof RoleFunction) {
-            RoleFunction bean = (RoleFunction) other;
+        if (other instanceof RoleFunction bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

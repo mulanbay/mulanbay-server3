@@ -71,7 +71,7 @@ public class PmsApiExceptionHandler extends ApiExceptionHandler {
                 log.setParaMap(request.getParameterMap());
             }
             log.setUserId(userId);
-            log.setUserName(userName);
+            log.setUsername(userName);
             logHandler.addSystemLog(log);
         } catch (Exception e) {
             logger.error("添加系统日志异常", e);

@@ -119,7 +119,7 @@ public class ApiExceptionHandler {
 		List<FieldError> errors = mae.getBindingResult().getFieldErrors();
 		List<ValidateError> es = messageHandler.getErrorInfo(errors);
 		//默认选择第一个
-		rb.setCode(es.get(0).getCode());
+		rb.setCode(ErrorCode.FORM_VALID_ERROR);
 		rb.setMessage(es.get(0).getErrorInfo());
 		//rb.setData(es);
 		if(doSystemLog()){

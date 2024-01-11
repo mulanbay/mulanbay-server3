@@ -259,8 +259,7 @@ public class UserMessage implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UserMessage) {
-            UserMessage bean = (UserMessage) other;
+        if (other instanceof UserMessage bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

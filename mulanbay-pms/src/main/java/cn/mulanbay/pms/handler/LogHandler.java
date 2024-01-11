@@ -48,7 +48,7 @@ public class LogHandler extends BaseHandler {
     public void addSystemLog(LogLevel logLevel, String title, String content, int errorCode) {
         SysLog log = new SysLog();
         log.setUserId(0L);
-        log.setUserName("系统操作");
+        log.setUsername("系统操作");
         log.setTitle(title);
         log.setContent(content);
         log.setLogLevel(logLevel);

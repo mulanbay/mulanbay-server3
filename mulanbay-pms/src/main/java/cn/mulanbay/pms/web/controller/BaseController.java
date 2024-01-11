@@ -7,12 +7,14 @@ import cn.mulanbay.common.exception.ValidateError;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.TokenHandler;
+import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +108,20 @@ public class BaseController {
         rb.setCode(ErrorCode.DO_BUSS_ERROR);
         rb.setMessage(msg);
         return rb;
+    }
+
+    protected Serializable formatIdValue(IdFieldType idFieldType, String idValue) {
+        Serializable bussId = null;
+        if (idFieldType == IdFieldType.LONG) {
+            bussId = Long.parseLong(idValue);
+        } else if (idFieldType == IdFieldType.INTEGER) {
+            bussId = Integer.parseInt(idValue);
+        } else if (idFieldType == IdFieldType.SHORT) {
+            bussId = Short.parseShort(idValue);
+        } else {
+            bussId = idValue;
+        }
+        return bussId;
     }
 
 }
