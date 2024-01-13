@@ -1,5 +1,7 @@
 package cn.mulanbay.schedule.domain;
 
+import cn.mulanbay.schedule.QuartzConstant;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -27,8 +29,8 @@ public class TaskServer implements java.io.Serializable {
 	 */
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
-	private Long id;
+	@Column(name = "server_id", unique = true, nullable = false)
+	private Long serverId;
 
 	/**
 	 * 服务器节点
@@ -69,27 +71,30 @@ public class TaskServer implements java.io.Serializable {
 	/**
 	 * 启动时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "start_time")
 	private Date startTime;
 
 	/**
 	 * 最后更新时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "modify_time")
 	private Date modifyTime;
 
 	/**
 	 * 停止时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "shutdown_time")
 	private Date shutdownTime;
 
-	public Long getId() {
-		return id;
+	public Long getServerId() {
+		return serverId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setServerId(Long serverId) {
+		this.serverId = serverId;
 	}
 
 	public String getDeployId() {
@@ -166,9 +171,8 @@ public class TaskServer implements java.io.Serializable {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof TaskServer) {
-			TaskServer server = (TaskServer) other;
-			return server.getId().equals(this.getId());
+		if (other instanceof TaskServer bean) {
+			return bean.getServerId().equals(this.getServerId());
 		}else {
 			return false;
 		}

@@ -88,7 +88,7 @@ public class ControllerHandler {
             String url = request.getServletPath();
             String method = request.getMethod();
             SysFunc sf = systemConfigHandler.getFunction(url, method);
-            if (sf == null && true==skipUnDefineFunc) {
+            if (sf == null && !skipUnDefineFunc) {
                 logger.warn("url:" + url + ",method:" + method + "未配置功能定义");
                 throw new ApplicationException(ErrorCode.FUNCTION_UN_DEFINE);
             } else if (sf.getStatus() == CommonStatus.DISABLE) {

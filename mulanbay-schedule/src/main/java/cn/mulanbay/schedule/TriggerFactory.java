@@ -39,9 +39,10 @@ public class TriggerFactory {
 			// todo 每个调度可以定义最后的执行时间，目前TaskTrigger没有定义
 			Date endTime = null;
 			int interval = getInterval(ts);
+			String tid = ts.getTriggerId().toString();
 			if (triggerType==TriggerType.SECOND) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -52,7 +53,7 @@ public class TriggerFactory {
 				logger.debug("bulid seconds triggerType");
 			} else if (triggerType==TriggerType.MINUTE) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -63,7 +64,7 @@ public class TriggerFactory {
 				logger.debug("bulid minutes triggerType");
 			} else if (triggerType==TriggerType.HOUR) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -73,7 +74,7 @@ public class TriggerFactory {
 				logger.debug("bulid hours triggerType");
 			} else if (triggerType==TriggerType.DAY) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -93,7 +94,7 @@ public class TriggerFactory {
 					ds.add(Integer.valueOf(d));
 				}
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -103,7 +104,7 @@ public class TriggerFactory {
 				logger.debug("bulid WEEK triggerType");
 			} else if (triggerType==TriggerType.MONTH) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -114,7 +115,7 @@ public class TriggerFactory {
 				logger.debug("bulid MONTH triggerType");
 			} else if (triggerType==TriggerType.YEAR) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.startAt(startTime)
 						.endAt(endTime)
@@ -124,14 +125,14 @@ public class TriggerFactory {
 				logger.debug("bulid YEAR triggerType");
 			} else if (triggerType==TriggerType.CRON) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName()).startAt(startTime)
 						.withSchedule(cronSchedule(ts.getCronExpression()))
 						.build();
 				logger.debug("bulid cron triggerType");
 			} else if (triggerType==TriggerType.NOW) {
 				trigger = newTrigger()
-						.withIdentity(ts.getId().toString(),
+						.withIdentity(tid,
 								ts.getGroupName())
 						.withSchedule(
 								dailyTimeIntervalSchedule().withRepeatCount(
@@ -141,9 +142,9 @@ public class TriggerFactory {
 				logger.error("找不到调度类型：" + triggerType);
 			}
 		} catch (Exception e) {
-			logger.error(ts.getName() + "[" + ts.getId()
+			logger.error(ts.getTriggerName() + "[" + ts.getTriggerId()
 					+ "]生成触发器异常", e);
-			throw new ApplicationException(ScheduleErrorCode.TRIGGER_CREATE_ERROR,ts.getName() + "[" + ts.getId()
+			throw new ApplicationException(ScheduleErrorCode.TRIGGER_CREATE_ERROR,ts.getTriggerName() + "[" + ts.getTriggerId()
 					+ "]生成触发器异常",e);
 		}
 		return trigger;

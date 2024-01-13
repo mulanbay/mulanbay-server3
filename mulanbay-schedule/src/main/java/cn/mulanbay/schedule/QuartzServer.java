@@ -93,7 +93,7 @@ public class QuartzServer {
 					JobDetail job = jc.getJobDetail();
 					TaskTrigger tt = (TaskTrigger) job.getJobDataMap().get(
 							QuartzConstant.SCHEDULE_TASK_TRIGGER);
-					if (tt.getId() == taskTriggerId) {
+					if (tt.getTriggerId() == taskTriggerId) {
 						return true;
 					}
 				}
@@ -199,7 +199,7 @@ public class QuartzServer {
 			for (JobExecutionContext jec : jecs) {
 				TaskTrigger tt = (TaskTrigger) jec.getJobDetail()
 						.getJobDataMap().get(QuartzConstant.SCHEDULE_TASK_TRIGGER);
-				if(taskTriggerId.longValue()==tt.getId().longValue()){
+				if(taskTriggerId.longValue()==tt.getTriggerId().longValue()){
 					return true;
 				}
 			}
@@ -259,12 +259,12 @@ public class QuartzServer {
 			logger.debug("开始更新调度，待比较更新的调度数："+triggerList.size());
 			// 更新调度
 			for (TaskTrigger ts : triggerList) {
-				JobKey key = JobKey.jobKey(ts.getId().toString(),
+				JobKey key = JobKey.jobKey(ts.getTriggerId().toString(),
 						ts.getGroupName());
 				JobDetail job = scheduler.getJobDetail(key);
 				if (job == null) {
-					logger.info("任务：" + ts.getName() + "["
-							+ ts.getId() + "]不存在，新增一个任务");
+					logger.info("任务：" + ts.getTriggerName() + "["
+							+ ts.getTriggerId() + "]不存在，新增一个任务");
 					addTask(ts);
 					changeCount++;
 				} else {
@@ -272,15 +272,15 @@ public class QuartzServer {
 							QuartzConstant.SCHEDULE_TASK_TRIGGER);
 					if (ts.getModifyTime() == null) {
 						// 说明没有修改，不做处理
-						logger.debug("任务：" + ts.getName() + "["
-								+ ts.getId() + "]没有变化");
+						logger.debug("任务：" + ts.getTriggerName() + "["
+								+ ts.getTriggerId() + "]没有变化");
 					} else {
 						if (oldTs.getModifyTime() == null
 								|| ts.getModifyTime().getTime()>oldTs.getModifyTime().getTime()) {
 							// 修改过
 							this.deleteTask(key);
-							logger.info("移除一个过时的任务：" + ts.getName()
-									+ "[" + ts.getId() + "]，重新调度");
+							logger.info("移除一个过时的任务：" + ts.getTriggerName()
+									+ "[" + ts.getTriggerId() + "]，重新调度");
 							addTask(ts);
 							changeCount++;
 						}
@@ -315,7 +315,7 @@ public class QuartzServer {
 	 */
 	public boolean refreshTask(TaskTrigger ts){
 		try {
-			JobKey key = JobKey.jobKey(ts.getId().toString(),
+			JobKey key = JobKey.jobKey(ts.getTriggerId().toString(),
 					ts.getGroupName());
 			String name = key.getName();
 			String group = key.getGroup();
@@ -370,7 +370,7 @@ public class QuartzServer {
 
 	private boolean isInActiveTrigger(String name, String group,List<TaskTrigger> triggerList) {
 		for (TaskTrigger ts : triggerList) {
-			if (ts.getId().toString().equals(name)
+			if (ts.getTriggerId().toString().equals(name)
 					&& ts.getGroupName().equals(group)) {
 				return true;
 			}
@@ -398,7 +398,7 @@ public class QuartzServer {
 			Class<AbstractBaseJob> jobClass = (Class<AbstractBaseJob>) Class.forName(className);
 
 			JobDetail jobDetail = newJob(jobClass).withIdentity(
-					ts.getId().toString(), ts.getGroupName())
+					ts.getTriggerId().toString(), ts.getGroupName())
 					.build();
 			// 设置参数
 			jobDetail.getJobDataMap()
@@ -411,8 +411,8 @@ public class QuartzServer {
 			Trigger trigger = TriggerFactory.createTrigger(ts);
 
 			scheduler.scheduleJob(jobDetail, trigger);
-			logger.info("添加一个任务：" + ts.getName() + "["
-					+ ts.getId() + "]");
+			logger.info("添加一个任务：" + ts.getTriggerName() + "["
+					+ ts.getTriggerId() + "]");
 			jobs++;
 			logger.debug("当前job数："+jobs);
 		} catch (Exception e) {

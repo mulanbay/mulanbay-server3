@@ -13,7 +13,6 @@ import cn.mulanbay.schedule.enums.JobExecuteResult;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     @Override
     public void updateTaskTriggerForNewJob(TaskTrigger taskTrigger) {
         try {
-            TaskTrigger dbBean = this.selectTaskTrigger(taskTrigger.getId());
+            TaskTrigger dbBean = this.selectTaskTrigger(taskTrigger.getTriggerId());
             dbBean.setTotalCount(taskTrigger.getTotalCount());
             dbBean.setFailCount(taskTrigger.getFailCount());
             dbBean.setLastExecuteResult(taskTrigger.getLastExecuteResult());
@@ -66,7 +65,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     @Override
     public TaskLog selectTaskLog(Long logId) {
         try {
-            return (TaskLog) this.getEntityById(TaskLog.class,logId);
+            return this.getEntityById(TaskLog.class,logId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取调度日志失败！",e);
         }
@@ -116,7 +115,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     @Override
     public void updateTaskTriggerStatus(Long triggerId, TriggerStatus status) {
         try {
-            String hql="update TaskTrigger set status=?1 where id=?2";
+            String hql="update TaskTrigger set status=?1 where triggerId=?2";
             this.updateEntities(hql,status,triggerId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,"更新调度状态失败！",e);
@@ -127,15 +126,15 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     /**
      * 获取有效的调度器
      * @param deployId
-     * @param supportDistri
+     * @param distriable
      * @return
      */
     @Override
-    public List<TaskTrigger> getActiveTaskTrigger(String deployId, boolean supportDistri) {
+    public List<TaskTrigger> getActiveTaskTrigger(String deployId, boolean distriable) {
         try {
             String hql="from TaskTrigger where triggerStatus=?1 ";
-            if(supportDistri){
-                hql+="and (deployId=?2 or distriable=1)";
+            if(distriable){
+                hql+="and (deployId=?2 or distriable=true)";
             }else {
                 hql+="and deployId=?2 ";
             }
@@ -147,15 +146,15 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
 
     /**
      * 检查调度日志是否存在
-     * @param taskTriggerId
+     * @param triggerId
      * @param bussDate
      * @return
      */
     @Override
-    public boolean isTaskLogExit(Long taskTriggerId, Date bussDate) {
+    public boolean isTaskLogExit(Long triggerId, Date bussDate) {
         try {
-            String hql="select count(0) from TaskLog where taskTrigger.id=?1 and bussDate=?2 ";
-            long n = this.getCount(hql,taskTriggerId,bussDate);
+            String hql="select count(0) from TaskLog where taskTrigger.triggerId=?1 and bussDate=?2 ";
+            long n = this.getCount(hql,triggerId,bussDate);
             return n>0 ? true : false;
         } catch (BaseException e) {
             throw new PersistentException(ScheduleErrorCode.TRIGGER_LOG_CHECK_ERROR,"检查调度日志是否存在失败！",e);
@@ -185,7 +184,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     public List<TaskLog> getAutoRedoTaskLogs(String deployId, boolean distriable, Date startDate,Date endDate) {
         try {
             String hql = """
-                    select tl from TaskLog tl,TaskTrigger tt where tl.taskTrigger.id = tt.id and tl.executeResult=?1 \n
+                    select tl from TaskLog tl,TaskTrigger tt where tl.taskTrigger.triggerId = tt.triggerId and tl.executeResult=?1 \n
                     and (tt.redoType=?2 or tt.redoType=?3) \n
                     and tl.startTime>=?4 and tl.startTime<=?5 \n
                     and tl.redoTimes < tt.allowedRedoTimes \n

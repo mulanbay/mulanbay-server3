@@ -16,6 +16,12 @@ public class ParaDefine {
 
     private String editData;
 
+    /**
+     * 是否必须
+     */
+    private boolean notNull = true;
+
+
     public String getName() {
         return name;
     }
@@ -70,5 +76,13 @@ public class ParaDefine {
 
     public void setEditData(String editData) {
         this.editData = editData;
+    }
+
+    public boolean getNotNull() {
+        return notNull;
+    }
+
+    public void setNotNull(boolean notNull) {
+        this.notNull = notNull;
     }
 }

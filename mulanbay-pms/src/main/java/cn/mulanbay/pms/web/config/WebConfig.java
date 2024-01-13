@@ -103,7 +103,7 @@ public class WebConfig {
      * 调度器分布式锁
      * @return
      */
-    @Bean
+    @Bean(name = "scheduleLocker")
     public ScheduleLockHandler scheduleLockHandler() {
         return new ScheduleLockHandler();
     }

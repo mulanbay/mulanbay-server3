@@ -29,12 +29,12 @@ public class RedoThread extends EnhanceThread {
 	private Object extraPara;
 
 	public RedoThread(TaskLog log) {
-		super("调度日志重做线程,id[" + log.getId() + "]");
+		super("调度日志重做线程,id[" + log.getLogId() + "]");
 		this.log = log;
 	}
 
 	public RedoThread(TaskLog log, boolean isUpdateTrigger) {
-		super("调度日志重做线程,id[" + log.getId() + "]");
+		super("调度日志重做线程,id[" + log.getLogId() + "]");
 		this.log = log;
 		this.isUpdateTrigger = isUpdateTrigger;
 	}

@@ -69,8 +69,8 @@ public class SysLogController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/getParas", method = RequestMethod.GET)
-    public ResultBean getParas(@RequestParam(name = "id") Long id) {
+    @RequestMapping(value = "/paras", method = RequestMethod.GET)
+    public ResultBean paras(@RequestParam(name = "id") Long id) {
         SysLog log = baseService.getObject(beanClass,id);
         return callback(log.getParas());
     }
@@ -92,8 +92,8 @@ public class SysLogController extends BaseController {
      * @param id 为操作日志的记录号
      * @return
      */
-    @RequestMapping(value = "/getBeanDetail", method = RequestMethod.GET)
-    public ResultBean getBeanDetail(@RequestParam(name = "id") Long id) {
+    @RequestMapping(value = "/beanDetail", method = RequestMethod.GET)
+    public ResultBean beanDetail(@RequestParam(name = "id") Long id) {
         SysLog log = baseService.getObject(beanClass,id);
         String idValue = log.getIdValue();
         if (StringUtil.isEmpty(idValue)) {

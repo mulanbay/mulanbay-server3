@@ -42,6 +42,7 @@ public class ParaBuilder {
                     pd.setDesc(jp.desc());
                     pd.setEditType(jp.editType());
                     pd.setEditData(jp.editData());
+                    pd.setNotNull(jp.notNull());
                 }else{
                     //默认以string编辑
                     pd.setField(f.getName());
@@ -50,6 +51,7 @@ public class ParaBuilder {
                     pd.setScale(0);
                     pd.setDesc("未配置定义");
                     pd.setEditType(EditType.TEXT);
+                    pd.setNotNull(false);
                 }
                 list.add(pd);
             }

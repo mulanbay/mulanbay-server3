@@ -5,7 +5,6 @@ import cn.mulanbay.business.handler.HandlerCmd;
 import cn.mulanbay.business.handler.HandlerInfo;
 import cn.mulanbay.business.handler.HandlerResult;
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.IPAddressUtil;
 import cn.mulanbay.schedule.*;
 import cn.mulanbay.schedule.domain.TaskLog;
@@ -14,14 +13,16 @@ import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 import cn.mulanbay.schedule.impl.LogNotifiableProcessor;
+import cn.mulanbay.schedule.lock.ScheduleLocker;
 import cn.mulanbay.schedule.thread.QuartzMonitorThread;
 import cn.mulanbay.schedule.thread.RedoThread;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,19 +59,55 @@ public class ScheduleHandler extends BaseHandler {
     /**
      * 系统是否已经开启调度功能，由配置文件决定，无法手动重新开启
      */
-    private boolean enableSchedule =false;
+    @Value("${mulanbay.schedule.enable:false}")
+    private boolean enableSchedule;
 
     /**
      * 调度资源
      */
     private QuartzSource quartzSource;
 
+    /**
+     * 部署点（针对不支持分布式的任务）
+     */
+    @Value("${mulanbay.nodeId:mulanbay}")
+    private String deployId;
+
+    /**
+     * 调度系统是否支持分布式
+     */
+    @Value("${mulanbay.schedule.distriable:true}")
+    boolean distriable;
+
+    /**
+     * 分布式任务最小的花费时间(秒数)
+     */
+    @Value("${mulanbay.schedule.distriTaskMinCost:2}")
+    int distriTaskMinCost;
+
+    @Value("${mulanbay.schedule.threadPool.corePoolSize:20}")
     int corePoolSize;
+
+    @Value("${mulanbay.schedule.threadPool.queueSize:1024}")
+    int queueSize;
+
+    @Value("${mulanbay.schedule.threadPool.maximumPoolSize:200}")
+    int maximumPoolSize;
 
     /**
      * 调度触发器检查周期(秒)
      */
-    long monitorInterval=60;
+    @Value("${mulanbay.schedule.monitorInterval:60}")
+    long monitorInterval;
+
+    @Autowired
+    SchedulePersistentProcessor schedulePersistentProcessor;
+
+    @Resource(name = "scheduleLocker")
+    ScheduleLocker scheduleLocker;
+
+    @Resource(name = "notifiableProcessor")
+    NotifiableProcessor notifiableProcessor;
 
     public ScheduleHandler() {
         super("调度处理");
@@ -80,10 +117,14 @@ public class ScheduleHandler extends BaseHandler {
     public void init() {
         super.init();
         if(this.isEnableSchedule()){
-            if(quartzSource==null){
-                quartzSource = new QuartzSource();
-                quartzSource.setNotifiableProcessor(new LogNotifiableProcessor());
-            }
+            quartzSource = new QuartzSource();
+            quartzSource.setDeployId(deployId);
+            quartzSource.setSchedulePersistentProcessor(schedulePersistentProcessor);
+            quartzSource.setDistriable(distriable);
+            quartzSource.setScheduleLocker(scheduleLocker);
+            quartzSource.setDistriTaskMinCost(distriTaskMinCost);
+            quartzSource.setNotifiableProcessor(notifiableProcessor);
+
             //判断分布式支持
             if(quartzSource.getDistriable()&&quartzSource.getScheduleLocker()==null){
                 throw new ApplicationException(ScheduleErrorCode.DISTRIBUTE_LOCK_NOT_FOUND);
@@ -91,13 +132,15 @@ public class ScheduleHandler extends BaseHandler {
             quartzServer = new QuartzServer();
             quartzServer.setQuartzSource(quartzSource);
             logger.debug("初始化调度服务");
-            quartzMonitorThread = new QuartzMonitorThread(this,monitorInterval);
-            quartzMonitorThread.start();
-            logger.debug("启动调度监控服务");
+            if(monitorInterval>0){
+                quartzMonitorThread = new QuartzMonitorThread(this,monitorInterval);
+                quartzMonitorThread.start();
+                logger.debug("启动调度监控服务");
+            }
             //调度线程的线程池采用： 丢弃任务并抛出RejectedExecutionException异常。 (默认)
             ThreadFactory threadFactory = new CustomizableThreadFactory("scheduleHandler");
-            scheduledThreadPool = new ThreadPoolExecutor(corePoolSize,100,10L,
-                    TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>(200),
+            scheduledThreadPool = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,10L,
+                    TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>(queueSize),
                     threadFactory,new ThreadPoolExecutor.AbortPolicy());
             //添加启动信息
             //updateTaskServerStart();
@@ -217,7 +260,7 @@ public class ScheduleHandler extends BaseHandler {
      * @param isSync 是否同步执行
      * @param extraPara 额外参数
      */
-    public void manualNew(long triggerId, Date bussDay, boolean isSync, Object extraPara, String remark) {
+    public void manualStart(long triggerId, Date bussDay, boolean isSync, Object extraPara, String remark) {
         if(!this.isEnableSchedule()){
             throw new ApplicationException(ScheduleErrorCode.SCHEDULE_NOT_ENABLED);
         }

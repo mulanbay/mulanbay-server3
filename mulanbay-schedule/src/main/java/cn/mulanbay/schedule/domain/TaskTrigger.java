@@ -1,6 +1,8 @@
 package cn.mulanbay.schedule.domain;
 
+import cn.mulanbay.schedule.QuartzConstant;
 import cn.mulanbay.schedule.enums.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -28,14 +30,14 @@ public class TaskTrigger implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
-	private Long id;
+	@Column(name = "trigger_id", unique = true, nullable = false)
+	private Long triggerId;
 
 	/**
 	 * 调度名称
 	 */
-	@Column(name = "name", nullable = false, length = 32)
-	private String name;
+	@Column(name = "trigger_name", nullable = false, length = 32)
+	private String triggerName;
 
 	/**
 	 * 部署点，不同的调度可以部署在不同的服务器上
@@ -120,12 +122,14 @@ public class TaskTrigger implements java.io.Serializable {
 	/**
 	 * 首次执行时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "first_execute_time")
 	private Date firstExecuteTime;
 
 	/**
 	 * 下一次执行时间,为空则使用firstExecuteTime
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "next_execute_time")
 	private Date nextExecuteTime;
 
@@ -144,6 +148,7 @@ public class TaskTrigger implements java.io.Serializable {
 	/**
 	 * 最近一次调度执行时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "last_execute_time")
 	private Date lastExecuteTime;
 
@@ -188,6 +193,7 @@ public class TaskTrigger implements java.io.Serializable {
 	@Column(name = "exec_time_periods")
 	private String execTimePeriods;
 
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "created_time")
 	private Date createdTime;
 
@@ -195,6 +201,7 @@ public class TaskTrigger implements java.io.Serializable {
 	 * 该字段表示调度配置有无修改过
 	 * 调度刷新时判断使用
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "modify_time")
 	//@Version
 	private Date modifyTime;
@@ -214,20 +221,20 @@ public class TaskTrigger implements java.io.Serializable {
 	public TaskTrigger() {
 	}
 
-	public Long getId() {
-		return id;
+	public Long getTriggerId() {
+		return triggerId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setTriggerId(Long triggerId) {
+		this.triggerId = triggerId;
 	}
 
-	public String getName() {
-		return name;
+	public String getTriggerName() {
+		return triggerName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTriggerName(String triggerName) {
+		this.triggerName = triggerName;
 	}
 
 	public String getDeployId() {
@@ -462,9 +469,8 @@ public class TaskTrigger implements java.io.Serializable {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof TaskTrigger) {
-			TaskTrigger bean = (TaskTrigger) other;
-			return bean.getId().equals(this.getId());
+		if (other instanceof TaskTrigger bean) {
+			return bean.getTriggerId().equals(this.getTriggerId());
 		}else {
 			return false;
 		}

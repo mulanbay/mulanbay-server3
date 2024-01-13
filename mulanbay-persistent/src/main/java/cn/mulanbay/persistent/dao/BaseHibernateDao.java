@@ -585,7 +585,7 @@ public class BaseHibernateDao {
 			pstmt = conn.prepareStatement(sql);
 			int i = START_OPL;
 			for (Object object : objects) {
-				setObject(pstmt, ++i, object);
+				setObject(pstmt, i++, object);
 			}
 			rs = pstmt.executeQuery();
 			ResultSetMetaData resultMetaData = rs.getMetaData();
@@ -764,7 +764,7 @@ public class BaseHibernateDao {
 			pstmt = conn.prepareStatement(sql);
 			int i = START_OPL;
 			for (Object object : objects) {
-				setObject(pstmt, ++i, object);
+				setObject(pstmt, i++, object);
 			}
 			rs = pstmt.executeUpdate();
 		} catch (Exception e) {

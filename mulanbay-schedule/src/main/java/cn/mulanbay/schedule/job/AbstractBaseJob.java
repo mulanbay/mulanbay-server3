@@ -159,20 +159,20 @@ public abstract class AbstractBaseJob implements Job {
 					QuartzConstant.SCHEDULE_QUARTZ_SOURCE);
 			boolean checkUnique = this.checkScheduleExecUnique();
 			if(!checkUnique){
-				logger.error("调度任务id="+taskTrigger.getId()+"重复执行");
+				logger.error("调度任务id="+taskTrigger.getTriggerId()+"重复执行");
 				return;
 			}
 			lockStatus = this.lock();
 			if(lockStatus!=LockStatus.SUCCESS){
 				return;
 			}
-			logger.debug("开始执行[" + taskTrigger.getName() + "]");
+			logger.debug("开始执行[" + taskTrigger.getTriggerName() + "]");
 			taskLog = new TaskLog();
 			// TODO线程同步
 			if (isDoing) {
-				logger.debug("任务[" + taskTrigger.getName()
+				logger.debug("任务[" + taskTrigger.getTriggerName()
 						+ "]已经在执行");
-				taskLog.setLogComment("任务[" + taskTrigger.getName()
+				taskLog.setLogComment("任务[" + taskTrigger.getTriggerName()
 						+ "]已经在执行，跳过本次执行。");
 				taskTrigger.setLastExecuteResult(JobExecuteResult.DUPLICATE);
 				return;
@@ -180,7 +180,7 @@ public abstract class AbstractBaseJob implements Job {
 			isDoing = true;
 			Date startTime = new Date();
 			// 新的
-			logger.debug("新的JOB[" + taskTrigger.getName() + "]");
+			logger.debug("新的JOB[" + taskTrigger.getTriggerName() + "]");
 			taskLog.setStartTime(startTime);
 			taskLog.setTaskTrigger(taskTrigger);
 			//taskTrigger.setLastExecuteTime(startTime);
@@ -194,15 +194,15 @@ public abstract class AbstractBaseJob implements Job {
 
 			// TODO 需要重新加载taskTrigger
 			taskTrigger.setLastExecuteResult(ar.getExecuteResult());
-			logger.debug("[" + taskTrigger.getName() + "]执行结束");
+			logger.debug("[" + taskTrigger.getTriggerName() + "]执行结束");
 		} catch (ApplicationException ae) {
-			logger.error("[" + taskTrigger.getName() + "]执行异常", ae);
+			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", ae);
 			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),
 					"调度执行遇到ApplicationException。"+ae.getMessageDetail()));
 		} catch (Exception e) {
-			logger.error("[" + taskTrigger.getName() + "]执行异常", e);
+			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", e);
 			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),e.getMessage()));
@@ -268,9 +268,9 @@ public abstract class AbstractBaseJob implements Job {
 			if(lockStatus!=LockStatus.SUCCESS){
 				return;
 			}
-			logger.debug("开始重做任务[" + taskTrigger.getName() + "]");
+			logger.debug("开始重做任务[" + taskTrigger.getTriggerName() + "]");
 			Date startTime = new Date();
-			if (taskLog.getId() == null) {
+			if (taskLog.getLogId() == null) {
 				taskLog.setStartTime(startTime);
 			} else {
 				taskLog.setLastStartTime(startTime);
@@ -281,16 +281,16 @@ public abstract class AbstractBaseJob implements Job {
 			taskLog.setExecuteResult(ar.getExecuteResult());
 			taskLog.setSubTaskExecuteResults(ar.getSubTaskExecuteResults());
 			taskLog.setLogComment(ar.getComment());
-			logger.debug("[" + taskLog.getTaskTrigger().getName()
+			logger.debug("[" + taskLog.getTaskTrigger().getTriggerName()
 					+ "]执行结束");
 		} catch (ApplicationException ae) {
-			logger.error("[" + taskTrigger.getName() + "]执行异常", ae);
+			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", ae);
 			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),
 					"调度执行遇到ApplicationException。"+ae.getMessageDetail()));
 		} catch (Exception e) {
-			logger.error("[" + taskLog.getTaskTrigger().getName()
+			logger.error("[" + taskLog.getTaskTrigger().getTriggerName()
 					+ "]执行异常", e);
 			taskLog.setExecuteResult(JobExecuteResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),e.getMessage()));
@@ -301,7 +301,7 @@ public abstract class AbstractBaseJob implements Job {
 					SchedulePersistentProcessor processor = this.getPersistentProcessor();
 					taskLog.setIpAddress(getIpAddress());
 					taskLog.setDeployId(quartzSource.getDeployId());
-					if (taskLog.getId() == null) {
+					if (taskLog.getLogId() == null) {
 						String lc = taskLog.getLogComment() == null ? "" : taskLog
 								.getLogComment();
 						taskLog.setLogComment(lc + "[未执行，手动重做]");
@@ -366,7 +366,7 @@ public abstract class AbstractBaseJob implements Job {
 	 */
 	private String generateScheduleIdentityId(){
 		String dateTimeString = DateUtil.getFormatDate(scheduledFireTime,DateUtil.Format24Datetime2);
-		return taskTrigger.getId()+"_"+dateTimeString;
+		return taskTrigger.getTriggerId()+"_"+dateTimeString;
 	}
 
 	/**
@@ -431,7 +431,7 @@ public abstract class AbstractBaseJob implements Job {
 	 */
 	private String getIdentityKey(){
 		String prefix= (isRedo ? "redo":"new");
-		return prefix+"_"+taskTrigger.getGroupName()+"_"+taskTrigger.getId();
+		return prefix+"_"+taskTrigger.getGroupName()+"_"+taskTrigger.getTriggerId();
 	}
 
 	/**
@@ -442,9 +442,9 @@ public abstract class AbstractBaseJob implements Job {
 		if(quartzSource.getNotifiableProcessor()!=null){
 			JobExecuteResult jer = taskLog.getExecuteResult();
 			if(jer==JobExecuteResult.FAIL||jer==JobExecuteResult.DUPLICATE){
-				Long taskTriggerId = taskTrigger.getId();
-				String title="调度器["+taskTrigger.getName()+"]调度执行异常";
-				String content="调度器["+taskTrigger.getName()+"]调度在"+
+				Long taskTriggerId = taskTrigger.getTriggerId();
+				String title="调度器["+taskTrigger.getTriggerName()+"]调度执行异常";
+				String content="调度器["+taskTrigger.getTriggerName()+"]调度在"+
 						DateUtil.getFormatDate(new Date(),DateUtil.Format24Datetime)+"执行异常,执行结果:"+jer.getName()+"，错误信息:"+
 						taskLog.getLogComment();
 				this.notifyMessage(taskTriggerId,ScheduleErrorCode.TRIGGER_EXEC_ERROR,title,content);
@@ -479,7 +479,7 @@ public abstract class AbstractBaseJob implements Job {
 					return false;
 				}
 			}else{
-				boolean isExit = this.getPersistentProcessor().isTaskLogExit(taskTrigger.getId(),this.getBussDay());
+				boolean isExit = this.getPersistentProcessor().isTaskLogExit(taskTrigger.getTriggerId(),this.getBussDay());
 				if(isExit){
 					return false;
 				}
@@ -497,7 +497,7 @@ public abstract class AbstractBaseJob implements Job {
 			// 已经检查过
 			return doTask();
 		} else {
-			logger.info("检查[" + getTaskTrigger().getName() + "]的参数:"
+			logger.info("检查[" + getTaskTrigger().getTriggerName() + "]的参数:"
 					+ getTaskTrigger().getTriggerParas());
 			ParaCheckResult pcr = checkTriggerPara();
 			if (pcr.getErrorCode() != ErrorCode.SUCCESS) {
@@ -560,13 +560,13 @@ public abstract class AbstractBaseJob implements Job {
 				if(we&&te){
 					return true;
 				}else{
-					logger.debug("ID["+taskTrigger.getId()+"],name["+taskTrigger.getName()+"]的调度在当前时间配置为不执行,星期判断:"+we+",时间段判断:"+te);
+					logger.debug("ID["+taskTrigger.getTriggerId()+"],name["+taskTrigger.getTriggerName()+"]的调度在当前时间配置为不执行,星期判断:"+we+",时间段判断:"+te);
 					return false;
 				}
 			}
 		} catch (Exception e) {
 			logger.error("检查调度是否需要执行异常",e);
-			this.notifyMessage(taskTrigger.getId(),ScheduleErrorCode.TRIGGER_EXEC_PARA_CHECK_ERROR,
+			this.notifyMessage(taskTrigger.getTriggerId(),ScheduleErrorCode.TRIGGER_EXEC_PARA_CHECK_ERROR,
 					"检查调度是否需要执行异常",e.getMessage());
 			return false;
 		}

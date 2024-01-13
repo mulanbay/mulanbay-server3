@@ -1,10 +1,12 @@
 package cn.mulanbay.pms.web.bean.req.auth.user;
 
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.AuthType;
 import cn.mulanbay.pms.persistent.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -25,7 +27,7 @@ public class UserForm {
     @NotNull(message = "用户状态不能为空")
     private UserStatus status;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = Constant.DATE_TIME_FORMAT)
     @NotNull(message = "过期时间不能为空")
     private Date expireTime;
 
@@ -33,9 +35,9 @@ public class UserForm {
     private String phone;
     private String email;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     private Date birthday;
-
 
     public Long getUserId() {
         return userId;

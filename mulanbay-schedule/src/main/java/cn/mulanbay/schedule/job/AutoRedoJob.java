@@ -56,7 +56,7 @@ public class AutoRedoJob extends AbstractBaseJob {
             redoThread.run();
             logger.debug("执行一个调度日志重做线程任务");
         } catch (Exception e) {
-            logger.error("自动重做任务，taskLogId="+taskLog.getId()+"异常",e);
+            logger.error("自动重做任务，taskLogId="+taskLog.getLogId()+"异常",e);
         }
     }
 

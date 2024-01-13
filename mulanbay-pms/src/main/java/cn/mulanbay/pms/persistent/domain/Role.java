@@ -1,6 +1,8 @@
 package cn.mulanbay.pms.persistent.domain;
 
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -41,9 +43,11 @@ public class Role implements java.io.Serializable {
     @Column(name = "remark")
     private String remark;
 
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "created_time")
     private Date createdTime;
 
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "modify_time")
     private Date modifyTime;
 

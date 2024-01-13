@@ -81,3 +81,18 @@ ALTER TABLE `user_level`
 
 ALTER TABLE `user_set`
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `task_log`
+    CHANGE COLUMN `id` `log_id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `task_trigger`
+    CHANGE COLUMN `id` `trigger_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `trigger_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL ;
+
+ALTER TABLE `task_server`
+    CHANGE COLUMN `id` `server_id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `command_config`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `task_trigger` DROP COLUMN `user_id`;

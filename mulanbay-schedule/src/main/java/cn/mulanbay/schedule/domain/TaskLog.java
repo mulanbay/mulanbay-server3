@@ -1,6 +1,8 @@
 package cn.mulanbay.schedule.domain;
 
+import cn.mulanbay.schedule.QuartzConstant;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -34,8 +36,8 @@ public class TaskLog implements java.io.Serializable {
 	 */
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
-	private Long id;
+	@Column(name = "log_id", unique = true, nullable = false)
+	private Long logId;
 
 	/**
 	 * 外键：调度触发器
@@ -47,8 +49,8 @@ public class TaskLog implements java.io.Serializable {
 	/**
 	 * 运营日
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_FORMAT)
 	@Column(name = "buss_date", nullable = false, length = 10)
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date bussDate;
 
 	/**
@@ -60,12 +62,14 @@ public class TaskLog implements java.io.Serializable {
 	/**
 	 * 执行开始时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "start_time")
 	private Date startTime;
 
 	/**
 	 * 执行结束时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "end_time")
 	private Date endTime;
 
@@ -108,12 +112,14 @@ public class TaskLog implements java.io.Serializable {
 	/**
 	 * 最后一次重试时的开始执行时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "last_start_time")
 	private Date lastStartTime;
 
 	/**
 	 * 最后一次重试时的结束执行时间
 	 */
+	@JsonFormat(pattern = QuartzConstant.DATE_TIME_FORMAT)
 	@Column(name = "last_end_time")
 	private Date lastEndTime;
 
@@ -132,12 +138,12 @@ public class TaskLog implements java.io.Serializable {
 		this.executeResult = executeResult;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getLogId() {
+		return logId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setLogId(Long logId) {
+		this.logId = logId;
 	}
 
 	public TaskTrigger getTaskTrigger() {
@@ -260,9 +266,8 @@ public class TaskLog implements java.io.Serializable {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof TaskLog) {
-			TaskLog log = (TaskLog) other;
-			return log.getId().equals(this.getId());
+		if (other instanceof TaskLog bean) {
+			return bean.getLogId().equals(this.getLogId());
 		}else {
 			return false;
 		}

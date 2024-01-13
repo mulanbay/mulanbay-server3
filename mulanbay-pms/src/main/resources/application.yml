@@ -76,6 +76,21 @@ mulanbay:
         maxFail: 3
         #消息发送是否需要锁定
         lock: false
+  #调度相关
+  schedule:
+    #是否开启调度服务
+    enable: false
+    #是否支持分布式
+    distriable: true
+    #分布式任务最小的花费时间(秒数)
+    distriTaskMinCost: 2
+    #调度触发器检查周期(秒),<=0不检查
+    monitorInterval: 60
+    #线程池
+    threadPool:
+      corePoolSize: 20
+      queueSize: 1024
+      maximumPoolSize: 200
 
 # hibernate相关
 hibernate:
@@ -114,8 +129,6 @@ spring:
           min-idle: 0     # 最小空闲连接，默认0
   #jsckson
   jackson:
-    #时间的json格式
-    date-format: yyyy-MM-dd HH:mm:ss
     # 解决spring json解析相差8个小时的时区问题（针对POST方法，且时间为yyyy-MM-dd模式）
     time-zone: GMT+8
   #加载本地配置文件

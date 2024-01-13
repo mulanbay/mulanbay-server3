@@ -113,8 +113,8 @@ public class OperLogController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/getParas", method = RequestMethod.GET)
-    public ResultBean getParas(@RequestParam(name = "id") Long id) {
+    @RequestMapping(value = "/paras", method = RequestMethod.GET)
+    public ResultBean paras(@RequestParam(name = "id") Long id) {
         OperLog br = baseService.getObject(beanClass, id);
         return callback(br.getParas());
     }
@@ -124,8 +124,8 @@ public class OperLogController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/getReturnData", method = RequestMethod.GET)
-    public ResultBean getReturnData(@RequestParam(name = "id") Long id) {
+    @RequestMapping(value = "/returnData", method = RequestMethod.GET)
+    public ResultBean returnData(@RequestParam(name = "id") Long id) {
         OperLog br = baseService.getObject(beanClass, id);
         return callback(br.getReturnData());
     }
@@ -136,8 +136,8 @@ public class OperLogController extends BaseController {
      * @param id 为操作日志的记录号
      * @return
      */
-    @RequestMapping(value = "/getBeanDetail", method = RequestMethod.GET)
-    public ResultBean getBeanDetail(@RequestParam(name = "id") Long id)  {
+    @RequestMapping(value = "/beanDetail", method = RequestMethod.GET)
+    public ResultBean beanDetail(@RequestParam(name = "id") Long id)  {
         OperLog br = baseService.getObject(beanClass, id);
         String idValue = br.getIdValue();
         if (StringUtil.isEmpty(idValue)) {
@@ -161,8 +161,8 @@ public class OperLogController extends BaseController {
      * @param operLogId 为OperationLog的主键
      * @return
      */
-    @RequestMapping(value = "/getCompareData", method = RequestMethod.GET)
-    public ResultBean getCompareData(@RequestParam(name = "operLogId")Long operLogId,@RequestParam(name = "compareType") LogCompareType compareType) {
+    @RequestMapping(value = "/compareData", method = RequestMethod.GET)
+    public ResultBean compareData(@RequestParam(name = "operLogId")Long operLogId,@RequestParam(name = "compareType") LogCompareType compareType) {
         OperLogCompareVo vo = new OperLogCompareVo();
         //获取当前日志记录的数据
         OperLog log = baseService.getObject(beanClass, operLogId);
@@ -192,8 +192,8 @@ public class OperLogController extends BaseController {
      * @param gr:id 为beanName的主键
      * @return
      */
-    @RequestMapping(value = "/getEditLogData", method = RequestMethod.GET)
-    public ResultBean getEditLogData(@Valid OperLogGetEditReq gr) {
+    @RequestMapping(value = "/editLogData", method = RequestMethod.GET)
+    public ResultBean editLogData(@Valid OperLogGetEditReq gr) {
         OperLogCompareVo vo = new OperLogCompareVo();
         SysFunc sf = logService.getEditSysFunc(gr.getBeanName());
         if (sf == null) {
@@ -253,8 +253,8 @@ public class OperLogController extends BaseController {
      * @param currentCompareId 目前正在比较的OperationLog的主键(比较页面的中间那个区域)
      * @return
      */
-    @RequestMapping(value = "/getNearestCompareData", method = RequestMethod.GET)
-    public ResultBean getNearestCompareData(@RequestParam(name = "currentCompareId")Long currentCompareId,@RequestParam(name = "compareType") LogCompareType compareType) {
+    @RequestMapping(value = "/nearestCompareData", method = RequestMethod.GET)
+    public ResultBean nearestCompareData(@RequestParam(name = "currentCompareId")Long currentCompareId,@RequestParam(name = "compareType") LogCompareType compareType) {
         OperLogCompareVo response = new OperLogCompareVo();
         if (currentCompareId == null) {
             return callback(response);

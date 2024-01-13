@@ -11,7 +11,7 @@ import cn.mulanbay.web.bean.request.PageSearch;
 
 public class SysFuncSH extends PageSearch {
 
-    @Query(fieldName = "name,urlAddress,supportMethods", op = Parameter.Operator.LIKE, crossType = CrossType.OR)
+    @Query(fieldName = "funcName,urlAddress,supportMethods", op = Parameter.Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
     @Query(fieldName = "status", op = Parameter.Operator.EQ)
@@ -29,7 +29,7 @@ public class SysFuncSH extends PageSearch {
     @Query(fieldName = "supportMethods", op = Parameter.Operator.LIKE)
     private String method;
 
-    @Query(fieldName = "parent.id", op = Parameter.Operator.EQ)
+    @Query(fieldName = "parent.funcId", op = Parameter.Operator.EQ)
     private Long pid;
 
     public String getName() {
