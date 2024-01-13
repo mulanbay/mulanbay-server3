@@ -16,8 +16,8 @@ import java.util.Date;
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "error_code_define")
-public class ErrorCodeDefine implements Serializable {
+@Table(name = "sys_code")
+public class SysCode implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,8 +40,8 @@ public class ErrorCodeDefine implements Serializable {
     /**
      * 是否实时通知
      */
-    @Column(name = "realtime_notify", nullable = false)
-    private Boolean realtimeNotify;
+    @Column(name = "realtime", nullable = false)
+    private Boolean realtime;
 
     /**
      * 是否需要记录日志
@@ -127,12 +127,12 @@ public class ErrorCodeDefine implements Serializable {
         this.notifiable = notifiable;
     }
 
-    public Boolean getRealtimeNotify() {
-        return realtimeNotify;
+    public Boolean getRealtime() {
+        return realtime;
     }
 
-    public void setRealtimeNotify(Boolean realtimeNotify) {
-        this.realtimeNotify = realtimeNotify;
+    public void setRealtime(Boolean realtime) {
+        this.realtime = realtime;
     }
 
     public Boolean getLoggable() {
@@ -235,7 +235,7 @@ public class ErrorCodeDefine implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof ErrorCodeDefine bean) {
+        if (other instanceof SysCode bean) {
             return bean.getCode().equals(this.getCode());
         }else {
             return false;

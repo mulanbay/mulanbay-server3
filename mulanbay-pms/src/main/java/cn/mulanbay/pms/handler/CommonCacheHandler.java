@@ -33,6 +33,15 @@ public class CommonCacheHandler extends BaseHandler {
     }
 
     /**
+     * 移除缓存
+     * @param cls
+     * @param id
+     */
+    public void removeBean(Class cls, Serializable id){
+        String key = "beanCache:" + cls.getName() + ":" + id;
+        cacheHandler.delete(key);
+    }
+    /**
      * 获取缓存Bean
      *
      * @param cls

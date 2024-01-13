@@ -4,7 +4,7 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.persistent.domain.ErrorCodeDefine;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.SysLog;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class SysLogThread extends BaseLogThread {
     private void handleLog(SysLog log) {
         try {
             SystemConfigHandler systemConfigHandler = getSystemConfigHandler();
-            ErrorCodeDefine ec = systemConfigHandler.getErrorCodeDefine(log.getErrorCode());
+            SysCode ec = systemConfigHandler.getSysCode(log.getErrorCode());
             if (ec != null && ec.getLoggable()) {
                 SysFunc sf = log.getSysFunc();
                 if (sf != null) {

@@ -4,7 +4,7 @@ import cn.mulanbay.business.handler.*;
 import cn.mulanbay.common.util.IPAddressUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.persistent.domain.ErrorCodeDefine;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.RoleFunction;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import org.slf4j.Logger;
@@ -53,6 +53,9 @@ public class SystemConfigHandler extends BaseHandler {
     @Autowired
     CacheHandler cacheHandler;
 
+    @Autowired
+    CommonCacheHandler commonCacheHandler;
+
     /**
      * key:urlAddress_supportMethod,例如：/buyRecord/edit_POST
      */
@@ -95,15 +98,6 @@ public class SystemConfigHandler extends BaseHandler {
             cacheHandler.setHash(SYS_FUNC_KEY, functionMap, 0);
         }
         logger.debug("初始化了" + urlMapSize + "条功能点记录");
-    }
-
-    /**
-     * 目前返回本地地址
-     *
-     * @return
-     */
-    public String getServerDomain() {
-        return hostIpAddress;
     }
 
     /**
@@ -234,8 +228,16 @@ public class SystemConfigHandler extends BaseHandler {
      * @param code
      * @return
      */
-    public ErrorCodeDefine getErrorCodeDefine(int code) {
-        return baseService.getObject(ErrorCodeDefine.class, code);
+    public SysCode getSysCode(int code) {
+        return commonCacheHandler.getBean(SysCode.class, code);
+    }
+
+    /**
+     * 移除
+     * @param code
+     */
+    public void refreshSysCode(int code) {
+        commonCacheHandler.removeBean(SysCode.class, code);
     }
 
     @Override

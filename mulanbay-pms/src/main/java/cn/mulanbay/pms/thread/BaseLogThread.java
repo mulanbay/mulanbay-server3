@@ -4,7 +4,7 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.MapUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.persistent.domain.ErrorCodeDefine;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class BaseLogThread extends Thread {
             return;
         }
         SystemConfigHandler systemConfigHandler = BeanFactoryUtil.getBean(SystemConfigHandler.class);
-        ErrorCodeDefine ec = systemConfigHandler.getErrorCodeDefine(code);
+        SysCode ec = systemConfigHandler.getSysCode(code);
         notifyError(userId, ec, message);
     }
 
@@ -76,7 +76,7 @@ public class BaseLogThread extends Thread {
      * @param ec
      * @param message
      */
-    protected void notifyError(Long userId, ErrorCodeDefine ec, String message) {
+    protected void notifyError(Long userId, SysCode ec, String message) {
 
     }
 

@@ -10,7 +10,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsErrorCode;
-import cn.mulanbay.pms.persistent.domain.ErrorCodeDefine;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.UserMessage;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
@@ -101,7 +101,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param notifyTime
      */
     public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
-        ErrorCodeDefine ec = systemConfigHandler.getErrorCodeDefine(code);
+        SysCode ec = systemConfigHandler.getSysCode(code);
         if (ec == null) {
             logHandler.addSystemLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置",
                     PmsErrorCode.ERROR_CODE_NOT_DEFINED);
@@ -149,11 +149,11 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             if (!notifyValidateError && code >= minValidateErrorCode) {
                 return;
             }
-            ErrorCodeDefine ec = systemConfigHandler.getErrorCodeDefine(code);
+            SysCode ec = systemConfigHandler.getSysCode(code);
             if (ec == null) {
                 logHandler.addSystemLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
                         PmsErrorCode.ERROR_CODE_NOT_DEFINED);
-                ec = systemConfigHandler.getErrorCodeDefine(PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE);
+                ec = systemConfigHandler.getSysCode(PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
             this.updateErrorCodeCount(code, 1);
             //获取发送时间
@@ -189,7 +189,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param userId
      * @return
      */
-    private boolean checkErrorCodeLimit(ErrorCodeDefine ec, Long userId) {
+    private boolean checkErrorCodeLimit(SysCode ec, Long userId) {
         if (ec.getLimitPeriod() <= 0) {
             return true;
         } else {
@@ -205,7 +205,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         }
     }
 
-    private UserMessage createUserMessage(ErrorCodeDefine ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
+    private UserMessage createUserMessage(SysCode ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
         UserMessage message = new UserMessage();
         message.setExpectSendTime(expectSendTime);
         message.setUserId(userId);
@@ -234,14 +234,14 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param notifyTime
      * @return
      */
-    private Date getExpectSendTime(ErrorCodeDefine ec, Date notifyTime) {
+    private Date getExpectSendTime(SysCode ec, Date notifyTime) {
         if (!ec.getNotifiable()) {
             logger.warn("代码[" + ec.getCode() + "]配置为不发送消息");
             return null;
         }
         if (notifyTime == null) {
             //由代码配置决定
-            if (ec.getRealtimeNotify()) {
+            if (ec.getRealtime()) {
                 notifyTime = new Date();
             } else {
                 //统一一个时间发送

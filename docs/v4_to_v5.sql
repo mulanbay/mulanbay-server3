@@ -96,3 +96,6 @@ ALTER TABLE `command_config`
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
 ALTER TABLE `task_trigger` DROP COLUMN `user_id`;
+ALTER TABLE `error_code_define`
+    CHANGE COLUMN `realtime_notify` `realtime` TINYINT NOT NULL ;
+ALTER TABLE `error_code_define` RENAME TO  `sys_code` ;
