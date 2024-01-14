@@ -6,6 +6,11 @@ package cn.mulanbay.pms.common;
  */
 public class Constant {
 
+    /**
+     * 正常的http响应码
+     */
+    public static final int SC_OK = 200;
+
     public static final String DATE_FORMAT = "yyyy-MM-dd";// 24
 
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24

@@ -48,7 +48,7 @@ public class SysFuncForm {
     //奖励积分(正为加，负为减)
     private Integer rewardPoint;
     //错误代码定义，方便日志监控
-    private Integer errorCode;
+    private Integer code;
     //是否树形统计
     private Boolean treeStat;
     private Boolean secAuth;
@@ -276,12 +276,12 @@ public class SysFuncForm {
         this.rewardPoint = rewardPoint;
     }
 
-    public Integer getErrorCode() {
-        return errorCode;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public Boolean getTreeStat() {

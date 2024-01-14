@@ -33,7 +33,7 @@ public class BaseListener {
             //增加IP地址和节点
             SystemConfigHandler systemConfigHandler = BeanFactoryUtil.getBean(SystemConfigHandler.class);
             msg = msg + ",IP地址:" + systemConfigHandler.getHostIpAddress() + "，节点编号:" + systemConfigHandler.getNodeId() + ".";
-            logHandler.addSystemLog(LogLevel.WARNING, title, msg, errorCode);
+            logHandler.addSysLog(LogLevel.WARNING, title, msg, errorCode);
         } catch (Exception e) {
             logger.error("doLog 异常", e);
         }

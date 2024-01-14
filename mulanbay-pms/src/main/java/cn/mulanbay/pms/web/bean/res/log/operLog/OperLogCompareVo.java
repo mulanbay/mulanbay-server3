@@ -2,6 +2,12 @@ package cn.mulanbay.pms.web.bean.res.log.operLog;
 
 import cn.mulanbay.pms.persistent.domain.OperLog;
 
+/**
+ * 消息
+ *
+ * @author 日志对比
+ * @create 2017-07-10 21:44
+ */
 public class OperLogCompareVo {
 
     //业务的ID

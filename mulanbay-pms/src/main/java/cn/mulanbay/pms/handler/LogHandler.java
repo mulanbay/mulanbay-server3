@@ -32,12 +32,12 @@ public class LogHandler extends BaseHandler {
 
     }
 
-    public void addOperationLog(OperLog log) {
+    public void addOperLog(OperLog log) {
         OperLogThread thread = new OperLogThread(log);
         threadPoolHandler.pushThread(thread);
     }
 
-    public void addSystemLog(SysLog log) {
+    public void addSysLog(SysLog log) {
         if (log.getOccurTime() == null) {
             log.setOccurTime(new Date());
         }
@@ -45,7 +45,7 @@ public class LogHandler extends BaseHandler {
         threadPoolHandler.pushThread(thread);
     }
 
-    public void addSystemLog(LogLevel logLevel, String title, String content, int errorCode) {
+    public void addSysLog(LogLevel logLevel, String title, String content, int errorCode) {
         SysLog log = new SysLog();
         log.setUserId(0L);
         log.setUsername("系统操作");

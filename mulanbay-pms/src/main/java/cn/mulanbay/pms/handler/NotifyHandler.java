@@ -10,13 +10,12 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsErrorCode;
-import cn.mulanbay.pms.persistent.domain.SysCode;
+import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
-import cn.mulanbay.pms.persistent.domain.UserMessage;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.persistent.enums.MessageType;
-import cn.mulanbay.pms.persistent.service.MonitorUserService;
 import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ import java.util.List;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-@Component
+@Component(value="notifiableProcessor")
 public class NotifyHandler extends BaseHandler implements NotifiableProcessor, MessageNotify {
 
     private static final Logger logger = LoggerFactory.getLogger(NotifyHandler.class);
@@ -61,9 +60,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     BaseService baseService;
 
     @Autowired
-    MonitorUserService systemMonitorUserService;
-
-    @Autowired
     SystemConfigHandler systemConfigHandler;
 
     @Autowired
@@ -75,6 +71,9 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     @Autowired
     CacheHandler cacheHandler;
 
+    @Autowired
+    UserHandler userHandler;
+
     public NotifyHandler() {
         super("提醒处理");
     }
@@ -84,7 +83,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      *
      * @param message
      */
-    public void addNotifyMessage(UserMessage message) {
+    public void addNotifyMessage(Message message) {
         //加入到最新的一条消息(两小时有效)
         String key = CacheKey.getKey(CacheKey.USER_LATEST_MESSAGE, message.getUserId().toString());
         cacheHandler.set(key, message, 7200);
@@ -103,7 +102,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
         SysCode ec = systemConfigHandler.getSysCode(code);
         if (ec == null) {
-            logHandler.addSystemLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置",
+            logHandler.addSysLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置",
                     PmsErrorCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
@@ -113,11 +112,11 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         if (expectSendTime == null) {
             return null;
         }
-        UserMessage message = this.createUserMessage(ec, userId, expectSendTime, title, content, ec.getMobileUrl(), null);
+        Message message = this.createUserMessage(ec, userId, expectSendTime, title, content, ec.getMobileUrl(), null);
         //因为用户日历和用户积分奖励都需要这个messageId，所以只能先保存。另外一种方法可以在UserMessage表中新增一个uuid字段来解决
         baseService.saveObject(message);
         this.addNotifyMessage(message);
-        return message.getId();
+        return message.getMsgId();
     }
 
     private void updateErrorCodeCount(Integer code, int addCount) {
@@ -151,7 +150,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             }
             SysCode ec = systemConfigHandler.getSysCode(code);
             if (ec == null) {
-                logHandler.addSystemLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
+                logHandler.addSysLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
                         PmsErrorCode.ERROR_CODE_NOT_DEFINED);
                 ec = systemConfigHandler.getSysCode(PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
@@ -161,7 +160,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             if (expectSendTime == null) {
                 return;
             }
-            List<MonitorUser> userList = systemMonitorUserService.selectListByType(ec.getBussType());
+            List<MonitorUser> userList = userHandler.getMonitorUserList(ec.getBussType());
             if (StringUtil.isEmpty(userList)) {
                 logger.warn("业务类型[" + ec.getBussType().getName() + "]没有配置系统监控人员");
                 return;
@@ -171,7 +170,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
                 //限流判断
                 boolean check = this.checkErrorCodeLimit(ec, smu.getUserId());
                 if (check) {
-                    UserMessage ssm = this.createUserMessage(ec, smu.getUserId(), expectSendTime, title, content, url, remark);
+                    Message ssm = this.createUserMessage(ec, smu.getUserId(), expectSendTime, title, content, url, remark);
                     this.addNotifyMessage(ssm);
                 } else {
                     logger.debug("code[" + ec.getCode() + "],userId[" + smu.getUserId() + "]触发限流，不发送");
@@ -205,8 +204,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         }
     }
 
-    private UserMessage createUserMessage(SysCode ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
-        UserMessage message = new UserMessage();
+    private Message createUserMessage(SysCode ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
+        Message message = new Message();
         message.setExpectSendTime(expectSendTime);
         message.setUserId(userId);
         message.setContent(content);
@@ -214,7 +213,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         message.setFailCount(0);
         message.setCode(ec.getCode());
         //没有作用
-        message.setMessageType(MessageType.WX);
+        message.setMsgType(MessageType.WX);
         message.setBussType(ec.getBussType());
         message.setLogLevel(ec.getLevel());
         message.setTitle(title);
@@ -265,7 +264,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         //发消息
         this.addMessageToNotifier(code, title, message, null, null, null);
         //记录系统日志
-        logHandler.addSystemLog(LogLevel.WARNING,title,message,code);
+        logHandler.addSysLog(LogLevel.WARNING,title,message,code);
     }
 
     @Override

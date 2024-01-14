@@ -43,15 +43,6 @@ public class AuthService extends BaseHibernateDao {
         }
     }
 
-    public User getUserForCache(Long userId) {
-        try {
-            return (User) this.getEntityById(User.class, userId);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "获取用户信息异常", e);
-        }
-    }
-
     /**
      * 通过手机号或者用户名查询用户
      *

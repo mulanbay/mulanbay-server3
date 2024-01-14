@@ -20,7 +20,7 @@ public class ScheduleLockHandler extends BaseHandler implements ScheduleLocker {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleLockHandler.class);
 
-    @Value("${system.namespace}")
+    @Value("${mulanbay.namespace}")
     String namespace;
 
     @Autowired

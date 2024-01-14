@@ -14,15 +14,14 @@ import cn.mulanbay.pms.common.PmsErrorCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.ThreadPoolHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.persistent.domain.Role;
-import cn.mulanbay.pms.persistent.domain.User;
-import cn.mulanbay.pms.persistent.domain.UserLevel;
-import cn.mulanbay.pms.persistent.domain.UserSet;
+import cn.mulanbay.pms.handler.WXHandler;
+import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import cn.mulanbay.pms.persistent.enums.AuthType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.FamilyService;
 import cn.mulanbay.pms.persistent.service.UserLevelService;
+import cn.mulanbay.pms.persistent.service.WxAccountService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -76,6 +75,11 @@ public class UserController extends BaseController {
     @Autowired
     UserLevelService userLevelService;
 
+    @Autowired
+    WxAccountService wxAccountService;
+
+    @Autowired
+    WXHandler wxHandler;
     /**
      * 用户树
      * @return
@@ -436,6 +440,45 @@ public class UserController extends BaseController {
             extension = MimeTypeUtils.getExtension(file.getContentType());
         }
         return extension;
+    }
+
+    /**
+     * 获取微信账号
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getWxAccount", method = RequestMethod.GET)
+    public ResultBean getWxAccount( @RequestParam(name = "userId") Long userId) {
+        WxAccount uw = wxAccountService.getAccount(userId, wxHandler.getAppId());
+        if (uw == null) {
+            uw = new WxAccount();
+            uw.setUserId(userId);
+        }
+        return callback(uw);
+    }
+
+    /**
+     * 修改用户微信信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "/editWxAccount", method = RequestMethod.POST)
+    public ResultBean editWxAccount(@RequestBody @Valid WxAccountForm eui) {
+        if (eui.getId() == null) {
+            WxAccount uw = new WxAccount();
+            uw.setOpenId(eui.getOpenId());
+            uw.setUserId(eui.getUserId());
+            uw.setAppId(wxHandler.getAppId());
+            uw.setCreatedTime(new Date());
+            baseService.saveObject(uw);
+        } else {
+            WxAccount uw = baseService.getObject(WxAccount.class, eui.getId());
+            uw.setOpenId(eui.getOpenId());
+            uw.setUserId(eui.getUserId());
+            uw.setModifyTime(new Date());
+            baseService.updateByMergeObject(uw);
+        }
+        return callback(null);
     }
 
 }

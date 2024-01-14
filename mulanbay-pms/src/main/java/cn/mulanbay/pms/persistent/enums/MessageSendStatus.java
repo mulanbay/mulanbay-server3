@@ -8,7 +8,10 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum MessageSendStatus {
 
-    UN_SEND(0, "未发送"), SEND_SUCCESS(1, "发送成功"), SEND_FAIL(2, "发送失败");
+    UN_SEND(0, "未发送"),
+    SUCCESS(1, "成功"),
+    FAIL(2, "失败"),
+    SKIP(3, "放弃");
 
     private int value;
 

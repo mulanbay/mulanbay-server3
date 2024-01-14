@@ -49,7 +49,7 @@ public class OperLogThread extends BaseLogThread {
         try {
             SystemConfigHandler systemConfigHandler = getSystemConfigHandler();
             SysFunc sf = log.getSysFunc();
-            int errorCode = 0;
+            int code = 0;
             String msgContent = "";
             if (log.getUrlAddress() != null) {
                 msgContent = log.getUrlAddress();
@@ -57,7 +57,7 @@ public class OperLogThread extends BaseLogThread {
             if (sf == null) {
                 logger.warn("找不到请求地址[" + log.getUrlAddress() + "],method[" + log.getMethod() + "]功能点配置信息");
             } else {
-                errorCode = sf.getErrorCode();
+                code = sf.getCode();
                 msgContent += "(" + sf.getFuncName() + ")";
                 log.setSysFunc(sf);
                 if (StringUtil.isNotEmpty(sf.getIdField())&&StringUtil.isEmpty(log.getIdValue())) {
@@ -81,7 +81,7 @@ public class OperLogThread extends BaseLogThread {
             BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
             baseService.saveObject(log);
             this.handleReward(sf, log);
-            this.notifyError(log.getUserId(), errorCode, msgContent);
+            this.notifyError(log.getUserId(), code, msgContent);
         } catch (Exception e) {
             logger.error("增加操作日志异常", e);
         }
@@ -110,7 +110,7 @@ public class OperLogThread extends BaseLogThread {
         systemLog.setTitle("获取不到请求参数信息");
         systemLog.setContent("获取不到请求参数信息");
         systemLog.setErrorCode(PmsErrorCode.OPERATION_LOG_PARA_IS_NULL);
-        BeanFactoryUtil.getBean(LogHandler.class).addSystemLog(systemLog);
+        BeanFactoryUtil.getBean(LogHandler.class).addSysLog(systemLog);
     }
 
     private SystemConfigHandler getSystemConfigHandler() {

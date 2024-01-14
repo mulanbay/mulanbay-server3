@@ -217,7 +217,6 @@ public class TaskTriggerController extends BaseController {
         TaskTrigger bean = baseService.getObject(beanClass, formRequest.getTriggerId());
         BeanCopy.copyProperties(formRequest, bean);
         String triggerParas = StringCoderUtil.decodeJson(formRequest.getTriggerParas());
-        ;
         String execTimePeriods = StringCoderUtil.decodeJson(formRequest.getExecTimePeriods());
         bean.setTriggerParas(triggerParas);
         bean.setExecTimePeriods(execTimePeriods);
@@ -277,6 +276,22 @@ public class TaskTriggerController extends BaseController {
         }
     }
 
+    /**
+     * 设置触发器状态
+     *
+     * @return
+     */
+    @RequestMapping(value = "/editStatus", method = RequestMethod.POST)
+    public ResultBean editStatus(@RequestBody @Valid EditTriggerStatusForm ets) {
+        TaskTrigger bean = baseService.getObject(beanClass, ets.getTriggerId());
+        if(bean.getTriggerStatus()==ets.getTriggerStatus()){
+            return callbackErrorInfo("状态未改变");
+        }
+        bean.setTriggerStatus(ets.getTriggerStatus());
+        bean.setModifyTime(new Date());
+        baseService.updateObject(bean);
+        return callback(null);
+    }
 
     /**
      * 设置调度状态

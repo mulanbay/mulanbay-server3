@@ -10,6 +10,9 @@ mulanbay:
     baseUrl: http://localhost:99/avatar
     #本地存放文件夹地址
     folder: ./picture
+  mobile:
+    #移动端根地址
+    baseUrl: http://localhost:81/
   #线程池
   threadPool:
     corePoolSize: 20
@@ -71,6 +74,8 @@ mulanbay:
       validateError: false
       #表单验证类的错误代码最小值
       minErrorCode: 10000000
+      #大于改天数的不再发送
+      expiredDays: 3
       send:
         #消息最大发送失败次数
         maxFail: 3
@@ -91,6 +96,20 @@ mulanbay:
       corePoolSize: 20
       queueSize: 1024
       maximumPoolSize: 200
+  #微信相关
+  wx:
+    #公众号ID
+    appId: < set in local properties>
+    secret: < set in local properties>
+    token: < set in local properties>
+    #授权回调地址
+    accessAuthRedirectUrl: < set in local properties>
+    #消息模版编号
+    msgTemplateId: < set in local properties>
+    #公众号地址
+    oaUrl: < set in local properties>
+    #公众号图片地址(移动端使用)
+    oaPicUrl: < set in local properties>
 
 # hibernate相关
 hibernate:
@@ -139,6 +158,16 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 1024MB
+  mail:
+    #发送邮件的邮箱地址：改成自己的邮箱
+    username: < set in local properties>
+    #qq邮箱采用授权码发送，非邮箱密码
+    password: < set in local properties>
+    ##平台地址，这里用的是qq邮箱，使用其他邮箱请更换
+    host: smtp.qq.com
+    port: 587
+    #与发件邮箱一致
+    from: < set in local properties>
 
 
 #服务

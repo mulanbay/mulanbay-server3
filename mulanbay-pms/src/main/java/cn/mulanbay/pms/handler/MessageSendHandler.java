@@ -1,0 +1,188 @@
+package cn.mulanbay.pms.handler;
+
+import cn.mulanbay.business.handler.BaseHandler;
+import cn.mulanbay.business.handler.lock.RedisDistributedLock;
+import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.service.BaseService;
+import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.persistent.domain.Message;
+import cn.mulanbay.pms.persistent.domain.User;
+import cn.mulanbay.pms.persistent.domain.UserSet;
+import cn.mulanbay.pms.persistent.enums.LogLevel;
+import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 消息发送处理
+ *
+ * @author fenghong
+ * @create 2017-07-10 21:44
+ */
+@Component
+public class MessageSendHandler extends BaseHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageSendHandler.class);
+
+    @Value("${mulanbay.notify.message.send.maxFail}")
+    int messageSendMaxFail;
+
+    @Value("${mulanbay.notify.message.send.lock}")
+    boolean sendLock;
+
+    @Value("${mulanbay.nodeId}")
+    String nodeId;
+
+    @Value("${system.mobile.baseUrl}")
+    private String mobileBaseUrl;
+
+    @Autowired
+    RedisDistributedLock redisDistributedLock;
+
+    @Autowired
+    LogHandler logHandler;
+
+    @Autowired
+    UserHandler userHandler;
+
+    @Autowired
+    WXHandler wxHandler;
+
+    @Autowired
+    MailHandler mailHandler;
+
+    @Autowired
+    BaseService baseService;
+
+    public MessageSendHandler() {
+        super("消息发送");
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param message
+     * @return
+     */
+    public boolean sendMessage(Message message) {
+        boolean needLock;
+        if (message.getMsgId() == null) {
+            needLock = false;
+        } else {
+            needLock = true;
+        }
+        //这个message有可能在其他地方被设置了id
+        String key = "messageSendLock:" + message.getMsgId();
+        try {
+            if (needLock) {
+                boolean b = redisDistributedLock.lock(key, 0);
+                if (!b) {
+                    logger.warn("消息ID=" + message.getMsgId() + "正在被发送，无法重复发送");
+                    logHandler.addSysLog(LogLevel.WARNING, "消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
+                            PmsErrorCode.MESSAGE_DUPLICATE_SEND);
+                    return true;
+                }
+            }
+            UserSet us = userHandler.getUserSet(message.getUserId());
+            if (us == null) {
+                logger.warn("无法获取到userId=" + message.getUserId() + "用户信息,无法发送消息");
+                message.setSendStatus(MessageSendStatus.SKIP);
+                message.setFailCount(message.getFailCount() + 1);
+                message.setLastSendTime(new Date());
+                message.setNodeId(nodeId);
+                message.setRemark("没有用户相关设置信息,无法发送消息");
+                baseService.saveOrUpdateObject(message);
+                return true;
+            }
+            boolean res;
+            if (message.getFailCount() < messageSendMaxFail) {
+                res = this.sendUserMessage(us, message);
+                if (res) {
+                    message.setSendStatus(MessageSendStatus.SUCCESS);
+                } else {
+                    message.setSendStatus(MessageSendStatus.FAIL);
+                    message.setFailCount(message.getFailCount() + 1);
+                }
+            } else {
+                message.setSendStatus(MessageSendStatus.FAIL);
+                message.setFailCount(message.getFailCount() + 1);
+                logger.info("消息ID=" + message.getMsgId() + "达到最大发送失败次数:" + messageSendMaxFail + ",本消息已经发送失败次数:" + message.getFailCount());
+                res = true;
+            }
+            message.setLastSendTime(new Date());
+            message.setNodeId(nodeId);
+            this.saveMessage(message);
+            return res;
+        } catch (Exception e) {
+            logger.error("发送消息失败，id=" + message.getMsgId(), e);
+            return false;
+        } finally {
+            if (needLock) {
+                boolean b = redisDistributedLock.releaseLock(key);
+                if (!b) {
+                    logger.warn("释放消息发送锁key=" + key + "失败");
+                }
+            }
+        }
+    }
+
+    /**
+     * 直接扔掉
+     *
+     * @param message
+     */
+    private void saveMessage(Message message) {
+        try {
+            baseService.saveOrUpdateObject(message);
+        } catch (Exception e) {
+            logger.error("保持用户消息异常", e);
+        }
+    }
+
+    /**
+     * 发送消息(后期比如可以增加短信的发送)
+     *
+     * @param us
+     * @param message
+     * @return
+     */
+    private boolean sendUserMessage(UserSet us, Message message) {
+        User user = baseService.getObject(User.class, message.getUserId());
+        boolean b1 = true;
+        if (us.getSendEmail() && StringUtil.isNotEmpty(user.getEmail())) {
+            // 发送邮件
+            b1 = mailHandler.sendMail(user.getEmail(),message.getTitle(), message.getContent());
+        }
+        boolean b2 = true;
+        if (us.getSendWx()) {
+            b2 = this.sendWxMessage(message.getMsgId(),message.getUserId(), message.getTitle(), message.getContent(), message.getCreatedTime(), message.getLogLevel(), message.getUrl());
+        }
+        //只要有一个发送成功算成功
+        return b1 || b2;
+    }
+
+
+
+    /**
+     * 发送微信消息
+     *
+     * @param userId
+     * @param title
+     * @param content
+     * @param time
+     * @param level
+     * @return
+     */
+    public boolean sendWxMessage(Long id,Long userId, String title, String content, Date time, LogLevel level, String url) {
+        if(StringUtil.isNotEmpty(url)&& !url.startsWith("http")){
+            url = mobileBaseUrl+url;
+        }
+        return wxHandler.sendTemplateMessage(id,userId, title, content, time, level, url);
+    }
+
+}

@@ -48,7 +48,10 @@ public class BeanCopy extends BeanUtils {
 	 */
 	public static void copy(Object source, Object target, boolean copyNull)
 			throws BeansException {
-		Assert.notNull(source, "Source must not be null");
+		if(source==null){
+			return;
+		}
+		//Assert.notNull(source, "Source must not be null");
 		Assert.notNull(target, "Target must not be null");
 		Class<?> actualEditable = target.getClass();
 		PropertyDescriptor[] targetPds = getPropertyDescriptors(actualEditable);

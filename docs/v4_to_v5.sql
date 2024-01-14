@@ -99,3 +99,15 @@ ALTER TABLE `task_trigger` DROP COLUMN `user_id`;
 ALTER TABLE `error_code_define`
     CHANGE COLUMN `realtime_notify` `realtime` TINYINT NOT NULL ;
 ALTER TABLE `error_code_define` RENAME TO  `sys_code` ;
+
+ALTER TABLE `user_message` RENAME TO `message` ;
+ALTER TABLE `message`
+    CHANGE COLUMN `id` `msg_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `message_type` `msg_type` SMALLINT NOT NULL ;
+
+ALTER TABLE `user_wxpay_info` RENAME TO  `wx_account` ;
+ALTER TABLE `wx_account`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `sys_func`
+    CHANGE COLUMN `error_code` `code` INT NOT NULL DEFAULT '0' ;

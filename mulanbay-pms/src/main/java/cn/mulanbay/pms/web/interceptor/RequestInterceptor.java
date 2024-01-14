@@ -17,8 +17,6 @@ import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.web.filter.MultipleRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.catalina.connector.RequestFacade;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +137,7 @@ public class RequestInterceptor extends BaseInterceptor {
             if (StringUtil.isNotEmpty(idValue)) {
                 log.setIdValue(idValue);
             }
-            logHandler.addOperationLog(log);
+            logHandler.addOperLog(log);
             logger.debug("记录了操作日志");
         } catch (ApplicationException e) {
             logger.error("do before addOperationLog error", e);

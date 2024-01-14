@@ -431,7 +431,7 @@ public abstract class AbstractBaseJob implements Job {
 	 */
 	private String getIdentityKey(){
 		String prefix= (isRedo ? "redo":"new");
-		return prefix+"_"+taskTrigger.getGroupName()+"_"+taskTrigger.getTriggerId();
+		return "schedule:"+prefix+":"+taskTrigger.getGroupName()+":"+taskTrigger.getTriggerId();
 	}
 
 	/**

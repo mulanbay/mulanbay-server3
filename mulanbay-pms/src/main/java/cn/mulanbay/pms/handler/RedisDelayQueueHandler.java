@@ -5,9 +5,10 @@ import cn.mulanbay.business.handler.HandlerCmd;
 import cn.mulanbay.business.handler.HandlerInfo;
 import cn.mulanbay.business.handler.HandlerResult;
 import cn.mulanbay.business.handler.lock.RedisDistributedLock;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.persistent.domain.UserMessage;
-import cn.mulanbay.pms.persistent.service.UserMessageService;
+import cn.mulanbay.pms.persistent.domain.Message;
+import cn.mulanbay.pms.persistent.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,11 @@ public class RedisDelayQueueHandler extends BaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisDelayQueueHandler.class);
 
-    @Value("${system.namespace}")
+    @Value("${mulanbay.namespace}")
     String namespace;
+
+    @Value("${mulanbay.notify.message.expiredDays:3}")
+    int expiredDays;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -42,7 +46,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
     RedisDistributedLock redisDistributedLock;
 
     @Autowired
-    UserMessageService userMessageService;
+    MessageService userMessageService;
 
     @Autowired
     BaseService baseService;
@@ -71,11 +75,12 @@ public class RedisDelayQueueHandler extends BaseHandler {
             //第一步：清除
             redisTemplate.delete(this.getQueueName());
             logger.info("开始加载未发送消息队列");
-            List<UserMessage> list = userMessageService.getNeedSendMessage(1, 1000, 3, null);
+            Date compareDate= DateUtil.getDate(-expiredDays);
+            List<Message> list = userMessageService.getNeedSendMessage(1, 1000, 3, compareDate);
             if (list.isEmpty()) {
                 logger.debug("没有需要加载的未发送消息队列");
             } else {
-                for (UserMessage um : list) {
+                for (Message um : list) {
                     this.addMessage(um);
                 }
                 logger.info("一共加载了" + list.size() + "个未发送消息");
@@ -96,7 +101,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
      *
      * @param um
      */
-    public void addMessage(UserMessage um) {
+    public void addMessage(Message um) {
         try {
             ZSetOperations zSetOperations = redisTemplate.opsForZSet();
             String key = getQueueName();
@@ -116,7 +121,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
      *
      * @param um
      */
-    public void removeMessage(UserMessage um) {
+    public void removeMessage(Message um) {
         ZSetOperations zSetOperations = redisTemplate.opsForZSet();
         String key = getQueueName();
         zSetOperations.remove(key, um);
@@ -144,9 +149,9 @@ public class RedisDelayQueueHandler extends BaseHandler {
      * @param now
      * @return
      */
-    public Set<UserMessage> getNeedSendMessage(Date now) {
+    public Set<Message> getNeedSendMessage(Date now) {
         ZSetOperations zSetOperations = redisTemplate.opsForZSet();
-        Set<UserMessage> sets = zSetOperations.rangeByScore(getQueueName(), 0, now.getTime());
+        Set<Message> sets = zSetOperations.rangeByScore(getQueueName(), 0, now.getTime());
         return sets;
     }
 

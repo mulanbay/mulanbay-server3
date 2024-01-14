@@ -7,7 +7,7 @@ import cn.mulanbay.common.util.CommandUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsErrorCode;
-import cn.mulanbay.pms.handler.PmsNotifyHandler;
+import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.CommandConfig;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleErrorCode;
@@ -30,16 +30,16 @@ public class PmsCommandJob extends AbstractBaseJob {
 
     private PmsCommandJobPara para;
 
-    PmsNotifyHandler pmsNotifyHandler;
+    NotifyHandler notifyHandler;
 
     @Override
     public TaskResult doTask() {
         TaskResult tr = new TaskResult();
         String res = "";
         String cmd = this.getCmd();
-        pmsNotifyHandler = BeanFactoryUtil.getBean(PmsNotifyHandler.class);
+        notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         if (para.isAsyn()) {
-            CommandExecuteThread thread = new CommandExecuteThread(cmd, para.getOsType(), pmsNotifyHandler);
+            CommandExecuteThread thread = new CommandExecuteThread(cmd, para.getOsType(), notifyHandler);
             res = "将在" + thread.getAsynTime() + "秒后执行命令:" + cmd;
             thread.start();
             logger.debug(res);
@@ -90,7 +90,7 @@ public class PmsCommandJob extends AbstractBaseJob {
     public void notifyLog(String cmd) {
         //通知
         String title = "服务器执行了脚本命令";
-        pmsNotifyHandler.addMessageToNotifier(PmsErrorCode.CMD_EXECUTED, title,
+        notifyHandler.addMessageToNotifier(PmsErrorCode.CMD_EXECUTED, title,
                 "服务器执行了脚本命令：" + cmd, null, null);
     }
 }

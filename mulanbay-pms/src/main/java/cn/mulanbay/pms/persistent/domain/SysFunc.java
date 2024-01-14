@@ -160,8 +160,8 @@ public class SysFunc implements java.io.Serializable {
     /**
      * 错误代码定义，方便日志监控
      */
-    @Column(name = "error_code")
-    private Integer errorCode;
+    @Column(name = "code")
+    private Integer code;
 
     /**
      * 是否树形统计
@@ -440,12 +440,12 @@ public class SysFunc implements java.io.Serializable {
         this.rewardPoint = rewardPoint;
     }
 
-    public Integer getErrorCode() {
-        return errorCode;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public Boolean getTreeStat() {

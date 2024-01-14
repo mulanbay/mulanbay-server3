@@ -13,14 +13,14 @@ import java.util.Date;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
- * 用户消息
+ * 消息
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "user_message")
-public class UserMessage implements java.io.Serializable {
+@Table(name = "message")
+public class Message implements java.io.Serializable {
 
     // Fields
 
@@ -31,14 +31,14 @@ public class UserMessage implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    private Long id;
+    @Column(name = "msg_id", unique = true, nullable = false)
+    private Long msgId;
 
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "message_type")
-    private MessageType messageType;
+    @Column(name = "msg_type")
+    private MessageType msgType;
 
     @Column(name = "buss_type")
     private MonitorBussType bussType;
@@ -101,17 +101,18 @@ public class UserMessage implements java.io.Serializable {
     /**
      * default constructor
      */
-    public UserMessage() {
+    public Message() {
     }
 
 
     // Property accessors
-    public Long getId() {
-        return this.id;
+
+    public Long getMsgId() {
+        return msgId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setMsgId(Long msgId) {
+        this.msgId = msgId;
     }
 
     public Long getUserId() {
@@ -122,12 +123,12 @@ public class UserMessage implements java.io.Serializable {
         this.userId = userId;
     }
 
-    public MessageType getMessageType() {
-        return messageType;
+    public MessageType getMsgType() {
+        return msgType;
     }
 
-    public void setMessageType(MessageType messageType) {
-        this.messageType = messageType;
+    public void setMsgType(MessageType msgType) {
+        this.msgType = msgType;
     }
 
     public MonitorBussType getBussType() {
@@ -248,8 +249,8 @@ public class UserMessage implements java.io.Serializable {
     }
 
     @Transient
-    public String getMessageTypeName() {
-        return messageType == null ? null : messageType.getName();
+    public String getMsgTypeName() {
+        return msgType == null ? null : msgType.getName();
     }
 
     @Transient
@@ -259,8 +260,8 @@ public class UserMessage implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof UserMessage bean) {
-            return bean.getId().equals(this.getId());
+        if (other instanceof Message bean) {
+            return bean.getMsgId().equals(this.getMsgId());
         }else {
             return false;
         }
