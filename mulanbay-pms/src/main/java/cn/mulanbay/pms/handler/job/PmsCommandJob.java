@@ -8,7 +8,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsErrorCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.persistent.domain.CommandConfig;
+import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleErrorCode;
 import cn.mulanbay.schedule.TaskResult;
@@ -62,7 +62,7 @@ public class PmsCommandJob extends AbstractBaseJob {
             return cmd;
         } else {
             BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
-            CommandConfig cc = baseService.getObject(CommandConfig.class, para.getCode(), "code");
+            Command cc = baseService.getObject(Command.class, para.getCode(), "code");
             if (cc == null) {
                 throw new ApplicationException(ScheduleErrorCode.TRIGGER_PARA_FORMAT_ERROR, "找不到code=" + para.getCode() + "的命令配置");
             } else {

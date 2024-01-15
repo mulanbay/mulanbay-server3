@@ -29,6 +29,18 @@ public class ChartData extends BaseChartData {
     //适合柱状图、折线混合图形(有且只有两条数据)
     private List<ChartYAxis> yaxis = new ArrayList<>();
 
+    private String unit;
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
+
+    @Override
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     public String[] getLegendData() {
         return legendData;
     }

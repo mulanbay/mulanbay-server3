@@ -18,8 +18,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "command_config")
-public class CommandConfig implements Serializable {
+@Table(name = "command")
+public class Command implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -159,7 +159,7 @@ public class CommandConfig implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof CommandConfig bean) {
+        if (other instanceof Command bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

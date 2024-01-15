@@ -111,3 +111,5 @@ ALTER TABLE `wx_account`
 
 ALTER TABLE `sys_func`
     CHANGE COLUMN `error_code` `code` INT NOT NULL DEFAULT '0' ;
+
+ALTER TABLE `command_config` RENAME TO  `command` ;
