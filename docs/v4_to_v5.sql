@@ -113,3 +113,8 @@ ALTER TABLE `sys_func`
     CHANGE COLUMN `error_code` `code` INT NOT NULL DEFAULT '0' ;
 
 ALTER TABLE `command_config` RENAME TO  `command` ;
+
+ALTER TABLE `database_clean`  RENAME TO  `db_clean` ;
+
+ALTER TABLE `db_clean`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
