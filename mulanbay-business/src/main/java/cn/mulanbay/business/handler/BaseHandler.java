@@ -1,12 +1,9 @@
 package cn.mulanbay.business.handler;
 
-import cn.mulanbay.business.BusinessErrorCode;
-import cn.mulanbay.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.AbstractMessageSource;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -24,6 +21,9 @@ public class BaseHandler {
 	// 自检失败关闭系统
 	boolean scfShutdown = false;
 
+	// 自检结果
+	Boolean checkResult = true;
+
 	//处理器名称
 	protected String handlerName;
 
@@ -32,29 +32,6 @@ public class BaseHandler {
 
 	public BaseHandler(String handlerName) {
 		this.handlerName = handlerName;
-	}
-
-	/**
-	 * 命令处理(默认不支持)
-	 *
-	 * @param cmd
-	 * @return
-	 */
-	public HandlerResult handle(String cmd) {
-		HandlerResult hr =new HandlerResult();
-		List<HandlerCmd> cmdList= this.getSupportCmdList();
-		if(StringUtil.isEmpty(cmdList)){
-			hr.setCode(BusinessErrorCode.HANDLER_CMD_NOT_SUPPORT);
-		}
-		return hr;
-	}
-
-	/**
-	 * 获取支持的命令列表
-	 * @return
-	 */
-	public List<HandlerCmd> getSupportCmdList(){
-		return null;
 	}
 
 	/**
@@ -84,7 +61,7 @@ public class BaseHandler {
 	 * @return
 	 */
 	public Boolean selfCheck() {
-		return true;
+		return null;
 	}
 
 	public boolean isScfShutdown() {
@@ -93,6 +70,10 @@ public class BaseHandler {
 
 	public void setScfShutdown(boolean scfShutdown) {
 		this.scfShutdown = scfShutdown;
+	}
+
+	public Boolean getCheckResult() {
+		return checkResult;
 	}
 
 	/**

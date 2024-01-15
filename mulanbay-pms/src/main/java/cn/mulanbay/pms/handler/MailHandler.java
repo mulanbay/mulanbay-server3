@@ -22,6 +22,10 @@ public class MailHandler extends BaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MailHandler.class);
 
+    public MailHandler() {
+        super("邮件处理");
+    }
+
     @Value("${spring.mail.from}")
     private String from;
 

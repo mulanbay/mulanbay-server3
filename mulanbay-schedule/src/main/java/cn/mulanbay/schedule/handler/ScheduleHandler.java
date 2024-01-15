@@ -1,9 +1,8 @@
 package cn.mulanbay.schedule.handler;
 
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.handler.HandlerCmd;
 import cn.mulanbay.business.handler.HandlerInfo;
-import cn.mulanbay.business.handler.HandlerResult;
+import cn.mulanbay.business.handler.HandlerMethod;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.IPAddressUtil;
 import cn.mulanbay.schedule.*;
@@ -12,7 +11,6 @@ import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
-import cn.mulanbay.schedule.impl.LogNotifiableProcessor;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
 import cn.mulanbay.schedule.thread.QuartzMonitorThread;
 import cn.mulanbay.schedule.thread.RedoThread;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
@@ -344,6 +341,9 @@ public class ScheduleHandler extends BaseHandler {
      * @return
      */
     public List<TaskTrigger> getCurrentlyExecutingJobs() {
+        if(!isEnableSchedule()){
+            return null;
+        }
         return quartzServer.getCurrentlyExecutingJobs();
     }
 
@@ -428,21 +428,24 @@ public class ScheduleHandler extends BaseHandler {
      */
     public ScheduleInfo getScheduleInfo() {
         ScheduleInfo si = new ScheduleInfo();
-        si.setDeployId(quartzServer.getQuartzSource().getDeployId());
-        si.setCheck(quartzMonitorThread.isCheck());
-        si.setInterval(quartzMonitorThread.getInterval());
+        si.setDeployId(deployId);
+        si.setCheck(monitorInterval>0);
+        si.setInterval(monitorInterval);
         si.setSchedule(enableSchedule);
-        si.setScheduleJobsCount(quartzServer.getScheduleJobsCount());
-        si.setCurrentlyExecutingJobsCount(quartzServer
-                .getCurrentlyExecutingJobsCount());
-        si.setDistriable(quartzSource.getDistriable());
+        if(isEnableSchedule()){
+            si.setScheduleJobsCount(quartzServer.getScheduleJobsCount());
+            si.setCurrentlyExecutingJobsCount(quartzServer
+                    .getCurrentlyExecutingJobsCount());
+        }
+        si.setDistriable(distriable);
         return si;
     }
 
     /**
-     * 检查调度
+     * 刷新调度
      * @param isForce
      */
+    @HandlerMethod(desc = "刷新调度")
     public boolean checkAndRefreshSchedule(boolean isForce) {
         try {
             if (enableSchedule) {
@@ -498,27 +501,6 @@ public class ScheduleHandler extends BaseHandler {
         }else{
             return false;
         }
-    }
-
-    @Override
-    public List<HandlerCmd> getSupportCmdList() {
-        List<HandlerCmd> list = new ArrayList<>();
-        list.add(new HandlerCmd("checkAndRefreshSchedule","刷新调度"));
-        list.add(new HandlerCmd("setStatusTrue","启动调度"));
-        list.add(new HandlerCmd("setStatusFalse","停止调度"));
-        return list;
-    }
-
-    @Override
-    public HandlerResult handle(String cmd) {
-        if("reloadFunctions".equals(cmd)){
-            checkAndRefreshSchedule(false);
-        }else if("setStatusTrue".equals(cmd)){
-            setScheduleStatus(true);
-        }else if("setStatusFalse".equals(cmd)){
-            setScheduleStatus(false);
-        }
-        return super.handle(cmd);
     }
 
     @Override

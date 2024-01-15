@@ -1,9 +1,8 @@
 package cn.mulanbay.pms.handler;
 
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.handler.HandlerCmd;
 import cn.mulanbay.business.handler.HandlerInfo;
-import cn.mulanbay.business.handler.HandlerResult;
+import cn.mulanbay.business.handler.HandlerMethod;
 import cn.mulanbay.business.handler.lock.RedisDistributedLock;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.service.BaseService;
@@ -17,7 +16,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +62,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
     /**
      * redis缓存被清空的时候才需要
      */
+    @HandlerMethod(desc = "加载数据库中未发送消息")
     private void loadUnSendMessage() {
         String key = "loadUnSendMessage";
         try {
@@ -153,21 +152,6 @@ public class RedisDelayQueueHandler extends BaseHandler {
         ZSetOperations zSetOperations = redisTemplate.opsForZSet();
         Set<Message> sets = zSetOperations.rangeByScore(getQueueName(), 0, now.getTime());
         return sets;
-    }
-
-    @Override
-    public List<HandlerCmd> getSupportCmdList() {
-        List<HandlerCmd> list = new ArrayList<>();
-        list.add(new HandlerCmd("loadUnSendMessage", "加载数据库中未发送消息"));
-        return list;
-    }
-
-    @Override
-    public HandlerResult handle(String cmd) {
-        if ("loadUnSendMessage".equals(cmd)) {
-            loadUnSendMessage();
-        }
-        return super.handle(cmd);
     }
 
     @Override

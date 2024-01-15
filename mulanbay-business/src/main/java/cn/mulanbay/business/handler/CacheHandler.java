@@ -52,7 +52,9 @@ public class CacheHandler extends BaseHandler  {
     public Boolean selfCheck() {
         this.set(getFullKey("test"), "testData", 10);
         String value = this.getForString(getFullKey("test"));
-        return "testData".equals(value);
+        boolean b = "testData".equals(value);
+        this.checkResult = b;
+        return b;
     }
 
     /**

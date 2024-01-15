@@ -1,9 +1,6 @@
 package cn.mulanbay.pms.handler;
 
-import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.handler.CacheHandler;
-import cn.mulanbay.business.handler.HandlerCmd;
-import cn.mulanbay.business.handler.HandlerResult;
+import cn.mulanbay.business.handler.*;
 import cn.mulanbay.common.exception.MessageNotify;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
@@ -267,19 +264,9 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         logHandler.addSysLog(LogLevel.WARNING,title,message,code);
     }
 
-    @Override
-    public List<HandlerCmd> getSupportCmdList() {
-        List<HandlerCmd> list = new ArrayList<>();
-        list.add(new HandlerCmd("clear", "清除所有未发送消息"));
-        return list;
-    }
-
-    @Override
-    public HandlerResult handle(String cmd) {
-        if ("clear".equals(cmd)) {
-            this.redisDelayQueueHandler.clearMessage();
-        }
-        return super.handle(cmd);
+    @HandlerMethod(desc = "清除所有未发送消息")
+    public void clearMessage(){
+        this.redisDelayQueueHandler.clearMessage();
     }
 
     @Override

@@ -3,8 +3,11 @@ package cn.mulanbay.business.handler;
 import cn.mulanbay.business.BusinessErrorCode;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,8 @@ import java.util.List;
  */
 public class HandlerManager {
 
+	private static final Logger logger = LoggerFactory.getLogger(HandlerManager.class);
+
 	@Autowired
 	private List<BaseHandler> handlerList;
 
@@ -27,24 +32,6 @@ public class HandlerManager {
 
 	public void setHandlerList(List<BaseHandler> handlerList) {
 		this.handlerList = handlerList;
-	}
-
-	/**
-	 * 处理命令
-	 * @param clz
-	 * @param cmd
-	 * @param isSync
-	 * @return
-	 */
-	public HandlerResult handleCmd(Class clz,String cmd,boolean isSync){
-		BaseHandler handler = this.getHandler(clz);
-		if(handler==null){
-			HandlerResult hr =new HandlerResult();
-			hr.setCode(BusinessErrorCode.HANDLER_NOT_FOUND);
-			return hr;
-		}else{
-			return handler.handle(cmd);
-		}
 	}
 
 	/**
@@ -95,5 +82,49 @@ public class HandlerManager {
 		}
 	}
 
+	/**
+	 * 获取支持的方法列表
+	 * @return
+	 */
+	public List<MethodBean> getMethodList(String className){
+		try {
+			Class clz = Class.forName(className);
+			List<MethodBean> list = new ArrayList<>();
+			Method[] ms = clz.getDeclaredMethods();
+			for(Method m : ms){
+				HandlerMethod hm = m.getAnnotation(HandlerMethod.class);
+				if(hm!=null){
+					MethodBean mb = new MethodBean();
+					mb.setName(hm.desc());
+					mb.setMethod(m.getName());
+					list.add(mb);
+				}
+			}
+			return list;
+		} catch (ClassNotFoundException e) {
+			throw new ApplicationException(BusinessErrorCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
+		}
+	}
+
+	/**
+	 * 执行方法
+	 * @param method
+	 * @param className
+	 * @return
+	 */
+	public boolean invokeMethod(String method,String className){
+		try {
+			Class clz = Class.forName(className);
+			BaseHandler handler = this.getHandler(clz);
+			Method m = clz.getMethod(method);
+			m.invoke(handler);
+			return true;
+		} catch (ClassNotFoundException e) {
+			throw new ApplicationException(BusinessErrorCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
+		} catch (Exception e) {
+			logger.error("invokeMethod error",e);
+			return false;
+		}
+	}
 
 }

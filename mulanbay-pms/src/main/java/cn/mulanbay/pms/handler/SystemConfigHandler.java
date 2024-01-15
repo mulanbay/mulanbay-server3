@@ -73,6 +73,7 @@ public class SystemConfigHandler extends BaseHandler {
     /**
      * 重载功能点
      */
+    @HandlerMethod(desc = "重载功能点")
     public void reloadFunctions() {
         //获取所有的功能点
         List<SysFunc> list = baseService.getBeanList(SysFunc.class, 0, 0, null);
@@ -103,6 +104,7 @@ public class SystemConfigHandler extends BaseHandler {
     /**
      * 重载角色功能点
      */
+    @HandlerMethod(desc = "重载角色功能点")
     public void reloadRoleFunctions() {
         //获取所有的功能点
         List<RoleFunction> list = baseService.getBeanList(RoleFunction.class, 0, 0, null);
@@ -240,22 +242,4 @@ public class SystemConfigHandler extends BaseHandler {
         commonCacheHandler.removeBean(SysCode.class, code);
     }
 
-    @Override
-    public List<HandlerCmd> getSupportCmdList() {
-        List<HandlerCmd> list = new ArrayList<>();
-        list.add(new HandlerCmd("reloadFunctions", "重新加载功能点配置"));
-        list.add(new HandlerCmd("reloadRoleFunctions", "重新加载角色功能点配置"));
-        list.add(new HandlerCmd("reloadConfigs", "重新加载系统配置"));
-        return list;
-    }
-
-    @Override
-    public HandlerResult handle(String cmd) {
-        if ("reloadFunctions".equals(cmd)) {
-            reloadFunctions();
-        } else if ("reloadRoleFunctions".equals(cmd)) {
-            reloadRoleFunctions();
-        }
-        return super.handle(cmd);
-    }
 }

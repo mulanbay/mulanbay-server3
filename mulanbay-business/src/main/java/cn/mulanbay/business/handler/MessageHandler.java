@@ -98,4 +98,5 @@ public class MessageHandler extends BaseHandler {
 	public ValidateError getErrorCodeInfo(int code) {
 		return getErrorInfo("errorcode." + code);
 	}
+
 }

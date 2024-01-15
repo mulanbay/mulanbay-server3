@@ -28,7 +28,8 @@ public class StartListener extends BaseListener implements ApplicationListener<C
         for (BaseHandler bh : hm.getHandlerList()) {
             logger.info(bh.getHandlerName() + " Handler begin to init...");
             bh.init();
-            if (!bh.selfCheck()) {
+            Boolean checkResult = bh.selfCheck();
+            if (checkResult!=null&&!checkResult) {
                 logger.error(bh.getHandlerName() + "自检失败。");
                 if (bh.isScfShutdown()) {
                     logger.error("因" + bh.getHandlerName() + "自检失败，关闭系统。");
