@@ -25,14 +25,14 @@ public class EnhanceThread extends Thread {
 	// 线程名称
 	protected String threadName;
 
-	protected boolean isStop = false;
+	protected boolean stop = false;
 
 	// 如果是周期性线程，设置是先sleep再做业务还是先业务再sleep
-	protected boolean isBeforeSleep = false;
+	protected boolean beforeSleep = false;
 
 	protected long interval;
 
-	protected Date created;
+	protected Date createdTime;
 
 	protected Date lastExecuteTime;
 
@@ -42,20 +42,17 @@ public class EnhanceThread extends Thread {
 	// 总执行失败次数
 	protected long failCount;
 
-	// 持续运行时间（秒）
-	protected long continuedSeconds;
-
 	public EnhanceThread(String threadName) {
 		super();
 		this.threadName = threadName;
-		created = new Date();
+		createdTime = new Date();
 		ThreadManager.getInstance().addThread(this);
 	}
 
 	public EnhanceThread() {
 		super();
 		this.threadName = "未知线程";
-		created = new Date();
+		createdTime = new Date();
 		ThreadManager.getInstance().addThread(this);
 	}
 
@@ -68,7 +65,7 @@ public class EnhanceThread extends Thread {
 	}
 
 	public void setStop(boolean isStop) {
-		this.isStop = isStop;
+		this.stop = isStop;
 	}
 
 	public void setInterval(long interval) {
@@ -80,11 +77,19 @@ public class EnhanceThread extends Thread {
 	}
 
 	public void setBeforeSleep(boolean isBeforeSleep) {
-		this.isBeforeSleep = isBeforeSleep;
+		this.beforeSleep = isBeforeSleep;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public boolean getStop() {
+		return stop;
 	}
 
 	public Date getLastExecuteTime() {
@@ -99,19 +104,23 @@ public class EnhanceThread extends Thread {
 		return failCount;
 	}
 
-	public long getContinuedSeconds() {
-		return (System.currentTimeMillis() - created.getTime()) / 1000;
+	/**
+	 * 持续时间
+	 * @return
+	 */
+	public long getDuration() {
+		return System.currentTimeMillis() - createdTime.getTime();
 	}
 
 	@Override
 	public void run() {
-		while (!isStop) {
+		while (!stop) {
 			try {
-				if (isBeforeSleep && interval > 0) {
+				if (beforeSleep && interval > 0) {
 					sleep(interval * 1000);
 				}
 				doThreadTask();
-				if (!isBeforeSleep && interval > 0) {
+				if (!beforeSleep && interval > 0) {
 					sleep(interval * 1000);
 				}
 			} catch (Exception e) {
@@ -119,7 +128,7 @@ public class EnhanceThread extends Thread {
 				failCount++;
 			} finally {
 				if (interval == 0) {
-					isStop = true;
+					stop = true;
 				}
 				totalCount++;
 				lastExecuteTime = new Date();
@@ -159,7 +168,7 @@ public class EnhanceThread extends Thread {
 
 	public void stopThread() {
 		try {
-			this.isStop = true;
+			this.stop = true;
 			this.interrupt();
 		} catch (Exception e) {
 			logger.error(threadName + "停止异常", e);
@@ -168,7 +177,7 @@ public class EnhanceThread extends Thread {
 		}
 	}
 
-	public List<ThreadInfo> getThreadInfo(){
+	public List<ThreadBean> getThreadInfo(){
 		return null;
 	}
 }

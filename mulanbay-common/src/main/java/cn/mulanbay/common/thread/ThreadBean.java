@@ -6,16 +6,16 @@ package cn.mulanbay.common.thread;
  * @description: 线程信息
  * @create 2018-01-20 21:44
  */
-public class ThreadInfo {
+public class ThreadBean {
 
     private String name;
 
     private String value;
 
-    public ThreadInfo() {
+    public ThreadBean() {
     }
 
-    public ThreadInfo(String name, String value) {
+    public ThreadBean(String name, String value) {
         this.name = name;
         this.value = value;
     }

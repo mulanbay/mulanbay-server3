@@ -1,7 +1,7 @@
 package cn.mulanbay.schedule.thread;
 
 import cn.mulanbay.common.thread.EnhanceThread;
-import cn.mulanbay.common.thread.ThreadInfo;
+import cn.mulanbay.common.thread.ThreadBean;
 import cn.mulanbay.common.util.IPAddressUtil;
 import cn.mulanbay.schedule.QuartzSource;
 import cn.mulanbay.schedule.SchedulePersistentProcessor;
@@ -98,7 +98,7 @@ public class QuartzMonitorThread extends EnhanceThread {
 	@Override
 	public void stopThread() {
 		try {
-			this.isStop = true;
+			this.stop = true;
 			this.interrupt();
 		} catch (Exception e) {
 			logger.error("调度检查线程停止异常", e);
@@ -106,10 +106,10 @@ public class QuartzMonitorThread extends EnhanceThread {
 	}
 
 	@Override
-	public List<ThreadInfo> getThreadInfo() {
-		List<ThreadInfo> list = new ArrayList<>();
-		list.add(new ThreadInfo("检查周期",interval+"秒"));
-		list.add(new ThreadInfo("是否检查",isCheck+""));
+	public List<ThreadBean> getThreadInfo() {
+		List<ThreadBean> list = new ArrayList<>();
+		list.add(new ThreadBean("检查周期",interval+"秒"));
+		list.add(new ThreadBean("是否检查",isCheck+""));
 		return list;
 	}
 }
