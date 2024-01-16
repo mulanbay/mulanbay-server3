@@ -118,7 +118,7 @@ public class LogService extends BaseHibernateDao {
      * @param code
      * @return
      */
-    public void updateErrorCodeCount(Integer code, int addCount) {
+    public void updateSysCodeCount(Integer code, long addCount) {
         try {
             String sql = "update error_code_define set count=count+" + addCount + " where code=?1 ";
             this.execSqlUpdate(sql, code);

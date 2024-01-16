@@ -30,7 +30,7 @@ public class CacheConfig {
     public RedisTemplate<Object,Object> redisStringTemplate(RedisTemplate<Object,Object> redisTemplate){
         StringRedisSerializer serializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(serializer);
-        //redisTemplate.setValueSerializer(serializer);
+        //redisTemplate.setValueSerializer(RedisSerializer.string());
         //redisTemplate.setHashKeySerializer(serializer);
         logger.info("set RedisTemplate Serializer");
         return redisTemplate;

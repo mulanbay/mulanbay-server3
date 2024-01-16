@@ -752,6 +752,35 @@ public class BaseHibernateDao {
 	 */
 	protected int execSqlUpdate(String sql, Object... objects)
 			throws BaseException {
+		try {
+			if(logger.isDebugEnabled()){
+				logger.debug("execSqlUpdate sql:" + sql);
+				logger.debug("请求参数：" + JsonUtil.beanToJson(objects));
+			}
+			NativeQuery query = getSession().createNativeQuery(sql,Long.class);
+			int i = START_OPL;
+			for (Object object : objects) {
+				query.setParameter(i++, object);
+			}
+			return query.executeUpdate();
+		} catch (Exception e) {
+			throw OPUtil.handleException(e);
+		}
+	}
+
+	/**
+	 * 采用JDBC模式更新
+	 * 占位符绑定时无需序号
+	 *
+	 * @param sql
+	 *            sql
+	 * @param objects
+	 *            变量绑定参数
+	 * @return list Object[]对象列表
+	 * @throws BaseException
+	 */
+	protected int execSqlUpdateJDBC(String sql, Object... objects)
+			throws BaseException {
 		if(logger.isDebugEnabled()){
 			logger.debug("execSqlUpdate sql:" + sql);
 			logger.debug("请求参数：" + JsonUtil.beanToJson(objects));

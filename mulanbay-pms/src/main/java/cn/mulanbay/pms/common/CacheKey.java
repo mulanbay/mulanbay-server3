@@ -166,6 +166,8 @@ public class CacheKey {
      */
     public static String ROLE_FUNC ="role_function";
 
+    public static String SYS_CODE_COUNTS ="sys_code_counts:{0}";
+
     /**
      * @param pattern
      * @param args

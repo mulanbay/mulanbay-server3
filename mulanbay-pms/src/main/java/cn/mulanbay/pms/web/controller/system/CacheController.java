@@ -9,8 +9,11 @@ import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieDetailData;
 import cn.mulanbay.pms.web.bean.res.system.cache.CacheVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,11 +31,27 @@ import java.util.*;
 @RequestMapping("/cache")
 public class CacheController extends BaseController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CacheController.class);
+
     @Autowired
     CacheHandler cacheHandler;
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    private static List<CacheVo> caches;
+
+    @PostConstruct
+    public void init(){
+        logger.info("init CacheVo");
+        caches = new ArrayList<CacheVo>();
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.LOGIN_TOKEN_KEY, "*")), "用户信息"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_LOGIN_FAIL, "*")), "用户登录失败"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, "*","*")), "系统代码限流"));
+        //caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.SYS_FUNC), "功能点"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.ROLE_FUNC), "角色功能"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.SYS_CODE_COUNTS, "*")), "系统代码计数"));
+    }
 
     /**
      * 缓存信息
@@ -78,12 +97,6 @@ public class CacheController extends BaseController {
      */
     @RequestMapping(value = "/names", method = RequestMethod.GET)
     public ResultBean names() {
-        List<CacheVo> caches = new ArrayList<CacheVo>();
-        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.LOGIN_TOKEN_KEY, "*")), "用户信息"));
-        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_LOGIN_FAIL, "*")), "用户登录失败"));
-        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, "*","*")), "系统代码限流"));
-        //caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.SYS_FUNC), "功能点"));
-        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.ROLE_FUNC), "角色功能"));
         return callback(caches);
     }
 

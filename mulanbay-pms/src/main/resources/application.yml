@@ -79,8 +79,13 @@ mulanbay:
       send:
         #消息最大发送失败次数
         maxFail: 3
+        #每次发送失败重试次数
+        retryTimes: 3
         #消息发送是否需要锁定
         lock: false
+    code:
+      #系统代码次数批量更新点
+      batchUpdates: 20
   #调度相关
   schedule:
     #是否开启调度服务

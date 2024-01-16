@@ -13,6 +13,9 @@ import cn.mulanbay.pms.web.bean.req.common.YearListSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +34,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/common")
 public class CommonController extends BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
+
+    private static List<TreeBean> domainClassList;
+
+    private static List<TreeBean> enumClassList;
+
+    @PostConstruct
+    public void init(){
+        logger.info("init domainClassList");
+        domainClassList = new ArrayList<>();
+        String packageName1 = User.class.getPackage().getName();
+        List<String> list = ClazzUtils.getClazzName(packageName1, false);
+        String packageName2 = TaskTrigger.class.getPackage().getName();
+        List<String> listSc = ClazzUtils.getClazzName(packageName2, false);
+        list.addAll(listSc);
+        Collections.sort(list);
+        for (String s : list) {
+            TreeBean treeBean = new TreeBean();
+            int n = s.lastIndexOf(".");
+            String className = s.substring(n + 1, s.length());
+            treeBean.setId(className);
+            treeBean.setText(className);
+            domainClassList.add(treeBean);
+        }
+
+        logger.info("init enumClassList");
+        enumClassList = new ArrayList<>();
+        //根据指定的一个枚举类
+        String enumPackageName1 = AccountType.class.getPackage().getName();
+        List<String> enumList = ClazzUtils.getClazzName(enumPackageName1, false);
+        Collections.sort(enumList);
+        for (String s : enumList) {
+            TreeBean treeBean = new TreeBean();
+            int n = s.lastIndexOf(".");
+            String className = s.substring(n + 1, s.length());
+            treeBean.setId(className);
+            treeBean.setText(className);
+            enumClassList.add(treeBean);
+        }
+    }
 
     /**
      * 获取月统计年份列表
@@ -89,7 +133,7 @@ public class CommonController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/enumDict")
+    @RequestMapping(value = "/enumDict", method = RequestMethod.GET)
     public ResultBean enumDict(EnumDictSH etr) {
         List<TreeBean> list = TreeBeanUtil.createTree(etr.getEnumClass(), etr.getIdType(), etr.getNeedRoot());
         return callback(list);
@@ -102,20 +146,7 @@ public class CommonController extends BaseController {
      */
     @RequestMapping(value = "/enumClassList", method = RequestMethod.GET)
     public ResultBean enumClassList() {
-        List<TreeBean> treeBeans = new ArrayList<>();
-        //根据指定的一个枚举类
-        String packageName1 = AccountType.class.getPackage().getName();
-        List<String> list = ClazzUtils.getClazzName(packageName1, false);
-        Collections.sort(list);
-        for (String s : list) {
-            TreeBean treeBean = new TreeBean();
-            int n = s.lastIndexOf(".");
-            String className = s.substring(n + 1, s.length());
-            treeBean.setId(className);
-            treeBean.setText(className);
-            treeBeans.add(treeBean);
-        }
-        return callback(treeBeans);
+        return callback(enumClassList);
     }
 
     /**
@@ -123,24 +154,9 @@ public class CommonController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/domainClassList", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/domainClassList", method = RequestMethod.GET)
     public ResultBean domainClassList() {
-        List<TreeBean> treeBeans = new ArrayList<>();
-        String packageName1 = User.class.getPackage().getName();
-        List<String> list = ClazzUtils.getClazzName(packageName1, false);
-        String packageName2 = TaskTrigger.class.getPackage().getName();
-        List<String> listSc = ClazzUtils.getClazzName(packageName2, false);
-        list.addAll(listSc);
-        Collections.sort(list);
-        for (String s : list) {
-            TreeBean treeBean = new TreeBean();
-            int n = s.lastIndexOf(".");
-            String className = s.substring(n + 1, s.length());
-            treeBean.setId(className);
-            treeBean.setText(className);
-            treeBeans.add(treeBean);
-        }
-        return callback(treeBeans);
+        return callback(domainClassList);
     }
 
 }

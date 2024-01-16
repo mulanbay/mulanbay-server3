@@ -103,7 +103,7 @@ public class DBCleanService extends BaseHibernateDao {
         try {
             String sql = null;
             Date date = DateUtil.getDate(-days);
-            sql = "delete from " + dc.getTableName() + " where " + dc.getDateField() + "<=? ";
+            sql = "delete from " + dc.getTableName() + " where " + dc.getDateField() + "<=?1 ";
             if (!StringUtil.isEmpty(dc.getExtraCondition())&&useEc) {
                 sql += "and " + dc.getExtraCondition();
             }

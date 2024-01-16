@@ -29,16 +29,28 @@ public class MessageSendHandler extends BaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageSendHandler.class);
 
-    @Value("${mulanbay.notify.message.send.maxFail}")
-    int messageSendMaxFail;
+    /**
+     * 最大发送失败次数
+     */
+    @Value("${mulanbay.notify.message.send.maxFail:3}")
+    int sendMaxFail;
 
-    @Value("${mulanbay.notify.message.send.lock}")
+    /**
+     * 每次发送失败重试次数
+     */
+    @Value("${mulanbay.notify.message.send.retryTimes:3}")
+    int retryTimes;
+
+    /**
+     * 消息发送是否需要锁定
+     */
+    @Value("${mulanbay.notify.message.send.lock:false}")
     boolean sendLock;
 
     @Value("${mulanbay.nodeId}")
     String nodeId;
 
-    @Value("${system.mobile.baseUrl}")
+    @Value("${mulanbay.mobile.baseUrl}")
     private String mobileBaseUrl;
 
     @Autowired
@@ -100,7 +112,7 @@ public class MessageSendHandler extends BaseHandler {
                 return true;
             }
             boolean res;
-            if (message.getFailCount() < messageSendMaxFail) {
+            if (message.getFailCount() < sendMaxFail) {
                 res = this.sendUserMessage(us, message);
                 if (res) {
                     message.setSendStatus(MessageSendStatus.SUCCESS);
@@ -111,7 +123,7 @@ public class MessageSendHandler extends BaseHandler {
             } else {
                 message.setSendStatus(MessageSendStatus.FAIL);
                 message.setFailCount(message.getFailCount() + 1);
-                logger.info("消息ID=" + message.getMsgId() + "达到最大发送失败次数:" + messageSendMaxFail + ",本消息已经发送失败次数:" + message.getFailCount());
+                logger.info("消息ID=" + message.getMsgId() + "达到最大发送失败次数:" + sendMaxFail + ",本消息已经发送失败次数:" + message.getFailCount());
                 res = true;
             }
             message.setLastSendTime(new Date());
@@ -156,7 +168,7 @@ public class MessageSendHandler extends BaseHandler {
         boolean b1 = true;
         if (us.getSendEmail() && StringUtil.isNotEmpty(user.getEmail())) {
             // 发送邮件
-            b1 = mailHandler.sendMail(user.getEmail(),message.getTitle(), message.getContent());
+            b1 = this.sendMail(user.getEmail(),message.getTitle(), message.getContent());
         }
         boolean b2 = true;
         if (us.getSendWx()) {
@@ -182,7 +194,46 @@ public class MessageSendHandler extends BaseHandler {
         if(StringUtil.isNotEmpty(url)&& !url.startsWith("http")){
             url = mobileBaseUrl+url;
         }
-        return wxHandler.sendTemplateMessage(id,userId, title, content, time, level, url);
+        int i =1;
+        boolean res = false;
+        while(i<=retryTimes&&!res){
+            res = wxHandler.sendTemplateMessage(id,userId, title, content, time, level, url);
+            if(!res){
+                try {
+                    i++;
+                    Thread.sleep(i*1000L);
+                    logger.info("微信消息{}发送失败，进行第{}次尝试",title,i);
+                } catch (Exception e) {
+                    logger.error("sendWxMessage sleep error",e);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 发送邮件
+     * @param to
+     * @param subject
+     * @param content
+     * @return
+     */
+    public boolean sendMail(String to, String subject, String content){
+        int i =1;
+        boolean res = false;
+        while(i<=retryTimes&&!res){
+            res = mailHandler.sendMail(to,subject, content);
+            if(!res){
+                try {
+                    i++;
+                    Thread.sleep(i*1000L);
+                    logger.info("邮件{}发送失败，进行第{}次尝试",subject,i);
+                } catch (Exception e) {
+                    logger.error("sendWxMessage sleep error",e);
+                }
+            }
+        }
+        return res;
     }
 
 }

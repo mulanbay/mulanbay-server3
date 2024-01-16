@@ -1,7 +1,5 @@
 package cn.mulanbay.pms.web.bean.res.system.cache;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * @author fenghong
  * @date 2024/1/16
@@ -38,8 +36,8 @@ public class CacheVo {
     }
 
     public CacheVo(String cacheName, String cacheKey, Object cacheValue) {
-        this.cacheName = StringUtils.replace(cacheName, ":", "");
-        this.cacheKey = StringUtils.replace(cacheKey, cacheName, "");
+        this.cacheName = cacheName;
+        this.cacheKey = cacheKey;
         this.cacheValue = cacheValue;
     }
 

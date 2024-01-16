@@ -13,6 +13,7 @@ import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.persistent.enums.MessageType;
+import cn.mulanbay.pms.persistent.service.LogService;
 import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,19 +42,28 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     String defaultExpectSendTime;
 
     /**
-     * 是否需要提醒表单验证类的错误代码
+     * 系统代码次数批量更新
+     */
+    @Value("${mulanbay.notify.code.batchUpdates}")
+    long codeBatchUpdates;
+
+    /**
+     * 是否需要提醒表单验证类的系统代码
      */
     @Value("${mulanbay.notify.message.validateError}")
     boolean notifyValidateError;
 
     /**
-     * 表单验证类的错误代码最小值，一般是8位数开始
+     * 表单验证类的系统代码最小值，一般是8位数开始
      */
     @Value("${mulanbay.notify.message.minCode}")
     int minValidateCode;
 
     @Autowired
     BaseService baseService;
+
+    @Autowired
+    LogService logService;
 
     @Autowired
     SystemConfigHandler systemConfigHandler;
@@ -79,7 +89,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      *
      * @param message
      */
-    public void addNotifyMessage(Message message) {
+    private void addNotifyMessage(Message message) {
         //加入到最新的一条消息(两小时有效)
         String key = CacheKey.getKey(CacheKey.USER_LATEST_MESSAGE, message.getUserId().toString());
         cacheHandler.set(key, message, 7200);
@@ -98,11 +108,11 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
         SysCode ec = systemConfigHandler.getSysCode(code);
         if (ec == null) {
-            logHandler.addSysLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置",
+            logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置",
                     PmsErrorCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
-        this.updateErrorCodeCount(code, 1);
+        this.updateSysCodeCount(code, 1);
         //获取发送时间
         Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
         if (expectSendTime == null) {
@@ -115,11 +125,23 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         return message.getMsgId();
     }
 
-    private void updateErrorCodeCount(Integer code, int addCount) {
+    /**
+     * 更新次数
+     * @param code
+     * @param addCount
+     */
+    private void updateSysCodeCount(Integer code, int addCount) {
         try {
-            //todo 后期先做缓存
+            String key = CacheKey.getKey(CacheKey.SYS_CODE_COUNTS,code.toString());
+            long cv = cacheHandler.incre(key,addCount);
+            if(cv>=codeBatchUpdates){
+                cv = cacheHandler.getAndSet(key,0L);
+                if(cv>0){
+                    logService.updateSysCodeCount(code,cv);
+                }
+            }
         } catch (Exception e) {
-            logger.error("更新错误代码次数异常", e);
+            logger.error("更新系统代码次数异常", e);
         }
     }
 
@@ -146,11 +168,11 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             }
             SysCode ec = systemConfigHandler.getSysCode(code);
             if (ec == null) {
-                logHandler.addSysLog(LogLevel.WARNING, "错误代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
+                logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
                         PmsErrorCode.ERROR_CODE_NOT_DEFINED);
                 ec = systemConfigHandler.getSysCode(PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
-            this.updateErrorCodeCount(code, 1);
+            this.updateSysCodeCount(code, 1);
             //获取发送时间
             Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
             if (expectSendTime == null) {
@@ -178,7 +200,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     }
 
     /**
-     * 检查错误代码限流发送
+     * 检查系统代码限流发送
      *
      * @param ec
      * @param userId
@@ -250,7 +272,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * 调度的消息通知
      *
      * @param taskTriggerId
-     * @param code          错误代码
+     * @param code          系统代码
      * @param title
      * @param message
      */
