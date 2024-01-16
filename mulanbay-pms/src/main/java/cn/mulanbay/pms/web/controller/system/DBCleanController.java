@@ -5,6 +5,7 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.DBClean;
+import cn.mulanbay.pms.persistent.enums.CleanType;
 import cn.mulanbay.pms.persistent.service.DBCleanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -82,9 +83,15 @@ public class DBCleanController extends BaseController {
      */
     @RequestMapping(value = "/manualClean", method = RequestMethod.POST)
     public ResultBean manualClean(@RequestBody @Valid DBManualCleanForm dmc) {
-        DBClean br = baseService.getObject(beanClass, dmc.getId());
-        int n = dbCleanService.manualClean(br, dmc.getDays(), true);
-        return callback(n);
+        DBClean bean = baseService.getObject(beanClass, dmc.getId());
+        CleanType cleanType = dmc.getCleanType();
+        if(cleanType==CleanType.TRUNCATE){
+            dbCleanService.truncateTable(bean.getTableName());
+            return callback(null);
+        }else{
+            int n = dbCleanService.manualClean(bean, dmc.getDays(),dmc.getUseEc(), true);
+            return callback(n);
+        }
     }
 
     /**
@@ -109,17 +116,6 @@ public class DBCleanController extends BaseController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
-        return callback(null);
-    }
-
-    /**
-     * 清空表
-     *
-     * @return
-     */
-    @RequestMapping(value = "/truncate", method = RequestMethod.GET)
-    public ResultBean truncate(@RequestParam(name = "id") Long id) {
-        dbCleanService.truncateTable(id);
         return callback(null);
     }
 

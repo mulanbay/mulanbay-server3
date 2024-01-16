@@ -39,10 +39,9 @@ public class DBCleanService extends BaseHibernateDao {
      *
      * @return
      */
-    public void truncateTable(Long id) {
+    public void truncateTable(String tableName) {
         try {
-            DBClean dc = this.getEntityById(DBClean.class, id);
-            String sql = "truncate table " + dc.getTableName();
+            String sql = "truncate table " + tableName;
             this.execSqlUpdate(sql);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -100,12 +99,12 @@ public class DBCleanService extends BaseHibernateDao {
      *
      * @param dc
      */
-    public int manualClean(DBClean dc, int days, boolean update) {
+    public int manualClean(DBClean dc, int days,Boolean useEc, boolean update) {
         try {
             String sql = null;
             Date date = DateUtil.getDate(-days);
             sql = "delete from " + dc.getTableName() + " where " + dc.getDateField() + "<=? ";
-            if (!StringUtil.isEmpty(dc.getExtraCondition())) {
+            if (!StringUtil.isEmpty(dc.getExtraCondition())&&useEc) {
                 sql += "and " + dc.getExtraCondition();
             }
             int n = this.execSqlUpdate(sql, date);
