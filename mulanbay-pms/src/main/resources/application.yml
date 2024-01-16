@@ -73,7 +73,7 @@ mulanbay:
       #是否需要提醒表单验证类的错误代码
       validateError: false
       #表单验证类的错误代码最小值
-      minErrorCode: 10000000
+      minCode: 10000000
       #大于改天数的不再发送
       expiredDays: 3
       send:

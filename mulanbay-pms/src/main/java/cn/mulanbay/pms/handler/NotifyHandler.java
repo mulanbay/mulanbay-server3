@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,8 +49,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     /**
      * 表单验证类的错误代码最小值，一般是8位数开始
      */
-    @Value("${mulanbay.notify.message.minErrorCode}")
-    int minValidateErrorCode;
+    @Value("${mulanbay.notify.message.minCode}")
+    int minValidateCode;
 
     @Autowired
     BaseService baseService;
@@ -142,7 +141,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      */
     public void addMessageToNotifier(int code, String title, String content, Date notifyTime, String url, String remark) {
         try {
-            if (!notifyValidateError && code >= minValidateErrorCode) {
+            if (!notifyValidateError && code >= minValidateCode) {
                 return;
             }
             SysCode ec = systemConfigHandler.getSysCode(code);

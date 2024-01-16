@@ -1,0 +1,142 @@
+package cn.mulanbay.pms.web.controller.system;
+
+import cn.mulanbay.business.handler.CacheHandler;
+import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.web.bean.req.system.cache.DeleteCacheForm;
+import cn.mulanbay.pms.web.bean.res.chart.ChartPieData;
+import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieData;
+import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieDetailData;
+import cn.mulanbay.pms.web.bean.res.system.cache.CacheVo;
+import cn.mulanbay.pms.web.controller.BaseController;
+import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+/**
+ * 缓存
+ *
+ * @author fenghong
+ * @create 2017-07-10 21:44
+ */
+@RestController
+@RequestMapping("/cache")
+public class CacheController extends BaseController {
+
+    @Autowired
+    CacheHandler cacheHandler;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    /**
+     * 缓存信息
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public ResultBean info() throws Exception {
+        Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
+        Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
+        Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());
+
+        Map<String, Object> result = new HashMap<>(3);
+        result.put("info", info);
+        result.put("dbSize", dbSize);
+
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("命令统计");
+        chartPieData.setUnit("个");
+        ChartPieSerieData serieData = new ChartPieSerieData();
+        serieData.setName("命令");
+        commandStats.stringPropertyNames().forEach(key -> {
+            Map<String, String> data = new HashMap<>(2);
+            String property = commandStats.getProperty(key);
+            String name = StringUtils.removeStart(key, "cmdstat_");
+            String value = StringUtils.substringBetween(property, "calls=", ",usec");
+            chartPieData.getXdata().add(name);
+            ChartPieSerieDetailData dataDetail = new ChartPieSerieDetailData();
+            dataDetail.setName(name);
+            dataDetail.setValue(value);
+            serieData.getData().add(dataDetail);
+        });
+        chartPieData.getDetailData().add(serieData);
+        result.put("commandStats", chartPieData);
+        return callback(result);
+    }
+
+    /**
+     * 名称列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/names", method = RequestMethod.GET)
+    public ResultBean names() {
+        List<CacheVo> caches = new ArrayList<CacheVo>();
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.LOGIN_TOKEN_KEY, "*")), "用户信息"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_LOGIN_FAIL, "*")), "用户登录失败"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, "*","*")), "系统代码限流"));
+        //caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.SYS_FUNC), "功能点"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.ROLE_FUNC), "角色功能"));
+        return callback(caches);
+    }
+
+    @RequestMapping(value = "/getCacheKeys", method = RequestMethod.GET)
+    public ResultBean getCacheKeys(@RequestParam(name = "cacheName") String cacheName) {
+        Set<String> cacheKeys = redisTemplate.keys(cacheName);
+        return callback(cacheKeys);
+    }
+
+    @RequestMapping(value = "/getCacheValue", method = RequestMethod.GET)
+    public ResultBean getCacheValue(@RequestParam(name = "cacheName") String cacheName, @RequestParam(name = "cacheKey") String cacheKey) {
+        Object cacheValue = null;
+        if (cacheKey.contains(CacheKey.SYS_FUNC) || cacheKey.contains(CacheKey.ROLE_FUNC)) {
+            cacheValue = redisTemplate.opsForHash().values(cacheKey);
+        } else {
+            cacheValue = redisTemplate.opsForValue().get(cacheKey);
+        }
+        CacheVo sysCache = new CacheVo(cacheName, cacheKey, cacheValue);
+        return callback(sysCache);
+    }
+
+    /**
+     * 删除缓存
+     *
+     * @return
+     */
+    @RequestMapping(value = "/deleteCacheKey", method = RequestMethod.POST)
+    public ResultBean deleteCacheKey(@RequestBody @Valid DeleteCacheForm dcf) {
+        Boolean b = redisTemplate.delete(dcf.getCacheKey());
+        return callback(b);
+    }
+
+    /**
+     * 删除
+     * @param dcf
+     * @return
+     */
+    @RequestMapping(value = "/deleteCacheName", method = RequestMethod.POST)
+    public ResultBean deleteCacheName(@RequestBody @Valid DeleteCacheForm dcf) {
+        Collection<String> cacheKeys = redisTemplate.keys(dcf.getCacheName());
+        Long n = redisTemplate.delete(cacheKeys);
+        return callback(n);
+    }
+
+    /**
+     * 清空所有
+     * @return
+     */
+    @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
+    public ResultBean deleteAll() {
+        Collection<String> cacheKeys = redisTemplate.keys("*");
+        Long n = redisTemplate.delete(cacheKeys);
+        return callback(n);
+    }
+
+}

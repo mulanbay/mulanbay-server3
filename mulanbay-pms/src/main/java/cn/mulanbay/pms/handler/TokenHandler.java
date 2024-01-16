@@ -6,7 +6,7 @@ import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.Md5Util;
 import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.pms.common.ConfigKey;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.persistent.domain.FamilyUser;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserRole;
@@ -139,7 +139,7 @@ public class TokenHandler extends BaseHandler {
         if (StringUtils.isNotEmpty(token)) {
             Claims claims = parseToken(token);
             // 解析对应的权限以及用户信息
-            String uuid = (String) claims.get(ConfigKey.LOGIN_USER_KEY);
+            String uuid = (String) claims.get(CacheKey.LOGIN_USER_KEY);
             return uuid;
         }
         return null;
@@ -235,7 +235,7 @@ public class TokenHandler extends BaseHandler {
         refreshToken(loginUser);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put(ConfigKey.LOGIN_USER_KEY, token);
+        claims.put(CacheKey.LOGIN_USER_KEY, token);
         return createToken(claims);
     }
 
@@ -331,8 +331,8 @@ public class TokenHandler extends BaseHandler {
      */
     private String getTokenFromHeader(HttpServletRequest request) {
         String token = request.getHeader(header);
-        if (StringUtils.isNotEmpty(token) && token.startsWith(ConfigKey.TOKEN_PREFIX)) {
-            token = token.replace(ConfigKey.TOKEN_PREFIX, "");
+        if (StringUtils.isNotEmpty(token) && token.startsWith(CacheKey.TOKEN_PREFIX)) {
+            token = token.replace(CacheKey.TOKEN_PREFIX, "");
         }
         return token;
     }
@@ -347,7 +347,7 @@ public class TokenHandler extends BaseHandler {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(ConfigKey.TOKEN_KEY)) {
+                if (cookie.getName().equals(CacheKey.TOKEN_KEY)) {
                     return cookie.getValue();
                 }
             }
@@ -356,6 +356,6 @@ public class TokenHandler extends BaseHandler {
     }
 
     private String getTokenKey(String uuid) {
-        return ConfigKey.LOGIN_TOKEN_KEY + uuid;
+        return CacheKey.getKey(CacheKey.LOGIN_TOKEN_KEY,uuid) ;
     }
 }

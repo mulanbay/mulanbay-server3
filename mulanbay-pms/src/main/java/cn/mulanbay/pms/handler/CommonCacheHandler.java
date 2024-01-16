@@ -6,6 +6,8 @@ import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.persistent.service.BaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import java.io.Serializable;
  */
 @Component
 public class CommonCacheHandler extends BaseHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(CommonCacheHandler.class);
 
     @Autowired
     DistributedLock distributedLock;
@@ -74,6 +78,7 @@ public class CommonCacheHandler extends BaseHandler {
             }
             return bean;
         } catch (Exception ex) {
+            logger.error("Common Cache Bean get error:",ex);
             throw new ApplicationException(ErrorCode.BEAN_GET_CACHE_ERROR);
         } finally {
             if (lock) {

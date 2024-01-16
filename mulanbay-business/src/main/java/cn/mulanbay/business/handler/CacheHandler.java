@@ -206,7 +206,7 @@ public class CacheHandler extends BaseHandler  {
      * @param key
      * @return
      */
-    private String getFullKey(String key) {
+    public String getFullKey(String key) {
         return namespace + ":" + key;
     }
 

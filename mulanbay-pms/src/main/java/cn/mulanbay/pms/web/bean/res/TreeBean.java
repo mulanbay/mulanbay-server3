@@ -21,6 +21,14 @@ public class TreeBean {
 
     private Attribute attributes;
 
+    public TreeBean() {
+    }
+
+    public TreeBean(Object id, String text) {
+        this.id = id;
+        this.text = text;
+    }
+
     List<TreeBean> children;
 
     public Object getId() {
