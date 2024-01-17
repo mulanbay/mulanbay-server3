@@ -10,6 +10,10 @@ mulanbay:
     baseUrl: http://localhost:99/avatar
     #本地存放文件夹地址
     folder: ./picture
+  #备份
+  backup:
+    #备份文件存放路径
+    filePath: /mulanbay/server/backup
   mobile:
     #移动端根地址
     baseUrl: http://localhost:81/
