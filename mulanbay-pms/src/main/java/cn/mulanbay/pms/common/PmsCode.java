@@ -30,8 +30,6 @@ public class PmsCode {
 
     public final static int IP_NOT_ALLOWED = 10009;
 
-    public final static int FILE_PATH_NOT_EXIT = 10010;
-
     public final static int THREAD_CAN_ONLY_DO_ONCE =10012;
 
     public final static int CREATE_CUSTOM_SSL_ERROR=10013;

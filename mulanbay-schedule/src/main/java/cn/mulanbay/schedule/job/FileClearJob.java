@@ -1,5 +1,6 @@
 package cn.mulanbay.schedule.job;
 
+import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.FileUtil;
 import cn.mulanbay.common.util.ZipUtil;
@@ -110,7 +111,7 @@ public class FileClearJob extends AbstractBaseJob {
 		}else{
 			File sf = new File(para.getSourcePath());
 			if (!sf.exists()) {
-				rb.setErrorCode(ScheduleCode.FILE_PATH_NOT_EXIT);
+				rb.setErrorCode(ErrorCode.FILE_PATH_NOT_EXIT);
 				return rb;
 			}
 		}

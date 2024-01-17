@@ -54,4 +54,6 @@ public class ErrorCode {
 
 	public final static int JSON_PARSE_ERROR =20;
 
+	public final static int FILE_PATH_NOT_EXIT = 21;
+
 }
