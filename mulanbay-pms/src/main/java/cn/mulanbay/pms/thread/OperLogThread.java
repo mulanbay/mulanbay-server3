@@ -4,7 +4,7 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.persistent.domain.OperLog;
@@ -109,7 +109,7 @@ public class OperLogThread extends BaseLogThread {
         systemLog.setLogLevel(LogLevel.WARNING);
         systemLog.setTitle("获取不到请求参数信息");
         systemLog.setContent("获取不到请求参数信息");
-        systemLog.setErrorCode(PmsErrorCode.OPERATION_LOG_PARA_IS_NULL);
+        systemLog.setErrorCode(PmsCode.OPERATION_LOG_PARA_IS_NULL);
         BeanFactoryUtil.getBean(LogHandler.class).addSysLog(systemLog);
     }
 

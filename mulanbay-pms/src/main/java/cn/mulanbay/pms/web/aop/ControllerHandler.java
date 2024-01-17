@@ -8,7 +8,7 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
@@ -90,15 +90,15 @@ public class ControllerHandler {
             SysFunc sf = systemConfigHandler.getFunction(url, method);
             if (sf == null && !skipUnDefineFunc) {
                 logger.warn("url:" + url + ",method:" + method + "未配置功能定义");
-                throw new ApplicationException(ErrorCode.FUNCTION_UN_DEFINE);
+                throw new ApplicationException(PmsCode.FUNCTION_UN_DEFINE);
             } else if (sf.getStatus() == CommonStatus.DISABLE) {
-                throw new ApplicationException(PmsErrorCode.SYSTEM_FUNCTION_DISABLED);
+                throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_DISABLED);
             }
             boolean autoLoad = !sf.getSecAuth();
             LoginUser loginUser = tokenHandler.getLoginUser(request, autoLoad);
             if (sf.getLoginAuth()) {
                 if (loginUser == null) {
-                    throw new ApplicationException(ErrorCode.USER_NOT_LOGIN);
+                    throw new ApplicationException(PmsCode.USER_NOT_LOGIN);
                 }
                 //刷新用户
                 tokenHandler.verifyToken(loginUser);
@@ -107,7 +107,7 @@ public class ControllerHandler {
                     //请求限制
                     String s = cacheHandler.getForString(key);
                     if (s != null) {
-                        throw new ApplicationException(ErrorCode.USER_REQUEST_TOO_FREQ);
+                        throw new ApplicationException(PmsCode.USER_REQUEST_TOO_FREQ);
                     } else {
                         cacheHandler.set(key, "123", sf.getRequestLimitPeriod());
                     }
@@ -121,7 +121,7 @@ public class ControllerHandler {
                             s = s + 1;
                             cacheHandler.set(key, s, 24 * 3600);
                         } else {
-                            throw new ApplicationException(ErrorCode.USER_FUNCTION_TOO_FREQ);
+                            throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
                         }
                     } else {
                         cacheHandler.set(key, 1, 24 * 3600);
@@ -131,11 +131,11 @@ public class ControllerHandler {
                     // 权限认证
                     Long roleId = loginUser.getRoleId();
                     if (roleId == null) {
-                        throw new ApplicationException(ErrorCode.USER_NOT_AUTH);
+                        throw new ApplicationException(PmsCode.USER_NOT_AUTH);
                     }
                     boolean b = systemConfigHandler.isRoleAuth(roleId, sf.getFuncId());
                     if (!b) {
-                        throw new ApplicationException(ErrorCode.USER_NOT_AUTH);
+                        throw new ApplicationException(PmsCode.USER_NOT_AUTH);
                     }
                 }
             }
@@ -193,7 +193,7 @@ public class ControllerHandler {
                                 if (userId != null) {
                                     boolean b = loginUser.userInFamily(userId);
                                     if (!b) {
-                                        throw new ApplicationException(ErrorCode.USER_NOT_IN_FAMILY);
+                                        throw new ApplicationException(PmsCode.USER_NOT_IN_FAMILY);
                                     }
                                 }
                             }
@@ -204,7 +204,7 @@ public class ControllerHandler {
                 if (arg instanceof PageSearch) {
                     PageSearch bu = (PageSearch) arg;
                     if (bu.getPageSize() > maxPageSize) {
-                        throw new ApplicationException(ErrorCode.PAGE_SIZE_OVER_MAX);
+                        throw new ApplicationException(PmsCode.PAGE_SIZE_OVER_MAX);
                     }
                 }
                 //时间查询类添加23:59:59

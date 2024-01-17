@@ -4,7 +4,7 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ProcedureProcessor;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
 import org.slf4j.Logger;
@@ -101,7 +101,7 @@ public class CallProcedureJob extends AbstractBaseJob {
 		rb.setMessage("参数格式为：1. 存储过程名称 ,2. 时间参数类型（0不需要,1只需要单天,2一天的时间段,3一个月的时间段）");
 		para = this.getTriggerParaBean();
 		if(para==null){
-			rb.setErrorCode(ScheduleErrorCode.TRIGGER_PARA_NULL);
+			rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
 		}
 		return rb;
 	}

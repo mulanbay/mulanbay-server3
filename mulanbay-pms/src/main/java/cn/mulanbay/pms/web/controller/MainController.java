@@ -4,7 +4,7 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
@@ -75,25 +75,25 @@ public class MainController extends BaseController {
         String verifyKey = CacheKey.getKey(CacheKey.CAPTCHA_CODE, login.getUuid());
         String serverCode = cacheHandler.getForString(verifyKey);
         if (StringUtil.isEmpty(serverCode) || !serverCode.equals(login.getCode())) {
-            return callbackErrorCode(ErrorCode.USER_VERIFY_CODE_ERROR);
+            return callbackErrorCode(PmsCode.USER_VERIFY_CODE_ERROR);
         }
         //错误次数验证
         String username = login.getUsername();
         String failKey = CacheKey.getKey(CacheKey.USER_LOGIN_FAIL, username);
         Integer fails = cacheHandler.get(failKey, Integer.class);
         if (fails != null && fails >= loginMaxFail) {
-            return callbackErrorCode(ErrorCode.USER_LOGIN_FAIL_MAX);
+            return callbackErrorCode(PmsCode.USER_LOGIN_FAIL_MAX);
         }
         //用户验证
         User user = authService.getUserByUsernameOrPhone(username);
         if (user == null) {
-            return callbackErrorCode(ErrorCode.USER_NOTFOUND);
+            return callbackErrorCode(PmsCode.USER_NOTFOUND);
         } else {
             if (user.getStatus() == UserStatus.DISABLE) {
-                return callbackErrorCode(ErrorCode.USER_IS_STOP);
+                return callbackErrorCode(PmsCode.USER_IS_STOP);
             }
             if (user.getExpireTime() != null && user.getExpireTime().before(new Date())) {
-                return callbackErrorCode(ErrorCode.USER_EXPIRED);
+                return callbackErrorCode(PmsCode.USER_EXPIRED);
             }
             // 检测密码
             String rp = user.getPassword();
@@ -105,7 +105,7 @@ public class MainController extends BaseController {
                     fails++;
                 }
                 cacheHandler.set(failKey, fails, 300);
-                return callbackErrorCode(ErrorCode.USER_PASSWORD_ERROR);
+                return callbackErrorCode(PmsCode.USER_PASSWORD_ERROR);
             }
             String token = doLogin(user, login.getFamilyMode());
             addLoginNotifyMsg(user.getUserId(), user.getUsername());
@@ -118,8 +118,8 @@ public class MainController extends BaseController {
     private void addLoginNotifyMsg(Long userId, String username) {
         try {
             // 发送系统通知
-            notifyHandler.addMessageToNotifier(PmsErrorCode.USER_LOGIN, "用户登录系统", "用户[" + username + "]登录系统", new Date(), null);
-            notifyHandler.addNotifyMessage(PmsErrorCode.USER_LOGIN, "您的账户正在登录系统", "您的账户[" + username + "]登录系统", userId, new Date());
+            notifyHandler.addMessageToNotifier(PmsCode.USER_LOGIN, "用户登录系统", "用户[" + username + "]登录系统", new Date(), null);
+            notifyHandler.addNotifyMessage(PmsCode.USER_LOGIN, "您的账户正在登录系统", "您的账户[" + username + "]登录系统", userId, new Date());
         } catch (Exception e) {
             logger.error("增加登录提醒日志异常", e);
         }

@@ -8,7 +8,7 @@ import cn.mulanbay.common.exception.ErrorCode;
  * @author fenghong
  * @create 2017-10-19 21:50
  **/
-public class ScheduleErrorCode extends ErrorCode {
+public class ScheduleCode extends ErrorCode {
 
     /**
      * 创建触发器异常

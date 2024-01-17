@@ -6,11 +6,11 @@ import cn.mulanbay.common.thread.CommandExecuteThread;
 import cn.mulanbay.common.util.CommandUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.schedule.ParaCheckResult;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
@@ -64,7 +64,7 @@ public class PmsCommandJob extends AbstractBaseJob {
             BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
             Command cc = baseService.getObject(Command.class, para.getCode(), "code");
             if (cc == null) {
-                throw new ApplicationException(ScheduleErrorCode.TRIGGER_PARA_FORMAT_ERROR, "找不到code=" + para.getCode() + "的命令配置");
+                throw new ApplicationException(ScheduleCode.TRIGGER_PARA_FORMAT_ERROR, "找不到code=" + para.getCode() + "的命令配置");
             } else {
                 return cc.getUrl();
             }
@@ -77,7 +77,7 @@ public class PmsCommandJob extends AbstractBaseJob {
         rb.setMessage("参数格式为：1. 命令,2.操作系统类型（-1由程序判断 0LINUX 1WINDOWS）,3. 是否异步（true|false）");
         para = this.getTriggerParaBean();
         if (para == null) {
-            rb.setErrorCode(ScheduleErrorCode.TRIGGER_PARA_NULL);
+            rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
         }
         return rb;
     }
@@ -90,7 +90,7 @@ public class PmsCommandJob extends AbstractBaseJob {
     public void notifyLog(String cmd) {
         //通知
         String title = "服务器执行了脚本命令";
-        notifyHandler.addMessageToNotifier(PmsErrorCode.CMD_EXECUTED, title,
+        notifyHandler.addMessageToNotifier(PmsCode.CMD_EXECUTED, title,
                 "服务器执行了脚本命令：" + cmd, null, null);
     }
 }

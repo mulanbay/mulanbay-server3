@@ -45,7 +45,7 @@ public class CommandUtil {
 			return sb.toString();
 		} catch (Exception e) {
 			logger.error("执行命令[" + cmd + "]异常：", e);
-			throw new ApplicationException(ErrorCode.EXECUTE_CMD_ERROR, "执行命令"
+			throw new ApplicationException(ErrorCode.CMD_EXEC_ERROR, "执行命令"
 					+ cmd + "异常：" + e.getMessage(), e);
 		} finally {
 			try {

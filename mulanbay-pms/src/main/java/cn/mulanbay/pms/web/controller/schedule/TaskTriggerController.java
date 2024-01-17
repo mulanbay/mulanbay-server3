@@ -19,7 +19,7 @@ import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.schedule.taskTrigger.TaskTriggerVo;
 import cn.mulanbay.pms.web.controller.BaseController;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.ScheduleInfo;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.TriggerStatus;
@@ -325,7 +325,7 @@ public class TaskTriggerController extends BaseController {
             TaskTrigger tt = pmsScheduleService.selectTaskTrigger(rsr.getTriggerId());
             boolean cr = pmsScheduleHandler.checkCanRun(tt);
             if (!cr) {
-                return callbackErrorCode(ScheduleErrorCode.TRIGGER_CANNOT_RUN_HERE);
+                return callbackErrorCode(ScheduleCode.TRIGGER_CANNOT_RUN_HERE);
             }
             b = pmsScheduleHandler.refreshTask(tt);
         } else {
@@ -334,7 +334,7 @@ public class TaskTriggerController extends BaseController {
         if (b) {
             return callback(null);
         } else {
-            return callbackErrorCode(ScheduleErrorCode.REFRESH_TRIGGER_FAIL);
+            return callbackErrorCode(ScheduleCode.REFRESH_TRIGGER_FAIL);
         }
     }
 
@@ -364,7 +364,7 @@ public class TaskTriggerController extends BaseController {
         TaskTrigger tt = pmsScheduleService.selectTaskTrigger(trf.getTriggerId());
         boolean cr = pmsScheduleHandler.checkCanRun(tt);
         if (!cr) {
-            return callbackErrorCode(ScheduleErrorCode.TRIGGER_CANNOT_RUN_HERE);
+            return callbackErrorCode(ScheduleCode.TRIGGER_CANNOT_RUN_HERE);
         }
         tt.setTotalCount(trf.getTotalCount());
         tt.setFailCount(trf.getFailCount());

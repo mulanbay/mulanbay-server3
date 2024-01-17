@@ -33,7 +33,7 @@ public class StringCoderUtil {
             }
         } catch (Exception e) {
             logger.error("解码异常", e);
-            throw new ApplicationException(PmsErrorCode.URL_DECODE_ERROR, e);
+            throw new ApplicationException(PmsCode.URL_DECODE_ERROR, e);
         }
     }
 

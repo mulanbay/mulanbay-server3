@@ -7,7 +7,7 @@ import cn.mulanbay.common.util.*;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.bean.wx.AccessToken;
 import cn.mulanbay.pms.handler.bean.wx.JsApiTicket;
 import cn.mulanbay.pms.handler.bean.wx.JsApiTicketAuth;
@@ -133,43 +133,48 @@ public class WXHandler extends BaseHandler {
      * @return
      */
     public boolean sendTemplateMessage(Long msgId,Long userId, String title, String content, Date time, LogLevel level, String url) {
-        WxAccount uw = this.geAccount(userId);
-        if (uw == null) {
-            logger.warn("无法获取到userId=" + userId + "的用户微信信息");
-            return false;
-        }
-        String color = null;
-        if (level == LogLevel.WARNING) {
-            color = "#FF6347";
-        } else if (level == LogLevel.ERROR) {
-            color = "#FF1493";
-        } else if (level == LogLevel.FATAL) {
-            color = "#9A32CD";
-        } else {
-            logger.debug("不需要设置模板消息的颜色属性");
-        }
-        MessageContent mc = new MessageContent();
-        mc.setTouser(uw.getOpenId());
-        mc.setTemplate_id(msgTemplateId);
-        mc.addMessageData("title", title, color);
-        mc.addMessageData("content", content);
-        if (time != null) {
-            mc.addMessageData("time", DateUtil.getFormatDate(time, DateUtil.Format24Datetime));
-        }
-        String mcUrl =null;
-        if(msgId!=null){
-            mcUrl = mobileBaseUrl+"/user/message/detail/"+msgId;
-        }else{
-            mcUrl = this.getFullUrl(url);
-        }
-        mc.setUrl(mcUrl);
-        HttpResult hr = this.sendTemplateMessage(mc);
-        //logger.debug("发送模板消息,mc:"+JsonUtil.beanToJson(mc));
-        //logger.debug("发送模板消息,hr:"+JsonUtil.beanToJson(hr));
-        if (hr.getStatusCode() == Constant.SC_OK) {
-            return true;
-        } else {
-            logger.error("发送模板消息异常，" + hr.getBody());
+        try {
+            WxAccount uw = this.geAccount(userId);
+            if (uw == null) {
+                logger.warn("无法获取到userId=" + userId + "的用户微信信息");
+                return false;
+            }
+            String color = null;
+            if (level == LogLevel.WARNING) {
+                color = "#FF6347";
+            } else if (level == LogLevel.ERROR) {
+                color = "#FF1493";
+            } else if (level == LogLevel.FATAL) {
+                color = "#9A32CD";
+            } else {
+                logger.debug("不需要设置模板消息的颜色属性");
+            }
+            MessageContent mc = new MessageContent();
+            mc.setTouser(uw.getOpenId());
+            mc.setTemplate_id(msgTemplateId);
+            mc.addMessageData("title", title, color);
+            mc.addMessageData("content", content);
+            if (time != null) {
+                mc.addMessageData("time", DateUtil.getFormatDate(time, DateUtil.Format24Datetime));
+            }
+            String mcUrl =null;
+            if(msgId!=null){
+                mcUrl = mobileBaseUrl+"/user/message/detail/"+msgId;
+            }else{
+                mcUrl = this.getFullUrl(url);
+            }
+            mc.setUrl(mcUrl);
+            HttpResult hr = this.sendTemplateMessage(mc);
+            //logger.debug("发送模板消息,mc:"+JsonUtil.beanToJson(mc));
+            //logger.debug("发送模板消息,hr:"+JsonUtil.beanToJson(hr));
+            if (hr.getStatusCode() == Constant.SC_OK) {
+                return true;
+            } else {
+                logger.error("发送模板消息失败，" + hr.getBody());
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("发送微信模板消息异常，",e);
             return false;
         }
     }
@@ -272,7 +277,7 @@ public class WXHandler extends BaseHandler {
             JsApiTicket at = (JsApiTicket) JsonUtil.jsonToBean(hr.getBody(), JsApiTicket.class);
             return at;
         } else {
-            throw new ApplicationException(PmsErrorCode.WXPAY_JSAPITOCKEN_ERROR);
+            throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
         }
     }
 
@@ -304,7 +309,7 @@ public class WXHandler extends BaseHandler {
             return jta;
         } catch (Exception e) {
             logger.error("getJsapiTicketAuth error", e);
-            throw new ApplicationException(PmsErrorCode.WXPAY_JSAPITOCKEN_ERROR);
+            throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
         }
     }
 
@@ -323,7 +328,7 @@ public class WXHandler extends BaseHandler {
             JsApiTicket jt = this.getJsapiTicket(accessToken);
             jsapiTicket = jt.getTicket();
             if (jt.getExpires_in() <= 0) {
-                throw new ApplicationException(PmsErrorCode.WXPAY_JSAPITOCKEN_ERROR);
+                throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
             }
             cacheHandler.set(key, jt.getTicket(), jt.getExpires_in() - 60);
         }
@@ -376,7 +381,7 @@ public class WXHandler extends BaseHandler {
             return new String(buf);
         } catch (Exception e) {
             logger.error("getSha1 异常", e);
-            throw new ApplicationException(PmsErrorCode.WXPAY_TOKEN_SHA_ERROR);
+            throw new ApplicationException(PmsCode.WXPAY_TOKEN_SHA_ERROR);
         }
     }
 

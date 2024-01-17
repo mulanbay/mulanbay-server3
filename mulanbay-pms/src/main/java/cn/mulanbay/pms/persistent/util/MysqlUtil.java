@@ -2,7 +2,7 @@ package cn.mulanbay.pms.persistent.util;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 
 import java.text.MessageFormat;
@@ -53,7 +53,7 @@ public class MysqlUtil {
                 //这里是除以100，不是60，比如：7.5代表的是7点50分，而不是7点半
                 return "(CAST(DATE_FORMAT(" + field + ",'%H') AS signed)+CAST(DATE_FORMAT(" + field + ",'%i') AS signed)/100)";
             default:
-                throw new ApplicationException(PmsErrorCode.UN_SUPPORT_DATE_GROUP_TYPE);
+                throw new ApplicationException(PmsCode.UN_SUPPORT_DATE_GROUP_TYPE);
         }
         return " " + method + "(" + field + ") ";
     }

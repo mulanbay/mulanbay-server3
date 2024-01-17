@@ -447,7 +447,7 @@ public abstract class AbstractBaseJob implements Job {
 				String content="调度器["+taskTrigger.getTriggerName()+"]调度在"+
 						DateUtil.getFormatDate(new Date(),DateUtil.Format24Datetime)+"执行异常,执行结果:"+jer.getName()+"，错误信息:"+
 						taskLog.getLogComment();
-				this.notifyMessage(taskTriggerId,ScheduleErrorCode.TRIGGER_EXEC_ERROR,title,content);
+				this.notifyMessage(taskTriggerId, ScheduleCode.TRIGGER_EXEC_ERROR,title,content);
 			}
 		}
 	}
@@ -566,7 +566,7 @@ public abstract class AbstractBaseJob implements Job {
 			}
 		} catch (Exception e) {
 			logger.error("检查调度是否需要执行异常",e);
-			this.notifyMessage(taskTrigger.getTriggerId(),ScheduleErrorCode.TRIGGER_EXEC_PARA_CHECK_ERROR,
+			this.notifyMessage(taskTrigger.getTriggerId(), ScheduleCode.TRIGGER_EXEC_PARA_CHECK_ERROR,
 					"检查调度是否需要执行异常",e.getMessage());
 			return false;
 		}
@@ -676,7 +676,7 @@ public abstract class AbstractBaseJob implements Job {
 			}
 		} catch (Exception e) {
 			logger.error("获取调度参数异常",e);
-			throw new ApplicationException(ScheduleErrorCode.JOB_PARA_PARSE_ERROR,
+			throw new ApplicationException(ScheduleCode.JOB_PARA_PARSE_ERROR,
 					"获取调度参数异常:"+e.getMessage());
 		}
 	}

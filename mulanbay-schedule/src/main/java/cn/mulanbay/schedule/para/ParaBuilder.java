@@ -1,7 +1,7 @@
 package cn.mulanbay.schedule.para;
 
 import cn.mulanbay.common.exception.PersistentException;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class ParaBuilder {
         } catch (Exception e) {
             logger.error("构建参数定义异常",e);
             throw new PersistentException(
-                    ScheduleErrorCode.JOB_PARA_BUILD_ERROR, "构建参数定义异常",e);
+                    ScheduleCode.JOB_PARA_BUILD_ERROR, "构建参数定义异常",e);
         }
     }
 }

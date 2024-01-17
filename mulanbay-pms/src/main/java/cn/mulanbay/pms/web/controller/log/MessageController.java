@@ -3,7 +3,7 @@ package cn.mulanbay.pms.web.controller.log;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.MessageSendHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.WXHandler;
@@ -155,7 +155,7 @@ public class MessageController extends BaseController {
                 return callback(b);
             } else {
                 if (code == 0) {
-                    code = PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE;
+                    code = PmsCode.MESSAGE_NOTIFY_COMMON_CODE;
                 }
                 notifyHandler.addNotifyMessage(code, um.getTitle(), um.getContent(),
                         user.getUserId(), um.getNotifyTime());

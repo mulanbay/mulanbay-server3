@@ -3,7 +3,7 @@ package cn.mulanbay.pms.util;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
@@ -247,7 +247,7 @@ public class ChartUtil {
         int year = DateUtil.getYear(sf.getStartDate());
         int endYear = DateUtil.getYear(sf.getEndDate());
         if (year != endYear) {
-            throw new ApplicationException(PmsErrorCode.START_YEAR_NOT_EQUALS_END_YEAR);
+            throw new ApplicationException(PmsCode.START_YEAR_NOT_EQUALS_END_YEAR);
         }
         chartData.setTitle(year + "年" + title);
         chartData.setYear(year);

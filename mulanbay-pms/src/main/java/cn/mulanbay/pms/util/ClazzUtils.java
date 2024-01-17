@@ -1,9 +1,8 @@
 package cn.mulanbay.pms.util;
 
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.User;
-import cn.mulanbay.pms.persistent.enums.AccountType;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,7 +167,7 @@ public class ClazzUtils {
             String fullName = packageName+"." + beanName;
             return Class.forName(fullName);
         } catch (Exception e) {
-            throw new ApplicationException(PmsErrorCode.CLASS_NOT_FOUND,e);
+            throw new ApplicationException(PmsCode.CLASS_NOT_FOUND,e);
         }
     }
 }

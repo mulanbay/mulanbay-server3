@@ -4,7 +4,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.SchedulePersistentProcessor;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
@@ -140,7 +140,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             }
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskTrigger.class,TriggerStatus.ENABLE,deployId);
         } catch (BaseException e) {
-            throw new PersistentException(ScheduleErrorCode.TRIGGER_GET_ACTIVE_LIST_ERROR,"获取有效的调度器失败！",e);
+            throw new PersistentException(ScheduleCode.TRIGGER_GET_ACTIVE_LIST_ERROR,"获取有效的调度器失败！",e);
         }
     }
 
@@ -157,7 +157,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             long n = this.getCount(hql,triggerId,bussDate);
             return n>0 ? true : false;
         } catch (BaseException e) {
-            throw new PersistentException(ScheduleErrorCode.TRIGGER_LOG_CHECK_ERROR,"检查调度日志是否存在失败！",e);
+            throw new PersistentException(ScheduleCode.TRIGGER_LOG_CHECK_ERROR,"检查调度日志是否存在失败！",e);
         }
     }
 
@@ -168,7 +168,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             long n = this.getCount(hql,scheduleIdentityId);
             return n>0 ? true : false;
         } catch (BaseException e) {
-            throw new PersistentException(ScheduleErrorCode.TRIGGER_LOG_CHECK_ERROR,"检查调度日志是否存在失败！",e);
+            throw new PersistentException(ScheduleCode.TRIGGER_LOG_CHECK_ERROR,"检查调度日志是否存在失败！",e);
         }
     }
 
@@ -197,7 +197,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskLog.class, JobExecuteResult.FAIL,
                     RedoType.AUTO_REDO,RedoType.ALL_REDO,startDate,endDate,deployId);
         } catch (BaseException e) {
-            throw new PersistentException(ScheduleErrorCode.TRIGGER_GET_AUTO_REDO_LOG_ERROR,"获取自动重做的调度任务失败！",e);
+            throw new PersistentException(ScheduleCode.TRIGGER_GET_AUTO_REDO_LOG_ERROR,"获取自动重做的调度任务失败！",e);
 
         }
     }
@@ -211,7 +211,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
         try {
             this.mergeEntity(taskServer);
         } catch (BaseException e) {
-            throw new PersistentException(ScheduleErrorCode.UPDATE_TASK_SERVER_ERROR,"更新调度服务器信息异常！",e);
+            throw new PersistentException(ScheduleCode.UPDATE_TASK_SERVER_ERROR,"更新调度服务器信息异常！",e);
         }
     }
 

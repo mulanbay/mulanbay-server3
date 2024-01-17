@@ -5,10 +5,9 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.SysLog;
 import cn.mulanbay.pms.persistent.dto.log.SysLogAnalyseStat;
-import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.persistent.service.LogService;
 import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.sysLog.SysLogAnalyseStatSH;
@@ -19,7 +18,6 @@ import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieDetailData;
 import cn.mulanbay.pms.web.bean.res.log.sysLog.OperBeanDetailVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -97,7 +95,7 @@ public class SysLogController extends BaseController {
         SysLog log = baseService.getObject(beanClass,id);
         String idValue = log.getIdValue();
         if (StringUtil.isEmpty(idValue)) {
-            throw new ApplicationException(PmsErrorCode.OPERATION_LOG_BEAN_ID_NULL);
+            throw new ApplicationException(PmsCode.OPERATION_LOG_BEAN_ID_NULL);
         } else {
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);

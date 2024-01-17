@@ -1,6 +1,6 @@
 package cn.mulanbay.business.handler.lock;
 
-import cn.mulanbay.business.BusinessErrorCode;
+import cn.mulanbay.business.BusinessCode;
 import cn.mulanbay.common.exception.ApplicationException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -49,7 +49,7 @@ public class DistributedLockAspectConfiguration {
         boolean lock = distributedLock.lock(key, redisLock.keepMills(), retryTimes, redisLock.sleepMills());
         if(!lock) {
             logger.error("get lock failed : " + key);
-            throw new ApplicationException(BusinessErrorCode.BUSINESS_LOCK_ERROR);
+            throw new ApplicationException(BusinessCode.BUSINESS_LOCK_ERROR);
         }
         //得到锁,执行方法，释放锁
         logger.debug("get lock success : " + key);
@@ -57,7 +57,7 @@ public class DistributedLockAspectConfiguration {
             return pjp.proceed();
         } catch (Exception e) {
             logger.error("execute locked method occured an exception", e);
-            throw new ApplicationException(BusinessErrorCode.BUSINESS_LOCK_EXECUTE_PROCEED_ERROR);
+            throw new ApplicationException(BusinessCode.BUSINESS_LOCK_EXECUTE_PROCEED_ERROR);
         } finally {
             boolean releaseResult = distributedLock.releaseLock(key);
             logger.debug("release lock : " + key + (releaseResult ? " success" : " failed"));

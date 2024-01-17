@@ -4,7 +4,7 @@ package cn.mulanbay.schedule.job;
 import cn.mulanbay.common.thread.CommandExecuteThread;
 import cn.mulanbay.common.util.CommandUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class CommandJob extends AbstractBaseJob {
 		rb.setMessage("参数格式为：1. 命令,2.操作系统类型（-1由程序判断 0LINUX 1WINDOWS）,3. 是否异步（true|false）");
 		para = this.getTriggerParaBean();
 		if(para==null){
-			rb.setErrorCode(ScheduleErrorCode.TRIGGER_PARA_NULL);
+			rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
 		}
 		return rb;
 	}

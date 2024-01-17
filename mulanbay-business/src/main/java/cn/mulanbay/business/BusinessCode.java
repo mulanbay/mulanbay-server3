@@ -9,7 +9,7 @@ import cn.mulanbay.common.exception.ErrorCode;
  * @author fenghong
  * @create 2017-10-19 21:50
  **/
-public class BusinessErrorCode extends ErrorCode {
+public class BusinessCode extends ErrorCode {
 
     //分布式锁琐失败
     public final static int BUSINESS_LOCK_ERROR = 20101;

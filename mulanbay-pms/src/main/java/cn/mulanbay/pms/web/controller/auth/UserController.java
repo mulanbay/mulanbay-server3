@@ -10,7 +10,7 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.ThreadPoolHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
@@ -294,7 +294,7 @@ public class UserController extends BaseController {
         User user = baseService.getObject(beanClass, eui.getUserId());
         String pp = tokenHandler.encodePassword(eui.getOldPassword());
         if (!user.getPassword().equals(pp)) {
-            return callbackErrorCode(PmsErrorCode.USER_PASSWORD_ERROR);
+            return callbackErrorCode(PmsCode.USER_PASSWORD_ERROR);
         }
         String newPP = tokenHandler.encodePassword(eui.getNewPassword());
         user.setPassword(newPP);
@@ -313,13 +313,13 @@ public class UserController extends BaseController {
         User user = baseService.getObject(beanClass, eui.getUserId());
         String pp = tokenHandler.encodePassword(eui.getPassword());
         if (!user.getPassword().equals(pp)) {
-            return callbackErrorCode(PmsErrorCode.USER_PASSWORD_ERROR);
+            return callbackErrorCode(PmsCode.USER_PASSWORD_ERROR);
         }
         if (eui.getSecAuthType() == AuthType.SMS && StringUtil.isEmpty(eui.getPhone())) {
-            return callbackErrorCode(PmsErrorCode.USER_SEC_AUTH_PHONE_NULL_);
+            return callbackErrorCode(PmsCode.USER_SEC_AUTH_PHONE_NULL_);
         }
         if (eui.getSecAuthType() == AuthType.EMAIL && StringUtil.isEmpty(eui.getEmail())) {
-            return callbackErrorCode(PmsErrorCode.USER_SEC_AUTH_EMAIL_NULL_);
+            return callbackErrorCode(PmsCode.USER_SEC_AUTH_EMAIL_NULL_);
         }
         UserSet us = baseService.getObject(UserSet.class,eui.getUserId());
         user.setUsername(eui.getUsername());

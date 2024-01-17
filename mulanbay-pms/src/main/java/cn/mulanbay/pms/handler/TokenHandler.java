@@ -7,6 +7,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.Md5Util;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.FamilyUser;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserRole;
@@ -171,7 +172,7 @@ public class TokenHandler extends BaseHandler {
         if (FamilyMode.F == user.getLastFamilyMode()) {
             FamilyUser fu = familyService.getAdminFamilyUser(user.getUserId());
             if (fu == null) {
-                throw new ApplicationException(ErrorCode.USER_LOGIN_FAMILY_FAIL);
+                throw new ApplicationException(PmsCode.USER_LOGIN_FAMILY_FAIL);
             } else {
                 //设置组成员
                 lu.setFamilyMode(FamilyMode.F);

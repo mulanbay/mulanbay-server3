@@ -6,7 +6,7 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.SysCode;
@@ -109,7 +109,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         SysCode ec = systemConfigHandler.getSysCode(code);
         if (ec == null) {
             logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置",
-                    PmsErrorCode.ERROR_CODE_NOT_DEFINED);
+                    PmsCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
         this.updateSysCodeCount(code, 1);
@@ -169,8 +169,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             SysCode ec = systemConfigHandler.getSysCode(code);
             if (ec == null) {
                 logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
-                        PmsErrorCode.ERROR_CODE_NOT_DEFINED);
-                ec = systemConfigHandler.getSysCode(PmsErrorCode.MESSAGE_NOTIFY_COMMON_CODE);
+                        PmsCode.ERROR_CODE_NOT_DEFINED);
+                ec = systemConfigHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
             this.updateSysCodeCount(code, 1);
             //获取发送时间

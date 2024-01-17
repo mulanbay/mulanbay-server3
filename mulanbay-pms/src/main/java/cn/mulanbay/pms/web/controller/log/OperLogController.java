@@ -7,7 +7,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.OperLog;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.User;
@@ -15,7 +15,6 @@ import cn.mulanbay.pms.persistent.dto.log.OperLogDateStat;
 import cn.mulanbay.pms.persistent.dto.log.OperLogStat;
 import cn.mulanbay.pms.persistent.dto.log.OperLogTreeStat;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.persistent.enums.LogCompareType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.LogService;
@@ -141,7 +140,7 @@ public class OperLogController extends BaseController {
         OperLog br = baseService.getObject(beanClass, id);
         String idValue = br.getIdValue();
         if (StringUtil.isEmpty(idValue)) {
-            throw new ApplicationException(PmsErrorCode.OPERATION_LOG_BEAN_ID_NULL);
+            throw new ApplicationException(PmsCode.OPERATION_LOG_BEAN_ID_NULL);
         } else {
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);
@@ -197,7 +196,7 @@ public class OperLogController extends BaseController {
         OperLogCompareVo vo = new OperLogCompareVo();
         SysFunc sf = logService.getEditSysFunc(gr.getBeanName());
         if (sf == null) {
-            throw new ApplicationException(PmsErrorCode.SYSTEM_FUNCTION_NOT_DEFINE, gr.getBeanName() + "修改类功能点没有定义");
+            throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_NOT_DEFINE, gr.getBeanName() + "修改类功能点没有定义");
         }
         //获取业务表最新的数据
         Serializable bussId = formatIdValue(sf.getIdFieldType(), gr.getId());
@@ -262,7 +261,7 @@ public class OperLogController extends BaseController {
         OperLog currentCompareLog = baseService.getObject(beanClass, currentCompareId);
         if (StringUtil.isEmpty(currentCompareLog.getIdValue())) {
             //idValue无法比较
-            throw new ApplicationException(PmsErrorCode.OPERATION_LOG_COMPARE_ID_VALUE_NULL);
+            throw new ApplicationException(PmsCode.OPERATION_LOG_COMPARE_ID_VALUE_NULL);
         }
         OperLog nextCompareLog = logService.getNearestCompareLog(currentCompareLog, compareType);
         response.setCompareData(nextCompareLog);
@@ -282,7 +281,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(ErrorCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOTFOUND);
             }
             sf.setUserId(user.getUserId());
         }
@@ -320,7 +319,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(ErrorCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOTFOUND);
             }
             sf.setUserId(user.getUserId());
         }
@@ -348,7 +347,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(ErrorCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOTFOUND);
             }
             sf.setUserId(user.getUserId());
         }

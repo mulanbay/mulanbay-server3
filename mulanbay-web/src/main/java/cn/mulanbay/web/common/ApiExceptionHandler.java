@@ -181,8 +181,8 @@ public class ApiExceptionHandler {
 	public ResultBean handleExceptionError(Exception ae,HttpServletRequest request) {
 		logger.error("handleExceptionError,class:"+ae.getClass()+",Exception:"+ae.getMessage(),ae);
 		ResultBean rb = new ResultBean();
-		rb.setCode(ErrorCode.UNKHOWM_ERROR);
-		ValidateError ve = messageHandler.getErrorCodeInfo(ErrorCode.UNKHOWM_ERROR);
+		rb.setCode(ErrorCode.UNKNOWN_ERROR);
+		ValidateError ve = messageHandler.getErrorCodeInfo(ErrorCode.UNKNOWN_ERROR);
 		rb.setMessage(ve.getErrorInfo()+":"+ae.getMessage());
 		if(doSystemLog()){
 			this.addSystemLog(request,ae.getClass(),"系统异常",rb.getMessage(),rb.getCode());

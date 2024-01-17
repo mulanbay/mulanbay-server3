@@ -7,7 +7,7 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.PriceUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.PmsScheduleHandler;
 import cn.mulanbay.pms.server.Cpu;
@@ -49,7 +49,7 @@ public class ServerMonitorJob extends AbstractBaseJob {
         if (diskRate >= para.getDiskMaxRate()) {
             String content = "磁盘[" + di.getPath() + "]报警，使用率达到" + PriceUtil.changeToString(2, diskRate * 100) +
                     "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getDiskMaxRate() * 100) + "%";
-            notifyHandler.addMessageToNotifier(PmsErrorCode.DISK_ALERT, "磁盘报警", content, new Date(), null);
+            notifyHandler.addMessageToNotifier(PmsCode.DISK_ALERT, "磁盘报警", content, new Date(), null);
             doAlertAutoJobs(para.getDiskAlertSelfJobs());
             n++;
         }
@@ -58,7 +58,7 @@ public class ServerMonitorJob extends AbstractBaseJob {
         if (memoryRate >= para.getMemoryMaxRate()) {
             String content = "内存报警，使用率达到" + PriceUtil.changeToString(2, memoryRate * 100) +
                     "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getMemoryMaxRate() * 100) + "%";
-            notifyHandler.addMessageToNotifier(PmsErrorCode.MEMORY_ALERT, "内存报警", content, new Date(), null);
+            notifyHandler.addMessageToNotifier(PmsCode.MEMORY_ALERT, "内存报警", content, new Date(), null);
             doAlertAutoJobs(para.getMemoryAlertSelfJobs());
             n++;
         }
@@ -67,7 +67,7 @@ public class ServerMonitorJob extends AbstractBaseJob {
         if (cpuRate >= para.getCpuMaxRate()) {
             String content = "CPU报警，使用率达到" + PriceUtil.changeToString(2, cpuRate * 100) +
                     "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getCpuMaxRate() * 100) + "%";
-            notifyHandler.addMessageToNotifier(PmsErrorCode.CPU_ALERT, "CPU报警", content, new Date(), null);
+            notifyHandler.addMessageToNotifier(PmsCode.CPU_ALERT, "CPU报警", content, new Date(), null);
             doAlertAutoJobs(para.getCpuAlertSelfJobs());
             n++;
         }
@@ -108,7 +108,7 @@ public class ServerMonitorJob extends AbstractBaseJob {
             try {
                 pmsScheduleHandler.manualStart(Long.valueOf(s), DateUtil.getDate(0), true, null, null);
                 String content = "系统报警后执行自动执行任务,任务编号:" + s;
-                notifyHandler.addMessageToNotifier(PmsErrorCode.SYSTEM_ALERT_AUTO_JOB, "系统报警后执行自动执行任务", content, new Date(), "系统报警后执行自动执行任务");
+                notifyHandler.addMessageToNotifier(PmsCode.SYSTEM_ALERT_AUTO_JOB, "系统报警后执行自动执行任务", content, new Date(), "系统报警后执行自动执行任务");
             } catch (Exception e) {
                 logger.error("系统报警后执行自动执行任务,id=" + s + "异常", e);
             }

@@ -4,7 +4,7 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.FileUtil;
 import cn.mulanbay.common.util.ZipUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
 import org.slf4j.Logger;
@@ -105,12 +105,12 @@ public class FileClearJob extends AbstractBaseJob {
 				"5. 备份时是否要打包（true/false）,6. 备份文件时间格式");
 		para = this.getTriggerParaBean();
 		if(para==null){
-			rb.setErrorCode(ScheduleErrorCode.TRIGGER_PARA_NULL);
+			rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
 			return rb;
 		}else{
 			File sf = new File(para.getSourcePath());
 			if (!sf.exists()) {
-				rb.setErrorCode(ScheduleErrorCode.FILE_PATH_NOT_EXIT);
+				rb.setErrorCode(ScheduleCode.FILE_PATH_NOT_EXIT);
 				return rb;
 			}
 		}

@@ -8,7 +8,7 @@ import cn.mulanbay.common.thread.CommandExecuteThread;
 import cn.mulanbay.common.util.CommandUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.CommandService;
@@ -60,7 +60,7 @@ public class CommandHandler extends BaseHandler {
     public CommonResult handleCmd(Command cc, boolean sync, Long userId) {
         CommonResult cr = new CommonResult();
         if (cc.getStatus() == CommonStatus.DISABLE) {
-            cr.setCode(PmsErrorCode.CMD_DISABLED);
+            cr.setCode(PmsCode.CMD_DISABLED);
             return cr;
         }
         String key = CacheKey.getKey(CacheKey.CMD_SEND_LOCK, cc.getId().toString());

@@ -4,7 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.lock.RedisDistributedLock;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserSet;
@@ -96,7 +96,7 @@ public class MessageSendHandler extends BaseHandler {
                 if (!b) {
                     logger.warn("消息ID=" + message.getMsgId() + "正在被发送，无法重复发送");
                     logHandler.addSysLog(LogLevel.WARNING, "消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
-                            PmsErrorCode.MESSAGE_DUPLICATE_SEND);
+                            PmsCode.MESSAGE_DUPLICATE_SEND);
                     return true;
                 }
             }

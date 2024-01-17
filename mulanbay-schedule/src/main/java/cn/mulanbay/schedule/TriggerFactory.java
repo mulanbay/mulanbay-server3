@@ -144,7 +144,7 @@ public class TriggerFactory {
 		} catch (Exception e) {
 			logger.error(ts.getTriggerName() + "[" + ts.getTriggerId()
 					+ "]生成触发器异常", e);
-			throw new ApplicationException(ScheduleErrorCode.TRIGGER_CREATE_ERROR,ts.getTriggerName() + "[" + ts.getTriggerId()
+			throw new ApplicationException(ScheduleCode.TRIGGER_CREATE_ERROR,ts.getTriggerName() + "[" + ts.getTriggerId()
 					+ "]生成触发器异常",e);
 		}
 		return trigger;

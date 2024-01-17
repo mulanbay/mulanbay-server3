@@ -124,7 +124,7 @@ public class ScheduleHandler extends BaseHandler {
 
             //判断分布式支持
             if(quartzSource.getDistriable()&&quartzSource.getScheduleLocker()==null){
-                throw new ApplicationException(ScheduleErrorCode.DISTRIBUTE_LOCK_NOT_FOUND);
+                throw new ApplicationException(ScheduleCode.DISTRIBUTE_LOCK_NOT_FOUND);
             }
             quartzServer = new QuartzServer();
             quartzServer.setQuartzSource(quartzSource);
@@ -241,11 +241,11 @@ public class ScheduleHandler extends BaseHandler {
      */
     public void manualRedo(long logId,boolean isSync) {
         if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleErrorCode.SCHEDULE_NOT_ENABLED);
+            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
         TaskLog taskLog=quartzSource.getSchedulePersistentProcessor().selectTaskLog(logId);
         if(taskLog.getTaskTrigger().getRedoType()== RedoType.CANNOT){
-            throw new ApplicationException(ScheduleErrorCode.TRIGGER_CANNOT_REDO);
+            throw new ApplicationException(ScheduleCode.TRIGGER_CANNOT_REDO);
         }
         startRedoJob(taskLog,isSync,null);
     }
@@ -259,13 +259,13 @@ public class ScheduleHandler extends BaseHandler {
      */
     public void manualStart(long triggerId, Date bussDay, boolean isSync, Object extraPara, String remark) {
         if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleErrorCode.SCHEDULE_NOT_ENABLED);
+            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
         TaskTrigger taskTrigger = quartzSource.getSchedulePersistentProcessor().selectTaskTrigger(triggerId);
         if(taskTrigger.getCheckUnique()){
             boolean b =quartzSource.getSchedulePersistentProcessor().isTaskLogExit(triggerId,bussDay);
             if(b){
-                throw new ApplicationException(ScheduleErrorCode.SCHEDULE_ALREADY_EXECED);
+                throw new ApplicationException(ScheduleCode.SCHEDULE_ALREADY_EXECED);
             }
         }
         TaskLog taskLog = new TaskLog();
@@ -406,7 +406,7 @@ public class ScheduleHandler extends BaseHandler {
      */
     public void setScheduleStatus(boolean b){
         if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleErrorCode.SCHEDULE_NOT_ENABLED);
+            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
         quartzServer.setScheduleStatus(b);
     }

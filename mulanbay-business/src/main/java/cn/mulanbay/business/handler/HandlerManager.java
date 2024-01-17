@@ -1,6 +1,6 @@
 package cn.mulanbay.business.handler;
 
-import cn.mulanbay.business.BusinessErrorCode;
+import cn.mulanbay.business.BusinessCode;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.StringUtil;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class HandlerManager {
 			Class clz = Class.forName(className);
 			return this.getHandler(clz);
 		} catch (Exception e) {
-			throw new ApplicationException(BusinessErrorCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
+			throw new ApplicationException(BusinessCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
 		}
 	}
 
@@ -102,7 +102,7 @@ public class HandlerManager {
 			}
 			return list;
 		} catch (ClassNotFoundException e) {
-			throw new ApplicationException(BusinessErrorCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
+			throw new ApplicationException(BusinessCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
 		}
 	}
 
@@ -120,7 +120,7 @@ public class HandlerManager {
 			m.invoke(handler);
 			return true;
 		} catch (ClassNotFoundException e) {
-			throw new ApplicationException(BusinessErrorCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
+			throw new ApplicationException(BusinessCode.CLASS_NAME_NOT_FOUND,"未找到相关类");
 		} catch (Exception e) {
 			logger.error("invokeMethod error",e);
 			return false;

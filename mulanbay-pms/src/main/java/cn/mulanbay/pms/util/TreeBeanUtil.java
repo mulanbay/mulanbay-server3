@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.util;
 
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.pms.common.PmsErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.enums.AccountType;
 import cn.mulanbay.pms.persistent.enums.EnumIdType;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
@@ -58,7 +58,7 @@ public class TreeBeanUtil {
             }
             return TreeBeanUtil.addRoot(list, needRoot);
         } catch (Exception e) {
-            throw new ApplicationException(PmsErrorCode.CREATE_TREE_ERROR, e);
+            throw new ApplicationException(PmsCode.CREATE_TREE_ERROR, e);
         }
     }
 

@@ -3,7 +3,7 @@ package cn.mulanbay.schedule.job;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
-import cn.mulanbay.schedule.ScheduleErrorCode;
+import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.enums.JobExecuteResult;
@@ -66,7 +66,7 @@ public class AutoRedoJob extends AbstractBaseJob {
         rb.setMessage("");
         para = this.getTriggerParaBean();
         if(para==null){
-            rb.setErrorCode(ScheduleErrorCode.TRIGGER_PARA_NULL);
+            rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
         }
         return rb;
     }
