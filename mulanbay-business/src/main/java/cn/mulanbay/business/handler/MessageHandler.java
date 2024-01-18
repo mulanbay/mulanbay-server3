@@ -6,12 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -41,40 +36,8 @@ public class MessageHandler extends BaseHandler {
 	public ValidateError getErrorInfo(String key) {
 		ValidateError ve = new ValidateError();
 		ve.setField(key);
-		ve.setErrorInfo(key);
+		ve.setErrorInfo(this.getConfigMessage(key));
 		return ve;
-	}
-
-	/**
-	 * 获取错误信息
-	 *
-	 * @param errors
-	 * @return
-	 */
-	public List<ValidateError> getErrorInfo(Errors errors) {
-		List<ValidateError> es = new ArrayList<ValidateError>();
-		for (ObjectError oe : errors.getAllErrors()) {
-			String key = oe.getDefaultMessage();
-			ValidateError ve = getErrorInfo(key);
-			es.add(ve);
-		}
-		return es;
-	}
-
-	/**
-	 * 获取错误信息
-	 *
-	 * @param errors
-	 * @return
-	 */
-	public List<ValidateError> getErrorInfo(List<FieldError> errors) {
-		List<ValidateError> es = new ArrayList<ValidateError>();
-		for (FieldError fe : errors) {
-			String key = fe.getDefaultMessage();
-			ValidateError ve = getErrorInfo(key);
-			es.add(ve);
-		}
-		return es;
 	}
 
 	/**
@@ -95,8 +58,8 @@ public class MessageHandler extends BaseHandler {
 		return null;
 	}
 
-	public ValidateError getErrorCodeInfo(int code) {
-		return getErrorInfo("errorcode." + code);
+	public ValidateError getCodeInfo(int code) {
+		return getErrorInfo("code." + code);
 	}
 
 }

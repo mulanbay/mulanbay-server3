@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.filter;
 
-import cn.mulanbay.pms.web.interceptor.RequestInterceptor;
 import cn.mulanbay.web.filter.MultipleRequestWrapper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -32,7 +31,14 @@ public class ChannelFilter implements Filter {
         logger.debug("in filter");
         ServletRequest requestWrapper = null;
         if(servletRequest instanceof HttpServletRequest) {
-            requestWrapper = new MultipleRequestWrapper((HttpServletRequest) servletRequest);
+            HttpServletRequest hsr = (HttpServletRequest) servletRequest;
+            String method = hsr.getMethod();
+            String contentType = hsr.getContentType();
+            if(method.equalsIgnoreCase("GET")||(contentType!=null&&contentType.startsWith("multipart/form-data"))){
+                filterChain.doFilter(servletRequest, servletResponse);
+                return;
+            }
+            requestWrapper = new MultipleRequestWrapper(hsr);
         }
         if(requestWrapper == null) {
             filterChain.doFilter(servletRequest, servletResponse);

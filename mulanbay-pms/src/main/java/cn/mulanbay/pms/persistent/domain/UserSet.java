@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -200,7 +201,7 @@ public class UserSet implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(userId);
     }
 
 }

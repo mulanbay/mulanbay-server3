@@ -2,6 +2,8 @@ package cn.mulanbay.pms.persistent.domain;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
@@ -76,6 +78,6 @@ public class UserRole implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(id);
     }
 }

@@ -7,14 +7,14 @@ import java.util.Objects;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
- * 角色功能点
+ * 快捷菜单
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "role_function")
-public class RoleFunction implements java.io.Serializable {
+@Table(name = "fast_menu")
+public class FastMenu implements java.io.Serializable {
 
     // Fields
 
@@ -28,22 +28,25 @@ public class RoleFunction implements java.io.Serializable {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "role_id")
-    private Long roleId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @Column(name = "function_id")
-    private Long functionId;
+    @Column(name = "menu_id", nullable = false)
+    private Long menuId;
+
+    @Column(name = "order_index", nullable = false)
+    private Short orderIndex;
 
     // Constructors
 
     /**
      * default constructor
      */
-    public RoleFunction() {
+    public FastMenu() {
     }
 
-    // Property accessors
 
+    // Property accessors
     public Long getId() {
         return this.id;
     }
@@ -52,25 +55,32 @@ public class RoleFunction implements java.io.Serializable {
         this.id = id;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Long getFunctionId() {
-        return functionId;
+    public Long getMenuId() {
+        return menuId;
     }
 
-    public void setFunctionId(Long functionId) {
-        this.functionId = functionId;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
+    public Short getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(Short orderIndex) {
+        this.orderIndex = orderIndex;
+    }
     @Override
     public boolean equals(Object other) {
-        if (other instanceof RoleFunction bean) {
+        if (other instanceof FastMenu bean) {
             return bean.getId().equals(this.getId());
         }else {
             return false;

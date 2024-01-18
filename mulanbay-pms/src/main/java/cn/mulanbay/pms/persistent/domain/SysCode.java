@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 错误代码定义
@@ -244,6 +245,6 @@ public class SysCode implements Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(code);
     }
 }

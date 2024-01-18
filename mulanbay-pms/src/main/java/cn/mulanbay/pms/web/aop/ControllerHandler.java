@@ -69,14 +69,14 @@ public class ControllerHandler {
     /**
      * controller包的子包里面任何方法
      */
-    @Pointcut("execution(public * cn.mulanbay.pms.web.controller.*.*(..))")
+    @Pointcut("execution(public * cn.mulanbay.pms.web.controller..*.*(..))")
     public void setUserInfo() {
     }
 
     /**
      * controller包的子包里面任何方法
      */
-    @Pointcut("execution(public * cn.mulanbay.pms.web.controller.*.*(..))")
+    @Pointcut("execution(public * cn.mulanbay.pms.web.controller..*.*(..))")
     public void doLog() {
     }
 

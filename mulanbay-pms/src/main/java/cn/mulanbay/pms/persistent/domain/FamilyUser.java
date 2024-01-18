@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -143,6 +144,6 @@ public class FamilyUser implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(id);
     }
 }

@@ -92,7 +92,7 @@ public class BaseController {
     protected ResultBean callbackErrorCode(int errorCode) {
         ResultBean rb = new ResultBean();
         rb.setCode(errorCode);
-        ValidateError ve = messageHandler.getErrorCodeInfo(errorCode);
+        ValidateError ve = messageHandler.getCodeInfo(errorCode);
         rb.setMessage(ve.getErrorInfo());
         return rb;
     }

@@ -59,7 +59,7 @@ public class ApiExceptionHandler {
 
 		ResultBean rb = new ResultBean();
 		rb.setCode(ae.getErrorCode());
-		ValidateError ve = messageHandler.getErrorCodeInfo(ae.getErrorCode());
+		ValidateError ve = messageHandler.getCodeInfo(ae.getErrorCode());
 		rb.setMessage(ve.getErrorInfo()+",错误详情:"+ae.getMessage());
 		if(doSystemLog()){
 			this.addSystemLog(request,ae.getClass(),ve.getErrorInfo(),rb.getMessage(),ae.getErrorCode());
@@ -79,29 +79,14 @@ public class ApiExceptionHandler {
 	public ResultBean handleBindExceptionError(BindException be,HttpServletRequest request) {
 		logger.error("handleBindExceptionError",be);
 		ResultBean rb = new ResultBean();
-		Errors errors = be.getBindingResult();
-		ValidateError ve = this.getValidateError(errors);
+		ObjectError oe = be.getBindingResult().getAllErrors().get(0);
 		//默认选择第一个
-		//rb.setCode(ve.getCode());
-		rb.setCode(-3);
-		rb.setMessage(ve.getErrorInfo());
-		//rb.setData(es);
+		rb.setCode(ErrorCode.FORM_VALID_ERROR);
+		rb.setMessage( oe.getDefaultMessage());
 		if(doSystemLog()){
-			this.addSystemLog(request,be.getClass(),"请求参数验证异常",rb.getMessage()+",代码:("+ve.getField()+")",rb.getCode());
+			this.addSystemLog(request,be.getClass(),"请求参数验证异常",rb.getMessage()+",代码:("+oe.getCode()+")",rb.getCode());
 		}
 		return rb;
-	}
-
-	/**
-	 * 获取验证的错误信息，默认是第一个
-	 * @param errors
-	 * @return
-	 */
-	private ValidateError getValidateError(Errors errors){
-		ObjectError oe =errors.getAllErrors().get(0);
-		String key = oe.getDefaultMessage();
-		ValidateError ve = messageHandler.getErrorInfo(key);
-		return ve;
 	}
 
 	/**
@@ -117,14 +102,14 @@ public class ApiExceptionHandler {
 		logger.error("MethodArgumentNotValidException",mae);
 		ResultBean rb = new ResultBean();
 		List<FieldError> errors = mae.getBindingResult().getFieldErrors();
-		List<ValidateError> es = messageHandler.getErrorInfo(errors);
+		FieldError fe = errors.get(0);
 		//默认选择第一个
 		rb.setCode(ErrorCode.FORM_VALID_ERROR);
-		rb.setMessage(es.get(0).getErrorInfo());
+		rb.setMessage(fe.getDefaultMessage());
 		//rb.setData(es);
 		if(doSystemLog()){
 			this.addSystemLog(request,mae.getClass(),
-					"请求参数验证异常",rb.getMessage()+",代码:("+es.get(0).getField()+")",rb.getCode());
+					"请求参数验证异常",rb.getMessage()+",信息:("+fe.getDefaultMessage()+")",rb.getCode());
 		}
 		return rb;
 	}
@@ -182,7 +167,7 @@ public class ApiExceptionHandler {
 		logger.error("handleExceptionError,class:"+ae.getClass()+",Exception:"+ae.getMessage(),ae);
 		ResultBean rb = new ResultBean();
 		rb.setCode(ErrorCode.UNKNOWN_ERROR);
-		ValidateError ve = messageHandler.getErrorCodeInfo(ErrorCode.UNKNOWN_ERROR);
+		ValidateError ve = messageHandler.getCodeInfo(ErrorCode.UNKNOWN_ERROR);
 		rb.setMessage(ve.getErrorInfo()+":"+ae.getMessage());
 		if(doSystemLog()){
 			this.addSystemLog(request,ae.getClass(),"系统异常",rb.getMessage(),rb.getCode());

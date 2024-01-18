@@ -11,6 +11,7 @@ import org.hibernate.annotations.NotFoundAction;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -618,6 +619,6 @@ public class SysFunc implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hashCode(funcId);
     }
 }

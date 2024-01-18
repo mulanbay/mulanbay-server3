@@ -59,7 +59,7 @@ public class BaseInterceptor implements HandlerInterceptor {
     void handleFail(HttpServletRequest request, HttpServletResponse response,
                     String redirectPath, int code, String failInfo, String reqUrl) {
         try {
-            ValidateError ve = messageHandler.getErrorCodeInfo(code);
+            ValidateError ve = messageHandler.getCodeInfo(code);
             String errorInfo = "";
             if (ve != null) {
                 errorInfo = ve.getErrorInfo();

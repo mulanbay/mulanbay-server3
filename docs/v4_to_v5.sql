@@ -118,3 +118,6 @@ ALTER TABLE `database_clean`  RENAME TO  `db_clean` ;
 
 ALTER TABLE `db_clean`
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `fast_menu`
+    CHANGE COLUMN `function_id` `menu_id` BIGINT NOT NULL ;
