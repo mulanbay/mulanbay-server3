@@ -121,3 +121,29 @@ ALTER TABLE `db_clean`
 
 ALTER TABLE `fast_menu`
     CHANGE COLUMN `function_id` `menu_id` BIGINT NOT NULL ;
+
+ALTER TABLE `buy_type` RENAME TO  `consume_source` ;
+
+ALTER TABLE `consume_source`
+ADD COLUMN `remark` VARCHAR(200) NULL AFTER `order_index`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `source_id` BIGINT(20) NOT NULL COMMENT 'ID' ,
+CHANGE COLUMN `name` `source_name` VARCHAR(32) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ;
+
+ALTER TABLE `consume_source`
+    CHANGE COLUMN `source_id` `source_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ;
+
+ALTER TABLE `goods_type`
+    ADD COLUMN `remark` VARCHAR(200) NULL AFTER `tags`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `type_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `name` `type_name` VARCHAR(32) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ;
+
+ALTER TABLE `goods_type`
+    CHANGE COLUMN `statable` `stat` BIT(1) NULL DEFAULT NULL ;
+
+
+
+

@@ -22,6 +22,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Table(name = "command")
 public class Command implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", unique = true, nullable = false)

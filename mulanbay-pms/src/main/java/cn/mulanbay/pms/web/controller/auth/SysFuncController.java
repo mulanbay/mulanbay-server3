@@ -69,9 +69,7 @@ public class SysFuncController extends BaseController {
                 treeBean.setPid(sfb.getPid());
                 treeBeans.add(treeBean);
             }
-            TreeBean root = new TreeBean();
-            root.setId(0L);
-            root.setText("根");
+            TreeBean root = TreeBean.creatRoot();
             TreeBean result = TreeBeanUtil.changToTree(root, treeBeans);
             List<TreeBean> resultList = new ArrayList<TreeBean>();
             resultList.add(result);

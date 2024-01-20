@@ -31,6 +31,16 @@ public class TreeBean {
 
     List<TreeBean> children;
 
+    /**
+     * 创建根节点
+     * @return
+     */
+    public static TreeBean creatRoot(){
+        TreeBean root = new TreeBean();
+        root.setId(0L);
+        root.setText("根");
+        return root;
+    }
     public Object getId() {
         return id;
     }
