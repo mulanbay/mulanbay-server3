@@ -15,6 +15,7 @@
         <module>mulanbay-schedule</module>
         <module>mulanbay-web</module>
         <module>mulanbay-pms</module>
+        <module>mulanbay-ai</module>
     </modules>
 
     <properties>

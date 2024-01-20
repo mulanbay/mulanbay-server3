@@ -145,5 +145,67 @@ ALTER TABLE `goods_type`
     CHANGE COLUMN `statable` `stat` BIT(1) NULL DEFAULT NULL ;
 
 
+ALTER TABLE `buy_record`  RENAME TO `consume` ;
+
+#更新商品类型
+update consume set goods_type_id = sub_goods_type_id where sub_goods_type_id is not null and id>0;
+
+CREATE TABLE `consume_refer` (
+`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+`refer_id` BIGINT(20) NOT NULL,
+`type` SMALLINT(5) NOT NULL,
+`remark` VARCHAR(200) NULL,
+`created_time` DATETIME NOT NULL,
+`modify_time` DATETIME NULL,
+PRIMARY KEY (`id`));
+
+ALTER TABLE `consume_refer`
+    ADD COLUMN `consume_id` BIGINT(20) NOT NULL AFTER `id`;
+
+#转移看病记录数据到关联表
+insert into consume_refer(consume_id,type,refer_id,created_time) select consume_id,0,treat_record_id,now() from consume where treat_record_id is not null;
+
+ALTER TABLE `consume`
+DROP COLUMN `treat_record_id`,
+DROP COLUMN `status`,
+CHANGE COLUMN `user_id` `user_id` BIGINT NOT NULL AFTER `goods_type_id`,
+CHANGE COLUMN `sku_info` `sku_info` VARCHAR(100) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL AFTER `shop_name`,
+CHANGE COLUMN `secondhand` `secondhand` BIT(1) NOT NULL AFTER `brand`,
+CHANGE COLUMN `id` `consume_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `buy_type_id` `source_id` BIGINT(20) NOT NULL ,
+CHANGE COLUMN `goods_type_id` `goods_type_id` BIGINT(20) NOT NULL ,
+CHANGE COLUMN `buy_date` `buy_time` DATETIME NULL DEFAULT NULL COMMENT '购买日期' ,
+CHANGE COLUMN `consume_date` `consume_time` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `delete_date` `invalid_time` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `expect_delete_date` `expert_invalid_time` DATETIME NULL DEFAULT NULL ,
+CHANGE COLUMN `use_time` `duration` BIGINT NULL DEFAULT NULL ,
+CHANGE COLUMN `keywords` `tags` VARCHAR(64) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `statable` `stat` BIT(1) NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `consume`
+    CHANGE COLUMN `sku_info` `sku` VARCHAR(100) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL AFTER `goods_name`;
+
+ALTER TABLE `account`
+    CHANGE COLUMN `id` `account_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `account_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+#转移收入数据到关联表
+insert into consume_refer(consume_id,type,refer_id,created_time) select buy_record_id,1,id,now() from income where buy_record_id is not null;
+
+ALTER TABLE `income`
+DROP COLUMN `buy_record_id`,
+CHANGE COLUMN `id` `income_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `income_name` VARCHAR(200) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `goods_lifetime`
+    CHANGE COLUMN `id` `lifetime_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `lifetime_name` VARCHAR(32) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `keywords` `tags` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+
 
 

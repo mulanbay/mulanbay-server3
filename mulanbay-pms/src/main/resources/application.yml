@@ -119,6 +119,27 @@ mulanbay:
     oaUrl: < set in local properties>
     #公众号图片地址(移动端使用)
     oaPicUrl: < set in local properties>
+  #消费相关
+  consume:
+    tag:
+      #历史tag统计天数
+      statDays: 365
+      num: 5
+    cacheQueue:
+      #缓存中的队列失效时间(智能匹配使用)
+      expireDays: 7
+      size: 100
+    match:
+      #NLP匹配时的最高匹配度，高于这个数不再往下匹配
+      maxDegree: 0.9
+      #NLP匹配时的最低匹配度，低于这个数认为没有匹配到
+      minDegree: 0.7
+      #商品类型的匹配列表过期时间(秒)
+      goodsTypeExpireTime: 3600
+  nlp:
+    model:
+      #模型是否要初始化
+      init: false
 
 # hibernate相关
 hibernate:

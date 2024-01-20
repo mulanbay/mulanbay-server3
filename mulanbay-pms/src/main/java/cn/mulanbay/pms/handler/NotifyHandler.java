@@ -112,7 +112,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
                     PmsCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
-        this.updateSysCodeCount(code, 1);
+        this.updateSysCodeCount(code, 1L);
         //获取发送时间
         Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
         if (expectSendTime == null) {
@@ -130,15 +130,13 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param code
      * @param addCount
      */
-    private void updateSysCodeCount(Integer code, int addCount) {
+    private void updateSysCodeCount(Integer code, long addCount) {
         try {
             String key = CacheKey.getKey(CacheKey.SYS_CODE_COUNTS,code.toString());
             long cv = cacheHandler.incre(key,addCount);
             if(cv>=codeBatchUpdates){
-                cv = cacheHandler.getAndSet(key,0L);
-                if(cv>0){
-                    logService.updateSysCodeCount(code,cv);
-                }
+                cacheHandler.incre(key,-cv);
+                logService.updateSysCodeCount(code,cv);
             }
         } catch (Exception e) {
             logger.error("更新系统代码次数异常", e);
@@ -172,7 +170,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
                         PmsCode.ERROR_CODE_NOT_DEFINED);
                 ec = systemConfigHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
-            this.updateSysCodeCount(code, 1);
+            this.updateSysCodeCount(code, 1L);
             //获取发送时间
             Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
             if (expectSendTime == null) {

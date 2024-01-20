@@ -119,7 +119,7 @@ public class CacheKey {
     /**
      * 消费记录缓存队列:用户ID
      */
-    public static final String BUY_RECORD_CACHE_QUEUE = "buyRecord:cacheQueue:{0}";
+    public static final String CONSUME_CACHE_QUEUE = "consume:cacheQueue:{0}";
 
     /**
      * 商品类型的匹配列表:用户ID

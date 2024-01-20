@@ -200,11 +200,6 @@ public class CacheHandler extends BaseHandler  {
         return redisTemplate.opsForValue().increment(getFullKey(key), n);
     }
 
-    public Long getAndSet(String key,Long v){
-        Long ov = (Long) redisTemplate.opsForValue().getAndSet(getFullKey(key),v);
-        return ov;
-    }
-
     /**
      * 获取key的全路径
      *

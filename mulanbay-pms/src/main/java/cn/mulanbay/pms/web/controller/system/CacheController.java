@@ -111,7 +111,7 @@ public class CacheController extends BaseController {
         Object cacheValue = null;
         if (cacheKey.contains(CacheKey.SYS_FUNC) || cacheKey.contains(CacheKey.ROLE_FUNC)) {
             cacheValue = redisTemplate.opsForHash().values(cacheKey);
-        } else {
+        }else {
             cacheValue = redisTemplate.opsForValue().get(cacheKey);
         }
         CacheVo sysCache = new CacheVo(cacheName, cacheKey, cacheValue);

@@ -1,21 +1,21 @@
 package cn.mulanbay.pms.persistent.enums;
 
 /**
- * 账户状态
+ * 消费管理类型
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum AccountStatus {
+public enum ConsumeReferType {
 
-    IMMOVABLE(0, "不可动资产"),
-    MOVABLE(1, "可动资产");
+    TREAT(0, "看病记录"),
+    INCOME(1, "收入");
 
     private int value;
 
     private String name;
 
-    AccountStatus(int value, String name) {
+    ConsumeReferType(int value, String name) {
         this.value = value;
         this.name = name;
     }
@@ -34,14 +34,5 @@ public enum AccountStatus {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public static AccountStatus getAccountStatus(int value) {
-        for (AccountStatus bt : AccountStatus.values()) {
-            if (bt.getValue() == value) {
-                return bt;
-            }
-        }
-        return null;
     }
 }
