@@ -80,6 +80,11 @@ public class ConsumeForm implements BindUser {
 
     private String sku;
 
+    /**
+     * 匹配日志追踪使用
+     */
+    private String traceId;
+
     public Long getConsumeId() {
         return consumeId;
     }
@@ -256,5 +261,13 @@ public class ConsumeForm implements BindUser {
 
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 }

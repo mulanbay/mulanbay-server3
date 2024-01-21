@@ -129,6 +129,10 @@ public class ConsumeController extends BaseController {
         bean.setCreatedTime(new Date());
         consumeService.saveConsume(bean);
         consumeHandler.addToCache(bean);
+        String traceId = form.getTraceId();
+        if(StringUtil.isNotEmpty(traceId)){
+            consumeHandler.addMatchLog(traceId,bean.getConsumeId(),bean.getUserId());
+        }
         return callback(null);
     }
 
@@ -237,9 +241,15 @@ public class ConsumeController extends BaseController {
             bean = consumeHandler.match(mr.getUserId(),mr.getGoodsName());
             if(bean==null){
                 bean = new ConsumeMatchBean();
+            }else{
+                //匹配到的才追踪记录
+                String traceId = StringUtil.genUUID();
+                bean.setTraceId(traceId);
+                consumeHandler.traceMatch(traceId,bean);
             }
             List<String> keywords = nlpProcessor.extractKeyword(mr.getGoodsName(),tagNum);
-            bean.setTags(keywords);
+            String tags= keywords.stream().map(String::valueOf).collect(Collectors.joining(","));
+            bean.setTags(tags);
             if(bean.getCompareId()==null){
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());

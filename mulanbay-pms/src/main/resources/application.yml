@@ -136,6 +136,8 @@ mulanbay:
       minDegree: 0.7
       #商品类型的匹配列表过期时间(秒)
       goodsTypeExpireTime: 3600
+      #匹配追踪有效时长(秒)
+      traceExpires: 180
   nlp:
     model:
       #模型是否要初始化

@@ -132,6 +132,11 @@ public class CacheKey {
     public static final String GOODS_LIFETIME_LIST = "goods:lifetimeList";
 
     /**
+     * 消费记录匹配追踪
+     */
+    public static final String CONSUME_MATCH_TRACE = "consume:matchTrace:{0}";
+
+    /**
      * 二次认证
      */
     public static final String USER_SEC_AUTH = "user_sec_auth";

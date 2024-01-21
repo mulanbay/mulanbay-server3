@@ -1,21 +1,21 @@
 package cn.mulanbay.pms.persistent.enums;
 
 /**
- * 消费管理类型
+ * 匹配类型
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum ConsumeReferType {
+public enum GoodsMatchType {
 
-    TREAT(0, "看病记录"),
-    INCOME(1, "收入");
+    CONSUME(0, "消费记录"),
+    GOODS_TYPE(1, "商品类型");
 
     private int value;
 
     private String name;
 
-    ConsumeReferType(int value, String name) {
+    GoodsMatchType(int value, String name) {
         this.value = value;
         this.name = name;
     }

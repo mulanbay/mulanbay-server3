@@ -22,7 +22,7 @@ public class BaseHandler {
 	boolean scfShutdown = false;
 
 	// 自检结果
-	Boolean checkResult = true;
+	Boolean checkResult = null;
 
 	//处理器名称
 	protected String handlerName;

@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.handler.bean.consume;
 
 import cn.mulanbay.pms.persistent.enums.GoodsConsumeType;
+import cn.mulanbay.pms.persistent.enums.GoodsMatchType;
 import cn.mulanbay.pms.persistent.enums.Payment;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class ConsumeMatchBean implements Serializable {
 
     private static final long serialVersionUID = 5066451654516299863L;
 
+    private String traceId;
     private String goodsName;
 
     private Long goodsTypeId;
@@ -45,13 +47,26 @@ public class ConsumeMatchBean implements Serializable {
     //匹配度
     private float match=0;
 
-    //参与比较的消费记录
+    /**
+     * 匹配类型
+     */
+    private GoodsMatchType matchType;
+
+    //参与比较的消费记录或商品类型ID
     private Long compareId;
 
     //参与比较的消费名称
     private String compareName;
 
-    private List<String> tags;
+    private String tags;
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
 
     public String getGoodsName() {
         return goodsName;
@@ -173,6 +188,14 @@ public class ConsumeMatchBean implements Serializable {
         this.match = match;
     }
 
+    public GoodsMatchType getMatchType() {
+        return matchType;
+    }
+
+    public void setMatchType(GoodsMatchType matchType) {
+        this.matchType = matchType;
+    }
+
     public Long getCompareId() {
         return compareId;
     }
@@ -189,11 +212,11 @@ public class ConsumeMatchBean implements Serializable {
         this.compareName = compareName;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
     }
 }

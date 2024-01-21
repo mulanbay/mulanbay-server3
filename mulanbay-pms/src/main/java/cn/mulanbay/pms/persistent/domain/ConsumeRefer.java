@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.ConsumeReferType;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
@@ -39,7 +39,7 @@ public class ConsumeRefer implements java.io.Serializable {
     private Long referId;
 
     @Column(name = "type")
-    private ConsumeReferType type;
+    private BussType type;
 
     @Column(name = "remark")
     private String remark;
@@ -86,11 +86,11 @@ public class ConsumeRefer implements java.io.Serializable {
         this.referId = referId;
     }
 
-    public ConsumeReferType getType() {
+    public BussType getType() {
         return type;
     }
 
-    public void setType(ConsumeReferType type) {
+    public void setType(BussType type) {
         this.type = type;
     }
 

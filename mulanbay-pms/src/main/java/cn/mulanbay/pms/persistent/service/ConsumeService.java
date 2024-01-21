@@ -80,7 +80,7 @@ public class ConsumeService extends BaseHibernateDao {
             if (consume.getSoldPrice() != null) {
                 //查询收入
                 String hql = "from ConsumeRefer where consumeId=?1 and type=?2";
-                ConsumeRefer refer = this.getEntity(hql,ConsumeRefer.class,consume.getConsumeId(), ConsumeReferType.INCOME);
+                ConsumeRefer refer = this.getEntity(hql,ConsumeRefer.class,consume.getConsumeId(), BussType.INCOME);
                 if (refer == null) {
                     addNewIncome(consume);
                 } else {
@@ -121,7 +121,7 @@ public class ConsumeService extends BaseHibernateDao {
             ConsumeRefer refer = new ConsumeRefer();
             refer.setConsumeId(consume.getConsumeId());
             refer.setReferId(income.getIncomeId());
-            refer.setType(ConsumeReferType.INCOME);
+            refer.setType(BussType.INCOME);
             refer.setCreatedTime(new Date());
             this.saveEntity(refer);
         } catch (BaseException e) {

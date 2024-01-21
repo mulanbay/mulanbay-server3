@@ -8,7 +8,7 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum BussType {
 
-    BUY_RECORD(0, "BuyRecord", "消费记录"),
+    CONSUME(0, "Consume", "消费记录"),
     DREAM(1, "Dream", "梦想"),
     LIFE_EXPERIENCE(2, "LifeExperience", "人生经历"),
     MUSIC_PRACTICE(3, "MusicPractice", "音乐练习"),
@@ -20,7 +20,8 @@ public enum BussType {
     WORK_OVER_TIME(9, "WorkOvertime", "加班记录"),
     SLEEP(10, "Sleep", "睡眠"),
     DIET(11, "Diet", "饮食"),
-    FUND(12, "Account", "资金");
+    FUND(12, "Account", "资金"),
+    INCOME(13, "Income", "收入");
 
     private int value;
 

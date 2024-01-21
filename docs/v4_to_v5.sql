@@ -192,7 +192,7 @@ ALTER TABLE `account`
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
 #转移收入数据到关联表
-insert into consume_refer(consume_id,type,refer_id,created_time) select buy_record_id,1,id,now() from income where buy_record_id is not null;
+insert into consume_refer(consume_id,type,refer_id,created_time) select buy_record_id,13,id,now() from income where buy_record_id is not null;
 
 ALTER TABLE `income`
 DROP COLUMN `buy_record_id`,
@@ -205,6 +205,23 @@ ALTER TABLE `goods_lifetime`
     CHANGE COLUMN `name` `lifetime_name` VARCHAR(32) CHARACTER SET 'utf8mb4' NOT NULL ,
     CHANGE COLUMN `keywords` `tags` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE =`buy_record_match_log`  RENAME TO `consume_match_log` ;
+ALTER TABLE `consume_match_log`
+DROP COLUMN `brand`,
+DROP COLUMN `shop_name`,
+DROP COLUMN `sub_goods_type_id`,
+DROP COLUMN `goods_type_id`,
+DROP COLUMN `buy_record_id`,
+ADD COLUMN `consume_id` BIGINT(20) NOT NULL AFTER `user_id`,
+ADD COLUMN `consume_data` VARCHAR(2000) NULL AFTER `consume_id`,
+ADD COLUMN `compare_data` VARCHAR(2000) NULL AFTER `compare_id`,
+ADD COLUMN `match_type` SMALLINT(5) NOT NULL AFTER `compare_data`,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `consume_match_log` RENAME TO `match_log` ;
+
+
 
 
 

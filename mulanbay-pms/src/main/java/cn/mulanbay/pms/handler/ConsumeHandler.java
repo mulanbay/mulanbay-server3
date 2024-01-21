@@ -4,24 +4,31 @@ import cn.mulanbay.ai.nlp.processor.NLPProcessor;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.queue.LimitQueue;
+import cn.mulanbay.common.util.JsonUtil;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.handler.bean.consume.ConsumeMatchBean;
 import cn.mulanbay.pms.handler.bean.consume.GoodsLifetimeMatchBean;
+import cn.mulanbay.pms.handler.bean.consume.GoodsTypeCompareBean;
 import cn.mulanbay.pms.persistent.domain.Consume;
+import cn.mulanbay.pms.persistent.domain.MatchLog;
 import cn.mulanbay.pms.persistent.domain.GoodsLifetime;
 import cn.mulanbay.pms.persistent.domain.GoodsType;
+import cn.mulanbay.pms.persistent.enums.GoodsMatchType;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,6 +65,12 @@ public class ConsumeHandler extends BaseHandler {
      */
     @Value("${mulanbay.consume.match.minDegree}")
     float minMatchDegree;
+
+    /**
+     * 匹配追踪有效时长(秒)
+     */
+    @Value("${mulanbay.consume.match.traceExpires:180}")
+    int traceExpires;
 
     /**
      * 商品类型的匹配列表过期时间(秒)
@@ -114,14 +127,16 @@ public class ConsumeHandler extends BaseHandler {
             return bean;
         }
         //没有或者匹配度很低，再从商品类别中比对
-        List<ConsumeMatchBean> list  = this.getGoodsTypeList(userId);
-        for(ConsumeMatchBean br : list){
-            String name = br.getCompareName();
+        List<GoodsTypeCompareBean> list  = this.getGoodsTypeList(userId);
+        for(GoodsTypeCompareBean gcb : list){
+            String name = gcb.getCompareName();
             float m = nlpProcessor.sentenceSimilarity(goodsName,name);
             if(m>bean.getMatch()){
-                bean.setGoodsTypeId(br.getGoodsTypeId());
-                bean.setCompareId(null);
+                bean = new ConsumeMatchBean();
+                bean.setGoodsTypeId(gcb.getGoodsTypeId());
+                bean.setCompareId(gcb.getGoodsTypeId());
                 bean.setMatch(m);
+                bean.setMatchType(GoodsMatchType.GOODS_TYPE);
                 if(m>=maxMatchDegree){
                     return bean;
                 }
@@ -146,18 +161,17 @@ public class ConsumeHandler extends BaseHandler {
         if (queue == null) {
             return bean;
         }else{
-            for(Consume br : queue.getList()){
-                float m = nlpProcessor.sentenceSimilarity(goodsName,br.getGoodsName());
+            for(Consume consume : queue.getList()){
+                float m = nlpProcessor.sentenceSimilarity(goodsName,consume.getGoodsName());
                 if(m>bean.getMatch()){
-                    bean.setGoodsTypeId(br.getGoodsType().getTypeId());
-                    bean.setSourceId(br.getSource().getSourceId());
-                    bean.setCompareId(br.getConsumeId());
-                    bean.setShopName(br.getShopName());
-                    bean.setBrand(br.getBrand());
+                    BeanCopy.copy(consume,bean);
+                    bean.setGoodsTypeId(consume.getGoodsType().getTypeId());
+                    bean.setSourceId(consume.getSource().getSourceId());
+                    bean.setCompareId(consume.getConsumeId());
                     bean.setMatch(m);
-                    BeanCopy.copy(br,bean);
+                    bean.setMatchType(GoodsMatchType.CONSUME);
                     if(m>=maxMatchDegree){
-                        logger.debug("在历史消费记录中匹配到，goodsName:"+br.getGoodsName());
+                        logger.debug("在历史消费记录中匹配到，goodsName:"+consume.getGoodsName());
                         return bean;
                     }
                 }
@@ -171,20 +185,21 @@ public class ConsumeHandler extends BaseHandler {
      * @param userId
      * @return
      */
-    private List<ConsumeMatchBean> getGoodsTypeList(Long userId){
+    private List<GoodsTypeCompareBean> getGoodsTypeList(Long userId){
         String key = CacheKey.getKey(CacheKey.GOODS_TYPE_MATCH_LIST,userId.toString());
-        List<ConsumeMatchBean> list = cacheHandler.get(key,List.class);
+        List<GoodsTypeCompareBean> list = cacheHandler.get(key,List.class);
         if(StringUtil.isEmpty(list)){
             list = new ArrayList<>();
             List<GoodsType> goodsTypeList = consumeService.getGoodsTypeList(userId);
             for(GoodsType gt : goodsTypeList){
-                ConsumeMatchBean mb = new ConsumeMatchBean();
+                GoodsTypeCompareBean mb = new GoodsTypeCompareBean();
                 mb.setGoodsTypeId(gt.getTypeId());
                 String compareName = gt.getTypeName();
                 if(StringUtil.isNotEmpty(gt.getTags())){
                     compareName+=","+gt.getTags();
                 }
                 mb.setCompareName(compareName);
+                mb.setTags(gt.getTags());
                 list.add(mb);
             }
         }
@@ -244,4 +259,65 @@ public class ConsumeHandler extends BaseHandler {
         return list;
     }
 
+    /**
+     * 追踪匹配
+     * @param traceId
+     * @param bean
+     */
+    public void traceMatch(String traceId,ConsumeMatchBean bean){
+        String key = CacheKey.getKey(CacheKey.CONSUME_MATCH_TRACE,traceId);
+        cacheHandler.set(key,bean,traceExpires);
+    }
+
+    /**
+     * 增加匹配记录
+     * @param traceId
+     * @param consumeId
+     * @param userId
+     */
+    public void addMatchLog(String traceId,Long consumeId,Long userId){
+        try {
+            String key = CacheKey.getKey(CacheKey.CONSUME_MATCH_TRACE,traceId);
+            ConsumeMatchBean form = cacheHandler.get(key,ConsumeMatchBean.class);
+            MatchLog bean = new MatchLog();
+            bean.setConsumeId(consumeId);
+            bean.setAiMatch(form.getMatch());
+            bean.setUserId(userId);
+            bean.setMatchType(form.getMatchType());
+            bean.setCompareId(form.getCompareId());
+            //计算实际匹配度
+            Consume consume = baseService.getObject(Consume.class,consumeId);
+            bean.setGoodsName(consume.getGoodsName());
+            bean.setConsumeData(JsonUtil.beanToJson(consume));
+            int m=0;
+            int total=1;
+            GoodsMatchType matchType = form.getMatchType();
+            if(matchType==GoodsMatchType.CONSUME){
+                Consume compareBean = baseService.getObject(Consume.class,form.getCompareId());
+                if(consume.getGoodsType().getTypeId().equals(compareBean.getGoodsType().getTypeId())){
+                    m++;
+                }
+                if(consume.getSource().getSourceId().equals(compareBean.getSource().getSourceId())){
+                    m++;
+                }
+                if(consume.getShopName().equals(compareBean.getShopName())){
+                    m++;
+                }
+                total=3;
+                bean.setCompareData(JsonUtil.beanToJson(compareBean));
+            }else{
+                GoodsType compareBean = baseService.getObject(GoodsType.class,form.getCompareId());
+                if(consume.getGoodsType().getTypeId().equals(compareBean.getTypeId())){
+                    m++;
+                }
+                bean.setCompareData(JsonUtil.beanToJson(compareBean));
+            }
+            float acMatch = (float) NumberUtil.getPercentValue(m,total,4)/100;
+            bean.setAcMatch(acMatch);
+            bean.setCreatedTime(new Date());
+            baseService.saveObject(bean);
+        } catch (BeansException e) {
+            logger.error("增加消费记录匹配日志异常",e);
+        }
+    }
 }
