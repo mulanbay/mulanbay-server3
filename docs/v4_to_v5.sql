@@ -221,6 +221,14 @@ CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
 ALTER TABLE `consume_match_log` RENAME TO `match_log` ;
 
+ALTER TABLE `life_archives` RENAME TO `archive` ;
+ALTER TABLE `archive`
+    CHANGE COLUMN `id` `archive_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+ALTER TABLE `archive`
+    CHANGE COLUMN `related_beans` `bean_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT '关联类' ;
+
+
 
 
 
