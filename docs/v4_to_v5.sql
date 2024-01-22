@@ -228,6 +228,10 @@ ALTER TABLE `archive`
 ALTER TABLE `archive`
     CHANGE COLUMN `related_beans` `bean_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT '关联类' ;
 
+ALTER TABLE `archive`
+DROP COLUMN `bean_name`;
+
+
 
 
 

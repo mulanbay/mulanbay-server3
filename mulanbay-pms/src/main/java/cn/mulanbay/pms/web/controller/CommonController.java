@@ -117,7 +117,7 @@ public class CommonController extends BaseController {
             List<TreeBean> list = new ArrayList<TreeBean>();
             for (BussType bt : BussType.values()) {
                 TreeBean tb = new TreeBean();
-                tb.setId(bt.getBeanName());
+                tb.setId(bt.getBeanClass().getSimpleName());
                 tb.setText(bt.getName());
                 list.add(tb);
             }

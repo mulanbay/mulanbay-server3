@@ -34,6 +34,8 @@ public class ArchiveSH extends PageSearch implements BindUser, FullEndDateTime {
     @Query(fieldName = "title,content", op = Parameter.Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
+    private String sortField;
+
     private String sortType;
 
     public Date getStartDate() {
@@ -78,6 +80,14 @@ public class ArchiveSH extends PageSearch implements BindUser, FullEndDateTime {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
     }
 
     public String getSortType() {

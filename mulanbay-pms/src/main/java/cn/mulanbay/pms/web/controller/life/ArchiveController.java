@@ -1,13 +1,13 @@
 package cn.mulanbay.pms.web.controller.life;
 
 import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.Archive;
 import cn.mulanbay.pms.persistent.service.ArchiveService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.life.archive.ArchiveForm;
 import cn.mulanbay.pms.web.bean.req.life.archive.ArchiveSH;
@@ -43,8 +43,10 @@ public class ArchiveController extends BaseController {
     public ResultBean list(ArchiveSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort sort = new Sort("date", sf.getSortType());
-        pr.addSort(sort);
+        if(StringUtil.isNotEmpty(sf.getSortField())){
+            Sort sort = new Sort(sf.getSortField(), sf.getSortType());
+            pr.addSort(sort);
+        }
         PageResult<Archive> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }
@@ -70,14 +72,16 @@ public class ArchiveController extends BaseController {
      */
     @RequestMapping(value = "/sync", method = RequestMethod.POST)
     public ResultBean sync(@RequestBody @Valid ArchiveForm form) {
-        Archive bean = archiveService.getArchive(form.getUserId(), form.getBeanName(), form.getSourceId());
+        Archive bean = archiveService.getArchive(form.getUserId(), form.getBussType(), form.getSourceId());
         if (bean == null) {
             bean = new Archive();
             BeanCopy.copy(form, bean);
             bean.setCreatedTime(new Date());
             baseService.saveObject(bean);
         } else {
+            Long archiveId = bean.getArchiveId();
             BeanCopy.copy(form, bean);
+            bean.setArchiveId(archiveId);
             bean.setModifyTime(new Date());
             baseService.updateObject(bean);
         }
@@ -104,7 +108,7 @@ public class ArchiveController extends BaseController {
     @RequestMapping(value = "/getSource", method = RequestMethod.GET)
     public ResultBean getSource(@RequestParam(name = "archiveId") Long archiveId) {
         Archive bean = baseService.getObject(beanClass,archiveId);
-        Class clz = ClazzUtils.getClass(bean.getBeanName());
+        Class clz = bean.getBussType().getBeanClass();
         Object o = baseService.getObject(clz, bean.getSourceId());
         return callback(o);
     }

@@ -44,9 +44,6 @@ public class Archive implements java.io.Serializable {
     @Column(name = "buss_type")
     private BussType bussType;
 
-    @Column(name = "bean_name")
-    private String beanName;
-
     @Column(name = "source_id")
     private Long sourceId;
     @Column(name = "remark")
@@ -106,14 +103,6 @@ public class Archive implements java.io.Serializable {
 
     public void setBussType(BussType bussType) {
         this.bussType = bussType;
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
     }
 
     public Long getSourceId() {

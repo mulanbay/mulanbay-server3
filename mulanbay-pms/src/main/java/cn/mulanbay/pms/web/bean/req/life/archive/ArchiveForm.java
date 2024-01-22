@@ -28,8 +28,6 @@ public class ArchiveForm implements BindUser {
     @NotNull(message = "业务类型不能为空")
     private BussType bussType;
 
-    private String beanName;
-
     private Long sourceId;
 
     private String remark;
@@ -82,14 +80,6 @@ public class ArchiveForm implements BindUser {
 
     public void setBussType(BussType bussType) {
         this.bussType = bussType;
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
     }
 
     public Long getSourceId() {
