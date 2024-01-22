@@ -83,8 +83,8 @@ public class ServerController extends BaseController {
             ServerDetail sd = queue.get(i);
             SysFile di = sd.getSysFiles().get(0);
             chartData.getXdata().add(DateUtil.getFormatDate(sd.getDate(), "MM-dd HH:mm"));
-            yData1.getData().add(NumberUtil.getDoubleValue(di.getFreeSpace() * 1.0 / 1024 / 1024 / 1024,0));
-            yData2.getData().add(NumberUtil.getDoubleValue((di.getTotalSpace() - di.getFreeSpace()) * 1.0 / di.getTotalSpace() * 100,0));
+            yData1.getData().add(NumberUtil.getValue(di.getFreeSpace() * 1.0 / 1024 / 1024 / 1024,0));
+            yData2.getData().add(NumberUtil.getValue((di.getTotalSpace() - di.getFreeSpace()) * 1.0 / di.getTotalSpace() * 100,0));
         }
         chartData.getYdata().add(yData1);
         chartData.getYdata().add(yData2);
@@ -110,8 +110,8 @@ public class ServerController extends BaseController {
             ServerDetail sd = queue.get(i);
             chartData.getXdata().add(DateUtil.getFormatDate(sd.getDate(), "MM-dd HH:mm"));
             Mem mem = sd.getMem();
-            yData1.getData().add(NumberUtil.getDoubleValue(mem.getFreePhysicalMemorySize() * 1.0 / 1024 / 1024 / 1024,0));
-            yData2.getData().add(NumberUtil.getDoubleValue((mem.getTotalMemorySize() - mem.getFreePhysicalMemorySize()) * 1.0 / mem.getTotalMemorySize() * 100,0));
+            yData1.getData().add(NumberUtil.getValue(mem.getFreePhysicalMemorySize() * 1.0 / 1024 / 1024 / 1024,0));
+            yData2.getData().add(NumberUtil.getValue((mem.getTotalMemorySize() - mem.getFreePhysicalMemorySize()) * 1.0 / mem.getTotalMemorySize() * 100,0));
         }
         chartData.getYdata().add(yData1);
         chartData.getYdata().add(yData2);
@@ -137,8 +137,8 @@ public class ServerController extends BaseController {
             ServerDetail sd = queue.get(i);
             chartData.getXdata().add(DateUtil.getFormatDate(sd.getDate(), "MM-dd HH:mm"));
             Cpu cpu = sd.getCpu();
-            yData1.getData().add(NumberUtil.getDoubleValue(cpu.getSysCpuRate() * 100,0));
-            yData2.getData().add(NumberUtil.getDoubleValue(cpu.getIdleCpuRate() * 100,0));
+            yData1.getData().add(NumberUtil.getValue(cpu.getSysCpuRate() * 100,0));
+            yData2.getData().add(NumberUtil.getValue(cpu.getIdleCpuRate() * 100,0));
         }
         chartData.getYdata().add(yData1);
         chartData.getYdata().add(yData2);

@@ -2,13 +2,12 @@ package cn.mulanbay.pms.persistent.service;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.*;
-import cn.mulanbay.pms.persistent.dto.consume.ConsumeRadarStat;
-import cn.mulanbay.pms.persistent.dto.consume.ConsumeRealTimeStat;
-import cn.mulanbay.pms.persistent.dto.consume.ConsumeUseTimeStat;
+import cn.mulanbay.pms.persistent.dto.consume.*;
 import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.util.PriceUtil;
@@ -181,7 +180,7 @@ public class ConsumeService extends BaseHibernateDao {
      */
     public void deleteChildren(Long pid) {
         try {
-            String hql = "update Consume set pid=null where pid=?0 ";
+            String hql = "update Consume set pid=null where pid=?1 ";
             this.updateEntities(hql,pid);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,
@@ -477,6 +476,76 @@ public class ConsumeService extends BaseHibernateDao {
         return sb.toString();
     }
 
+    /**
+     * 获取消费记录的总成本（关联子集）
+     * 不包含自身的价格成本
+     *
+     * @param rootId 消费记录ID
+     */
+    public ConsumeChildrenCostStat getChildrenTotalDeepCost(Long rootId) {
+        try {
+            String sql = "select getConsumeChildren("+rootId+")";
+            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
+            String ids = ll.get(0);
+            if(StringUtil.isEmpty(ids)){
+                return new ConsumeChildrenCostStat();
+            }
+            ids = ids.substring(1);
+            String statSql = """
+                    select sum(total_price) as totalPrice,sum(sold_price) as soldPrice,count(0) as totalCount FROM consume WHERE consume_id in
+                    ({ids})
+                    """;
+            statSql = statSql.replace("{ids}",ids);
+            ConsumeChildrenCostStat res = this.getEntitySQL(statSql,ConsumeChildrenCostStat.class);
+            return res;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "获取消费记录的总成本异常", e);
+        }
+    }
 
+    /**
+     * 获取消费记录的总成本（只关联一层）
+     * 不包含自身的价格成本
+     *
+     * @param rootId 消费记录ID
+     */
+    public ConsumeChildrenCostStat getChildrenTotalCost(Long rootId) {
+        try {
+            String sql = "select sum(total_price) as totalPrice,sum(sold_price) as soldPrice,count(0) as totalCount from consume where pid = ?1";
+            ConsumeChildrenCostStat res = this.getEntitySQL(sql,ConsumeChildrenCostStat.class,rootId);
+            return res;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "获取消费记录的总成本异常", e);
+        }
+    }
+
+    /**
+     * 获取子商品列表
+     * @param rootId
+     * @return
+     */
+    public List<ConsumeCascadeDTO> getChildrenDeepList(Long rootId){
+        try {
+            String sql = "select getConsumeChildren("+rootId+")";
+            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
+            String ids = ll.get(0);
+            if(StringUtil.isEmpty(ids)){
+                return new ArrayList<>();
+            }
+            ids = ids.substring(1);
+            String statSql = """
+                    select consume_id as consumeId,pid,goods_name as goodsName,total_price as totalPrice FROM consume WHERE consume_id in
+                    ({ids})
+                    """;
+            statSql = statSql.replace("{ids}",ids);
+            List<ConsumeCascadeDTO> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE,ConsumeCascadeDTO.class);
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取子商品列表异常", e);
+        }
+    }
 
 }

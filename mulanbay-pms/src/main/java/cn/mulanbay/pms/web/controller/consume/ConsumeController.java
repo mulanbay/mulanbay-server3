@@ -14,6 +14,8 @@ import cn.mulanbay.pms.persistent.domain.Consume;
 import cn.mulanbay.pms.persistent.domain.ConsumeSource;
 import cn.mulanbay.pms.persistent.domain.GoodsType;
 import cn.mulanbay.pms.persistent.domain.UserSet;
+import cn.mulanbay.pms.persistent.dto.consume.ConsumeCascadeDTO;
+import cn.mulanbay.pms.persistent.dto.consume.ConsumeChildrenCostStat;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -21,6 +23,9 @@ import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.consume.consume.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.chart.ChartTreeData;
+import cn.mulanbay.pms.web.bean.res.chart.ChartTreeDetailData;
+import cn.mulanbay.pms.web.bean.res.consume.consume.ConsumeCostStatVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -31,10 +36,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.math.RoundingMode;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static cn.mulanbay.pms.common.Constant.ROUNDING_MODE;
+import static cn.mulanbay.pms.common.Constant.SCALE;
 
 /**
  * 购买记录
@@ -262,4 +269,123 @@ public class ConsumeController extends BaseController {
         }
         return callback(bean);
     }
+
+    /**
+     * 成本统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/costStat")
+    public ResultBean costStat(ConsumeCostStatForm form) {
+        Consume consume = baseService.getObject(beanClass,form.getConsumeId());
+        ConsumeCostStatVo vo = new ConsumeCostStatVo();
+        BeanCopy.copyProperties(consume,vo);
+        Date expDate = vo.getInvalidTime();
+        if(expDate==null){
+            expDate = new Date();
+        }else{
+            long expMillSecs = expDate.getTime()-vo.getBuyTime().getTime();
+            vo.setExpMillSecs(expMillSecs);
+        }
+        long usedMillSecs = expDate.getTime()-vo.getBuyTime().getTime();
+        vo.setUsedMillSecs(usedMillSecs);
+        long usedDays = usedMillSecs / (24*3600*1000);
+        if(usedDays<=0){
+            usedDays=1;
+        }
+        //计算下一级
+        boolean deepCost = form.getDeepCost();
+        ConsumeChildrenCostStat cc = null;
+        if(deepCost==true){
+            cc = consumeService.getChildrenTotalDeepCost(form.getConsumeId());
+        }else{
+            cc = consumeService.getChildrenTotalCost(form.getConsumeId());
+        }
+        Long childrens = cc.getTotalCount()==null ? null: cc.getTotalCount().longValue();
+        vo.setChildrens(childrens);
+        if(cc.getSoldPrice()!=null){
+            vo.setChildrenSoldPrice(cc.getSoldPrice());
+        }
+        BigDecimal ctp = cc.getTotalPrice()==null ? new BigDecimal(0) : cc.getTotalPrice();
+        vo.setChildrenPrice(ctp);
+        //总成本=商品价格+下一级商品成本
+        BigDecimal totalCost = ctp.add(vo.getTotalPrice());
+        vo.setTotalCost(totalCost);
+        //计算每天花费
+        BigDecimal vs = vo.getSoldPrice()==null ? new BigDecimal(0) : vo.getSoldPrice();
+        BigDecimal cts = cc.getSoldPrice()==null ? new BigDecimal(0) : cc.getSoldPrice();
+        // (买入价格-出售价格)/使用天数
+        BigDecimal costPerDay = (vo.getTotalPrice().subtract(vs)).divide(new BigDecimal(usedDays),SCALE, ROUNDING_MODE);
+        // (买入价格-出售价格+下一级商品成本-下一级商品出售价格)/使用天数
+        BigDecimal totalCostPerDay = (vo.getTotalPrice().subtract(vs).add(ctp).subtract(cts)).divide(new BigDecimal(usedDays),SCALE, ROUNDING_MODE);
+        vo.setCostPerDay(costPerDay);
+        vo.setTotalCostPerDay(totalCostPerDay);
+        if(vo.getSoldPrice()!=null){
+            //折旧率
+            // 买入价格/出售价格
+            BigDecimal depRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(vo.getTotalPrice(),SCALE, ROUNDING_MODE);
+            // 买入价格/(总成本-下一级商品出售价格)
+            BigDecimal totalDepRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(totalCost.subtract(cts),SCALE, ROUNDING_MODE);
+            vo.setDepRate(depRate);
+            vo.setTotalDepRate(totalDepRate);
+        }
+        return callback(vo);
+    }
+
+
+    /**
+     * 子集树形统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/treeStat", method = RequestMethod.GET)
+    public ResultBean treeStat(@RequestParam(name = "consumeId") Long consumeId) {
+        Long rootId = consumeId;
+        Consume consume = baseService.getObject(beanClass,rootId);
+        List<ConsumeCascadeDTO> children = consumeService.getChildrenDeepList(rootId);
+        // 转换为Map
+        Map<Long,ConsumeCascadeDTO> map = new HashMap<>();
+        // 添加根节点信息
+        ConsumeCascadeDTO root = new ConsumeCascadeDTO();
+        root.setGoodsName(consume.getGoodsName());
+        map.put(rootId,root);
+        BigDecimal totalCost = consume.getTotalPrice();
+        for (ConsumeCascadeDTO child : children){
+            map.put(child.getConsumeId().longValue(),child);
+            totalCost = totalCost.add(child.getTotalPrice());
+        }
+        ChartTreeDetailData rootData = new ChartTreeDetailData(consume.getTotalPrice().doubleValue(), consume.getGoodsName(),false);
+        ChartTreeDetailData data = this.generateTree(rootData,map,children);
+        ChartTreeData treeData = new ChartTreeData();
+        treeData.setData(data);
+        treeData.setUnit("元");
+        treeData.setTitle("商品关系图");
+        treeData.setSubTitle("商品总价:"+NumberUtil.getValue(consume.getTotalPrice(),2)+"元,总成本:"+NumberUtil.getValue(totalCost.doubleValue(),2)+"元");
+        return callback(treeData);
+    }
+
+    /**
+     * 构建树
+     * @param root
+     * @param map
+     * @param list
+     * @return
+     */
+    private ChartTreeDetailData generateTree(ChartTreeDetailData root,Map<Long,ConsumeCascadeDTO> map,List<ConsumeCascadeDTO> list){
+        for (ConsumeCascadeDTO child : list) {
+            ConsumeCascadeDTO parent = map.get(child.getPid().longValue());
+            String parentName = parent.getGoodsName();
+            if (root.getName().equals(parentName)) {
+                root.addChild(NumberUtil.getValue(child.getTotalPrice().doubleValue(),2), child.getGoodsName(),false);
+            }
+        }
+        if (root.getChildren() != null) {
+            for (ChartTreeDetailData cc : root.getChildren()) {
+                generateTree(cc,map, list);
+            }
+        }
+        return root;
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package cn.mulanbay.pms.common;
 
+import java.math.RoundingMode;
+
 /**
  * Created by fenghong on 2017/2/27.
  * 常量
@@ -14,6 +16,16 @@ public class Constant {
     public static final String DATE_FORMAT = "yyyy-MM-dd";// 24
 
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
+
+    /**
+     * 小数的精度
+     */
+    public static final int SCALE = 2;// 24
+
+    /**
+     * 小数进位规则
+     */
+    public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
 
     /**
      * 默认的用户等级

@@ -93,8 +93,8 @@ public class MatchLogController extends BaseController {
         ChartYData y2Data = new ChartYData("实际匹配度","");
         for (MatchLog bean : list) {
             chartData.getXdata().add(DateUtil.getFormatDate(bean.getCreatedTime(),DateUtil.Format24Datetime));
-            yData.getData().add(NumberUtil.getDoubleValue(bean.getAiMatch(),2));
-            y2Data.getData().add(NumberUtil.getDoubleValue(bean.getAcMatch(),2));
+            yData.getData().add(NumberUtil.getValue(bean.getAiMatch(),2));
+            y2Data.getData().add(NumberUtil.getValue(bean.getAcMatch(),2));
         }
         chartData.getYdata().add(yData);
         chartData.getYdata().add(y2Data);

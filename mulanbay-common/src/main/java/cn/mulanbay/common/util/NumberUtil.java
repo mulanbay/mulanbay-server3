@@ -106,9 +106,19 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getDoubleValue(double value,int scale){
+	public static double getValue(double value, int scale){
 		BigDecimal b = new BigDecimal(value);
-		double v  =  b.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
+		return getValue(b,scale);
+	}
+
+	/**
+	 * 获取值保留小数位数
+	 * @param value
+	 * @param scale
+	 * @return
+	 */
+	public static double getValue(BigDecimal value,int scale){
+		double v  =  value.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
 		return v;
 	}
 

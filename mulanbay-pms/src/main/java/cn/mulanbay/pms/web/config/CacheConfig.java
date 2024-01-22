@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -30,7 +31,7 @@ public class CacheConfig {
     public RedisTemplate<Object,Object> redisStringTemplate(RedisTemplate<Object,Object> redisTemplate){
         StringRedisSerializer serializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(serializer);
-        //redisTemplate.setValueSerializer(RedisSerializer.string());
+        //redisTemplate.setValueSerializer(genericToStringSerializer);
         //redisTemplate.setHashKeySerializer(serializer);
         logger.info("set RedisTemplate Serializer");
         return redisTemplate;
