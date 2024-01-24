@@ -4,7 +4,7 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.queue.LimitQueue;
 import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.common.util.PriceUtil;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+
+import static cn.mulanbay.pms.common.Constant.SCALE;
 
 /**
  * @author fenghong
@@ -47,8 +49,8 @@ public class ServerMonitorJob extends AbstractBaseJob {
         double diskRate = (di.getTotalSpace() - di.getFreeSpace()) * 1.0 / di.getTotalSpace();
         int n = 0;
         if (diskRate >= para.getDiskMaxRate()) {
-            String content = "磁盘[" + di.getPath() + "]报警，使用率达到" + PriceUtil.changeToString(2, diskRate * 100) +
-                    "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getDiskMaxRate() * 100) + "%";
+            String content = "磁盘[" + di.getPath() + "]报警，使用率达到" + NumberUtil.getValue(diskRate * 100,SCALE) +
+                    "%,超过系统警告值:" + NumberUtil.getValue(para.getDiskMaxRate() * 100,SCALE) + "%";
             notifyHandler.addMessageToNotifier(PmsCode.DISK_ALERT, "磁盘报警", content, new Date(), null);
             doAlertAutoJobs(para.getDiskAlertSelfJobs());
             n++;
@@ -56,8 +58,8 @@ public class ServerMonitorJob extends AbstractBaseJob {
         Mem mem = sd.getMem();
         double memoryRate = (mem.getTotalMemorySize() - mem.getFreePhysicalMemorySize()) * 1.0 / mem.getTotalMemorySize();
         if (memoryRate >= para.getMemoryMaxRate()) {
-            String content = "内存报警，使用率达到" + PriceUtil.changeToString(2, memoryRate * 100) +
-                    "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getMemoryMaxRate() * 100) + "%";
+            String content = "内存报警，使用率达到" + NumberUtil.getValue(memoryRate * 100,SCALE) +
+                    "%,超过系统警告值:" + NumberUtil.getValue(para.getMemoryMaxRate() * 100,SCALE) + "%";
             notifyHandler.addMessageToNotifier(PmsCode.MEMORY_ALERT, "内存报警", content, new Date(), null);
             doAlertAutoJobs(para.getMemoryAlertSelfJobs());
             n++;
@@ -65,8 +67,8 @@ public class ServerMonitorJob extends AbstractBaseJob {
         Cpu cpu = sd.getCpu();
         double cpuRate = cpu.getSysCpuRate();
         if (cpuRate >= para.getCpuMaxRate()) {
-            String content = "CPU报警，使用率达到" + PriceUtil.changeToString(2, cpuRate * 100) +
-                    "%,超过系统警告值:" + PriceUtil.changeToString(2, para.getCpuMaxRate() * 100) + "%";
+            String content = "CPU报警，使用率达到" + NumberUtil.getValue(cpuRate * 100,SCALE) +
+                    "%,超过系统警告值:" + NumberUtil.getValue(para.getCpuMaxRate() * 100,SCALE) + "%";
             notifyHandler.addMessageToNotifier(PmsCode.CPU_ALERT, "CPU报警", content, new Date(), null);
             doAlertAutoJobs(para.getCpuAlertSelfJobs());
             n++;

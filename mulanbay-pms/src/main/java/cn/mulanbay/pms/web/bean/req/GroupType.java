@@ -8,8 +8,8 @@ package cn.mulanbay.pms.web.bean.req;
  */
 public enum GroupType {
     COUNT(0, "次数", "","次"),
-    TOTALPRICE(1, "花费", "","元"),
-    SHIPMENT(2, "运费", "","元"),
+    TOTALPRICE(1, "花费", "total_price","元"),
+    SHIPMENT(2, "运费", "shipment","元"),
     HOURS(3, "时长","小时","小时"),
     KILOMETRES(4, "公里数", "kilometres", "公里"),
     MINUTES(5, "锻炼时间", "minutes", "分钟"),

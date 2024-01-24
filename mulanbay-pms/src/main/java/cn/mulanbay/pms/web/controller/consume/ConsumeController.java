@@ -4,6 +4,7 @@ import cn.mulanbay.ai.nlp.processor.NLPProcessor;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -14,17 +15,18 @@ import cn.mulanbay.pms.persistent.domain.Consume;
 import cn.mulanbay.pms.persistent.domain.ConsumeSource;
 import cn.mulanbay.pms.persistent.domain.GoodsType;
 import cn.mulanbay.pms.persistent.domain.UserSet;
-import cn.mulanbay.pms.persistent.dto.consume.ConsumeCascadeDTO;
-import cn.mulanbay.pms.persistent.dto.consume.ConsumeChildrenCostStat;
+import cn.mulanbay.pms.persistent.dto.consume.*;
+import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
+import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
-import cn.mulanbay.pms.web.bean.res.chart.ChartTreeData;
-import cn.mulanbay.pms.web.bean.res.chart.ChartTreeDetailData;
+import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.consume.consume.ConsumeCostStatVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
@@ -36,7 +38,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,9 @@ public class ConsumeController extends BaseController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    DataService dataService;
 
     @Autowired
     ConsumeHandler consumeHandler;
@@ -360,7 +364,7 @@ public class ConsumeController extends BaseController {
         treeData.setData(data);
         treeData.setUnit("元");
         treeData.setTitle("商品关系图");
-        treeData.setSubTitle("商品总价:"+NumberUtil.getValue(consume.getTotalPrice(),2)+"元,总成本:"+NumberUtil.getValue(totalCost.doubleValue(),2)+"元");
+        treeData.setSubTitle("商品总价:"+NumberUtil.getValue(consume.getTotalPrice(),SCALE)+"元,总成本:"+NumberUtil.getValue(totalCost.doubleValue(),2)+"元");
         return callback(treeData);
     }
 
@@ -373,10 +377,10 @@ public class ConsumeController extends BaseController {
      */
     private ChartTreeDetailData generateTree(ChartTreeDetailData root,Map<Long,ConsumeCascadeDTO> map,List<ConsumeCascadeDTO> list){
         for (ConsumeCascadeDTO child : list) {
-            ConsumeCascadeDTO parent = map.get(child.getPid().longValue());
+            ConsumeCascadeDTO parent = map.get(child.getPid());
             String parentName = parent.getGoodsName();
             if (root.getName().equals(parentName)) {
-                root.addChild(NumberUtil.getValue(child.getTotalPrice().doubleValue(),2), child.getGoodsName(),false);
+                root.addChild(NumberUtil.getValue(child.getTotalPrice().doubleValue(),SCALE), child.getGoodsName(),false);
             }
         }
         if (root.getChildren() != null) {
@@ -387,5 +391,244 @@ public class ConsumeController extends BaseController {
         return root;
     }
 
+    /**
+     * 商品使用寿命
+     *
+     * @return
+     */
+    @RequestMapping(value = "/useTimeList")
+    public ResultBean useTimeList(ConsumeUseTimeListSH sf) {
+        sf.setInvalidTimeType(NullType.NOT_NULL);
+        PageRequest req = sf.buildQuery();
+        req.setBeanClass(beanClass);
+        if (StringUtil.isEmpty(sf.getSortField())) {
+            req.addSort(new Sort("invalidTime", Sort.DESC));
+        } else {
+            req.addSort(new Sort(sf.getSortField(), sf.getSortType()));
+        }
+        PageResult<Consume> res = baseService.getBeanResult(req);
+        return callbackDataGrid(res);
+    }
+
+    /**
+     * 商品使用寿命
+     *
+     * @return
+     */
+    @RequestMapping(value = "/useTimeStat")
+    public ResultBean useTimeStat(ConsumeUseTimeStatSH sf) {
+        sf.setInvalidTmeType(NullType.NOT_NULL);
+        List<ConsumeUseTimeStat> list = consumeService.getUseTimeStat(sf);
+        Collections.sort(list, (o1, o2) -> {
+            //按照平均使用时间排序
+            Long t1 = o1.getTotalDuration().longValue()/o1.getTotalCount();
+            Long t2 = o2.getTotalDuration().longValue()/o2.getTotalCount();
+            return t2.compareTo(t1);
+        });
+
+        ChartData chartData = new ChartData();
+        chartData.setTitle("商品使用时间分析");
+        //混合图形下使用
+        chartData.addYAxis("天数","天");
+        chartData.addYAxis("次数","次");
+        chartData.setLegendData(new String[]{"平均寿命","次数"});
+        ChartYData yData1 = new ChartYData("平均寿命","天");
+        ChartYData yData2 = new ChartYData("次数","次");
+        for (ConsumeUseTimeStat bean : list) {
+            chartData.getXdata().add(bean.getName().toString());
+            BigDecimal days = bean.getTotalDuration().divide(new BigDecimal(bean.getTotalCount()),SCALE, ROUNDING_MODE);
+            days = days.divide(new BigDecimal(24*3600*1000L),SCALE, ROUNDING_MODE);
+            yData1.getData().add(days);
+            yData2.getData().add(bean.getTotalCount());
+        }
+        chartData.getYdata().add(yData1);
+        chartData.getYdata().add(yData2);
+        return callback(chartData);
+    }
+
+    /**
+     * 统计分析
+     *
+     * @return
+     */
+    @RequestMapping(value = "/analyseStat")
+    public ResultBean analyseStat(ConsumeAnalyseStatSH sf) {
+        if (sf.getChartType() == ChartType.BAR) {
+            List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(sf);
+            return callback(this.createAnalyseStatBarData(list, sf));
+        } else if (sf.getChartType() == ChartType.PIE) {
+            List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(sf);
+            return callback(this.createAnalyseStatPieData(list, sf));
+        } else if (sf.getChartType() == ChartType.TREE_MAP) {
+            //只有按照商品子类型的才能
+            if (!ConsumeService.GroupField.GOODS_TYPE.equals(sf.getGroupField())) {
+                return callbackErrorInfo("只有按照商品类型分组的才支持该分析图型");
+            }
+            List<ConsumeRealTimeTreeStat> list = consumeService.getAnalyseTreeStat(sf);
+            return callback(this.createAnalyseStatTreeMapData(list, sf));
+        } else {
+            return callbackErrorInfo("不支持的图表类型");
+        }
+    }
+
+    /**
+     * 封装消费记录分析的树形图数据
+     *
+     * @param list
+     * @param sf
+     * @return
+     */
+    private ChartTreeMapData createAnalyseStatTreeMapData(List<ConsumeRealTimeTreeStat> list, ConsumeAnalyseStatSH sf) {
+        ChartTreeMapData chartData = new ChartTreeMapData();
+        chartData.setTitle("消费分析");
+        chartData.setName("消费");
+        if (sf.getType() == GroupType.COUNT) {
+            chartData.setUnit("次");
+        } else {
+            chartData.setUnit("元");
+        }
+        BigDecimal totalValue = new BigDecimal(0);
+        Map<Long, ChartTreeMapDetailData> dataMap = new HashMap<>();
+        for (ConsumeRealTimeTreeStat bean : list) {
+            totalValue = totalValue.add(bean.getValue());
+            ChartTreeMapDetailData mdd = dataMap.get(bean.getParentGoodsTypeId());
+            //只有两层结构
+            if (mdd == null) {
+                mdd = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(),SCALE), bean.getGoodsName(), bean.getGoodsName());
+                dataMap.put(bean.getParentGoodsTypeId(), mdd);
+            }
+            ChartTreeMapDetailData child = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(),SCALE),
+                    bean.getGoodsName(), bean.getParentGoodsTypeName() + "/" + bean.getGoodsName());
+            mdd.addChild(child);
+        }
+        chartData.setData(new ArrayList<>(dataMap.values()));
+        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(), totalValue);
+        chartData.setSubTitle(subTitle);
+        return chartData;
+
+    }
+
+    /**
+     * 封装消费分析的饼状图数据
+     *
+     * @param list
+     * @param sf
+     * @return
+     */
+    private ChartPieData createAnalyseStatPieData(List<ConsumeRealTimeStat> list, ConsumeAnalyseStatSH sf) {
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("消费分析");
+        chartPieData.setUnit(sf.getType().getUnit());
+        ChartPieSerieData seriesData = new ChartPieSerieData();
+        seriesData.setName(sf.getType().getName());
+        //总的值
+        BigDecimal totalValue = new BigDecimal(0);
+        for (ConsumeRealTimeStat bean : list) {
+            chartPieData.getXdata().add(bean.getName());
+            ChartPieSerieDetailData dataDetail = new ChartPieSerieDetailData();
+            dataDetail.setName(bean.getName());
+            dataDetail.setValue(bean.getValue());
+            seriesData.getData().add(dataDetail);
+            totalValue = totalValue.add(bean.getValue());
+        }
+        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(), totalValue);
+        chartPieData.setSubTitle(subTitle);
+        chartPieData.getDetailData().add(seriesData);
+        return chartPieData;
+    }
+
+
+    /**
+     * 封装消费记录分析的柱状图数据
+     *
+     * @param list
+     * @param sf
+     * @return
+     */
+    private ChartData createAnalyseStatBarData(List<ConsumeRealTimeStat> list, ConsumeAnalyseStatSH sf) {
+        ChartData chartData = new ChartData();
+        chartData.setTitle("消费分析");
+        chartData.setUnit(sf.getType().getUnit());
+        chartData.setLegendData(new String[]{sf.getType().getName()});
+        ChartYData yData = new ChartYData();
+        yData.setName(sf.getType().getName());
+        BigDecimal totalValue = new BigDecimal(0);
+        for (ConsumeRealTimeStat bean : list) {
+            chartData.getXdata().add(bean.getName());
+            yData.getData().add(bean.getValue());
+            totalValue = totalValue.add(bean.getValue());
+        }
+        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(),totalValue);
+        chartData.setSubTitle(subTitle);
+        chartData.getYdata().add(yData);
+        return chartData;
+
+    }
+
+
+    /**
+     * 获取子标题后缀
+     *
+     * @param groupType
+     * @param totalValue
+     * @return
+     */
+    private String getSubTitlePostfix(GroupType groupType, BigDecimal totalValue) {
+        if (groupType == GroupType.COUNT) {
+            return NumberUtil.getValue(totalValue,0) + "次";
+        } else {
+            return NumberUtil.getValue(totalValue,SCALE) + "元";
+        }
+    }
+
+    /**
+     * 按照日期统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/dateStat")
+    public ResultBean dateStat(ConsumeDateStatSH sf) {
+        switch (sf.getDateGroupType()){
+            case DAYCALENDAR :
+                //日历
+                List<ConsumeDateStat> list = consumeService.getDateStat(sf);
+                return callback(ChartUtil.createChartCalendarData("消费统计", "次数", "次", sf, list));
+            case HOURMINUTE :
+                //散点图
+                PageRequest pr = sf.buildQuery();
+                pr.setBeanClass(beanClass);
+                List<Date> dateList = consumeService.getDateList(sf);
+                return callback(ChartUtil.createHMChartData(dateList,"消费分析","消费时间点"));
+            default:
+                break;
+        }
+        ChartData chartData = new ChartData();
+        chartData.setTitle("消费统计");
+        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setLegendData(new String[]{"消费","次数"});
+        //混合图形下使用(最后一组数据默认为次数)
+        chartData.addYAxis("消费","元");
+        chartData.addYAxis("次数","次");
+        ChartYData yData1 = new ChartYData("次数","次");
+        ChartYData yData2 = new ChartYData("消费","元");
+        //总的值
+        BigDecimal totalValue = new BigDecimal(0);
+        //总的值
+        BigDecimal totalCount = new BigDecimal(0);
+        List<ConsumeDateStat> list = consumeService.getDateStat(sf);
+        for (ConsumeDateStat bean : list) {
+            chartData.addXData(bean, sf.getDateGroupType());
+            yData1.getData().add(bean.getTotalCount());
+            yData2.getData().add(bean.getTotalPrice());
+            totalCount = totalCount.add(new BigDecimal(bean.getTotalCount()));
+            totalValue = totalValue.add(bean.getTotalPrice());
+        }
+        chartData.getYdata().add(yData2);
+        chartData.getYdata().add(yData1);
+        String subTitle = this.getDateTitle(sf)+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
+        chartData.setSubTitle(subTitle);
+        chartData = ChartUtil.completeDate(chartData, sf);
+        return callback(chartData);
+    }
 
 }

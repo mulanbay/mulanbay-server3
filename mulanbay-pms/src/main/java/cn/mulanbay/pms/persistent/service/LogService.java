@@ -120,7 +120,7 @@ public class LogService extends BaseHibernateDao {
      */
     public void updateSysCodeCount(Integer code, long addCount) {
         try {
-            String sql = "update error_code_define set count=count+" + addCount + " where code=?1 ";
+            String sql = "update sys_code set count=count+" + addCount + " where code=?1 ";
             this.execSqlUpdate(sql, code);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,

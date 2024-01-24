@@ -4,11 +4,13 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.ValidateError;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.TokenHandler;
 import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.web.bean.LoginUser;
+import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
@@ -122,6 +124,26 @@ public class BaseController {
             bussId = idValue;
         }
         return bussId;
+    }
+
+
+    /**
+     * 获取日期的标题，只要用于报表的子标题
+     *
+     * @param sf
+     * @return
+     */
+    protected String getDateTitle(DateStatSH sf) {
+        if (sf.getStartDate() == null && sf.getEndDate() == null) {
+            return "";
+        } else if (sf.getStartDate() != null && sf.getEndDate() == null) {
+            return "从" + DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "开始";
+        } else if (sf.getStartDate() == null && sf.getEndDate() != null) {
+            return "截止" + DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
+        } else {
+            return DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" +
+                    DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
+        }
     }
 
 }

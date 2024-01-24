@@ -7,9 +7,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
-import cn.mulanbay.pms.web.bean.res.chart.ChartCalendarData;
-import cn.mulanbay.pms.web.bean.res.chart.ChartData;
-import cn.mulanbay.pms.web.bean.res.chart.ChartYData;
+import cn.mulanbay.pms.web.bean.res.chart.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -262,6 +260,35 @@ public class ChartUtil {
                 chartData.addSerieData(new Object[]{dateString, vv});
             }
         }
+        return chartData;
+    }
+
+    /**
+     * 生成基于时分统计的散点图形数据
+     * @param dateList
+     * @param title
+     * @param name
+     * @return
+     */
+    public static ScatterChartData createHMChartData(List<Date> dateList , String title, String name){
+        ScatterChartData chartData = new ScatterChartData();
+        chartData.setTitle(title);
+        chartData.setxUnit("");
+        chartData.setyUnit("点");
+        chartData.addLegent(name);
+        ScatterChartDetailData detailData = new ScatterChartDetailData();
+        detailData.setName(name);
+        double totalX = 0;
+        int n = 0;
+        for (Date date : dateList) {
+            String x = DateUtil.getFormatDate(date,"yyyyMMdd");
+            String y = DateUtil.getFormatDate(date,"HH.mm");
+            detailData.addData(new Object[]{x, y});
+            totalX += Double.valueOf(y);
+            n++;
+        }
+        detailData.setxAxisAverage(totalX / n);
+        chartData.addSeriesData(detailData);
         return chartData;
     }
 }

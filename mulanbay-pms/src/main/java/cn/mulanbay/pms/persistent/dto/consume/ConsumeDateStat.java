@@ -1,28 +1,25 @@
 package cn.mulanbay.pms.persistent.dto.consume;
 
+import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.dto.common.DateStat;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
-public class ConsumeRadarStat implements DateStat {
-
-    // 商品类型，来源类型等
-    private Long groupId;
+public class ConsumeDateStat implements DateStat, CalendarDateStat {
 
     // 可以为天(20100101),周(1-36),月(1-12),年(2014)
-    private Long indexValue;
+    private Number indexValue;
 
     private Long totalCount;
 
     // 价格，精确到元，可以为运费、总价
     private BigDecimal totalPrice;
 
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public ConsumeDateStat(Number indexValue, Long totalCount, BigDecimal totalPrice) {
+        this.indexValue = indexValue;
+        this.totalCount = totalCount;
+        this.totalPrice = totalPrice;
     }
 
     @Override
@@ -30,11 +27,11 @@ public class ConsumeRadarStat implements DateStat {
         return indexValue==null ? null : indexValue.intValue();
     }
 
-    public Long getIndexValue() {
+    public Number getIndexValue() {
         return indexValue;
     }
 
-    public void setIndexValue(Long indexValue) {
+    public void setIndexValue(Number indexValue) {
         this.indexValue = indexValue;
     }
 
@@ -54,4 +51,13 @@ public class ConsumeRadarStat implements DateStat {
         this.totalPrice = totalPrice;
     }
 
+    @Override
+    public double getCalendarStatValue() {
+        return totalCount.doubleValue();
+    }
+
+    @Override
+    public int getDayIndexValue() {
+        return this.getDateIndexValue();
+    }
 }

@@ -1,10 +1,12 @@
 package cn.mulanbay.pms.persistent.dto.consume;
 
+import java.math.BigDecimal;
+
 public class ConsumeRealTimeStat {
 
     private Long id;
     private String name;
-    private Double value;
+    private BigDecimal value;
 
     public Long getId() {
         return id;
@@ -22,11 +24,11 @@ public class ConsumeRealTimeStat {
         this.name = name;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 }

@@ -13,6 +13,7 @@ import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.util.PriceUtil;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeAnalyseStatSH;
+import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeDateStatSH;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeTagSH;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeUseTimeStatSH;
 import org.springframework.stereotype.Service;
@@ -33,23 +34,6 @@ import java.util.List;
 @Service
 @Transactional
 public class ConsumeService extends BaseHibernateDao {
-
-    private static class GroupField{
-
-        public static String GOODS_TYPE="goods_type_id";
-
-        public static String SOURCE="source_id";
-
-        public static String SECONDHAND="secondhand";
-
-        public static String SHOP_NAME="shop_name";
-
-        public static String BRAND="brand";
-
-        public static String PAYMENT="payment";
-
-
-    }
 
     /**
      * 新增消费记录
@@ -144,7 +128,6 @@ public class ConsumeService extends BaseHibernateDao {
         }
     }
 
-
     /**
      * 设置上级
      * @param consumeId
@@ -207,89 +190,6 @@ public class ConsumeService extends BaseHibernateDao {
     }
 
     /**
-     * 获取雷达统计分组中的最大值
-     *
-     * @param sf
-     * @return
-     */
-    public Long getMaxValue(ConsumeAnalyseStatSH sf) {
-        try {
-            PageRequest pr = sf.buildQuery();
-            String paraStr = pr.getParameterString();
-            StringBuffer sb = new StringBuffer();
-            if (sf.getType() == GroupType.COUNT) {
-                sb.append("select max(vv) from (");
-                sb.append("select " + sf.getGroupField() + ",count(*) vv from consume ");
-                sb.append(paraStr);
-                sb.append(" group by " + sf.getGroupField());
-                sb.append(") as aa ");
-            } else if (sf.getType() == GroupType.TOTALPRICE) {
-                sb.append("select max(total_price) as vv from consume ");
-                sb.append(paraStr);
-            } else {
-                sb.append("select max(shipment) as vv from consume ");
-                sb.append(paraStr);
-            }
-            List list = this.getEntityListSI(sb.toString(),NO_PAGE,NO_PAGE_SIZE,Object.class, pr.getParameterValue());
-            if (list.isEmpty()) {
-                return 0L;
-            }
-            Object oo = list.get(0);
-            if (sf.getType() == GroupType.COUNT) {
-                BigInteger vv = (BigInteger) oo;
-                return vv.longValue();
-            } else {
-                BigDecimal vv = (BigDecimal) oo;
-                return vv.longValue();
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "获取雷达统计分组中的最大值异常", e);
-        }
-    }
-
-    /**
-     * 实时的分析雷达统计
-     *
-     * @param sf
-     * @return
-     */
-    public List<ConsumeRadarStat> getRadarStat(ConsumeAnalyseStatSH sf) {
-        try {
-            PageRequest pr = sf.buildQuery();
-            String groupField = sf.getGroupField();
-            GroupType type = sf.getType();
-            StringBuffer sql = new StringBuffer();
-            sql.append("select groupId,indexValue,count(*) totalCount,sum(pp) totalPrice from ( ");
-            if ("price_region".equals(groupField)) {
-                sql.append("select getPriceRegionId(total_price," + sf.getUserId() + ") as groupId,");
-            } else {
-                sql.append("select " + groupField + " as groupId,");
-            }
-            sql.append(MysqlUtil.dateTypeMethod("buy_time", sf.getDateGroupType()) + " as indexValue");
-            if (type == GroupType.COUNT || type == GroupType.TOTALPRICE) {
-                //统计次数
-                sql.append(" ,total_price as pp from consume ");
-            } else if (type == GroupType.SHIPMENT) {
-                //运费
-                sql.append(" ,shipment as pp from consume ");
-            }
-            sql.append(pr.getParameterString());
-            if (sf.isStat()) {
-                sql.append(getStatCondition());
-            }
-            sql.append(") as aa ");
-            sql.append("group by groupId,indexValue ");
-            sql.append("order by indexValue,groupId ");
-            List<ConsumeRadarStat> list = this.getEntityListSI(sql.toString(), pr.getPage(), pr.getPageSize(), ConsumeRadarStat.class, pr.getParameterValue());
-            return list;
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "获取实时的分析雷达统计异常", e);
-        }
-    }
-
-    /**
      * 实时的分析统计
      *
      * @param sf
@@ -302,11 +202,7 @@ public class ConsumeService extends BaseHibernateDao {
             String groupField = sf.getGroupField();
             GroupType type = sf.getType();
             StringBuffer sql = new StringBuffer();
-            if ("price_region".equals(groupField)) {
-                sql.append("select getPriceRegionId(total_price," + sf.getUserId() + ") as priceRegion");
-            } else {
-                sql.append("select " + groupField);
-            }
+            sql.append("select " + groupField);
             if (type == GroupType.COUNT) {
                 //统计次数
                 sql.append(" ,count(*) as cc from consume ");
@@ -321,11 +217,7 @@ public class ConsumeService extends BaseHibernateDao {
             if (sf.isStat()) {
                 sql.append(getStatCondition());
             }
-            if ("price_region".equals(groupField)) {
-                sql.append(" group by priceRegion");
-            } else {
-                sql.append(" group by " + groupField);
-            }
+            sql.append(" group by " + groupField);
             if (sf.getChartType() == ChartType.BAR) {
                 sql.append(" order by cc desc");
             }
@@ -347,14 +239,57 @@ public class ConsumeService extends BaseHibernateDao {
                     // ID值大部分情况下不需要
                     //bb.setId(Integer.valueOf(serierIdObj.toString()));
                 }
-                double value = Double.valueOf(oo[1].toString());
-                bb.setValue(value);
+                bb.setValue(new BigDecimal(oo[1].toString()));
                 result.add(bb);
             }
             return result;
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取实时统计异常", e);
+        }
+    }
+
+    /**
+     * 实时的分析统计(基于树形结构)
+     *
+     * @param sf
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<ConsumeRealTimeTreeStat> getAnalyseTreeStat(ConsumeAnalyseStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            GroupType type = sf.getType();
+            StringBuffer sql = new StringBuffer();
+            sql.append("select goods_type_id as goodsTypeId");
+            if (type == GroupType.COUNT) {
+                //统计次数
+                sql.append(" ,count(0) as value from consume ");
+            } else if (type == GroupType.TOTALPRICE) {
+                //价格
+                sql.append(" ,sum(total_price) as value from consume ");
+            } else if (type == GroupType.SHIPMENT) {
+                //运费
+                sql.append(" ,sum(shipment) as value from consume ");
+            }
+            sql.append(pr.getParameterString());
+            sql.append(" group by pid,goods_type_id ");
+            sql.append(" order by pid ");
+            List<ConsumeRealTimeTreeStat> list = this.getEntityListSI(sql.toString(),NO_PAGE,NO_PAGE_SIZE,ConsumeRealTimeTreeStat.class, pr.getParameterValue());
+            if(StringUtil.isEmpty(list)){
+                return new ArrayList<>();
+            }
+            for (ConsumeRealTimeTreeStat ts : list) {
+                GoodsType t = this.getEntityById(GoodsType.class,ts.getGoodsTypeId());
+                ts.setGoodsName(t.getTypeName());
+                GoodsType parent = this.getEntityById(GoodsType.class,t.getPid());
+                ts.setParentGoodsTypeId(parent.getTypeId());
+                ts.setParentGoodsTypeName(parent.getTypeName());
+            }
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "实时的分析统计(基于树形结构)异常", e);
         }
     }
 
@@ -462,7 +397,6 @@ public class ConsumeService extends BaseHibernateDao {
         }
     }
 
-
     /**
      * 获取需要统计的条件
      *
@@ -546,6 +480,78 @@ public class ConsumeService extends BaseHibernateDao {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取子商品列表异常", e);
         }
+    }
+
+
+    /**
+     * 按时间来统计
+     *
+     * @param sf
+     * @return
+     */
+    public List<ConsumeDateStat> getDateStat(ConsumeDateStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            DateGroupType dateGroupType = sf.getDateGroupType();
+            GroupType groupType = sf.getGroupType();
+            String sql = """
+                    select indexValue,count(0) as totalCount,sum(price) as totalPrice
+                    from ( select {date_group_field} as indexValue,
+                    {group_field} as price
+                    from consume
+                    {query_para}
+                    ) tt group by indexValue
+                     order by indexValue
+                    """;
+            sql = sql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("buy_time", dateGroupType))
+                     .replace("{group_field}",groupType.getField())
+                     .replace("{query_para}",pr.getParameterString());
+            List<ConsumeDateStat> list = this.getEntityListSI(sql, pr.getPage(), pr.getPageSize(), ConsumeDateStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "按时间来统计异常", e);
+        }
+    }
+
+    /**
+     * 获取时间列表
+     * @param sf
+     * @return
+     */
+    public List<Date> getDateList(ConsumeDateStatSH sf) {
+        try {
+            String sql = """
+                    select buy_time from consume
+                    {query_para}
+                     order by buy_time
+                    """;
+            PageRequest pr = sf.buildQuery();
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            List<Date> list = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Date.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取时间列表异常", e);
+        }
+    }
+
+
+    public static class GroupField{
+
+        public static String GOODS_TYPE="goods_type_id";
+
+        public static String SOURCE="source_id";
+
+        public static String SECONDHAND="secondhand";
+
+        public static String SHOP_NAME="shop_name";
+
+        public static String BRAND="brand";
+
+        public static String PAYMENT="payment";
+
+
     }
 
 }

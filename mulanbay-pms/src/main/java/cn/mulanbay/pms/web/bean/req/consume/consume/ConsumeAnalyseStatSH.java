@@ -10,6 +10,7 @@ import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.req.GroupType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -22,10 +23,12 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
     @Query(fieldName = "goods_name,tags,shop_name,remark", op = Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
-    @Query(fieldName = "buy_date", op = Operator.GTE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Query(fieldName = "buy_time", op = Operator.GTE)
     private Date startDate;
 
-    @Query(fieldName = "buy_date", op = Operator.LTE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Query(fieldName = "buy_time", op = Operator.LTE)
     private Date endDate;
 
     @Query(fieldName = "user_id", op = Operator.EQ)
@@ -38,16 +41,13 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
     private Double endTotalPrice;
 
     @Query(fieldName = "goods_type_id", op = Operator.EQ)
-    private Integer goodsType;
+    private Long goodsTypeId;
 
-    @Query(fieldName = "sub_goods_type_id", op = Operator.EQ)
-    private Integer subGoodsType;
+    @Query(fieldName = "source_id", op = Operator.EQ)
+    private Long sourceId;
 
-    @Query(fieldName = "buy_type_id", op = Operator.EQ)
-    private Integer buyType;
-
-    @Query(fieldName = "keywords", op = Operator.LIKE)
-    private String keywords;
+    @Query(fieldName = "tags", op = Operator.LIKE)
+    private String tags;
 
     //sql需要原始的数字类型
     @Query(fieldName = "consume_type", op = Operator.EQ)
@@ -142,36 +142,28 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
         this.endTotalPrice = endTotalPrice;
     }
 
-    public Integer getGoodsType() {
-        return goodsType;
+    public Long getGoodsTypeId() {
+        return goodsTypeId;
     }
 
-    public void setGoodsType(Integer goodsType) {
-        this.goodsType = goodsType;
+    public void setGoodsTypeId(Long goodsTypeId) {
+        this.goodsTypeId = goodsTypeId;
     }
 
-    public Integer getSubGoodsType() {
-        return subGoodsType;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setSubGoodsType(Integer subGoodsType) {
-        this.subGoodsType = subGoodsType;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
-    public Integer getBuyType() {
-        return buyType;
+    public String getTags() {
+        return tags;
     }
 
-    public void setBuyType(Integer buyType) {
-        this.buyType = buyType;
-    }
-
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public boolean isStat() {
