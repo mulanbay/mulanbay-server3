@@ -17,6 +17,7 @@ import cn.mulanbay.pms.persistent.domain.GoodsType;
 import cn.mulanbay.pms.persistent.domain.UserSet;
 import cn.mulanbay.pms.persistent.dto.consume.*;
 import cn.mulanbay.pms.persistent.enums.ChartType;
+import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -71,9 +72,6 @@ public class ConsumeController extends BaseController {
     AuthService authService;
 
     @Autowired
-    DataService dataService;
-
-    @Autowired
     ConsumeHandler consumeHandler;
 
     @Autowired
@@ -87,8 +85,8 @@ public class ConsumeController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/tagTree")
-    public ResultBean tagTree(ConsumeTagSH sf) {
+    @RequestMapping(value = "/tagsTree")
+    public ResultBean tagsTree(ConsumeTagSH sf) {
         if(sf.getStartDate()==null&&sf.getEndDate()==null){
             Date end = new Date();
             Date start = DateUtil.getDate(-tagDays);
@@ -502,7 +500,7 @@ public class ConsumeController extends BaseController {
             mdd.addChild(child);
         }
         chartData.setData(new ArrayList<>(dataMap.values()));
-        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(), totalValue);
+        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(), totalValue);
         chartData.setSubTitle(subTitle);
         return chartData;
 
@@ -531,7 +529,7 @@ public class ConsumeController extends BaseController {
             seriesData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(), totalValue);
+        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(), totalValue);
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(seriesData);
         return chartPieData;
@@ -558,7 +556,7 @@ public class ConsumeController extends BaseController {
             yData.getData().add(bean.getValue());
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf)+getSubTitlePostfix(sf.getType(),totalValue);
+        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(),totalValue);
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         return chartData;
@@ -625,9 +623,224 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf)+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
+        String subTitle = this.getDateTitle(sf)+",总计"+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
+        return callback(chartData);
+    }
+
+    /**
+     * 同期比对统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/yoyStat")
+    public ResultBean yoyStat(@Valid ConsumeYoyStatSH sf) {
+        if (sf.getDateGroupType() == DateGroupType.DAY) {
+            return callback(createChartCalendarMultiData(sf));
+        }
+        String unit = sf.getGroupType().getUnit();
+        ChartData chartData = initYoyCharData(sf, "消费统计同期对比", null);
+        chartData.setUnit(unit);
+        String[] legendData = new String[sf.getYears().size()];
+        for (int i = 0; i < sf.getYears().size(); i++) {
+            legendData[i] = sf.getYears().get(i).toString();
+            //数据,为了代码复用及统一，统计还是按照日期的统计
+            ConsumeDateStatSH dateSearch = generateSearch(sf.getYears().get(i), sf);
+            ChartYData yData = new ChartYData();
+            yData.setName(sf.getYears().get(i).toString());
+            yData.setUnit(unit);
+            List<ConsumeDateStat> list = consumeService.getDateStat(dateSearch);
+            //临时内容，作为补全用
+            ChartData temp = new ChartData();
+            for (ConsumeDateStat bean : list) {
+                temp.addXData(bean, sf.getDateGroupType());
+                if (sf.getGroupType() == GroupType.COUNT) {
+                    yData.getData().add(bean.getTotalCount());
+                } else {
+                    yData.getData().add(bean.getTotalPrice());
+                }
+            }
+            //临时内容，作为补全用
+            temp.getYdata().add(yData);
+            dateSearch.setCompleteDate(true);
+            temp = ChartUtil.completeDate(temp, dateSearch);
+            //设置到最终的结果集中
+            chartData.getYdata().add(temp.getYdata().get(0));
+        }
+        chartData.setLegendData(legendData);
+
+        return callback(chartData);
+    }
+
+    private ConsumeDateStatSH generateSearch(int year, ConsumeYoyStatSH sf) {
+        ConsumeDateStatSH dateSearch = new ConsumeDateStatSH();
+        dateSearch.setDateGroupType(sf.getDateGroupType());
+        dateSearch.setStartDate(DateUtil.getDate(year + "-01-01", DateUtil.FormatDay1));
+        dateSearch.setEndDate(DateUtil.getDate(year + "-12-31", DateUtil.FormatDay1));
+        dateSearch.setUserId(sf.getUserId());
+        dateSearch.setStartTotalPrice(sf.getStartTotalPrice());
+        dateSearch.setEndTotalPrice(sf.getEndTotalPrice());
+        dateSearch.setGroupType(GroupType.TOTALPRICE);
+        dateSearch.setSourceId(sf.getSourceId());
+        dateSearch.setGoodsTypeId(sf.getGoodsTypeId());
+        dateSearch.setConsumeType(sf.getConsumeType());
+        dateSearch.setSecondhand(sf.getSecondhand());
+        return dateSearch;
+    }
+
+    /**
+     * 基于日历的热点图
+     *
+     * @param sf
+     * @return
+     */
+    private ChartCalendarMultiData createChartCalendarMultiData(ConsumeYoyStatSH sf) {
+        ChartCalendarMultiData data = new ChartCalendarMultiData();
+        data.setTitle("消费统计同期对比");
+        if (sf.getGroupType() == GroupType.COUNT) {
+            data.setUnit("次");
+        } else {
+            data.setUnit("元");
+        }
+        for (int i = 0; i < sf.getYears().size(); i++) {
+            ConsumeDateStatSH dateSearch = generateSearch(sf.getYears().get(i), sf);
+            List<ConsumeDateStat> list = consumeService.getDateStat(dateSearch);
+            for (ConsumeDateStat bean : list) {
+                String dateString = DateUtil.getFormatDateString(bean.getDateIndexValue().toString(), "yyyyMMdd", "yyyy-MM-dd");
+                if (sf.getGroupType() == GroupType.COUNT) {
+                    data.addData(sf.getYears().get(i), dateString, bean.getTotalCount());
+                } else {
+                    data.addData(sf.getYears().get(i), dateString, bean.getTotalPrice());
+                }
+            }
+        }
+        return data;
+    }
+
+    /**
+     * 根据标签统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/tagsStat")
+    public ResultBean tagsStat(@Valid ConsumeTagsStatSH sf) {
+        List<ConsumeTagsStat> list = consumeService.getTagsStat(sf);
+        ChartData chartData = new ChartData();
+        chartData.setTitle("标签统计");
+        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setLegendData(new String[]{"消费","次数"});
+        //混合图形下使用
+        chartData.addYAxis("消费","元");
+        chartData.addYAxis("次数","次");
+        ChartYData yData1 = new ChartYData("次数","次");
+        ChartYData yData2 = new ChartYData("消费","元");
+        //总的值
+        BigDecimal totalValue = new BigDecimal(0);
+        //总的值
+        BigDecimal totalCount = new BigDecimal(0);
+        for (ConsumeTagsStat bean : list) {
+            chartData.getXdata().add(bean.getTags());
+            yData1.getData().add(bean.getTotalCount());
+            yData2.getData().add(bean.getTotalPrice());
+            totalCount = totalCount.add(new BigDecimal(bean.getTotalCount().longValue()));
+            totalValue = totalValue.add(bean.getTotalPrice());
+        }
+        chartData.getYdata().add(yData2);
+        chartData.getYdata().add(yData1);
+        String subTitle = this.getDateTitle(sf)+",总计"+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
+        chartData.setSubTitle(subTitle);
+        chartData = ChartUtil.completeDate(chartData, sf);
+        return callback(chartData);
+    }
+
+    /**
+     * 统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/tagsDetailStat", method = RequestMethod.GET)
+    public ResultBean tagsDetailStat(ConsumeAnalyseStatSH basf) {
+        basf.setType(GroupType.TOTALPRICE);
+        List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(basf);
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("[" + basf.getTags() + "]的消费分析");
+        chartPieData.setUnit("元");
+        ChartPieSerieData serieData = new ChartPieSerieData();
+        serieData.setName("费用");
+        //总的值
+        BigDecimal totalValue = new BigDecimal((0));
+        for (ConsumeRealTimeStat bean : list) {
+            chartPieData.getXdata().add(bean.getName());
+            ChartPieSerieDetailData dataDetail = new ChartPieSerieDetailData();
+            dataDetail.setName(bean.getName());
+            dataDetail.setValue(bean.getValue());
+            serieData.getData().add(dataDetail);
+            totalValue.add(bean.getValue());
+        }
+        String subTitle = "花费总金额:" + NumberUtil.getValue( totalValue,SCALE) + "元";
+        chartPieData.setSubTitle(subTitle);
+        chartPieData.getDetailData().add(serieData);
+        return callback(chartPieData);
+    }
+
+    /**
+     * 商品词云统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/wordCloudStat", method = RequestMethod.GET)
+    public ResultBean wordCloudStat(@Valid ConsumeWordCloudSH sf) {
+        List<String> list = consumeService.getWordCloudStat(sf);
+        Map<String,Integer> statData = new HashMap<>();
+        String field = sf.getField();
+        for (String d : list) {
+            if("goodsName".equals(field)||"sku".equals(field)){
+                //先分词
+                List<String> keywords = nlpProcessor.extractKeyword(d,tagNum);
+                for(String s : keywords){
+                    //忽略分词后为词长度为1的
+                    if(sf.getIgnoreShort()!=null&&sf.getIgnoreShort()){
+                        if(s.length()<2){
+                            continue;
+                        }
+                    }
+                    Integer n = statData.get(s);
+                    if(n==null){
+                        statData.put(s,1);
+                    }else{
+                        statData.put(s,n+1);
+                    }
+                }
+            }else if("shopName".equals(field)||"brand".equals(field)){
+                Integer n = statData.get(d);
+                if(n==null){
+                    statData.put(d,1);
+                }else{
+                    statData.put(d,n+1);
+                }
+            }else if("tags".equals(field)){
+                String[] keywords = d.split(",");
+                for(String s : keywords){
+                    Integer n = statData.get(s);
+                    if(n==null){
+                        statData.put(s,1);
+                    }else{
+                        statData.put(s,n+1);
+                    }
+                }
+            }
+
+        }
+
+        ChartWorldCloudData chartData = new ChartWorldCloudData();
+        for(String key : statData.keySet()){
+            ChartNameValueVo dd = new ChartNameValueVo();
+            dd.setName(key);
+            dd.setValue(statData.get(key));
+            chartData.addData(dd);
+        }
+        chartData.setTitle("消费词云");
         return callback(chartData);
     }
 

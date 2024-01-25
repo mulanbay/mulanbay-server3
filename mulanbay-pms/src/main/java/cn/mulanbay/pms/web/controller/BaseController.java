@@ -7,11 +7,15 @@ import cn.mulanbay.common.exception.ValidateError;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.TokenHandler;
+import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.web.bean.LoginUser;
+import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
+import cn.mulanbay.pms.web.bean.res.chart.ChartData;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +148,32 @@ public class BaseController {
             return DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" +
                     DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
         }
+    }
+
+    /**
+     * 初始化同期对比数据
+     *
+     * @param sf
+     * @param title
+     * @param subTitle
+     * @return
+     */
+    protected ChartData initYoyCharData(BaseYoyStatSH sf, String title, String subTitle) {
+        ChartData chartData = new ChartData();
+        chartData.setTitle(title);
+        chartData.setSubTitle(subTitle);
+        if (sf.getDateGroupType() == DateGroupType.MONTH) {
+            for (int i = 1; i <= Constant.MAX_MONTH; i++) {
+                chartData.getIntXData().add(i);
+                chartData.getXdata().add(i + "月份");
+            }
+        } else if (sf.getDateGroupType() == DateGroupType.WEEK) {
+            for (int i = 1; i <= Constant.MAX_WEEK; i++) {
+                chartData.getIntXData().add(i);
+                chartData.getXdata().add("第" + i + "周");
+            }
+        }
+        return chartData;
     }
 
 }

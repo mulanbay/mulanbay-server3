@@ -1,54 +1,33 @@
 package cn.mulanbay.pms.web.bean.req.consume.consume;
 
 import cn.mulanbay.common.aop.BindUser;
-import cn.mulanbay.common.aop.FullEndDateTime;
-import cn.mulanbay.persistent.query.NullType;
-import cn.mulanbay.persistent.query.Parameter.Operator;
+import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.persistent.query.QueryBuilder;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
-import cn.mulanbay.web.bean.request.PageSearch;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class ConsumeUseTimeStatSH extends PageSearch implements DateStatSH, BindUser, FullEndDateTime {
-
-    private String groupField;
+public class ConsumeTagsStatSH extends QueryBuilder implements DateStatSH, BindUser {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Query(fieldName = "buy_time", op = Operator.GTE)
+    @Query(fieldName = "buy_time", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Query(fieldName = "buy_time", op = Operator.LTE)
+    @Query(fieldName = "buy_time", op = Parameter.Operator.LTE)
     private Date endDate;
 
-    @Query(fieldName = "user_id", op = Operator.EQ)
-    private Long userId;
+    @Query(fieldName = "user_id", op = Parameter.Operator.EQ)
+    public Long userId;
 
-    @Query(fieldName = "goods_type_id", op = Operator.EQ)
+    @Query(fieldName = "goods_type_id", op = Parameter.Operator.EQ)
     private Long goodsTypeId;
 
-    @Query(fieldName = "source_id", op = Operator.EQ)
+    @Query(fieldName = "source_id", op = Parameter.Operator.EQ)
     private Long sourceId;
-
-    @Query(fieldName = "secondhand", op = Operator.EQ)
-    private Boolean secondhand;
-
-    /**
-     * 非空表示设置过作废日期
-     */
-    @Query(fieldName = "invalid_time", op = Operator.NULL_NOTNULL)
-    private NullType invalidTmeType;
-
-    public String getGroupField() {
-        return groupField;
-    }
-
-    public void setGroupField(String groupField) {
-        this.groupField = groupField;
-    }
 
     @Override
     public Date getStartDate() {
@@ -74,7 +53,6 @@ public class ConsumeUseTimeStatSH extends PageSearch implements DateStatSH, Bind
         return null;
     }
 
-    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
@@ -103,21 +81,5 @@ public class ConsumeUseTimeStatSH extends PageSearch implements DateStatSH, Bind
 
     public void setSourceId(Long sourceId) {
         this.sourceId = sourceId;
-    }
-
-    public Boolean getSecondhand() {
-        return secondhand;
-    }
-
-    public void setSecondhand(Boolean secondhand) {
-        this.secondhand = secondhand;
-    }
-
-    public NullType getInvalidTmeType() {
-        return invalidTmeType;
-    }
-
-    public void setInvalidTmeType(NullType invalidTmeType) {
-        this.invalidTmeType = invalidTmeType;
     }
 }

@@ -5,14 +5,17 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter.Operator;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.persistent.query.QueryBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class ConsumeTagSH extends QueryBuilder implements BindUser, FullEndDateTime {
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Query(fieldName = "buy_time", op = Operator.GTE)
     private Date startDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Query(fieldName = "buy_time", op = Operator.LTE)
     private Date endDate;
 

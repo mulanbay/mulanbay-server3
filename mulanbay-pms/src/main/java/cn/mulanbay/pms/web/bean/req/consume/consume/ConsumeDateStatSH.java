@@ -10,6 +10,7 @@ import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ConsumeDateStatSH extends QueryBuilder implements DateStatSH, BindUser, FullEndDateTime {
@@ -29,13 +30,13 @@ public class ConsumeDateStatSH extends QueryBuilder implements DateStatSH, BindU
     private Boolean secondhand;
 
     @Query(fieldName = "total_price", op = Parameter.Operator.GTE)
-    private Double startTotalPrice;
+    private BigDecimal startTotalPrice;
 
     @Query(fieldName = "total_price", op = Parameter.Operator.LTE)
-    private Double endTotalPrice;
+    private BigDecimal endTotalPrice;
 
     @Query(fieldName = "goods_type_id", op = Parameter.Operator.EQ)
-    private Long goodsType;
+    private Long goodsTypeId;
 
     @Query(fieldName = "source_id", op = Parameter.Operator.EQ)
     private Long sourceId;
@@ -88,28 +89,28 @@ public class ConsumeDateStatSH extends QueryBuilder implements DateStatSH, BindU
         this.secondhand = secondhand;
     }
 
-    public Double getStartTotalPrice() {
+    public BigDecimal getStartTotalPrice() {
         return startTotalPrice;
     }
 
-    public void setStartTotalPrice(Double startTotalPrice) {
+    public void setStartTotalPrice(BigDecimal startTotalPrice) {
         this.startTotalPrice = startTotalPrice;
     }
 
-    public Double getEndTotalPrice() {
+    public BigDecimal getEndTotalPrice() {
         return endTotalPrice;
     }
 
-    public void setEndTotalPrice(Double endTotalPrice) {
+    public void setEndTotalPrice(BigDecimal endTotalPrice) {
         this.endTotalPrice = endTotalPrice;
     }
 
-    public Long getGoodsType() {
-        return goodsType;
+    public Long getGoodsTypeId() {
+        return goodsTypeId;
     }
 
-    public void setGoodsType(Long goodsType) {
-        this.goodsType = goodsType;
+    public void setGoodsTypeId(Long goodsTypeId) {
+        this.goodsTypeId = goodsTypeId;
     }
 
     public Long getSourceId() {

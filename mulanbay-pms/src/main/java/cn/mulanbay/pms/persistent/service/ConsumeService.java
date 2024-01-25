@@ -12,10 +12,7 @@ import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.util.PriceUtil;
 import cn.mulanbay.pms.web.bean.req.GroupType;
-import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeAnalyseStatSH;
-import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeDateStatSH;
-import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeTagSH;
-import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeUseTimeStatSH;
+import cn.mulanbay.pms.web.bean.req.consume.consume.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -533,6 +530,54 @@ public class ConsumeService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取时间列表异常", e);
+        }
+    }
+
+    /**
+     * 按标签来统计购买记录
+     *
+     * @param sf 查询条件
+     * @return
+     */
+    public List<ConsumeTagsStat> getTagsStat(ConsumeTagsStatSH sf) {
+        try {
+            String sql = """
+                    select tags ,count(0) as totalCount,sum(price) as totalPrice from consume
+                    {query_para}
+                    and tags is not null
+                    group by tags
+                    order by totalPrice desc
+                    """;
+            PageRequest pr = sf.buildQuery();
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            List<ConsumeTagsStat> list = this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE, ConsumeTagsStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "按标签来统计购买记录异常", e);
+        }
+    }
+
+    /**
+     * 词云统计
+     * @param sf
+     * @return
+     */
+    public List<String> getWordCloudStat(ConsumeWordCloudSH sf) {
+        try {
+            String hql = """
+                    select {field} from Consume
+                    {query_para}
+                    and  {field} is not null
+                    """;
+            PageRequest pr = sf.buildQuery();
+            hql = hql.replace("{query_para}",pr.getParameterString())
+                     .replace("{field}",sf.getField());
+            List<String> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,String.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "词云统计异常", e);
         }
     }
 
