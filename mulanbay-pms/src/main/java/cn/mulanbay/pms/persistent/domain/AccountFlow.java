@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.AccountAdjustType;
 import cn.mulanbay.pms.persistent.enums.AccountStatus;
 import cn.mulanbay.pms.persistent.enums.AccountType;
 
@@ -14,54 +15,58 @@ import java.util.Objects;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
- * 账户
+ * 账户流水记录
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "account")
-public class Account implements java.io.Serializable {
+@Table(name = "account_flow")
+public class AccountFlow implements java.io.Serializable {
 
     private static final long serialVersionUID = 7254329209805899896L;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "account_id", unique = true, nullable = false)
-    private Long accountId;
+    @Column(name = "flow_id", unique = true, nullable = false)
+    private Long flowId;
 
     @Column(name = "user_id")
     private Long userId;
 
-    /**
-     * 账户名称
-     */
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = true)
+    private Account account;
+
+    //账户名称
     @Column(name = "account_name")
     private String accountName;
-    /**
-     * 账户卡号
-     */
+
+    //账户卡号
     @Column(name = "card_no")
     private String cardNo;
 
-    /*8
-    账户类型
-     */
+    //账户类型
     @Column(name = "type")
     private AccountType type;
 
-    /**
-     * 账户余额
-     */
-    @Column(name = "amount",precision = 9,scale = 2)
-    private BigDecimal amount;
+    @Column(name = "before_amount")
+    private BigDecimal beforeAmount;
 
-    /**
-     * 账户状态
-     */
+    @Column(name = "after_amount")
+    private BigDecimal afterAmount;
+
+    @Column(name = "adjust_type")
+    private AccountAdjustType adjustType;
+    //业务key，只针对快照方式有效
+
+    @ManyToOne
+    @JoinColumn(name = "snapshot_id", nullable = true)
+    private AccountSnapshot snapshot;
+
+    //账户状态
     @Column(name = "status")
     private AccountStatus status;
-
     @Column(name = "remark")
     private String remark;
 
@@ -73,12 +78,12 @@ public class Account implements java.io.Serializable {
     @Column(name = "modify_time")
     private Date modifyTime;
 
-    public Long getAccountId() {
-        return accountId;
+    public Long getFlowId() {
+        return flowId;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setFlowId(Long flowId) {
+        this.flowId = flowId;
     }
 
     public Long getUserId() {
@@ -87,6 +92,14 @@ public class Account implements java.io.Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getAccountName() {
@@ -113,12 +126,36 @@ public class Account implements java.io.Serializable {
         this.type = type;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getBeforeAmount() {
+        return beforeAmount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setBeforeAmount(BigDecimal beforeAmount) {
+        this.beforeAmount = beforeAmount;
+    }
+
+    public BigDecimal getAfterAmount() {
+        return afterAmount;
+    }
+
+    public void setAfterAmount(BigDecimal afterAmount) {
+        this.afterAmount = afterAmount;
+    }
+
+    public AccountAdjustType getAdjustType() {
+        return adjustType;
+    }
+
+    public void setAdjustType(AccountAdjustType adjustType) {
+        this.adjustType = adjustType;
+    }
+
+    public AccountSnapshot getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(AccountSnapshot snapshot) {
+        this.snapshot = snapshot;
     }
 
     public AccountStatus getStatus() {
@@ -159,14 +196,19 @@ public class Account implements java.io.Serializable {
     }
 
     @Transient
+    public String getAdjustTypeName() {
+        return adjustType==null ? null:adjustType.getName();
+    }
+
+    @Transient
     public String getStatusName() {
         return status==null ? null:status.getName();
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof Account bean) {
-            return bean.getAccountId().equals(this.getAccountId());
+        if (other instanceof AccountFlow bean) {
+            return bean.getFlowId().equals(this.getFlowId());
         }else {
             return false;
         }
@@ -174,6 +216,6 @@ public class Account implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(accountId);
+        return Objects.hashCode(flowId);
     }
 }

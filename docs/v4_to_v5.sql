@@ -231,10 +231,50 @@ ALTER TABLE `archive`
 ALTER TABLE `archive`
 DROP COLUMN `bean_name`;
 
+ALTER TABLE `account_flow`
+    CHANGE COLUMN `id` `flow_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `flow_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+ALTER TABLE `account_snapshot_info`  RENAME TO  `account_snapshot` ;
+ALTER TABLE `account_snapshot`
+    CHANGE COLUMN `id` `snapshot_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `snapshot_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+#更新预算的消费商品类型绑定
+update budget set goods_type_id = sub_goods_type_id where sub_goods_type_id is not null and id>0;
 
+ALTER TABLE `budget`
+DROP COLUMN `sub_goods_type_id`,
+DROP COLUMN `fee_type`,
+CHANGE COLUMN `id` `budget_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `budget_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `keywords` `tags` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+ALTER TABLE `budget`
+    ADD COLUMN `icg` TINYINT NOT NULL DEFAULT 1 AFTER `goods_type_id`,
+CHANGE COLUMN `goods_type_id` `goods_type_id` BIGINT(20) NULL DEFAULT NULL ;
 
+ALTER TABLE `budget_log`
+    CHANGE COLUMN `id` `log_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `budget_snapshot`
+DROP COLUMN `sub_goods_type_id`,
+DROP COLUMN `fee_type`,
+ADD COLUMN `icg` TINYINT NULL DEFAULT 1 AFTER `goods_type_id`,
+CHANGE COLUMN `buss_key` `buss_key` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL AFTER `budget_log_id`,
+CHANGE COLUMN `id` `snapshot_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `budget_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `keywords` `tags` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `budget_timeline`
+    CHANGE COLUMN `id` `timeline_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+ALTER TABLE `account_flow`
+    CHANGE COLUMN `flow_name` `account_name` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL ;
 
 
