@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,9 +20,6 @@ public class DateUtil {
 	private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
 	public final static String FormatDay1 = "yyyy-MM-dd";
-	public final static String FormatDay2 = "yyyy年MM月dd日";
-	public final static String FormatDay3 = "yyyy年MM月dd日 HH:mm:ss";
-	public final static String FormatDay4 = "yyyy-MM-dd HH:mm";
 
 	public static final String Format24Datetime = "yyyy-MM-dd HH:mm:ss";// 24
 
@@ -381,58 +377,24 @@ public class DateUtil {
 	}
 
 	/**
-	 * 获取距离凌晨的当前时间
+	 * 从凌晨开始
 	 *
+	 * @param date
 	 * @return
 	 */
-	public static String getFromMiddleNight() {
-		return getToday(FormatDay1)+ " 00:00:00";
-	}
-
-	public static Date getFromMiddleNightDate(String date){
-		return getDate(date+" 00:00:00",Format24Datetime);
-	}
-
-	public static Date getFromMiddleNightDate(Date date){
+	public static Date fromMiddleNight(Date date){
 		String s = getFormatDate(date,FormatDay1);
 		return getDate(s+" 00:00:00",Format24Datetime);
 	}
 
-
 	/**
 	 * 添加午夜的23:59:59
 	 * @param date
 	 * @return
 	 */
-	public static Date getTodayTillMiddleNightDate(String date){
-		return getDate(date+" 23:59:59",Format24Datetime);
-	}
-
-	/**
-	 * 添加午夜的23:59:59
-	 * @param date
-	 * @return
-	 */
-	public static Date getTodayTillMiddleNightDate(Date date){
+	public static Date tillMiddleNight(Date date){
 	 	String dd = DateUtil.getFormatDate(date,DateUtil.FormatDay1);
 		return getDate(dd+" 23:59:59",Format24Datetime);
-	}
-
-	/**
-	 * 获取当前时间到今天的午夜
-	 *
-	 * @return
-	 */
-	public static String getTodayTillMiddleNight() {
-		return getToday(FormatDay1) + " 23:59:59";
-	}
-
-	public static java.sql.Timestamp getCurrentTimestamp() {
-		return new Timestamp(System.currentTimeMillis());
-	}
-
-	public static java.util.Date getCurrentUtilDate() {
-		return new java.util.Date(System.currentTimeMillis());
 	}
 
 	public static String getToday(String formatDay) {
@@ -458,17 +420,17 @@ public class DateUtil {
 	public static Date getLastDayOfCurrYear(){
 		Calendar currCal=Calendar.getInstance();
 		int currentYear = currCal.get(Calendar.YEAR);
-		return getLastDayOfYear(currentYear);
+		return getYearLast(currentYear);
 	}
 
 	/**
 	 * 获取当年的最后一天
 	 * @return
 	 */
-	public static Date getLastDayOfYear(Date date){
+	public static Date getYearLast(Date date){
 		String y = DateUtil.getFormatDate(date,"yyyy");
 		int currentYear = Integer.valueOf(y);
-		return getLastDayOfYear(currentYear);
+		return getYearLast(currentYear);
 	}
 
 	/**
@@ -501,7 +463,7 @@ public class DateUtil {
 	 * @param year 年份
 	 * @return Date
 	 */
-	public static Date getLastDayOfYear(int year){
+	public static Date getYearLast(int year){
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 		calendar.set(Calendar.YEAR, year);
@@ -515,7 +477,7 @@ public class DateUtil {
 	 * @param date
 	 * @return
 	 */
-	public static Date getFirstDayOfMonth(Date date){
+	public static Date getMonthFirst(Date date){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -528,7 +490,7 @@ public class DateUtil {
 	 * @param date
 	 * @return
 	 */
-	public static Date getLastDayOfMonth(Date date){
+	public static Date getMonthLast(Date date){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));

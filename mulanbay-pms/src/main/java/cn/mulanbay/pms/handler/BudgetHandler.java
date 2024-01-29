@@ -225,26 +225,26 @@ public class BudgetHandler extends BaseHandler {
         Date endTime;
         if (period == PeriodType.MONTHLY) {
             //月的为当月第一天
-            startTime = DateUtil.getFirstDayOfMonth(bussDay);
+            startTime = DateUtil.getMonthFirst(bussDay);
             if (useLastDay) {
-                Date endDate = DateUtil.getLastDayOfMonth(bussDay);
-                endTime = DateUtil.getTodayTillMiddleNightDate(endDate);
+                Date endDate = DateUtil.getMonthLast(bussDay);
+                endTime = DateUtil.tillMiddleNight(endDate);
             } else {
-                endTime = DateUtil.getTodayTillMiddleNightDate(bussDay);
+                endTime = DateUtil.tillMiddleNight(bussDay);
             }
         } else {
             //年的为当年第一天
             startTime = DateUtil.getYearFirst(bussDay);
             if (useLastDay) {
-                Date endDate = DateUtil.getLastDayOfYear(Integer.valueOf(DateUtil.getYear(bussDay)));
-                endTime = DateUtil.getTodayTillMiddleNightDate(endDate);
+                Date endDate = DateUtil.getYearLast(Integer.valueOf(DateUtil.getYear(bussDay)));
+                endTime = DateUtil.tillMiddleNight(endDate);
             } else {
-                endTime = DateUtil.getTodayTillMiddleNightDate(bussDay);
+                endTime = DateUtil.tillMiddleNight(bussDay);
             }
 
         }
         //去掉时分秒
-        startTime = DateUtil.getFromMiddleNightDate(startTime);
+        startTime = DateUtil.fromMiddleNight(startTime);
         return new Date[]{startTime, endTime};
     }
 
@@ -310,6 +310,7 @@ public class BudgetHandler extends BaseHandler {
      */
     public ConsumeBean getConsume(Date startTime, Date endTime, Long userId) {
         ConsumeBean bean = new ConsumeBean();
+        long totalCount=0L;
         //总消费
         List<ConsumeConsumeTypeStat> brcList = consumeService.getConsumeTypeAmountStat(startTime, endTime, userId);
         for (ConsumeConsumeTypeStat brc : brcList) {
@@ -320,8 +321,9 @@ public class BudgetHandler extends BaseHandler {
             } else if (brc.getConsumeType().intValue() == GoodsConsumeType.TREAT.getValue()) {
                 bean.setTreatAmount(brc.getTotalPrice());
             }
+            totalCount+= brc.getTotalCount();
         }
-
+        bean.setTotalCount(totalCount);
         return bean;
     }
 

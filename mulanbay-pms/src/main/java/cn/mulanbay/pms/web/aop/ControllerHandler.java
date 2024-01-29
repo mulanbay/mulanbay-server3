@@ -6,7 +6,6 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.BindUserLevel;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
@@ -212,7 +211,7 @@ public class ControllerHandler {
                     FullEndDateTime qwu = (FullEndDateTime) arg;
                     Date endDate = qwu.getEndDate();
                     if (endDate != null) {
-                        qwu.setEndDate(DateUtil.getTodayTillMiddleNightDate(endDate));
+                        qwu.setEndDate(DateUtil.tillMiddleNight(endDate));
                     }
                 }
             }

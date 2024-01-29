@@ -188,12 +188,12 @@ public class BaseController {
     protected Date[] getStatDateRange(DateGroupType dateGroupType, Date date) {
         Date[] dd = new Date[2];
         if (dateGroupType == DateGroupType.DAY) {
-            dd[0] = DateUtil.getFromMiddleNightDate(date);
-            dd[1] = DateUtil.getTodayTillMiddleNightDate(date);
+            dd[0] = DateUtil.fromMiddleNight(date);
+            dd[1] = DateUtil.tillMiddleNight(date);
         } else if (dateGroupType == DateGroupType.MONTH) {
-            dd[0] = DateUtil.getFromMiddleNightDate(DateUtil.getFirstDayOfMonth(date));
-            Date endDate = DateUtil.getLastDayOfMonth(date);
-            dd[1] = DateUtil.getTodayTillMiddleNightDate(endDate);
+            dd[0] = DateUtil.fromMiddleNight(DateUtil.getMonthFirst(date));
+            Date endDate = DateUtil.getMonthLast(date);
+            dd[1] = DateUtil.tillMiddleNight(endDate);
         } else {
             int year = Integer.parseInt(DateUtil.getFormatDate(date, "yyyy"));
             dd[0] = DateUtil.getDate(year + "-01-01 00:00:00", DateUtil.Format24Datetime);

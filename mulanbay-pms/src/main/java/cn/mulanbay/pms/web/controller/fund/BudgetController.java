@@ -529,11 +529,11 @@ public class BudgetController extends BaseController {
         Date firstDay;
         Date lastDay;
         if (re.getPeriod() == PeriodType.MONTHLY) {
-            firstDay = DateUtil.getFirstDayOfMonth(re.getBussDay());
-            lastDay = DateUtil.getLastDayOfMonth(re.getBussDay());
+            firstDay = DateUtil.getMonthFirst(re.getBussDay());
+            lastDay = DateUtil.getMonthLast(re.getBussDay());
         } else {
             firstDay = DateUtil.getYearFirst(re.getBussDay());
-            lastDay = DateUtil.getLastDayOfYear(re.getBussDay());
+            lastDay = DateUtil.getYearLast(re.getBussDay());
         }
         //最多只能统计到昨天
         Date max = DateUtil.getDate(-1, new Date());

@@ -31,11 +31,11 @@ public class BussDayUtil {
             dateFormat = "yyyy";
             totalDays = DateUtil.getYearDays(bussDay);
             startDate = DateUtil.getYearFirst(bussDay);
-            endDate = DateUtil.getLastDayOfYear(bussDay);
+            endDate = DateUtil.getYearLast(bussDay);
         }else{
             totalDays = DateUtil.getMonthDays(bussDay);
-            startDate = DateUtil.getFirstDayOfMonth(bussDay);
-            endDate = DateUtil.getLastDayOfMonth(bussDay);
+            startDate = DateUtil.getMonthFirst(bussDay);
+            endDate = DateUtil.getMonthLast(bussDay);
         }
         bean.setPeriod(period);
         bean.setDateFormat(dateFormat);

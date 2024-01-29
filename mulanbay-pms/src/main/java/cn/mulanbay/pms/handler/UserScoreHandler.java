@@ -85,7 +85,7 @@ public class UserScoreHandler extends BaseHandler {
     }
 
     public Date[] getDays(Date bussDay) {
-        Date endTime = DateUtil.getTodayTillMiddleNightDate(bussDay);
+        Date endTime = DateUtil.tillMiddleNight(bussDay);
         Date startTime = DateUtil.getDate(0 - statDays, bussDay);
         return new Date[]{startTime, endTime};
     }
@@ -263,7 +263,7 @@ public class UserScoreHandler extends BaseHandler {
         UserScoreSH sf = new UserScoreSH();
         sf.setUserId(userId);
         sf.setStartDate(startDate);
-        sf.setEndDate(DateUtil.getTodayTillMiddleNightDate(endDate));
+        sf.setEndDate(DateUtil.tillMiddleNight(endDate));
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(UserScore.class);
         pr.setPage(NO_PAGE);
