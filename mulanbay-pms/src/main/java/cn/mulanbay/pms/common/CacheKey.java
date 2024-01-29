@@ -102,6 +102,11 @@ public class CacheKey {
     public static final String USER_LATEST_MESSAGE = "user:latestMessage:{0}";
 
     /**
+     * 用户最新评分（用户编号）
+     */
+    public static final String USER_LATEST_SCORE = "user:latestScore:{0}";
+
+    /**
      * QA列表
      */
     public static final String QA_LIST = "qa:list";

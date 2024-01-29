@@ -1,25 +1,37 @@
 package cn.mulanbay.pms.web.controller;
 
 import cn.mulanbay.business.handler.CacheHandler;
-import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
+import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
+import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.User;
-import cn.mulanbay.pms.persistent.enums.FamilyMode;
-import cn.mulanbay.pms.persistent.enums.FunctionDataType;
-import cn.mulanbay.pms.persistent.enums.UserStatus;
+import cn.mulanbay.pms.persistent.dto.consume.ConsumeRealTimeStat;
+import cn.mulanbay.pms.persistent.dto.fund.IncomeSummaryStat;
+import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.service.AuthService;
+import cn.mulanbay.pms.persistent.service.ConsumeService;
+import cn.mulanbay.pms.persistent.service.IncomeService;
 import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
+import cn.mulanbay.pms.web.bean.req.GroupType;
+import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeAnalyseStatSH;
+import cn.mulanbay.pms.web.bean.req.fund.budget.BudgetSH;
 import cn.mulanbay.pms.web.bean.req.main.LoginReq;
 import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserGeneralStatSH;
 import cn.mulanbay.pms.web.bean.res.main.MyInfoVo;
 import cn.mulanbay.pms.web.bean.res.main.RouterMetaVo;
 import cn.mulanbay.pms.web.bean.res.main.RouterVo;
+import cn.mulanbay.pms.web.bean.res.main.UserGeneralStatVo;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -56,6 +69,12 @@ public class MainController extends BaseController {
     AuthService authService;
 
     @Autowired
+    ConsumeService consumeService;
+
+    @Autowired
+    IncomeService incomeService;
+
+    @Autowired
     CacheHandler cacheHandler;
 
     @Autowired
@@ -64,6 +83,8 @@ public class MainController extends BaseController {
     @Autowired
     NotifyHandler notifyHandler;
 
+    @Autowired
+    BudgetHandler budgetHandler;
     /**
      * 登陆
      *
@@ -310,5 +331,72 @@ public class MainController extends BaseController {
         return component;
     }
 
+
+    /**
+     * 总的资金统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/generalStat", method = RequestMethod.GET)
+    public ResultBean generalStat(@Valid UserGeneralStatSH ugs) {
+        Long userId = ugs.getUserId();
+        UserGeneralStatVo res = new UserGeneralStatVo();
+        BudgetSH bs = new BudgetSH();
+        bs.setStatus(CommonStatus.ENABLE);
+        bs.setUserId(ugs.getUserId());
+        PageRequest pr = bs.buildQuery();
+        pr.setBeanClass(Budget.class);
+        Date today = new Date();
+        //预算默认以预算列表来统计实现
+        List<Budget> budgetList = baseService.getBeanList(pr);
+        if (budgetList.isEmpty()) {
+//            UserPlanConfigValue upcv = userPlanService.getMonthBudgetConfig(userId);
+//            //月度消费预算(目前通过用户计划来实现)
+//            if (upcv != null) {
+//                res.setMonthBudget(Double.valueOf(upcv.getPlanValue()));
+//                res.setYearBudget(Double.valueOf(upcv.getPlanValue()) * 12);
+//            }
+        } else {
+            BudgetAmountBean bab = budgetHandler.calcBudgetAmount(budgetList, today);
+            res.setMonthBudget(bab.getMonthBudget());
+            res.setYearBudget(bab.getYearBudget());
+            //年度消费预测(最后一天)
+            int days = DateUtil.getYearDays(today);
+            Double rate = budgetHandler.predictYearRate(userId,null,days,false);
+            res.setYearPredict(rate==null ? null : res.getYearBudget().multiply(new BigDecimal(rate)));
+        }
+        ConsumeAnalyseStatSH sf = new ConsumeAnalyseStatSH();
+        sf.setUserId(ugs.getUserId());
+        sf.setStartDate(ugs.getStartDate());
+        sf.setEndDate(ugs.getEndDate());
+        sf.setConsumeType(ugs.getConsumeType());
+        sf.setType(GroupType.TOTALPRICE);
+        sf.setGroupField("goods_type_id");
+        List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(sf);
+        for (ConsumeRealTimeStat br : list) {
+            res.appendConsume(br.getValue());
+        }
+
+        //收入
+        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, ugs.getStartDate(), ugs.getEndDate());
+        res.setTotalIncome(iss.getTotalAmount() == null ? new BigDecimal(0) : iss.getTotalAmount());
+
+        //获取月度统计
+        int n = DateUtil.getMonthDays(today);
+        int a = DateUtil.getDayOfMonth(today);
+        res.setDayMonthRate(NumberUtil.getPercentValue(a, n, 2));
+        res.setRemainMonthDays(n - a);
+        res.setMonthDays(n);
+        res.setMonthPassDays(a);
+        //获取月度预测(最后一天)
+        int month = DateUtil.getMonth(today)+1;
+        Double rate = budgetHandler.predictMonthRate(userId,month,null,n,false);
+        res.setMonthPredict(rate==null ? null : res.getMonthBudget().multiply(new BigDecimal(rate)));
+
+        Date[] dd = getStatDateRange(DateGroupType.MONTH, today);
+        BigDecimal monthConsumeAmount = consumeService.statConsumeAmount(dd[0], dd[1], userId, ugs.getConsumeType());
+        res.appendMonthConsume(monthConsumeAmount);
+        return callback(res);
+    }
 
 }

@@ -220,6 +220,16 @@ public class Budget implements java.io.Serializable {
         this.modifyTime = modifyTime;
     }
 
+    @Transient
+    public String getPeriodName(){
+        return period==null? null:period.getName();
+    }
+
+    @Transient
+    public String getTypeName(){
+        return type==null? null:type.getName();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof Budget bean) {

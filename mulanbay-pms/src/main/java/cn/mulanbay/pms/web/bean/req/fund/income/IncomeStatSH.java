@@ -4,6 +4,7 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
@@ -16,11 +17,11 @@ public class IncomeStatSH extends PageSearch implements DateStatSH, BindUser, Fu
 
     private String dateQueryType;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "occur_time", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "occur_time", op = Parameter.Operator.LTE)
     private Date endDate;
 

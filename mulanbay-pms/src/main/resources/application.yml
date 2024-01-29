@@ -5,6 +5,13 @@ mulanbay:
   version: 5.0.0
   #命名空间，主要是缓存使用
   namespace: mulanbay
+  score:
+    #用户默认评分
+    default: 60
+    #评分统计周期
+    statDays: 30
+    #评分的缓存时间(秒)
+    cacheTime: 300
   picture:
     #图片路径（头像使用）
     baseUrl: http://localhost:99/avatar
@@ -142,6 +149,12 @@ mulanbay:
     model:
       #模型是否要初始化
       init: false
+  ml:
+    #机器学习模型文件
+    pmml:
+      modelPath: /mulanbay/server/pmml
+      verify: false
+      initModel: true
 
 # hibernate相关
 hibernate:

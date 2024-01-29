@@ -2,6 +2,7 @@ package cn.mulanbay.common.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 /**
  * 数字工具类
@@ -154,6 +155,21 @@ public class NumberUtil {
 		BigDecimal b = new BigDecimal(l);
 		double v  =  b.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
 		return v;
+	}
+
+	/**
+	 * 获取百分数（乘了100的数）
+	 * @param value
+	 * @param counts
+	 * @param scale
+	 * @return
+	 */
+	public static BigDecimal getPercentValue(BigDecimal value,BigDecimal total,int scale){
+		if(value==null||total==null||total.doubleValue()<=0){
+			return new BigDecimal(0);
+		}
+		BigDecimal b = value.multiply(new BigDecimal(100)).divide(total,scale, RoundingMode.HALF_UP);
+		return b;
 	}
 
 	/**

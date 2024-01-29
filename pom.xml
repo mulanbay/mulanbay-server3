@@ -31,6 +31,8 @@
         <kaptcha.version>2.3.2</kaptcha.version>
         <jwt.version>0.12.3</jwt.version>
         <oshi.version>6.4.8</oshi.version>
+        <pmml-evaluator.version>1.6.4</pmml-evaluator.version>
+        <pmml-evaluator-extension.version>1.5.16</pmml-evaluator-extension.version>
 
     </properties>
 

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -415,18 +414,15 @@ public class ConsumeService extends BaseHibernateDao {
      */
     public ConsumeChildrenCostStat getChildrenTotalDeepCost(Long rootId) {
         try {
-            String sql = "select getConsumeChildren("+rootId+")";
-            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
-            String ids = ll.get(0);
-            if(StringUtil.isEmpty(ids)){
+            String childrenIds = this.getConsumeChildrenIds(rootId);
+            if(StringUtil.isEmpty(childrenIds)){
                 return new ConsumeChildrenCostStat();
             }
-            ids = ids.substring(1);
             String statSql = """
                     select sum(total_price) as totalPrice,sum(sold_price) as soldPrice,count(0) as totalCount FROM consume WHERE consume_id in
                     ({ids})
                     """;
-            statSql = statSql.replace("{ids}",ids);
+            statSql = statSql.replace("{ids}",childrenIds);
             ConsumeChildrenCostStat res = this.getEntitySQL(statSql,ConsumeChildrenCostStat.class);
             return res;
         } catch (BaseException e) {
@@ -434,6 +430,50 @@ public class ConsumeService extends BaseHibernateDao {
                     "获取消费记录的总成本异常", e);
         }
     }
+
+    /**
+     * 获取商品类型的子集ID
+     * @param pid
+     * @return
+     */
+    private String getGoodsTypeChildrenIds(Long pid){
+        try {
+            String sql = "select getGoodsTypeChildren("+pid+")";
+            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
+            String ids = ll.get(0);
+            if(StringUtil.isEmpty(ids)){
+                return null;
+            }else{
+                return ids.substring(1);
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取商品类型的子集ID异常", e);
+        }
+    }
+
+    /**
+     * 获取消费的子集ID
+     * @param pid
+     * @return
+     */
+    private String getConsumeChildrenIds(Long pid){
+        try {
+            String sql = "select getConsumeChildren("+pid+")";
+            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
+            String ids = ll.get(0);
+            if(StringUtil.isEmpty(ids)){
+                return null;
+            }else{
+                return ids.substring(1);
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取消费的子集ID异常", e);
+        }
+    }
+
+
 
     /**
      * 获取消费记录的总成本（只关联一层）
@@ -459,18 +499,15 @@ public class ConsumeService extends BaseHibernateDao {
      */
     public List<ConsumeCascadeDTO> getChildrenDeepList(Long rootId){
         try {
-            String sql = "select getConsumeChildren("+rootId+")";
-            List<String> ll = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class);
-            String ids = ll.get(0);
-            if(StringUtil.isEmpty(ids)){
+            String childrenIds = this.getConsumeChildrenIds(rootId);
+            if(StringUtil.isEmpty(childrenIds)){
                 return new ArrayList<>();
             }
-            ids = ids.substring(1);
             String statSql = """
                     select consume_id as consumeId,pid,goods_name as goodsName,total_price as totalPrice FROM consume WHERE consume_id in
                     ({ids})
                     """;
-            statSql = statSql.replace("{ids}",ids);
+            statSql = statSql.replace("{ids}",childrenIds);
             List<ConsumeCascadeDTO> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE,ConsumeCascadeDTO.class);
             return list;
         } catch (BaseException e) {
@@ -578,6 +615,106 @@ public class ConsumeService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "词云统计异常", e);
+        }
+    }
+
+
+    /**
+     * 获取消费总值
+     * @param startTime
+     * @param endTime
+     * @param userId
+     * @param consumeType
+     * @return
+     */
+    public BigDecimal statConsumeAmount(Date startTime, Date endTime, Long userId, Short consumeType) {
+        try {
+            String sql = "select sum(total_price) from consume where buy_time>=?1 and buy_time<=?2 and user_id=?3 ";
+            if (consumeType != null) {
+                sql += " and consume_type=" + consumeType;
+            }
+            List<BigDecimal> list = this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE,BigDecimal.class,startTime, endTime, userId);
+            if (list.isEmpty() || list.get(0) == null) {
+                return new BigDecimal(0);
+            } else {
+                return list.get(0);
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取消费总值异常", e);
+        }
+    }
+
+    /**
+     * 获取消费总值
+     * @param startTime
+     * @param endTime
+     * @param userId
+     * @param goodsTypeId
+     * @param tags
+     * @return
+     */
+    public ConsumeBudgetStat statConsumeAmount(Date startTime, Date endTime, Long userId, Long goodsTypeId,String tags,Boolean icg) {
+        try {
+            StringBuffer sb = new StringBuffer();
+            sb.append("select sum(total_price) as totalPrice,max(buy_time) as maxBuyDate from consume where buy_time>=?1 and buy_time<=?2 and user_id=?3");
+            List args = new ArrayList();
+            args.add(startTime);
+            args.add(endTime);
+            args.add(userId);
+            int index =4;
+            if(goodsTypeId!=null){
+                if(icg==null||!icg){
+                    sb.append(" and goods_type_id=?"+(index++));
+                    args.add(goodsTypeId);
+                }else{
+                    String childrenIds = this.getGoodsTypeChildrenIds(goodsTypeId);
+                    if(StringUtil.isEmpty(childrenIds)){
+                        sb.append(" and goods_type_id=?"+(index++));
+                        args.add(goodsTypeId);
+                    }else{
+                        sb.append(" and (goods_type_id=?"+(index++)+" or goods_type_id in ("+childrenIds+"))");
+                        args.add(goodsTypeId);
+                    }
+                }
+            }
+            if(StringUtil.isNotEmpty(tags)){
+                sb.append(" and (goods_name like?"+(index++)+" or tags like?"+(index++)+")");
+                args.add("%"+tags+"%");
+                args.add("%"+tags+"%");
+            }
+            List<ConsumeBudgetStat> list = this.getEntityListSI(sb.toString(),NO_PAGE,NO_PAGE_SIZE,ConsumeBudgetStat.class, args.toArray());
+            if (list.isEmpty() || list.get(0) == null) {
+                return new ConsumeBudgetStat(null,null);
+            } else {
+                return list.get(0);
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取消费总值异常", e);
+        }
+    }
+
+    /**
+     * 获取根据消费类型分组的消费总额
+     *
+     * @param startTime
+     * @param endTime
+     * @param userId
+     * @return
+     */
+    public List<ConsumeConsumeTypeStat> getConsumeTypeAmountStat(Date startTime, Date endTime, Long userId) {
+        try {
+            String sql = "select consume_type as ConsumeType,count(0) as totalCount,sum(total_price) as totalPrice from consume where buy_time>=?1 and buy_time<=?2 and user_id=?3 group by consume_type";
+            List args = new ArrayList();
+            args.add(startTime);
+            args.add(endTime);
+            args.add(userId);
+            List<ConsumeConsumeTypeStat> list = this.getEntityListSI(sql, NO_PAGE, NO_PAGE_SIZE, ConsumeConsumeTypeStat.class, startTime, endTime, userId);
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取根据消费类型分组的消费总额异常", e);
         }
     }
 

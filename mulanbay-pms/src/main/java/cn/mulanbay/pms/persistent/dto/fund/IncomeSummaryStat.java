@@ -5,20 +5,20 @@ import java.math.BigInteger;
 
 public class IncomeSummaryStat {
 
-    private BigInteger totalCount;
+    private Long totalCount;
 
     private BigDecimal totalAmount;
 
-    public IncomeSummaryStat(BigInteger totalCount, BigDecimal totalAmount) {
+    public IncomeSummaryStat(Long totalCount, BigDecimal totalAmount) {
         this.totalCount = totalCount;
         this.totalAmount = totalAmount;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

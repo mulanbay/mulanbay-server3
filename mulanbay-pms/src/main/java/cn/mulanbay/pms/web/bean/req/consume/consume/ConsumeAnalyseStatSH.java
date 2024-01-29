@@ -6,6 +6,7 @@ import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter.Operator;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.persistent.query.QueryBuilder;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
@@ -23,11 +24,11 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
     @Query(fieldName = "goods_name,tags,shop_name,remark", op = Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buy_time", op = Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buy_time", op = Operator.LTE)
     private Date endDate;
 

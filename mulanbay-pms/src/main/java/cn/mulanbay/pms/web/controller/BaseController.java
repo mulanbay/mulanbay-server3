@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -176,4 +177,28 @@ public class BaseController {
         return chartData;
     }
 
+
+    /**
+     * 获取时间区间
+     *
+     * @param dateGroupType
+     * @param date
+     * @return
+     */
+    protected Date[] getStatDateRange(DateGroupType dateGroupType, Date date) {
+        Date[] dd = new Date[2];
+        if (dateGroupType == DateGroupType.DAY) {
+            dd[0] = DateUtil.getFromMiddleNightDate(date);
+            dd[1] = DateUtil.getTodayTillMiddleNightDate(date);
+        } else if (dateGroupType == DateGroupType.MONTH) {
+            dd[0] = DateUtil.getFromMiddleNightDate(DateUtil.getFirstDayOfMonth(date));
+            Date endDate = DateUtil.getLastDayOfMonth(date);
+            dd[1] = DateUtil.getTodayTillMiddleNightDate(endDate);
+        } else {
+            int year = Integer.parseInt(DateUtil.getFormatDate(date, "yyyy"));
+            dd[0] = DateUtil.getDate(year + "-01-01 00:00:00", DateUtil.Format24Datetime);
+            dd[1] = DateUtil.getDate(year + "-12-31 23:59:59", DateUtil.Format24Datetime);
+        }
+        return dd;
+    }
 }

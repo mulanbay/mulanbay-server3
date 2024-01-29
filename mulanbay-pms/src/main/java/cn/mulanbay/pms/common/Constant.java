@@ -33,6 +33,11 @@ public class Constant {
     public static final int USER_LEVEL=3;
 
     /**
+     * 最大季度
+     */
+    public static final int MAX_QUARTERLY = 4;
+
+    /**
      * 最大月份数
      */
     public static final int MAX_MONTH = 12;

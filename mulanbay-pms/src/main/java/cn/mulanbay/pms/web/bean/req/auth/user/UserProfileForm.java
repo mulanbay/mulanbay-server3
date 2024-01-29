@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.bean.req.auth.user;
 
 import cn.mulanbay.common.aop.BindUser;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.AuthType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,7 +16,7 @@ public class UserProfileForm implements BindUser {
     private String email;
 
     //生日（计算最大心率使用到）
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     private Date birthday;
     private AuthType secAuthType;
 

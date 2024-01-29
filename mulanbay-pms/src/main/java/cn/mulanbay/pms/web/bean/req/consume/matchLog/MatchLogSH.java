@@ -2,6 +2,7 @@ package cn.mulanbay.pms.web.bean.req.consume.matchLog;
 
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.GoodsMatchType;
 import cn.mulanbay.web.bean.request.PageSearch;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -14,13 +15,13 @@ public class MatchLogSH extends PageSearch {
     @Query(fieldName = "goodsName", op = Parameter.Operator.LIKE)
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "createdTime", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "createdTime", op = Parameter.Operator.LTE)
     private Date endDate;
 

@@ -6,6 +6,7 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter.Operator;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.MoneyFlow;
 import cn.mulanbay.web.bean.request.PageSearch;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -28,13 +29,13 @@ public class ConsumeSH extends PageSearch implements BindUser, BindFamily, FullE
     @Query(fieldName = "goodsName,tags,shopName,remark", op = Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buyTime", op = Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buyTime", op = Operator.LTE)
     private Date endDate;
 

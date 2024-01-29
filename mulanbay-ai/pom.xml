@@ -33,12 +33,12 @@
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator</artifactId>
-            <version>1.6.4</version>
+            <version>${pmml-evaluator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator-extension</artifactId>
-            <version>1.5.16</version>
+            <version>${pmml-evaluator-extension.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jpmml</groupId>

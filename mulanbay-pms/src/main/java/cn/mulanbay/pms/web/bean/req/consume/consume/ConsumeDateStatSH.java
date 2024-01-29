@@ -5,6 +5,7 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.persistent.query.QueryBuilder;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.req.GroupType;
@@ -15,11 +16,11 @@ import java.util.Date;
 
 public class ConsumeDateStatSH extends QueryBuilder implements DateStatSH, BindUser, FullEndDateTime {
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buy_time", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "buy_time", op = Parameter.Operator.LTE)
     private Date endDate;
 

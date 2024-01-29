@@ -5,6 +5,7 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.AccountAdjustType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
@@ -19,11 +20,11 @@ public class AccountFlowSH extends PageSearch implements BindUser, FullEndDateTi
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     private Long userId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "createdTime", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "createdTime", op = Parameter.Operator.LTE)
     private Date endDate;
 

@@ -277,4 +277,31 @@ ALTER TABLE `budget_timeline`
 ALTER TABLE `account_flow`
     CHANGE COLUMN `flow_name` `account_name` VARCHAR(45) CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_0900_ai_ci' NULL DEFAULT NULL ;
 
+ALTER TABLE `score_config`
+    CHANGE COLUMN `id` `config_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `config_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `score_config_group` RENAME TO  `score_group` ;
+ALTER TABLE `score_group`
+    CHANGE COLUMN `id` `group_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `group_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_score`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+ALTER TABLE `user_score_detail`
+    CHANGE COLUMN `score_config_id` `config_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_reward_point_record`  RENAME TO  `user_reward` ;
+ALTER TABLE `user_reward`
+    CHANGE COLUMN `remark` `remark` VARCHAR(200) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL AFTER `message_id`,
+    CHANGE COLUMN `reward_source` `source` SMALLINT NOT NULL DEFAULT '0' ;
+
+ALTER TABLE `model_config` RENAME TO  `ai_model` ;
+ALTER TABLE `ai_model`
+    CHANGE COLUMN `id` `model_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `model_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 

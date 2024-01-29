@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.bean.req.fund.income;
 
 import cn.mulanbay.common.aop.BindUser;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.IncomeType;
 
@@ -28,7 +29,7 @@ public class IncomeForm implements BindUser {
     @NotNull(message = "收入金额不能为空")
     private BigDecimal amount;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "收入时间不能为空")
     private Date occurTime;
 

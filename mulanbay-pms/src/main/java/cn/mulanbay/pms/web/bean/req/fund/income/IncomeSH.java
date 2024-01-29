@@ -4,6 +4,7 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.IncomeType;
 import cn.mulanbay.web.bean.request.PageSearch;
@@ -19,11 +20,11 @@ public class IncomeSH extends PageSearch implements BindUser, FullEndDateTime {
     @Query(fieldName = "incomeName", op = Parameter.Operator.LIKE)
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "occurTime", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "occurTime", op = Parameter.Operator.LTE)
     private Date endDate;
 
