@@ -45,14 +45,14 @@ public class BudgetService extends BaseHibernateDao {
             StringBuffer sql = new StringBuffer();
             List args = new ArrayList();
             if (statType == BudgetStatType.NAME) {
-                sql.append("select name as name,sum(amount) as value from ");
+                sql.append("select 0 as id,budget_name as name,sum(amount) as value from ");
             } else if (statType == BudgetStatType.TYPE) {
-                sql.append("select type as id,sum(amount) as value from ");
+                sql.append("select type as id,'' as name,sum(amount) as value from ");
             } else if (statType == BudgetStatType.PERIOD) {
-                sql.append("select period as id,sum(amount) as value from ");
+                sql.append("select period as id,'' as name,sum(amount) as value from ");
             }
             sql.append("(");
-            sql.append("SELECT name,type,period,");
+            sql.append("SELECT budget_name,type,period,");
             sql.append("case when period=0 then amount ");
             sql.append("when period=1 then amount*365 ");
             sql.append("when period=2 then amount*52 ");
@@ -396,11 +396,11 @@ public class BudgetService extends BaseHibernateDao {
                     left join
                     (select incomeDate,sum(amount) as totalIncome from (
                     select CAST(DATE_FORMAT(occur_time,'%Y%m') AS signed) as incomeDate,amount from income
-                    where user_id=?1 and occur_time>=?2 and occur_time<=?3
+                    where user_id=?1 and occur_time>=?2 and occur_time<=?3)
                     as tt group by incomeDate) as tt
                     on CAST(DATE_FORMAT(bl.occur_date,'%Y%m') AS signed) = tt.incomeDate
                     where bl.user_id=?4 and bl.occur_date>=?5 and bl.occur_date<=?6
-                    and bl.period=?6 and budget_id is null
+                    and bl.period=?7 and budget_id is null
                     order by bl.occur_date
                     """;
             List args = new ArrayList();
@@ -411,7 +411,7 @@ public class BudgetService extends BaseHibernateDao {
             args.add(startTime);
             args.add(endTime);
             args.add(period.getValue());
-            List<UserBudgetAndIncomeStat> list = this.getEntityListSI(sql.toString(), NO_PAGE,NO_PAGE_SIZE,
+            List<UserBudgetAndIncomeStat> list = this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE,
                     UserBudgetAndIncomeStat.class, args.toArray());
             return list;
         } catch (BaseException e) {

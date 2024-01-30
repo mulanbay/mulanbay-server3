@@ -1,7 +1,5 @@
 package cn.mulanbay.pms.persistent.dto.log;
 
-import java.math.BigInteger;
-
 public class OperLogTreeStat {
 
     private Long funcId;

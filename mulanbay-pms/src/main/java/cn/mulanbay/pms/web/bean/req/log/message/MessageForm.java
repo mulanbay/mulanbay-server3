@@ -1,8 +1,8 @@
 package cn.mulanbay.pms.web.bean.req.log.message;
 
 import cn.mulanbay.pms.common.Constant;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;

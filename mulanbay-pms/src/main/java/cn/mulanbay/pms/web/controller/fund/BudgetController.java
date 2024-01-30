@@ -9,8 +9,8 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.UserScoreHandler;
-import cn.mulanbay.pms.handler.bean.consume.ConsumeBean;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
+import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.domain.BudgetTimeline;
@@ -29,6 +29,8 @@ import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeAnalyseStatSH;
 import cn.mulanbay.pms.web.bean.req.fund.budget.*;
+import cn.mulanbay.pms.web.bean.req.fund.budgetTimeline.BudgetTimelineReStatForm;
+import cn.mulanbay.pms.web.bean.req.fund.budgetTimeline.BudgetTimelineSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.fund.budget.BudgetAnalyseVo;
@@ -258,86 +260,22 @@ public class BudgetController extends BaseController {
     public ResultBean analyse(@Valid BudgetAnalyseSH sf) {
         Date[] ds = budgetHandler.getDateRange(sf.getPeriod(), sf.getDate(), true);
         BudgetAnalyseVo res = new BudgetAnalyseVo();
+        FundStatBean fundStat = budgetHandler.statConsumeIncome(ds[0],ds[1],sf.getUserId());
+        List<Budget> budgetList = budgetService.getActiveUserBudget(sf.getUserId(), null);
+        BudgetAmountBean bab = budgetHandler.calcBudgetAmount(budgetList, sf.getDate());
         if (sf.getPeriod() == PeriodType.MONTHLY) {
             res.setTitle(DateUtil.getFormatDate(sf.getDate(), "yyyy-MM") + "月度预算分析");
+            fundStat.setBudget(bab.getMonthBudget());
         } else {
             res.setTitle(DateUtil.getFormatDate(sf.getDate(), "yyyy") + "年度预算分析");
+            fundStat.setBudget(bab.getYearBudget());
         }
-        List<Budget> list = budgetService.getActiveUserBudget(sf.getUserId(), null);
-        Date now = new Date();
-        BigDecimal amount = new BigDecimal(0);
-        for (Budget b : list) {
-            if (b.getPeriod() == PeriodType.ONCE) {
-                if (b.getExpectPaidTime() == null) {
-                    //如果是单次，且没有具体实现日期，则跳过
-                    continue;
-                } else if (b.getExpectPaidTime().after(ds[0]) && b.getExpectPaidTime().before(ds[1])) {
-                    //加入
-                    BudgetInfoVo bib = new BudgetInfoVo();
-                    BeanCopy.copyProperties(b, bib);
-                    Integer n = budgetHandler.getLeftDays(b, now);
-                    bib.setLeftDays(n);
-                    res.addBudget(bib);
-                    amount =amount.add(b.getAmount());
-                } else {
-                    continue;
-                }
-            } else {
-                //加入
-                BudgetInfoVo bib = new BudgetInfoVo();
-                BeanCopy.copyProperties(b, bib);
-                Integer n = budgetHandler.getLeftDays(b, now);
-                bib.setLeftDays(n);
-                if (b.getPeriod() == PeriodType.DAILY) {
-                    if (sf.getPeriod() == PeriodType.MONTHLY) {
-                        bib.setDrate(30);
-                    } else {
-                        bib.setDrate(365);
-                    }
-                } else if (b.getPeriod() == PeriodType.WEEKLY) {
-                    if (sf.getPeriod() == PeriodType.MONTHLY) {
-                        bib.setDrate(4);
-                    } else {
-                        bib.setDrate(52);
-                    }
-                } else if (b.getPeriod() == PeriodType.MONTHLY) {
-                    if (sf.getPeriod() == PeriodType.MONTHLY) {
-                        bib.setDrate(1);
-                    } else {
-                        bib.setDrate(12);
-                    }
-                } else if (b.getPeriod() == PeriodType.QUARTERLY) {
-                    if (sf.getPeriod() == PeriodType.MONTHLY) {
-                        //月度的跳过
-                        continue;
-                    } else {
-                        bib.setDrate(4);
-                    }
-                } else if (b.getPeriod() == PeriodType.YEARLY) {
-                    if (sf.getPeriod() == PeriodType.MONTHLY) {
-                        //查询实际是否在这段时间内
-                        if (b.getExpectPaidTime() == null) {
-                            continue;
-                        } else if (b.getExpectPaidTime().after(ds[0]) && b.getExpectPaidTime().before(ds[1])) {
+        List<BudgetInfoVo> voList = new ArrayList<>();
+        for(Budget budget : budgetList){
 
-                        } else {
-                            continue;
-                        }
-                    }
-                }
-                res.addBudget(bib);
-                amount = amount.add(b.getAmount().multiply(new BigDecimal(bib.getDrate()))) ;
-            }
         }
-        //设置预算
-        res.setBudgetAmount(amount);
-        //查询已经消费的
-        ConsumeBean cb= budgetHandler.getConsume(ds[0], ds[1], sf.getUserId());
-        res.setTrAmount(cb.getTreatAmount());
-        res.setNcAmount(cb.getNcAmount());
-        res.setBcAmount(cb.getBcAmount());
-        //todo 查询收入
-
+        res.setBudgetList(budgetList);
+        res.setFundStat(fundStat);
         return callback(res);
     }
 
@@ -437,7 +375,7 @@ public class BudgetController extends BaseController {
         ChartYData predictData = new ChartYData();
         if(predict){
             legends.add("预测值");
-            //scoreMap = userScoreHandler.getUserScoreMap(userId,pdb.getStartDate(),pdb.getEndDate(),sf.getPeriod());
+            scoreMap = userScoreHandler.getUserScoreMap(userId,pdb.getStartDate(),pdb.getEndDate(),sf.getPeriod());
             predictData.setName(legends.get(2));
         }
         chartData.setLegendData(legends.toArray(new String[legends.size()]));

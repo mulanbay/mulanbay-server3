@@ -1,8 +1,8 @@
-package cn.mulanbay.pms.web.bean.res.main;
+package cn.mulanbay.pms.handler.bean.fund;
 
 import java.math.BigDecimal;
 
-public class GeneralStatDetailVo {
+public class FundStatBean {
 
     /**
      * 预算

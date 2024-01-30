@@ -48,6 +48,11 @@ public class Constant {
     public static final int MAX_DAY = 366;
 
     /**
+     * 一个月最大周数
+     */
+    public static final int MAX_MONTH_WEEK = 4;
+
+    /**
      * 一个月最大天数
      */
     public static final int MAX_MONTH_DAY = 31;

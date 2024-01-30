@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.consume.consume;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotNull;
 
 public class ConsumeDeleteChildrenForm implements BindUser {

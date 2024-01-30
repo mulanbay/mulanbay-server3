@@ -2,8 +2,8 @@ package cn.mulanbay.pms.web.bean.req.consume.consumeSource;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public class ConsumeSourceForm implements BindUser {

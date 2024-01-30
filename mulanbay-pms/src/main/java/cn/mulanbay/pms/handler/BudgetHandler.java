@@ -5,18 +5,23 @@ import cn.mulanbay.ai.ml.processor.BudgetConsumeYEvaluateProcessor;
 import cn.mulanbay.ai.ml.processor.bean.BudgetConsumeER;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.bean.consume.ConsumeBean;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
+import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.dto.consume.ConsumeBudgetStat;
 import cn.mulanbay.pms.persistent.dto.consume.ConsumeConsumeTypeStat;
+import cn.mulanbay.pms.persistent.dto.fund.IncomeSummaryStat;
+import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.GoodsConsumeType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
+import cn.mulanbay.pms.persistent.service.IncomeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +55,9 @@ public class BudgetHandler extends BaseHandler {
     BudgetService budgetService;
 
     @Autowired
+    IncomeService incomeService;
+
+    @Autowired
     UserScoreHandler userScoreHandler;
 
     @Autowired
@@ -75,6 +83,20 @@ public class BudgetHandler extends BaseHandler {
     }
 
     /**
+     * 通过bussKey获取BussDay
+     *
+     * @param bussKey
+     * @return
+     */
+    public Date getBussDay(String bussKey) {
+        if (bussKey.length() == 4) {
+            return DateUtil.getDate(bussKey + "0101", "yyyyMMdd");
+        } else {
+            return DateUtil.getDate(bussKey + "01", "yyyyMMdd");
+        }
+    }
+
+    /**
      * 计算预算
      *
      * @param budgetList
@@ -89,6 +111,8 @@ public class BudgetHandler extends BaseHandler {
             if (b.getPeriod() == PeriodType.WEEKLY) {
                 bab.addYearBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_WEEK)));
                 bab.addYearBudget(b);
+                bab.addMonthBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_MONTH_WEEK)));
+                bab.addMonthBudget(b);
             } else if (b.getPeriod() == PeriodType.MONTHLY) {
                 bab.addYearBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_MONTH)));
                 bab.addYearBudget(b);
@@ -208,6 +232,28 @@ public class BudgetHandler extends BaseHandler {
             v = consumeService.statConsumeAmount(ds[0], ds[1], budget.getUserId(), budget.getGoodsTypeId(), budget.getTags(),budget.getIcg());
         }
         return v;
+    }
+
+    /**
+     * 统计资金
+     * @param startTime
+     * @param endTime
+     * @param userId
+     * @return
+     */
+    public FundStatBean statConsumeIncome(Date startTime,Date endTime, Long userId){
+        FundStatBean vo = new FundStatBean();
+        ConsumeBean consumeBean = this.getConsume(startTime,endTime,userId);
+        vo.setNcAmount(consumeBean.getNcAmount());
+        vo.setBcAmount(consumeBean.getBcAmount());
+        vo.setTrAmount(consumeBean.getBcAmount());
+        vo.setTotalConsume(consumeBean.getTotalAmount());
+        vo.setConsumeCount(consumeBean.getTotalCount());
+        //收入
+        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, startTime, endTime);
+        vo.setIncome(iss.getTotalAmount() == null ? new BigDecimal(0) : iss.getTotalAmount());
+
+        return vo;
     }
 
     /**
@@ -356,15 +402,55 @@ public class BudgetHandler extends BaseHandler {
         } else {
             bl.setBudgetAmount(budgetAmount);
         }
-        bl.setNcAmount(cb.getNcAmount());
-        bl.setBcAmount(cb.getBcAmount());
-        bl.setTrAmount(cb.getTreatAmount());
+        bl.setNcAmount(cb.getNcAmount()==null? new BigDecimal(0):cb.getNcAmount());
+        bl.setBcAmount(cb.getBcAmount()==null? new BigDecimal(0):cb.getBcAmount());
+        bl.setTrAmount(cb.getTreatAmount()==null? new BigDecimal(0):cb.getTreatAmount());
         bl.setCreatedTime(new Date());
         bl.setOccurDate(startTime);
         bl.setUserId(userId);
         bl.setPeriod(period);
+        bl.setTotalAmount(NumberUtil.sum(bl.getNcAmount(),bl.getBcAmount(),bl.getTrAmount()));
         bl.setRemark("调度自动生成");
         return bl;
     }
+
+
+    /**
+     * 统计及保存预算日志
+     *
+     * @param usList
+     * @param userId
+     * @param bussDay
+     * @param bussKey
+     * @param isRedo
+     * @param period
+     * @param useLastDay
+     * @return
+     */
+    public BudgetLog statAndSaveBudgetLog(List<Budget> usList, Long userId, Date bussDay, String bussKey, boolean isRedo, PeriodType period, boolean useLastDay) {
+        BudgetAmountBean bab = this.calcBudgetAmount(usList, bussDay);
+        BigDecimal budgetAmount = new BigDecimal(0);
+        List<Budget> ccList;
+        if (period == PeriodType.MONTHLY) {
+            budgetAmount = bab.getMonthBudget();
+            ccList = bab.getMonthBudgetList();
+        } else {
+            budgetAmount = bab.getYearBudget();
+            ccList = bab.getYearBudgetList();
+        }
+        Date[] ds = this.getDateRange(period, bussDay, useLastDay);
+
+        BudgetLog bl = this.statBudget(userId, budgetAmount, ds[0], ds[1], bussKey, isRedo, period);
+        //自动计算
+        bl.setSource(BudgetLogSource.AUTO);
+        //计算收入
+        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, ds[0], ds[1]);
+        BigDecimal totalAmount = iss.getTotalAmount();
+        bl.setIncomeAmount(totalAmount == null ? new BigDecimal(0) : iss.getTotalAmount());
+        budgetService.saveStatBudgetLog(ccList, bl, isRedo);
+        return bl;
+    }
+
+
 
 }

@@ -6,7 +6,6 @@ import cn.mulanbay.pms.persistent.enums.Payment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 消费记录匹配

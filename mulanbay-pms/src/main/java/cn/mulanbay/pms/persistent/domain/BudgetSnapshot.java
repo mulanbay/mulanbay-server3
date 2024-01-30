@@ -4,7 +4,6 @@ import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.BudgetType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
@@ -34,7 +33,7 @@ public class BudgetSnapshot implements java.io.Serializable {
     @Column(name = "user_id")
     private Long userId;
     //日终统计的月度/年度统计外键
-    @Column(name = "budgetlLog_id")
+    @Column(name = "budget_Log_id")
     private Long budgetLogId;
     //冗余
     @Column(name = "buss_key")

@@ -305,3 +305,8 @@ ALTER TABLE `ai_model`
     CHANGE COLUMN `name` `model_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+ALTER TABLE `budget_log`
+    ADD COLUMN `total_amount` DECIMAL(9,2) NULL AFTER `tr_amount`;
+
+update budget_log set total_amount=nc_amount+bc_amount+tr_amount where log_id>0;
+

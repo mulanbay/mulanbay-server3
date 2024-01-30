@@ -3,7 +3,6 @@ package cn.mulanbay.pms.persistent.domain;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
@@ -59,6 +58,11 @@ public class BudgetLog implements java.io.Serializable {
     //实际看病消费金额
     @Column(name = "tr_amount")
     private BigDecimal trAmount;
+
+    //总的消费值
+    @Column(name = "total_amount")
+    private BigDecimal totalAmount;
+
     //收入
     @Column(name = "income_amount")
     private BigDecimal incomeAmount;
@@ -159,6 +163,14 @@ public class BudgetLog implements java.io.Serializable {
         this.trAmount = trAmount;
     }
 
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     public BigDecimal getIncomeAmount() {
         return incomeAmount;
     }
@@ -205,6 +217,17 @@ public class BudgetLog implements java.io.Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+
+    @Transient
+    public String getPeriodName(){
+        return period==null? null:period.getName();
+    }
+
+    @Transient
+    public String getSourceName(){
+        return source==null? null:source.getName();
     }
 
     @Override

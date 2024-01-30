@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.log.sysCode;
 
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MonitorBussType;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

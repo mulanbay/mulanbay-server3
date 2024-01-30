@@ -1,0 +1,308 @@
+package cn.mulanbay.pms.web.controller.fund;
+
+import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.query.NullType;
+import cn.mulanbay.persistent.query.PageRequest;
+import cn.mulanbay.persistent.query.PageResult;
+import cn.mulanbay.persistent.query.Sort;
+import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.BudgetHandler;
+import cn.mulanbay.pms.persistent.domain.Budget;
+import cn.mulanbay.pms.persistent.domain.BudgetLog;
+import cn.mulanbay.pms.persistent.dto.fund.UserBudgetAndIncomeStat;
+import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
+import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.service.BudgetService;
+import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
+import cn.mulanbay.pms.web.bean.req.fund.budgetLog.*;
+import cn.mulanbay.pms.web.bean.res.chart.ChartData;
+import cn.mulanbay.pms.web.bean.res.chart.ChartYData;
+import cn.mulanbay.pms.web.controller.BaseController;
+import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import static cn.mulanbay.pms.common.Constant.SCALE;
+
+/**
+ * 预算日志
+ *
+ * @author fenghong
+ * @create 2017-07-10 21:44
+ */
+@RestController
+@RequestMapping("/budgetLog")
+public class BudgetLogController extends BaseController {
+
+    private static Class<BudgetLog> beanClass = BudgetLog.class;
+
+    @Autowired
+    BudgetService budgetService;
+
+    @Autowired
+    BudgetHandler budgetHandler;
+
+    /**
+     * 获取列表
+     * @return
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ResultBean list(BudgetLogSH sf) {
+        String budgetKey = sf.getBudgetKey();
+        if (StringUtil.isNotEmpty(budgetKey)) {
+            if (budgetKey.startsWith("p")) {
+                //说明是分组过来的，即period的大节点
+                int period = Integer.valueOf(sf.getBudgetKey().replace("p", ""));
+                PeriodType bp = PeriodType.getPeriodType(period);
+                sf.setPeriod(bp);
+            } else {
+                Long budgetId = Long.valueOf(sf.getBudgetKey());
+                sf.setBudgetId(budgetId);
+            }
+        }
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        Sort s1 = new Sort("createdTime", Sort.DESC);
+        pr.addSort(s1);
+        PageResult<BudgetLog> qr = baseService.getBeanResult(pr);
+        return callbackDataGrid(qr);
+    }
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResultBean create(@RequestBody @Valid BudgetLogForm form) {
+        BudgetLog budgetLog = new BudgetLog();
+        BeanCopy.copy(form, budgetLog, true);
+        Budget budget = baseService.getObject(Budget.class, form.getBudgetId());
+        budgetLog.setBudget(budget);
+        //计算业务key
+        String bussKey = budgetHandler.createBussKey(budget.getPeriod(), budgetLog.getOccurDate());
+        boolean isBussKeyExit = budgetService.isBudgetLogExit(bussKey, form.getUserId(), form.getLogId(), budget.getBudgetId());
+        if (isBussKeyExit) {
+            return callbackErrorCode(PmsCode.BUDGET_LOG_EXIT);
+        }
+        budgetLog.setPeriod(budget.getPeriod());
+        budgetLog.setBussKey(bussKey);
+        budgetLog.setBudgetAmount(budget.getAmount());
+        budgetLog.setNcAmount(form.getAmount());
+        budgetLog.setBcAmount(new BigDecimal(0));
+        budgetLog.setTrAmount(new BigDecimal(0));
+        budgetLog.setIncomeAmount(new BigDecimal(0));
+        budgetLog.setSource(BudgetLogSource.MANUAL);
+        budgetLog.setCreatedTime(new Date());
+        budgetService.saveBudgetLog(budgetLog, false);
+        return callback(null);
+    }
+
+    /**
+     * 获取详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public ResultBean get(@RequestParam(name = "logId") Long logId) {
+        BudgetLog budgetLog = baseService.getObject(beanClass, logId);
+        return callback(budgetLog);
+    }
+
+    /**
+     * 修改
+     *
+     * @return
+     */
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public ResultBean edit(@RequestBody @Valid BudgetLogForm form) {
+        BudgetLog budgetLog = baseService.getObject(beanClass, form.getLogId());
+        BeanCopy.copy(form, budgetLog, true);
+        Budget budget = baseService.getObject(Budget.class, form.getBudgetId());
+        budgetLog.setBudget(budget);
+        //计算业务key
+        String bussKey = budgetHandler.createBussKey(budget.getPeriod(), budgetLog.getOccurDate());
+        boolean isBussKeyExit = budgetService.isBudgetLogExit(bussKey, form.getUserId(), form.getLogId(), budget.getBudgetId());
+        if (isBussKeyExit) {
+            return callbackErrorCode(PmsCode.BUDGET_LOG_EXIT);
+        }
+        budgetLog.setPeriod(budget.getPeriod());
+        budgetLog.setBudgetAmount(budget.getAmount());
+        budgetLog.setNcAmount(form.getAmount());
+        budgetLog.setBcAmount(new BigDecimal(0));
+        budgetLog.setTrAmount(new BigDecimal(0));
+        budgetLog.setIncomeAmount(new BigDecimal(0));
+        budgetLog.setBussKey(bussKey);
+        budgetLog.setModifyTime(new Date());
+        baseService.updateObject(budgetLog);
+        return callback(null);
+    }
+
+    /**
+     * 删除
+     *
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
+        baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
+        return callback(null);
+    }
+
+    /**
+     * 统计(这里的收入是实时获取的，以前的接口中收入还没有统计到BudgetLog中)
+     *
+     * @return
+     */
+    @RequestMapping(value = "/stat", method = RequestMethod.GET)
+    public ResultBean stat(@Valid BudgetLogStatSH sf) {
+        if (sf.getBudgetKey().startsWith("p")) {
+            //说明是分组过来的，即period的大节点
+            int period = Integer.valueOf(sf.getBudgetKey().replace("p", ""));
+            PeriodType bp = PeriodType.getPeriodType(period);
+            List<UserBudgetAndIncomeStat> list = budgetService.statUserBudgetAndIncome(sf.getStartDate(), sf.getEndDate(),
+                    sf.getUserId(), bp);
+            ChartData chartData = new ChartData();
+            chartData.setTitle(bp.getName() + "预算统计");
+            chartData.setLegendData(new String[]{"预算", "实际花费", "收入","花费/预算比率"});
+            ChartYData budgetData = new ChartYData("预算","元");
+            ChartYData consumeData = new ChartYData("实际花费","元");
+            ChartYData incomeData = new ChartYData("收入","元");
+            ChartYData rateData = new ChartYData("花费/预算比率","%");
+            //混合图形下使用
+            chartData.addYAxis("金额","元");
+            chartData.addYAxis("比率","%");
+            for (UserBudgetAndIncomeStat bean : list) {
+                String xformat = DateUtil.FormatDay1;
+                if (bp == PeriodType.YEARLY) {
+                    xformat = "yyyy";
+                } else if (bp == PeriodType.MONTHLY) {
+                    xformat = "yyyy-MM";
+                }
+                chartData.getXdata().add(DateUtil.getFormatDate(bean.getOccurDate(), xformat));
+                budgetData.getData().add(bean.getBudgetAmount());
+                BigDecimal consume = bean.getNcAmount().add(bean.getTrAmount());
+                if (sf.getNeedOutBurst() != null && sf.getNeedOutBurst() == true) {
+                    consume = consume.add(bean.getBcAmount());
+                }
+                consumeData.getData().add(NumberUtil.getValue(consume,0));
+                double rate = NumberUtil.getPercentValue(consume.doubleValue(),bean.getBudgetAmount().doubleValue(),0);
+                rateData.getData().add(rate);
+                incomeData.getData().add(bean.getTotalIncome() == null ? 0 : bean.getTotalIncome());
+            }
+            chartData.getYdata().add(budgetData);
+            chartData.getYdata().add(consumeData);
+            chartData.getYdata().add(incomeData);
+            chartData.getYdata().add(rateData);
+
+            //String subTitle = this.getDateTitle(sf, totalCount.longValue()+"次");
+            //chartData.setSubTitle(subTitle);
+            return callback(chartData);
+        } else {
+            Long budgetId = Long.valueOf(sf.getBudgetKey());
+            sf.setBudgetId(budgetId);
+            PageRequest pr = sf.buildQuery();
+            pr.setBeanClass(beanClass);
+            Sort s1 = new Sort("occurDate", Sort.ASC);
+            pr.addSort(s1);
+            PageResult<BudgetLog> qr = baseService.getBeanResult(pr);
+            ChartData chartData = new ChartData();
+            Budget budget = baseService.getObject(Budget.class, budgetId);
+
+            chartData.setTitle(budget.getBudgetName() + "预算统计");
+            chartData.setLegendData(new String[]{"预算", "实际花费"});
+            ChartYData budgetData = new ChartYData("预算");
+            ChartYData consumeData = new ChartYData("实际花费");
+
+            for (BudgetLog bean : qr.getBeanList()) {
+                chartData.getXdata().add(DateUtil.getFormatDate(bean.getOccurDate(), DateUtil.FormatDay1));
+                budgetData.getData().add(bean.getBudgetAmount());
+                //单个的消费只保存在普通消费字段里面
+                consumeData.getData().add(NumberUtil.getValue(bean.getNcAmount(),SCALE));
+            }
+            chartData.getYdata().add(budgetData);
+            chartData.getYdata().add(consumeData);
+
+            return callback(chartData);
+        }
+    }
+
+    /**
+     * 实际的账户变化与系统计算的存款变化
+     *
+     * @return
+     */
+    @RequestMapping(value = "/biasStat", method = RequestMethod.GET)
+    public ResultBean biasStat(@Valid BudgetLogBiasStatSH sf) {
+        sf.setAccountChangeAmount(NullType.NOT_NULL);
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        Sort s1 = new Sort("bussKey", Sort.ASC);
+        pr.addSort(s1);
+        List<BudgetLog> list = baseService.getBeanList(pr);
+        ChartData chartData = new ChartData();
+        chartData.setTitle("账户变化与系统计算误差统计");
+        chartData.setLegendData(new String[]{"误差值","误差率"});
+        //混合图形下使用
+        chartData.addYAxis("金额","元");
+        chartData.addYAxis("比率","%");
+        ChartYData yData1 = new ChartYData("误差值","元");
+        ChartYData yData2 = new ChartYData("误差率","%");
+        for (BudgetLog bean : list) {
+            chartData.getIntXData().add(Integer.valueOf(bean.getBussKey()));
+            chartData.getXdata().add(bean.getBussKey());
+            //存款变化
+            BigDecimal mv = bean.getIncomeAmount().subtract((bean.getBcAmount().add(bean.getNcAmount()).add(bean.getTrAmount())));
+            //账户变化
+            BigDecimal ev = bean.getAccountChangeAmount();
+            BigDecimal e = ev.subtract(mv);
+            yData1.getData().add(NumberUtil.getValue(e,SCALE));
+            double pp = NumberUtil.getPercentValue(e.doubleValue(),Math.abs(mv.doubleValue()),0);
+            yData2.getData().add(pp);
+        }
+        chartData.getYdata().add(yData1);
+        chartData.getYdata().add(yData2);
+        return callback(chartData);
+    }
+
+    /**
+     * 统计（这里的收入是日终统计到BudgetLog中了，后期新增了字段）
+     *
+     * @return
+     */
+    @RequestMapping(value = "/periodStat", method = RequestMethod.GET)
+    public ResultBean periodStat(@Valid BudgetLogPeriodStatSH sf) {
+        BudgetLog bl = budgetService.selectBudgetLog(sf.getBussKey(), sf.getUserId());
+        return callback(bl);
+    }
+
+    /**
+     * 重新保存
+     *
+     * @return
+     */
+    @RequestMapping(value = "/reSave", method = RequestMethod.POST)
+    public ResultBean reSave(@RequestBody @Valid BudgetLogReSaveForm form) {
+        BudgetLog budgetLog = baseService.getObject(beanClass, form.getLogId());
+        Date bussDay = budgetLog.getOccurDate();
+        List<Budget> list = budgetService.getActiveUserBudget(form.getUserId(), null);
+        //默认是每月、每年的统计的日志
+        boolean useLastDay = true;
+        if (budgetLog.getBudget() != null) {
+            //重新统计统计的是当时那一天为主的值
+            useLastDay = false;
+        }
+        budgetHandler.statAndSaveBudgetLog(list, form.getUserId(), bussDay, budgetLog.getBussKey(), true, budgetLog.getPeriod(), useLastDay);
+        return callback(null);
+    }
+
+
+}

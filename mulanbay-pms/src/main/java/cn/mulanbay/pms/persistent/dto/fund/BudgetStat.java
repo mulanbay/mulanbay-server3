@@ -8,16 +8,6 @@ public class BudgetStat {
     private String name;
     private BigDecimal value;
 
-    public BudgetStat(Object id, BigDecimal value) {
-        this.id = id;
-        this.value = value;
-    }
-
-    public BudgetStat(String name, BigDecimal value) {
-        this.name = name;
-        this.value = value;
-    }
-
     public BudgetStat(Object id, String name, BigDecimal value) {
         this.id = id;
         this.name = name;

@@ -1,7 +1,5 @@
 package cn.mulanbay.pms.persistent.dto.auth;
 
-import java.math.BigInteger;
-
 /**
  * 系统功能点封装
  *

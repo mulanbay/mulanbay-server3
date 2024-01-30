@@ -15,7 +15,6 @@ import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.role.RoleForm;
 import cn.mulanbay.pms.web.bean.req.auth.role.RoleFunctionForm;
 import cn.mulanbay.pms.web.bean.req.auth.role.RoleSH;
-import cn.mulanbay.pms.web.bean.req.auth.user.UserRoleForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;

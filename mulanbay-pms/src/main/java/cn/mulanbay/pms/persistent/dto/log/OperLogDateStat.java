@@ -3,8 +3,6 @@ package cn.mulanbay.pms.persistent.dto.log;
 import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.dto.common.DateStat;
 
-import java.math.BigInteger;
-
 public class OperLogDateStat implements DateStat, CalendarDateStat {
 
     // 月份

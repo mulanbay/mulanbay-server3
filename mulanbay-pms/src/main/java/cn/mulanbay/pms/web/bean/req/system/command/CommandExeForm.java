@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.system.command;
 
 import cn.mulanbay.common.aop.BindUser;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 public class CommandExeForm implements BindUser {
 

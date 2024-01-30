@@ -158,6 +158,21 @@ public class NumberUtil {
 	}
 
 	/**
+	 * 求和
+	 * @param values
+	 * @return
+	 */
+	public static BigDecimal sum(BigDecimal... values){
+		BigDecimal total= new BigDecimal(0);
+		for(BigDecimal v : values){
+			if(v!=null){
+				total= total.add(v);
+			}
+		}
+		return total;
+	}
+
+	/**
 	 * 获取百分数（乘了100的数）
 	 * @param value
 	 * @param counts

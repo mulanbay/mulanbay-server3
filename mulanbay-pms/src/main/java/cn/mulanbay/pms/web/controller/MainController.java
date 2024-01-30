@@ -3,29 +3,33 @@ package cn.mulanbay.pms.web.controller;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.handler.bean.consume.ConsumeBean;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
+import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.User;
-import cn.mulanbay.pms.persistent.dto.fund.IncomeSummaryStat;
-import cn.mulanbay.pms.persistent.enums.*;
+import cn.mulanbay.pms.persistent.enums.FamilyMode;
+import cn.mulanbay.pms.persistent.enums.FunctionDataType;
+import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.enums.UserStatus;
 import cn.mulanbay.pms.persistent.service.AuthService;
+import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.IncomeService;
 import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
-import cn.mulanbay.pms.web.bean.req.fund.budget.BudgetSH;
 import cn.mulanbay.pms.web.bean.req.main.LoginReq;
 import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.req.main.UserGeneralStatSH;
-import cn.mulanbay.pms.web.bean.res.main.*;
+import cn.mulanbay.pms.web.bean.res.main.GeneralStatVo;
+import cn.mulanbay.pms.web.bean.res.main.MyInfoVo;
+import cn.mulanbay.pms.web.bean.res.main.RouterMetaVo;
+import cn.mulanbay.pms.web.bean.res.main.RouterVo;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +71,9 @@ public class MainController extends BaseController {
 
     @Autowired
     IncomeService incomeService;
+
+    @Autowired
+    BudgetService budgetService;
 
     @Autowired
     CacheHandler cacheHandler;
@@ -334,17 +341,14 @@ public class MainController extends BaseController {
     @RequestMapping(value = "/generalStat", method = RequestMethod.GET)
     public ResultBean generalStat(@Valid UserGeneralStatSH ugs) {
         Long userId = ugs.getUserId();
-        GeneralStatDetailVo monthStat = this.generalStat(DateGroupType.MONTH,userId);
-        GeneralStatDetailVo yearStat = this.generalStat(DateGroupType.YEAR,userId);
-
+        Date today = ugs.getDate();
+        if(today==null){
+            today = new Date();
+        }
+        FundStatBean monthStat = this.generalStat(PeriodType.MONTHLY,today,userId);
+        FundStatBean yearStat = this.generalStat(PeriodType.YEARLY,today,userId);
         //获取预算
-        BudgetSH bs = new BudgetSH();
-        bs.setStatus(CommonStatus.ENABLE);
-        bs.setUserId(ugs.getUserId());
-        PageRequest pr = bs.buildQuery();
-        pr.setBeanClass(Budget.class);
-        Date today = new Date();
-        List<Budget> budgetList = baseService.getBeanList(pr);
+        List<Budget> budgetList = budgetService.getActiveUserBudget(ugs.getUserId(), null);
         if (!budgetList.isEmpty()) {
             BudgetAmountBean bab = budgetHandler.calcBudgetAmount(budgetList, today);
             monthStat.setBudget(bab.getMonthBudget());
@@ -374,30 +378,8 @@ public class MainController extends BaseController {
         return callback(res);
     }
 
-    private GeneralStatDetailVo generalStat(DateGroupType type,Long userId){
-        GeneralStatDetailVo vo = new GeneralStatDetailVo();
-        Date startTime = null;
-        Date endTime = null;
-        Date now = new Date();
-        if(type==DateGroupType.MONTH){
-            startTime = DateUtil.getMonthFirst(now);
-            Date end = DateUtil.getMonthLast(now);
-            endTime = DateUtil.tillMiddleNight(end);
-        }else{
-            startTime = DateUtil.getYearFirst(now);
-            Date end = DateUtil.getYearLast(now);
-            endTime = DateUtil.tillMiddleNight(end);
-        }
-        ConsumeBean consumeBean = budgetHandler.getConsume(startTime,endTime,userId);
-        vo.setNcAmount(consumeBean.getNcAmount());
-        vo.setBcAmount(consumeBean.getBcAmount());
-        vo.setTrAmount(consumeBean.getBcAmount());
-        vo.setTotalConsume(consumeBean.getTotalConsume());
-        vo.setConsumeCount(consumeBean.getTotalCount());
-        //收入
-        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, startTime, endTime);
-        vo.setIncome(iss.getTotalAmount() == null ? new BigDecimal(0) : iss.getTotalAmount());
-
-        return vo;
+    private FundStatBean generalStat(PeriodType type, Date bussDay, Long userId){
+        Date[] ds = budgetHandler.getDateRange(type,bussDay,true);
+        return budgetHandler.statConsumeIncome(ds[0],ds[1],userId);
     }
 }

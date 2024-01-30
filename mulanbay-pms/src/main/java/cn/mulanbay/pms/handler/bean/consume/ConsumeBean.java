@@ -45,7 +45,7 @@ public class ConsumeBean {
         this.totalCount = totalCount;
     }
 
-    public BigDecimal getTotalConsume() {
+    public BigDecimal getTotalAmount() {
         BigDecimal total = new BigDecimal(0);
         if(ncAmount!=null){
             total=total.add(ncAmount);

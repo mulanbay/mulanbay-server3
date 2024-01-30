@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.controller.log;
 
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;

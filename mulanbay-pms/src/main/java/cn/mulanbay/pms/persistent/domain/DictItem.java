@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-
 import jakarta.persistence.*;
 
 import java.util.Objects;

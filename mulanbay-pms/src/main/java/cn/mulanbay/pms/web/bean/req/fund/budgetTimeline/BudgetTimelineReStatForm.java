@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.web.bean.req.fund.budget;
+package cn.mulanbay.pms.web.bean.req.fund.budgetTimeline;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.persistent.enums.PeriodType;

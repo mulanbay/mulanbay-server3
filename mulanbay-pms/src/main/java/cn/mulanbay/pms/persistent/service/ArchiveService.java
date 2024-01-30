@@ -5,7 +5,6 @@ import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.Archive;
-import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

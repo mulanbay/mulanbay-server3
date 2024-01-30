@@ -4,7 +4,6 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsCode;
 import org.slf4j.Logger;

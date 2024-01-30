@@ -2,9 +2,9 @@ package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.Objects;
 

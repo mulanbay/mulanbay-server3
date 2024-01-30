@@ -2,7 +2,6 @@ package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 

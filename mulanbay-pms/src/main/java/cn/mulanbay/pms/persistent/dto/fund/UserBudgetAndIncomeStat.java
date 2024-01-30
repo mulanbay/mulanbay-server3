@@ -1,12 +1,11 @@
 package cn.mulanbay.pms.persistent.dto.fund;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class UserBudgetAndIncomeStat {
 
-    private BigInteger userId;
+    private Long userId;
     private Date occurDate;
     private BigDecimal budgetAmount;
     private BigDecimal ncAmount;
@@ -14,7 +13,7 @@ public class UserBudgetAndIncomeStat {
     private BigDecimal trAmount;
     private BigDecimal totalIncome;
 
-    public UserBudgetAndIncomeStat(BigInteger userId, Date occurDate, BigDecimal budgetAmount, BigDecimal ncAmount, BigDecimal bcAmount, BigDecimal trAmount, BigDecimal totalIncome) {
+    public UserBudgetAndIncomeStat(Long userId, Date occurDate, BigDecimal budgetAmount, BigDecimal ncAmount, BigDecimal bcAmount, BigDecimal trAmount, BigDecimal totalIncome) {
         this.userId = userId;
         this.occurDate = occurDate;
         this.budgetAmount = budgetAmount;
@@ -24,11 +23,11 @@ public class UserBudgetAndIncomeStat {
         this.totalIncome = totalIncome;
     }
 
-    public BigInteger getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(BigInteger userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

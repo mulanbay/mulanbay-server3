@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.config.goodsLifetime;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.web.bean.request.PageSearch;
-
 import jakarta.validation.constraints.NotEmpty;
 
 public class GoodsLifetimeCompareAndMatchForm extends PageSearch implements BindUser {

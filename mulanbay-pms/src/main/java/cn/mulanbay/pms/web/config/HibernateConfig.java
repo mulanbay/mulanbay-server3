@@ -3,12 +3,11 @@ package cn.mulanbay.pms.web.config;
 import cn.mulanbay.persistent.cache.CacheProcessor;
 import cn.mulanbay.persistent.cache.PageCacheManager;
 import cn.mulanbay.persistent.service.BaseService;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+
 import javax.sql.DataSource;
 import java.util.Properties;
 

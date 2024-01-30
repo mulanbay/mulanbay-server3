@@ -1,24 +1,26 @@
 package cn.mulanbay.pms.web.bean.res.main;
 
+import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
+
 public class GeneralStatVo {
 
-    private GeneralStatDetailVo monthStat;
+    private FundStatBean monthStat;
 
-    private GeneralStatDetailVo yearStat;
+    private FundStatBean yearStat;
 
-    public GeneralStatDetailVo getMonthStat() {
+    public FundStatBean getMonthStat() {
         return monthStat;
     }
 
-    public void setMonthStat(GeneralStatDetailVo monthStat) {
+    public void setMonthStat(FundStatBean monthStat) {
         this.monthStat = monthStat;
     }
 
-    public GeneralStatDetailVo getYearStat() {
+    public FundStatBean getYearStat() {
         return yearStat;
     }
 
-    public void setYearStat(GeneralStatDetailVo yearStat) {
+    public void setYearStat(FundStatBean yearStat) {
         this.yearStat = yearStat;
     }
 }

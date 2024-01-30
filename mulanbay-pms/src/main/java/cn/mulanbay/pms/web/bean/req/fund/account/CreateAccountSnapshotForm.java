@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.fund.account;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-
 import jakarta.validation.constraints.NotEmpty;
 
 public class CreateAccountSnapshotForm implements BindUser {

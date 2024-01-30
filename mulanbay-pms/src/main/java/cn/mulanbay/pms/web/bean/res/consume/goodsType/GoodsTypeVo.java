@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.res.consume.goodsType;
 
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-import cn.mulanbay.pms.persistent.enums.FunctionDataType;
 
 import java.util.ArrayList;
 import java.util.List;

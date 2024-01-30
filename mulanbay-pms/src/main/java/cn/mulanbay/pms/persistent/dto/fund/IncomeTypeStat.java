@@ -3,7 +3,6 @@ package cn.mulanbay.pms.persistent.dto.fund;
 import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class IncomeTypeStat implements CalendarDateStat {
     // 月份
