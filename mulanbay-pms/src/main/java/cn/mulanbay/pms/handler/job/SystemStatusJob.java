@@ -55,7 +55,7 @@ public class SystemStatusJob extends AbstractBaseJob {
             }
             //写系统日志
             LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);
-            logHandler.addSysLog(LogLevel.WARNING,"系统状态操作","系统状态调度器设置系统状态,"+msg, PmsCode.SYSTEM_STATUS_CHANGE);
+            logHandler.addSysLog(LogLevel.WARNING,"系统状态操作","系统状态调度器设置系统状态,"+msg, PmsCode.SYSTEM_LOCK);
 
         }
         return tr;

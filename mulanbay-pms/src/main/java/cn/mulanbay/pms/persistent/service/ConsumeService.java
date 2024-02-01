@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+
 /**
  * 消费记录
  *
@@ -285,7 +287,7 @@ public class ConsumeService extends BaseHibernateDao {
         if(g==null){
             return "未知";
         }else{
-            if(g.getPid()==0L){
+            if(g.getPid()==ROOT_ID){
                 return g.getTypeName();
             }else{
                 return findTopType(map,g.getPid());

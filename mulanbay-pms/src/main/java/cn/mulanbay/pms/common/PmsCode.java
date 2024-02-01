@@ -68,7 +68,9 @@ public class PmsCode {
 
     public final static int BEAN_GET_CACHE_ERROR =10027;
 
-    public final static int SYSTEM_STATUS_CHANGE =10028;
+    public final static int SYSTEM_LOCK =10028;
+
+    public final static int SYSTEM_UNLOCK =10029;
 
     /**
      * 通用类 start

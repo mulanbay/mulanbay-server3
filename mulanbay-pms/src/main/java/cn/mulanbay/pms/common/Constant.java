@@ -18,6 +18,11 @@ public class Constant {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
 
     /**
+     * 根节点号
+     */
+    public static long ROOT_ID=0L;
+
+    /**
      * 预算周期前缀
      */
     public static final String BUDGET_PERIOD_PX = "p";// 24

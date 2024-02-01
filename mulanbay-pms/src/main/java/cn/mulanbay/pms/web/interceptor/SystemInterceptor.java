@@ -33,6 +33,11 @@ public class SystemInterceptor extends BaseInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         int code = systemStatusHandler.getStatus();
         if(code!= ErrorCode.SUCCESS){
+            String url = request.getServletPath();
+            if(url.equals("/system/unlock")){
+                //白名单
+                return true;
+            }
             logger.warn("系统停止服务,code={}",code);
             this.handleFail(request,response,null,code, systemStatusHandler.getMessage(), null);
             return false;

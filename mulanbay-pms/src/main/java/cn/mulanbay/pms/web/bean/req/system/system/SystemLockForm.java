@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.web.bean.req.system.command;
+package cn.mulanbay.pms.web.bean.req.system.system;
 
 import cn.mulanbay.pms.common.Constant;
 import jakarta.validation.constraints.NotEmpty;
@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class SystemStatusForm {
+public class SystemLockForm {
 
     @NotNull(message = "状态码不能为空")
     private Integer code;
