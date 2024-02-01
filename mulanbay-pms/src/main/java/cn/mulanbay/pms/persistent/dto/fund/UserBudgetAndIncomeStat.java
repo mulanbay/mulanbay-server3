@@ -6,16 +6,16 @@ import java.util.Date;
 public class UserBudgetAndIncomeStat {
 
     private Long userId;
-    private Date occurDate;
+    private Date bussDay;
     private BigDecimal budgetAmount;
     private BigDecimal ncAmount;
     private BigDecimal bcAmount;
     private BigDecimal trAmount;
     private BigDecimal totalIncome;
 
-    public UserBudgetAndIncomeStat(Long userId, Date occurDate, BigDecimal budgetAmount, BigDecimal ncAmount, BigDecimal bcAmount, BigDecimal trAmount, BigDecimal totalIncome) {
+    public UserBudgetAndIncomeStat(Long userId, Date bussDay, BigDecimal budgetAmount, BigDecimal ncAmount, BigDecimal bcAmount, BigDecimal trAmount, BigDecimal totalIncome) {
         this.userId = userId;
-        this.occurDate = occurDate;
+        this.bussDay = bussDay;
         this.budgetAmount = budgetAmount;
         this.ncAmount = ncAmount;
         this.bcAmount = bcAmount;
@@ -31,12 +31,12 @@ public class UserBudgetAndIncomeStat {
         this.userId = userId;
     }
 
-    public Date getOccurDate() {
-        return occurDate;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setOccurDate(Date occurDate) {
-        this.occurDate = occurDate;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
     }
 
     public BigDecimal getBudgetAmount() {

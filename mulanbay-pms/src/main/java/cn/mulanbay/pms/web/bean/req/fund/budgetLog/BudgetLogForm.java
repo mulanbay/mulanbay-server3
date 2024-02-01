@@ -22,8 +22,8 @@ public class BudgetLogForm implements BindUser {
     private BigDecimal amount;
 
     @DateTimeFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @NotNull(message = "发生时间不能为空")
-    private Date occurDate;
+    @NotNull(message = "业务时间不能为空")
+    private Date bussDay;
 
     private Long consumeId;
 
@@ -63,12 +63,12 @@ public class BudgetLogForm implements BindUser {
         this.amount = amount;
     }
 
-    public Date getOccurDate() {
-        return occurDate;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setOccurDate(Date occurDate) {
-        this.occurDate = occurDate;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
     }
 
     public Long getConsumeId() {

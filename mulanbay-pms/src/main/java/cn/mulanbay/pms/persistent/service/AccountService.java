@@ -2,6 +2,7 @@ package cn.mulanbay.pms.persistent.service;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.Account;
@@ -9,7 +10,6 @@ import cn.mulanbay.pms.persistent.domain.AccountFlow;
 import cn.mulanbay.pms.persistent.domain.AccountSnapshot;
 import cn.mulanbay.pms.persistent.dto.fund.AccountStat;
 import cn.mulanbay.pms.persistent.enums.*;
-import cn.mulanbay.pms.util.PriceUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +105,7 @@ public class AccountService extends BaseHibernateDao {
     public void updateAccount(Account account, BigDecimal beforeAmount, String remark) {
         try {
             this.updateEntity(account);
-            if (!PriceUtil.priceEquals(account.getAmount(), beforeAmount)) {
+            if (!NumberUtil.priceEquals(account.getAmount(), beforeAmount)) {
                 //写流水
                 AccountFlow af = new AccountFlow();
                 af.setAccount(account);

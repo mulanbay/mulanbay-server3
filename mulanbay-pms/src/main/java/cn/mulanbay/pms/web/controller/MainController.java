@@ -21,6 +21,7 @@ import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.IncomeService;
+import cn.mulanbay.pms.util.FundUtil;
 import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.main.LoginReq;
@@ -379,7 +380,7 @@ public class MainController extends BaseController {
     }
 
     private FundStatBean generalStat(PeriodType type, Date bussDay, Long userId){
-        Date[] ds = budgetHandler.getDateRange(type,bussDay,true);
+        Date[] ds = FundUtil.getDateRange(type,bussDay,true);
         return budgetHandler.statConsumeIncome(ds[0],ds[1],userId);
     }
 }

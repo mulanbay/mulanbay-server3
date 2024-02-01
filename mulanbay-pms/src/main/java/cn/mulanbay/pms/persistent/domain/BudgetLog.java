@@ -35,39 +35,41 @@ public class BudgetLog implements java.io.Serializable {
     @ManyToOne
     @JoinColumn(name = "budget_id")
     private Budget budget;
-    //周期类型
-    @Column(name = "period")
-    private PeriodType period;
+    /**
+     * 指的是统计的周期类型
+     */
+    @Column(name = "stat_period")
+    private PeriodType statPeriod;
     //业务key，唯一性判断使用，避免重复设置
     @Column(name = "buss_key")
     private String bussKey;
 
     //发生的时间
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "occur_date")
-    private Date occurDate;
+    @Column(name = "buss_day")
+    private Date bussDay;
     //预算金额
-    @Column(name = "budget_amount")
+    @Column(name = "budget_amount",precision = 9,scale = 2)
     private BigDecimal budgetAmount;
     //实际普通消费金额
-    @Column(name = "nc_amount")
+    @Column(name = "nc_amount",precision = 9,scale = 2)
     private BigDecimal ncAmount;
     //实际突发消费金额
-    @Column(name = "bc_amount")
+    @Column(name = "bc_amount",precision = 9,scale = 2)
     private BigDecimal bcAmount;
     //实际看病消费金额
-    @Column(name = "tr_amount")
+    @Column(name = "tr_amount",precision = 9,scale = 2)
     private BigDecimal trAmount;
 
     //总的消费值
-    @Column(name = "total_amount")
+    @Column(name = "total_amount",precision = 9,scale = 2)
     private BigDecimal totalAmount;
 
     //收入
-    @Column(name = "income_amount")
+    @Column(name = "income_amount",precision = 9,scale = 2)
     private BigDecimal incomeAmount;
     //账户变化值
-    @Column(name = "account_change_amount")
+    @Column(name = "account_change_amount",precision = 9,scale = 2)
     private BigDecimal accountChangeAmount;
 
     @Column(name = "source")
@@ -107,12 +109,12 @@ public class BudgetLog implements java.io.Serializable {
         this.budget = budget;
     }
 
-    public PeriodType getPeriod() {
-        return period;
+    public PeriodType getStatPeriod() {
+        return statPeriod;
     }
 
-    public void setPeriod(PeriodType period) {
-        this.period = period;
+    public void setStatPeriod(PeriodType statPeriod) {
+        this.statPeriod = statPeriod;
     }
 
     public String getBussKey() {
@@ -123,12 +125,12 @@ public class BudgetLog implements java.io.Serializable {
         this.bussKey = bussKey;
     }
 
-    public Date getOccurDate() {
-        return occurDate;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setOccurDate(Date occurDate) {
-        this.occurDate = occurDate;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
     }
 
     public BigDecimal getBudgetAmount() {
@@ -221,8 +223,8 @@ public class BudgetLog implements java.io.Serializable {
 
 
     @Transient
-    public String getPeriodName(){
-        return period==null? null:period.getName();
+    public String getStatPeriodName(){
+        return statPeriod==null? null:statPeriod.getName();
     }
 
     @Transient

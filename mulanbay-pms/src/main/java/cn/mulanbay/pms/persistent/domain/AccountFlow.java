@@ -49,10 +49,10 @@ public class AccountFlow implements java.io.Serializable {
     @Column(name = "type")
     private AccountType type;
 
-    @Column(name = "before_amount")
+    @Column(name = "before_amount",precision = 9,scale = 2)
     private BigDecimal beforeAmount;
 
-    @Column(name = "after_amount")
+    @Column(name = "after_amount",precision = 9,scale = 2)
     private BigDecimal afterAmount;
 
     @Column(name = "adjust_type")

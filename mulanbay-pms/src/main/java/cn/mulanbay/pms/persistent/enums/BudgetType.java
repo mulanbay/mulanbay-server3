@@ -8,7 +8,11 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum BudgetType {
 
-    INSURANCE(0, "保险"), STUDY(1, "学习培训"), FINANCE(2, "理财产品"), LIVE(3, "生活类"), OTHER(4, "其他");
+    INSURANCE(0, "保险"),
+    STUDY(1, "学习培训"),
+    FINANCE(2, "理财产品"),
+    LIVE(3, "生活类"),
+    OTHER(4, "其他");
 
     private int value;
 

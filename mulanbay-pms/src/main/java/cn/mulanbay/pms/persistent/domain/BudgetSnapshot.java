@@ -35,12 +35,21 @@ public class BudgetSnapshot implements java.io.Serializable {
     //日终统计的月度/年度统计外键
     @Column(name = "budget_Log_id")
     private Long budgetLogId;
+    /**
+     * 指的是统计的周期类型
+     */
+    @Column(name = "stat_period")
+    private PeriodType statPeriod;
     //冗余
     @Column(name = "buss_key")
     private String bussKey;
+    //发生的时间
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
+    @Column(name = "buss_day")
+    private Date bussDay;
     //来源ID，即Budget主键
-    @Column(name = "from_id")
-    private Long fromId;
+    @Column(name = "budget_id")
+    private Long budgetId;
     //名称
     @Column(name = "budget_name")
     private String budgetName;
@@ -63,7 +72,7 @@ public class BudgetSnapshot implements java.io.Serializable {
     @Column(name = "last_paid_time")
     private Date lastPaidTime;
     //金额
-    @Column(name = "amount")
+    @Column(name = "amount",precision = 9,scale = 2)
     private BigDecimal amount;
     @Column(name = "remind")
     private Boolean remind;
@@ -80,6 +89,31 @@ public class BudgetSnapshot implements java.io.Serializable {
      */
     @Column(name = "icg")
     private Boolean icg;
+
+    /**
+     * 实际消费金额
+     */
+    @Column(name = "ac_amount",precision = 9,scale = 2)
+    private BigDecimal acAmount;
+
+    /**
+     * 统计系数
+     */
+    @Column(name = "factor")
+    private Integer factor;
+
+    /**
+     * 占该周期预算总值的比例
+     */
+    @Column(name = "rate",precision = 9,scale = 4)
+    private BigDecimal rate;
+
+    /**
+     * 占该周期收入的比例
+     */
+    @Column(name = "ic_rate",precision = 9,scale = 4)
+    private BigDecimal icRate;
+
     @Column(name = "remark")
     private String remark;
 
@@ -90,6 +124,31 @@ public class BudgetSnapshot implements java.io.Serializable {
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "modify_time")
     private Date modifyTime;
+
+
+    @Transient
+    public String getTypeName() {
+        return type.getName();
+    }
+
+    @Transient
+    public String getPeriodName() {
+        return period.getName();
+    }
+
+    @Transient
+    public String getStatusName() {
+        return status.getName();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof BudgetSnapshot bean) {
+            return bean.getSnapshotId().equals(this.getSnapshotId());
+        }else {
+            return false;
+        }
+    }
 
     public Long getSnapshotId() {
         return snapshotId;
@@ -115,6 +174,14 @@ public class BudgetSnapshot implements java.io.Serializable {
         this.budgetLogId = budgetLogId;
     }
 
+    public PeriodType getStatPeriod() {
+        return statPeriod;
+    }
+
+    public void setStatPeriod(PeriodType statPeriod) {
+        this.statPeriod = statPeriod;
+    }
+
     public String getBussKey() {
         return bussKey;
     }
@@ -123,12 +190,20 @@ public class BudgetSnapshot implements java.io.Serializable {
         this.bussKey = bussKey;
     }
 
-    public Long getFromId() {
-        return fromId;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
+    }
+
+    public Long getBudgetId() {
+        return budgetId;
+    }
+
+    public void setBudgetId(Long budgetId) {
+        this.budgetId = budgetId;
     }
 
     public String getBudgetName() {
@@ -227,6 +302,38 @@ public class BudgetSnapshot implements java.io.Serializable {
         this.icg = icg;
     }
 
+    public BigDecimal getAcAmount() {
+        return acAmount;
+    }
+
+    public void setAcAmount(BigDecimal acAmount) {
+        this.acAmount = acAmount;
+    }
+
+    public Integer getFactor() {
+        return factor;
+    }
+
+    public void setFactor(Integer factor) {
+        this.factor = factor;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+    public BigDecimal getIcRate() {
+        return icRate;
+    }
+
+    public void setIcRate(BigDecimal icRate) {
+        this.icRate = icRate;
+    }
+
     public String getRemark() {
         return remark;
     }
@@ -249,30 +356,6 @@ public class BudgetSnapshot implements java.io.Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
-    }
-
-    @Transient
-    public String getTypeName() {
-        return type.getName();
-    }
-
-    @Transient
-    public String getPeriodName() {
-        return period.getName();
-    }
-
-    @Transient
-    public String getStatusName() {
-        return status.getName();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof BudgetSnapshot bean) {
-            return bean.getSnapshotId().equals(this.getSnapshotId());
-        }else {
-            return false;
-        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.controller.fund;
 
 import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -14,13 +15,16 @@ import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.FundUtil;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeSH;
+import cn.mulanbay.pms.web.bean.req.fund.budgetLog.BudgetLogBiasStatSH;
 import cn.mulanbay.pms.web.bean.req.fund.budgetSnapshot.*;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.fund.budget.BudgetChildrenVo;
 import cn.mulanbay.pms.web.bean.res.fund.budget.BudgetDetailVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,7 +76,7 @@ public class BudgetSnapShotController extends BaseController {
     @RequestMapping(value = "/detailList", method = RequestMethod.GET)
     public ResultBean detailList(BudgetSnapshotDetailListSH sf) {
         BudgetLog budgetLog = baseService.getObject(BudgetLog.class, sf.getBudgetLogId());
-        Date bussDay = budgetLog.getOccurDate();
+        Date bussDay = budgetLog.getBussDay();
         String bussKey = budgetLog.getBussKey();
         List<BudgetSnapshot> snapshotList = budgetService.getBudgetSnapshotList(sf.getUserId(),sf.getBudgetLogId());
         List<BudgetDetailVo> res = new ArrayList<>();
@@ -87,10 +91,10 @@ public class BudgetSnapShotController extends BaseController {
                         vo = new BudgetDetailVo();
                         BeanCopy.copy(bg,vo);
                         //查手动日志
-                        BudgetLog bl = budgetService.selectBudgetLog(budgetLog.getBussKey(), bg.getUserId(), null, bg.getFromId());
+                        BudgetLog bl = budgetService.selectBudgetLog(budgetLog.getBussKey(), bg.getUserId(), null, bg.getBudgetId());
                         if(bl!=null){
                             //有记录
-                            vo.setCpPaidTime(bl.getOccurDate());
+                            vo.setCpPaidTime(bl.getBussDay());
                             BigDecimal total = bl.getTotalAmount();
                             vo.setCpPaidAmount(total);
                             vo.setSource(bl.getSource());
@@ -98,7 +102,7 @@ public class BudgetSnapShotController extends BaseController {
                     }
                     break;
                 case MONTHLY:
-                    if(budgetLog.getPeriod()==PeriodType.YEARLY){
+                    if(budgetLog.getStatPeriod()==PeriodType.YEARLY){
                         //月报，直接空数据,前端以子列表显示
                         vo = this.createDefault(bg);
                     }else{
@@ -113,7 +117,7 @@ public class BudgetSnapShotController extends BaseController {
                     break;
             }
             //ID号是原来复制过来的Budget编号
-            vo.setBudgetId(bg.getFromId());
+            vo.setBudgetId(bg.getBudgetId());
             //设置快照ID，查询子列表有用
             vo.setSnapshotId(bg.getSnapshotId());
             res.add(vo);
@@ -129,7 +133,7 @@ public class BudgetSnapShotController extends BaseController {
     private BudgetDetailVo createDefault(BudgetSnapshot bg){
         BudgetDetailVo vo = new BudgetDetailVo();
         BeanCopy.copyProperties(bg,vo);
-        vo.setBudgetId(bg.getFromId());
+        vo.setBudgetId(bg.getBudgetId());
         vo.setHasChild(true);
         return vo;
     }
@@ -148,14 +152,14 @@ public class BudgetSnapShotController extends BaseController {
          * 3.父类是月度快照，子类是每天预算，那么查询当期月份所有该天预算的列表（正常情况下有28-31条）
          * 目前只实现第一种
          */
-        PeriodType parentPeriod = bl.getPeriod();
+        PeriodType parentPeriod = bl.getStatPeriod();
         if(parentPeriod==PeriodType.YEARLY){
-            List<BudgetSnapshot> snapshotList = budgetService.getMonthBudgetSnapshotList(sf.getUserId(),snapshot.getFromId(),bl.getBussKey());
+            List<BudgetSnapshot> snapshotList = budgetService.getMonthBudgetSnapshotList(sf.getUserId(),snapshot.getBudgetId(),bl.getBussKey());
             BudgetChildrenVo res = new BudgetChildrenVo();
             BigDecimal budgetAmount = new BigDecimal(0);
             BigDecimal paidAmount = new BigDecimal(0);
             for(BudgetSnapshot ss : snapshotList){
-                Date bussDay = budgetHandler.getBussDay(ss.getBussKey());
+                Date bussDay = FundUtil.getBussDay(ss.getBussKey());
                 BudgetDetailVo child = this.getDetail(ss,bussDay,ss.getBussKey());
                 BigDecimal b = child.getCpPaidAmount()==null ? new BigDecimal(0):child.getCpPaidAmount();
                 budgetAmount=budgetAmount.add(child.getAmount());
@@ -206,46 +210,6 @@ public class BudgetSnapShotController extends BaseController {
     }
 
     /**
-     * 获取子列表
-     *
-     * @return
-     */
-    @RequestMapping(value = "/history", method = RequestMethod.GET)
-    public ResultBean history(BudgetSnapshotHistorySH sf) {
-        Budget budget = baseService.getObject(Budget.class,sf.getBudgetId());
-        sf.setStartBussKey(budgetHandler.createBussKey(budget.getPeriod(),sf.getStartDate()));
-        sf.setEndBussKey(budgetHandler.createBussKey(budget.getPeriod(),sf.getEndDate()));
-        PageRequest pr = sf.buildQuery();
-        pr.setBeanClass(beanClass);
-        Sort sort = new Sort("bussKey", Sort.DESC);
-        pr.addSort(sort);
-        PageResult<BudgetSnapshot> qr = baseService.getBeanResult(pr);
-        Map res = new HashMap<>();
-        List<BudgetDetailVo> list = new ArrayList<>();
-        for (BudgetSnapshot bg : qr.getBeanList()) {
-            if(bg.getBussKey().length()==4){
-                //在年度里面不需要统计
-                BudgetDetailVo bdb = this.createDefault(bg);
-                list.add(bdb);
-            }else{
-                Date bussDay = budgetHandler.getBussDay(bg.getBussKey());
-                BudgetDetailVo bdb = this.getDetail(bg,bussDay,bg.getBussKey());
-                list.add(bdb);
-            }
-        }
-        res.put("beanList",list);
-        res.put("maxRow",qr.getMaxRow());
-        res.put("page",qr.getPage());
-        res.put("pageSize",qr.getPageSize());
-        if(sf.isNeedChart()){
-            String title = "["+budget.getBudgetName()+"]历史执行统计";
-            ChartData chartData = this.createChartData(title,list);
-            res.put("chartData",chartData);
-        }
-        return callback(res);
-    }
-
-    /**
      * 获取详情
      * @param bg
      * @param bussDay
@@ -266,14 +230,14 @@ public class BudgetSnapShotController extends BaseController {
             bdb.setSource(BudgetLogSource.REAL_TIME);
         }else{
             //查询日志
-            BudgetLog bl = budgetService.selectBudgetLog(bussKey,bg.getUserId(),null,bg.getFromId());
+            BudgetLog bl = budgetService.selectBudgetLog(bussKey,bg.getUserId(),null,bg.getBudgetId());
             if (bl != null) {
-                bdb.setCpPaidTime(bl.getOccurDate());
+                bdb.setCpPaidTime(bl.getBussDay());
                 bdb.setCpPaidAmount(bl.getTotalAmount());
                 bdb.setSource(bl.getSource());
             }
         }
-        bdb.setBudgetId(bg.getFromId());
+        bdb.setBudgetId(bg.getBudgetId());
         return bdb;
     }
 
@@ -291,7 +255,7 @@ public class BudgetSnapShotController extends BaseController {
         BudgetLog budgetLog = baseService.getObject(BudgetLog.class, sf.getBudgetLogId());
         PageResult<BudgetDetailVo> res = new PageResult<>(qr);
         List<BudgetDetailVo> list = new ArrayList<>();
-        Date bussDay = budgetLog.getOccurDate();
+        Date bussDay = budgetLog.getBussDay();
         String bussKey = budgetLog.getBussKey();
         for (BudgetSnapshot bg : qr.getBeanList()) {
             BudgetDetailVo bdb = this.getDetail(bg,bussDay,bussKey);
@@ -335,7 +299,7 @@ public class BudgetSnapShotController extends BaseController {
         other = other.subtract(budgetLog.getTrAmount());
 
         //饮食成本
-        Date[] ds = budgetHandler.getDateRange(budgetLog.getPeriod(), budgetLog.getOccurDate(), true);
+        Date[] ds = FundUtil.getDateRange(budgetLog.getStatPeriod(), budgetLog.getBussDay(), true);
         //BigDecimal dietPrice = dietService.getTotalPrice(sf.getUserId(), ds[0], ds[1]);
         //todo
         BigDecimal dietPrice = new BigDecimal(0d);
@@ -386,14 +350,53 @@ public class BudgetSnapShotController extends BaseController {
     }
 
     private Date[] getDateRange(BudgetSnapshot snapshot ){
-        Date bussDay = budgetHandler.getBussDay(snapshot.getBussKey());
+        Date bussDay = FundUtil.getBussDay(snapshot.getBussKey());
         BudgetLog bl = baseService.getObject(BudgetLog.class,snapshot.getBudgetLogId());
         /**
          * 周期需要使用父类的周期
          * 假如snapshot是月度类型预算，但是该记录是在年度预算统计里面，需要查询的是整个年度的数据
          */
-        Date[] ds = budgetHandler.getDateRange(bl.getPeriod(), bussDay, true);
+        Date[] ds = FundUtil.getDateRange(bl.getStatPeriod(), bussDay, true);
         return ds;
     }
+
+    /**
+     * 预算统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/budgetStat", method = RequestMethod.GET)
+    public ResultBean budgetStat(@Valid BudgetSnapshotSH sf) {
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        Sort sort = new Sort("bussKey", Sort.ASC);
+        pr.addSort(sort);
+        PageResult<BudgetSnapshot> qr = baseService.getBeanResult(pr);
+        Budget budget = baseService.getObject(Budget.class,sf.getBudgetId());
+        ChartData chartData = new ChartData();
+        chartData.setTitle("["+budget.getBudgetName()+"]预算变化统计");
+        chartData.setLegendData(new String[]{"预算占比","收入占比","预算值","实际消费"});
+        //混合图形下使用
+        chartData.addYAxis("比率","%");
+        chartData.addYAxis("金额","元");
+        ChartYData yData1 = new ChartYData("预算占比","%");
+        ChartYData yData2 = new ChartYData("收入占比","%");
+        ChartYData yData3 = new ChartYData("预算值","元");
+        ChartYData yData4 = new ChartYData("实际消费","元");
+        for (BudgetSnapshot bean : qr.getBeanList()) {
+            chartData.getIntXData().add(Integer.valueOf(bean.getBussKey()));
+            chartData.getXdata().add(bean.getBussKey());
+            yData1.getData().add(bean.getRate()==null ? null: NumberUtil.getValue(bean.getRate().multiply(new BigDecimal(100)),0));
+            yData2.getData().add(bean.getIcRate()==null ? null: NumberUtil.getValue(bean.getIcRate().multiply(new BigDecimal(100)),0));
+            yData3.getData().add(bean.getAmount());
+            yData4.getData().add(bean.getAcAmount());
+        }
+        chartData.getYdata().add(yData1);
+        chartData.getYdata().add(yData2);
+        chartData.getYdata().add(yData3);
+        chartData.getYdata().add(yData4);
+        return callback(chartData);
+    }
+
 
 }

@@ -2,6 +2,7 @@ package cn.mulanbay.pms.persistent.service;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
+import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
@@ -10,7 +11,6 @@ import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.consume.*;
 import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
-import cn.mulanbay.pms.util.PriceUtil;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.*;
 import org.springframework.stereotype.Service;
@@ -64,7 +64,7 @@ public class ConsumeService extends BaseHibernateDao {
                     addNewIncome(consume);
                 } else {
                     Income income = this.getEntityById(Income.class,refer.getReferId());
-                    if (!PriceUtil.priceEquals(consume.getSoldPrice(), income.getAmount())) {
+                    if (!NumberUtil.priceEquals(consume.getSoldPrice(), income.getAmount())) {
                         //价格有改变更新
                         income.setAmount(consume.getSoldPrice());
                         income.setModifyTime(new Date());

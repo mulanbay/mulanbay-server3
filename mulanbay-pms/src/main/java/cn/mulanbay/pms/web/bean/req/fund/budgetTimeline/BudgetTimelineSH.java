@@ -3,13 +3,15 @@ package cn.mulanbay.pms.web.bean.req.fund.budgetTimeline;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class BudgetTimelineSH implements BindUser {
 
-    private PeriodType period;
+    @NotNull(message = "周期不能为空")
+    private PeriodType statPeriod;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     private Date bussDay;
@@ -32,12 +34,12 @@ public class BudgetTimelineSH implements BindUser {
      */
     private Boolean predict = false;
 
-    public PeriodType getPeriod() {
-        return period;
+    public PeriodType getStatPeriod() {
+        return statPeriod;
     }
 
-    public void setPeriod(PeriodType period) {
-        this.period = period;
+    public void setStatPeriod(PeriodType statPeriod) {
+        this.statPeriod = statPeriod;
     }
 
     public Date getBussDay() {

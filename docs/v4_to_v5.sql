@@ -310,3 +310,28 @@ ALTER TABLE `budget_log`
 
 update budget_log set total_amount=nc_amount+bc_amount+tr_amount where log_id>0;
 
+ALTER TABLE `budget_snapshot`
+    ADD COLUMN `ac_amount` DECIMAL(9,2) NULL AFTER `icg`,
+ADD COLUMN `factor` INT NULL AFTER `ac_amount`,
+ADD COLUMN `rate` DECIMAL(9,4) NULL AFTER `factor`,
+ADD COLUMN `ic_rate` DECIMAL(9,4) NULL AFTER `rate`,
+CHANGE COLUMN `from_id` `budget_id` BIGINT NOT NULL ;
+
+ALTER TABLE `budget_log`
+    CHANGE COLUMN `occur_date` `buss_day` DATETIME NOT NULL ;
+
+ALTER TABLE `budget_snapshot`
+    ADD COLUMN `buss_day` DATETIME NULL AFTER `buss_key`;
+
+update budget_snapshot ss,budget_log log set ss.buss_day = log.buss_day where log.log_id = ss.budget_Log_id and ss.snapshot_id>0;
+
+ALTER TABLE `budget_log`
+    CHANGE COLUMN `period` `stat_period` SMALLINT NOT NULL ;
+
+ALTER TABLE `budget_timeline`
+    CHANGE COLUMN `period` `stat_period` SMALLINT NOT NULL ;
+
+ALTER TABLE `budget_snapshot`
+    ADD COLUMN `stat_period` SMALLINT(5) NULL AFTER `budget_log_id`;
+
+update budget_snapshot ss,budget_log log set ss.stat_period = log.stat_period where log.log_id = ss.budget_Log_id and ss.snapshot_id>0;

@@ -17,18 +17,18 @@ import java.util.Date;
 public class BudgetLogBiasStatSH extends QueryBuilder implements DateStatSH, BindUser, FullEndDateTime {
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "occurDate", op = Parameter.Operator.GTE)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "occurDate", op = Parameter.Operator.LTE)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.LTE)
     private Date endDate;
 
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     private Long userId;
 
-    @Query(fieldName = "period", op = Parameter.Operator.EQ)
-    private PeriodType period;
+    @Query(fieldName = "statPeriod", op = Parameter.Operator.EQ)
+    private PeriodType statPeriod;
 
     @Query(fieldName = "accountChangeAmount", op = Parameter.Operator.NULL_NOTNULL)
     private NullType accountChangeAmount;
@@ -72,12 +72,12 @@ public class BudgetLogBiasStatSH extends QueryBuilder implements DateStatSH, Bin
         this.userId = userId;
     }
 
-    public PeriodType getPeriod() {
-        return period;
+    public PeriodType getStatPeriod() {
+        return statPeriod;
     }
 
-    public void setPeriod(PeriodType period) {
-        this.period = period;
+    public void setStatPeriod(PeriodType statPeriod) {
+        this.statPeriod = statPeriod;
     }
 
     public NullType getAccountChangeAmount() {

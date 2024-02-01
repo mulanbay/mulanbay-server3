@@ -157,6 +157,25 @@ public class NumberUtil {
 		return v;
 	}
 
+	public static boolean priceEquals(BigDecimal a, BigDecimal b){
+		return priceEquals(a.doubleValue(),b.doubleValue());
+	}
+
+	/**
+	 * 价格是否相等
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean priceEquals(double a, double b){
+		if(Math.abs(a-b)<=0.001){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
 	/**
 	 * 求和
 	 * @param values

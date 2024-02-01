@@ -6,7 +6,6 @@ import cn.mulanbay.ai.ml.processor.bean.BudgetConsumeER;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
-import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.bean.consume.ConsumeBean;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
 import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
@@ -22,6 +21,7 @@ import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.IncomeService;
+import cn.mulanbay.pms.util.FundUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,20 +83,6 @@ public class BudgetHandler extends BaseHandler {
     }
 
     /**
-     * 通过bussKey获取BussDay
-     *
-     * @param bussKey
-     * @return
-     */
-    public Date getBussDay(String bussKey) {
-        if (bussKey.length() == 4) {
-            return DateUtil.getDate(bussKey + "0101", "yyyyMMdd");
-        } else {
-            return DateUtil.getDate(bussKey + "01", "yyyyMMdd");
-        }
-    }
-
-    /**
      * 计算预算
      *
      * @param budgetList
@@ -108,61 +94,15 @@ public class BudgetHandler extends BaseHandler {
             if (b.getStatus() == CommonStatus.DISABLE) {
                 continue;
             }
-            if (b.getPeriod() == PeriodType.WEEKLY) {
-                bab.addYearBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_WEEK)));
-                bab.addYearBudget(b);
-                bab.addMonthBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_MONTH_WEEK)));
+            int monthFactor = FundUtil.getFactor(PeriodType.MONTHLY,now,b);
+            int yearFactor = FundUtil.getFactor(PeriodType.YEARLY,now,b);
+            if(monthFactor>0){
+                bab.addMonthBudget(b.getAmount().multiply(new BigDecimal(monthFactor)));
                 bab.addMonthBudget(b);
-            } else if (b.getPeriod() == PeriodType.MONTHLY) {
-                bab.addYearBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_MONTH)));
+            }
+            if(yearFactor>0){
+                bab.addYearBudget(b.getAmount().multiply(new BigDecimal(yearFactor)));
                 bab.addYearBudget(b);
-                bab.addMonthBudget(b.getAmount());
-                bab.addMonthBudget(b);
-            } else if (b.getPeriod() == PeriodType.QUARTERLY) {
-                bab.addYearBudget(b.getAmount().multiply(new BigDecimal(Constant.MAX_QUARTERLY)));
-                bab.addYearBudget(b);
-            } else if (b.getPeriod() == PeriodType.YEARLY) {
-                bab.addYearBudget(b.getAmount());
-                bab.addYearBudget(b);
-                Date date = b.getExpectPaidTime();
-                if (date != null) {
-                    //月度预算
-                    String m1 = DateUtil.getFormatDate(now, "MM");
-                    String m2 = DateUtil.getFormatDate(date, "MM");
-                    if (m1.equals(m2)) {
-                        //同一个月
-                        bab.addMonthBudget(b.getAmount());
-                        bab.addMonthBudget(b);
-                    }
-                }
-            } else if (b.getPeriod() == PeriodType.ONCE) {
-                Date date = b.getExpectPaidTime();
-                if (date != null) {
-                    //年度预算
-                    String y1 = DateUtil.getFormatDate(now, YEARLY_DATE_FORMAT);
-                    String y2 = DateUtil.getFormatDate(date, YEARLY_DATE_FORMAT);
-                    if (y1.equals(y2)) {
-                        //同一年
-                        bab.addYearBudget(b.getAmount());
-                        bab.addYearBudget(b);
-                    }
-                    //月度预算
-                    String m1 = DateUtil.getFormatDate(now, MONTHLY_DATE_FORMAT);
-                    String m2 = DateUtil.getFormatDate(date, MONTHLY_DATE_FORMAT);
-                    if (m1.equals(m2)) {
-                        //同一个月
-                        bab.addMonthBudget(b.getAmount());
-                        bab.addMonthBudget(b);
-                    }
-                }
-
-            } else if (b.getPeriod() == PeriodType.DAILY) {
-                int ydays = DateUtil.getDays(Integer.parseInt(DateUtil.getFormatDate(now, YEARLY_DATE_FORMAT)));
-                bab.addYearBudget(b.getAmount().multiply(new BigDecimal(ydays)));
-                bab.addYearBudget(b);
-                int mdays = DateUtil.getMonthDays(now);
-                bab.addMonthBudget(b.getAmount().multiply(new BigDecimal(mdays)));
-                bab.addMonthBudget(b);
             }
         }
         return bab;
@@ -227,7 +167,7 @@ public class BudgetHandler extends BaseHandler {
      */
     public ConsumeBudgetStat getActualAmount(Budget budget, Date bussDay) {
         ConsumeBudgetStat v = null;
-        Date[] ds = this.getDateRange(budget.getPeriod(), bussDay, true);
+        Date[] ds = FundUtil.getDateRange(budget.getPeriod(), bussDay, true);
         if (budget.getGoodsTypeId() != null) {
             v = consumeService.statConsumeAmount(ds[0], ds[1], budget.getUserId(), budget.getGoodsTypeId(), budget.getTags(),budget.getIcg());
         }
@@ -254,44 +194,6 @@ public class BudgetHandler extends BaseHandler {
         vo.setIncome(iss.getTotalAmount() == null ? new BigDecimal(0) : iss.getTotalAmount());
 
         return vo;
-    }
-
-    /**
-     * 获取时间区间
-     *
-     * @param period
-     * @param bussDay
-     * @param useLastDay endTime是否使用最后一天
-     *                   true:月度类型则选择该月的最后一天，年度类型则选择该年的最后一天
-     *                   false：endTime等于bussDay的23：59：59
-     * @return
-     */
-    public Date[] getDateRange(PeriodType period, Date bussDay, boolean useLastDay) {
-        Date startTime;
-        Date endTime;
-        if (period == PeriodType.MONTHLY) {
-            //月的为当月第一天
-            startTime = DateUtil.getMonthFirst(bussDay);
-            if (useLastDay) {
-                Date endDate = DateUtil.getMonthLast(bussDay);
-                endTime = DateUtil.tillMiddleNight(endDate);
-            } else {
-                endTime = DateUtil.tillMiddleNight(bussDay);
-            }
-        } else {
-            //年的为当年第一天
-            startTime = DateUtil.getYearFirst(bussDay);
-            if (useLastDay) {
-                Date endDate = DateUtil.getYearLast(Integer.valueOf(DateUtil.getYear(bussDay)));
-                endTime = DateUtil.tillMiddleNight(endDate);
-            } else {
-                endTime = DateUtil.tillMiddleNight(bussDay);
-            }
-
-        }
-        //去掉时分秒
-        startTime = DateUtil.fromMiddleNight(startTime);
-        return new Date[]{startTime, endTime};
     }
 
     /**
@@ -406,9 +308,9 @@ public class BudgetHandler extends BaseHandler {
         bl.setBcAmount(cb.getBcAmount()==null? new BigDecimal(0):cb.getBcAmount());
         bl.setTrAmount(cb.getTreatAmount()==null? new BigDecimal(0):cb.getTreatAmount());
         bl.setCreatedTime(new Date());
-        bl.setOccurDate(startTime);
+        bl.setBussDay(startTime);
         bl.setUserId(userId);
-        bl.setPeriod(period);
+        bl.setStatPeriod(period);
         bl.setTotalAmount(NumberUtil.sum(bl.getNcAmount(),bl.getBcAmount(),bl.getTrAmount()));
         bl.setRemark("调度自动生成");
         return bl;
@@ -438,7 +340,7 @@ public class BudgetHandler extends BaseHandler {
             budgetAmount = bab.getYearBudget();
             ccList = bab.getYearBudgetList();
         }
-        Date[] ds = this.getDateRange(period, bussDay, useLastDay);
+        Date[] ds = FundUtil.getDateRange(period, bussDay, useLastDay);
 
         BudgetLog bl = this.statBudget(userId, budgetAmount, ds[0], ds[1], bussKey, isRedo, period);
         //自动计算

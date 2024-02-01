@@ -30,9 +30,11 @@ public class BudgetTimeline implements java.io.Serializable {
 
     @Column(name = "user_id")
     private Long userId;
-    //周期类型
-    @Column(name = "period")
-    private PeriodType period;
+    /**
+     * 指的是统计的周期类型
+     */
+    @Column(name = "stat_period")
+    private PeriodType statPeriod;
     //业务key，唯一性判断使用，避免重复设置
     @Column(name = "buss_key")
     private String bussKey;
@@ -47,16 +49,16 @@ public class BudgetTimeline implements java.io.Serializable {
     @Column(name = "pass_days")
     private Integer passDays;
     //预算金额
-    @Column(name = "budget_amount")
+    @Column(name = "budget_amount",precision = 9,scale = 2)
     private BigDecimal budgetAmount;
     //实际普通消费金额
-    @Column(name = "nc_amount")
+    @Column(name = "nc_amount",precision = 9,scale = 2)
     private BigDecimal ncAmount;
     //实际突发消费金额
-    @Column(name = "bc_amount")
+    @Column(name = "bc_amount",precision = 9,scale = 2)
     private BigDecimal bcAmount;
     //实际看病消费金额
-    @Column(name = "tr_amount")
+    @Column(name = "tr_amount",precision = 9,scale = 2)
     private BigDecimal trAmount;
     @Column(name = "remark")
     private String remark;
@@ -85,12 +87,12 @@ public class BudgetTimeline implements java.io.Serializable {
         this.userId = userId;
     }
 
-    public PeriodType getPeriod() {
-        return period;
+    public PeriodType getStatPeriod() {
+        return statPeriod;
     }
 
-    public void setPeriod(PeriodType period) {
-        this.period = period;
+    public void setStatPeriod(PeriodType statPeriod) {
+        this.statPeriod = statPeriod;
     }
 
     public String getBussKey() {
@@ -182,8 +184,8 @@ public class BudgetTimeline implements java.io.Serializable {
     }
 
     @Transient
-    public String getPeriodName() {
-        return period.getName();
+    public String getStatPeriodName() {
+        return statPeriod.getName();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class Budget implements java.io.Serializable {
     @Column(name = "last_paid_time")
     private Date lastPaidTime;
     //金额
-    @Column(name = "amount")
+    @Column(name = "amount",precision = 9,scale = 2)
     private BigDecimal amount;
     @Column(name = "remind")
     private Boolean remind;

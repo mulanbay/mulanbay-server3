@@ -15,11 +15,11 @@ import java.util.Date;
 public class BudgetLogStatSH extends QueryBuilder implements DateStatSH, BindUser, FullEndDateTime {
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "occurDate", op = Parameter.Operator.GTE)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "occurDate", op = Parameter.Operator.LTE)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.LTE)
     private Date endDate;
 
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)

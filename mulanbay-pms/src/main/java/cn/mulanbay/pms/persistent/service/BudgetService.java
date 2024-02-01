@@ -9,6 +9,7 @@ import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.domain.BudgetSnapshot;
 import cn.mulanbay.pms.persistent.domain.BudgetTimeline;
+import cn.mulanbay.pms.persistent.dto.consume.ConsumeBudgetStat;
 import cn.mulanbay.pms.persistent.dto.fund.BudgetStat;
 import cn.mulanbay.pms.persistent.dto.fund.UserBudgetAndIncomeStat;
 import cn.mulanbay.pms.persistent.enums.BudgetStatType;
@@ -16,12 +17,17 @@ import cn.mulanbay.pms.persistent.enums.BudgetType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.FundUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static cn.mulanbay.pms.common.Constant.ROUNDING_MODE;
 
 /**
  * 预算
@@ -32,6 +38,9 @@ import java.util.List;
 @Service
 @Transactional
 public class BudgetService extends BaseHibernateDao {
+
+    @Autowired
+    ConsumeService consumeService;
 
     /**
      * 获取预算分析
@@ -261,6 +270,21 @@ public class BudgetService extends BaseHibernateDao {
     }
 
     /**
+     * 删除预算日志
+     */
+    public void deleteBudgetLog(Long logId) {
+        try {
+            String hql = "delete from BudgetSnapshot where budgetLogId=?1 ";
+            this.updateEntities(hql, logId);
+            this.removeEntity(BudgetLog.class,logId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    " 保存预算日志(日终统计)异常", e);
+        }
+
+    }
+
+    /**
      * 保存预算日志(日终统计)
      */
     public void saveStatBudgetLog(List<Budget> ccList, BudgetLog budgetLog, boolean isRedo) {
@@ -274,6 +298,9 @@ public class BudgetService extends BaseHibernateDao {
                 }
             }
             this.saveBudgetLog(budgetLog, isRedo);
+            PeriodType statType = budgetLog.getStatPeriod();
+            Date statDate = FundUtil.getBussDay(budgetLog.getBussKey());
+            Date[] ds = FundUtil.getDateRange(statType, statDate, true);
             //保存预算快照
             List<BudgetSnapshot> ss = new ArrayList<>();
             for (Budget b : ccList) {
@@ -281,10 +308,24 @@ public class BudgetService extends BaseHibernateDao {
                 BeanCopy.copy(b, snapshot);
                 snapshot.setSnapshotId(null);
                 snapshot.setBudgetLogId(budgetLog.getLogId());
-                snapshot.setFromId(b.getBudgetId());
+                snapshot.setBudgetId(b.getBudgetId());
                 snapshot.setBussKey(budgetLog.getBussKey());
+                snapshot.setBussDay(budgetLog.getBussDay());
+                snapshot.setStatPeriod(budgetLog.getStatPeriod());
                 snapshot.setCreatedTime(new Date());
                 snapshot.setModifyTime(null);
+                //计算
+                int factor = FundUtil.getFactor(statType,statDate,b);
+                snapshot.setFactor(factor);
+                if(b.getGoodsTypeId()!=null||StringUtil.isNotEmpty(b.getTags())){
+                    ConsumeBudgetStat cbs = consumeService.statConsumeAmount(ds[0],ds[1],b.getUserId(),b.getGoodsTypeId(),b.getTags(),b.getIcg());
+                    snapshot.setAcAmount(cbs.getTotalPrice());
+                    snapshot.setLastPaidTime(cbs.getMaxConsumeDate());
+                }
+                snapshot.setRate(b.getAmount().multiply(new BigDecimal(factor)).divide(budgetLog.getBudgetAmount(),ROUNDING_MODE));
+                if(budgetLog.getIncomeAmount()!=null&&budgetLog.getIncomeAmount().compareTo(BigDecimal.ZERO)==1){
+                    snapshot.setIcRate(b.getAmount().multiply(new BigDecimal(factor)).divide(budgetLog.getIncomeAmount(),ROUNDING_MODE));
+                }
                 ss.add(snapshot);
             }
             this.saveEntities(ss.toArray());
@@ -307,9 +348,9 @@ public class BudgetService extends BaseHibernateDao {
             this.saveEntity(budgetLog);
             Budget budget = budgetLog.getBudget();
             if (budget != null) {
-                budget.setLastPaidTime(budgetLog.getOccurDate());
+                budget.setLastPaidTime(budgetLog.getBussDay());
                 if (budget.getFirstPaidTime() == null) {
-                    budget.setFirstPaidTime(budgetLog.getOccurDate());
+                    budget.setFirstPaidTime(budgetLog.getBussDay());
                 }
                 if (budget.getPeriod() == PeriodType.ONCE) {
                     //关闭该预算
@@ -390,7 +431,7 @@ public class BudgetService extends BaseHibernateDao {
     public List<UserBudgetAndIncomeStat> statUserBudgetAndIncome(Date startTime, Date endTime, Long userId, PeriodType period) {
         try {
             String sql= """
-                    select bl.user_id as userId,bl.occur_date as occurDate,bl.budget_amount as budgetAmount,
+                    select bl.user_id as userId,bl.buss_day as bussDay,bl.budget_amount as budgetAmount,
                     bl.nc_amount as ncAmount,bl.bc_amount as bcAmount,bl.tr_amount as trAmount,tt.totalIncome
                     from budget_log bl
                     left join
@@ -398,10 +439,10 @@ public class BudgetService extends BaseHibernateDao {
                     select CAST(DATE_FORMAT(occur_time,'%Y%m') AS signed) as incomeDate,amount from income
                     where user_id=?1 and occur_time>=?2 and occur_time<=?3)
                     as tt group by incomeDate) as tt
-                    on CAST(DATE_FORMAT(bl.occur_date,'%Y%m') AS signed) = tt.incomeDate
-                    where bl.user_id=?4 and bl.occur_date>=?5 and bl.occur_date<=?6
-                    and bl.period=?7 and budget_id is null
-                    order by bl.occur_date
+                    on CAST(DATE_FORMAT(bl.buss_day,'%Y%m') AS signed) = tt.incomeDate
+                    where bl.user_id=?4 and bl.buss_day>=?5 and bl.buss_day<=?6
+                    and bl.stat_period=?7 and budget_id is null
+                    order by bl.buss_day
                     """;
             List args = new ArrayList();
             args.add(userId);
