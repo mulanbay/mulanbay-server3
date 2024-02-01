@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.core.annotation.Order;
 
 import java.util.Date;
 
@@ -31,6 +32,7 @@ import java.util.Date;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
+@Order(2)
 @Component
 public class RequestInterceptor extends BaseInterceptor {
 

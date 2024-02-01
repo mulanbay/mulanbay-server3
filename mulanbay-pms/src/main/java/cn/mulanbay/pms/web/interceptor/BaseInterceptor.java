@@ -3,6 +3,7 @@ package cn.mulanbay.pms.web.interceptor;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ValidateError;
 import cn.mulanbay.common.util.JsonUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.web.bean.response.ResultBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 拦截器基类
@@ -59,14 +60,16 @@ public class BaseInterceptor implements HandlerInterceptor {
     void handleFail(HttpServletRequest request, HttpServletResponse response,
                     String redirectPath, int code, String failInfo, String reqUrl) {
         try {
-            ValidateError ve = messageHandler.getCodeInfo(code);
-            String errorInfo = "";
-            if (ve != null) {
-                errorInfo = ve.getErrorInfo();
-            } else {
-                errorInfo = "未找到相关错误信息";
+            String message = failInfo;
+            if(StringUtil.isEmpty(message)){
+                ValidateError ve = messageHandler.getCodeInfo(code);
+                if (ve != null) {
+                    message = ve.getErrorInfo();
+                } else {
+                    message = "未找到相关错误信息";
+                }
             }
-            if (reqUrl.startsWith("/main") || reqUrl.endsWith("list")) {
+            if (StringUtil.isNotEmpty(reqUrl)&&(reqUrl.startsWith("/main") || reqUrl.endsWith("list"))) {
                 // 普通界面,直接界面，不走controller
                 response.sendRedirect(request.getContextPath() + redirectPath
                         + "?code=" + code);
@@ -74,8 +77,9 @@ public class BaseInterceptor implements HandlerInterceptor {
                 // ajax调用
                 ResultBean rb = new ResultBean();
                 rb.setCode(code);
-                rb.setMessage(errorInfo);
+                rb.setMessage(message);
                 // Ajax调用
+                response.setContentType("text/html;charset = UTF-8");
                 response.getWriter().print(JsonUtil.beanToJson(rb));
             }
         } catch (Exception e) {

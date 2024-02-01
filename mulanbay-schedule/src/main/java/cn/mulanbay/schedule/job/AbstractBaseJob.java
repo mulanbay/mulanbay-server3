@@ -598,7 +598,7 @@ public abstract class AbstractBaseJob implements Job {
 	 * @param conf
 	 * @return
 	 */
-	private boolean checkTimeExec(Date now,String conf){
+	protected boolean checkTimeExec(Date now,String conf){
 		if(StringUtil.isEmpty(conf)){
 			return true;
 		}else{

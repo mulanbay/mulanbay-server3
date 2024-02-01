@@ -1,13 +1,10 @@
 package cn.mulanbay.pms.web.bean.req.schedule.taskTrigger;
 
 import cn.mulanbay.common.aop.BindUser;
-import cn.mulanbay.persistent.query.Parameter;
-import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.web.bean.request.PageSearch;
 
 public class TaskTriggerCategorySH extends PageSearch implements BindUser {
 
-    @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     private Long userId;
 
     //分组的字段，对应数据库中的字段名

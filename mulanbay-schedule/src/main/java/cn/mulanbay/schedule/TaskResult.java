@@ -46,6 +46,5 @@ public class TaskResult {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
-	
+
 }

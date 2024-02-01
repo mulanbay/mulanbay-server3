@@ -7,12 +7,14 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.handler.CommandHandler;
+import cn.mulanbay.pms.handler.SystemStatusHandler;
 import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.system.command.CommandExeForm;
 import cn.mulanbay.pms.web.bean.req.system.command.CommandForm;
 import cn.mulanbay.pms.web.bean.req.system.command.CommandSH;
+import cn.mulanbay.pms.web.bean.req.system.command.SystemStatusForm;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -35,6 +37,9 @@ public class CommandController extends BaseController {
 
     @Autowired
     CommandHandler commandHandler;
+
+    @Autowired
+    SystemStatusHandler systemStatusHandler;
 
     /**
      * 获取列表
@@ -115,6 +120,17 @@ public class CommandController extends BaseController {
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
         return callback(null);
+    }
+
+    /**
+     * 自检
+     * @param hc
+     * @return
+     */
+    @RequestMapping(value = "/setSystemStatus", method = RequestMethod.POST)
+    public ResultBean setSystemStatus(@RequestBody @Valid SystemStatusForm hc) {
+        Boolean b = systemStatusHandler.setStatus(hc.getCode(),hc.getMessage(),hc.getExpireTime());
+        return callback(b);
     }
 
 }

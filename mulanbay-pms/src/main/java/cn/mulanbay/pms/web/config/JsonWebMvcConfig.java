@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.config;
 
 import cn.mulanbay.pms.web.interceptor.RequestInterceptor;
+import cn.mulanbay.pms.web.interceptor.SystemInterceptor;
 import cn.mulanbay.web.bind.CustomMappingJackson2HttpMessageConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class JsonWebMvcConfig extends WebMvcConfigurationSupport {
     @Autowired
     RequestInterceptor requestInterceptor;
 
+    @Autowired
+    SystemInterceptor systemInterceptor;
+
     @Override
     protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         logger.debug("加入Json 转换器：configureMessageConverters");
@@ -46,6 +50,7 @@ public class JsonWebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         logger.debug("加载拦截器");
+        registry.addInterceptor(systemInterceptor).addPathPatterns("/**");
         registry.addInterceptor(requestInterceptor).addPathPatterns("/**");
     }
 

@@ -262,6 +262,9 @@ public class Message implements java.io.Serializable {
     @Override
     public boolean equals(Object other) {
         if (other instanceof Message bean) {
+            if(bean.getMsgId()==null&&this.getMsgId()==null){
+                return super.equals(other);
+            }
             return bean.getMsgId().equals(this.getMsgId());
         }else {
             return false;

@@ -9,6 +9,15 @@ package cn.mulanbay.pms.common;
  */
 public class PmsCode {
 
+    /**
+     * 自动停止
+     */
+    public final static int SERVER_AUTO_STOP = 9998;
+
+    /**
+     * 手动停止
+     */
+    public final static int SERVER_MANUAL_STOP = 9999;
 
     public final static int FIELD_VALIDATE_ERROR = 10000;
 
@@ -58,6 +67,8 @@ public class PmsCode {
     public final static int FUNCTION_UN_DEFINE =10026;
 
     public final static int BEAN_GET_CACHE_ERROR =10027;
+
+    public final static int SYSTEM_STATUS_CHANGE =10028;
 
     /**
      * 通用类 start
