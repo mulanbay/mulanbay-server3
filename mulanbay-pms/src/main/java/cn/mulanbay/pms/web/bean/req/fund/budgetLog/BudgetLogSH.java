@@ -17,7 +17,6 @@ public class BudgetLogSH extends PageSearch implements BindUser {
     @Query(fieldName = "period", op = Parameter.Operator.EQ)
     private PeriodType period;
 
-    //页面传输使用，因为可能是budgetId，也可能是分组的编号
     private String budgetKey;
 
     @Override

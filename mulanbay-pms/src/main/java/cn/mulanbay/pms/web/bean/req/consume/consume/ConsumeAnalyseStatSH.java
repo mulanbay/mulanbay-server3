@@ -60,6 +60,11 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
 
     private DateGroupType dateGroupType;
 
+    /**
+     * 以商品类型分组时，是否以顶层分组
+     */
+    private Boolean groupTop;
+
     public String getGroupField() {
         return groupField;
     }
@@ -189,5 +194,13 @@ public class ConsumeAnalyseStatSH extends QueryBuilder implements DateStatSH, Bi
 
     public void setChartType(ChartType chartType) {
         this.chartType = chartType;
+    }
+
+    public Boolean getGroupTop() {
+        return groupTop;
+    }
+
+    public void setGroupTop(Boolean groupTop) {
+        this.groupTop = groupTop;
     }
 }

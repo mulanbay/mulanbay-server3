@@ -61,9 +61,9 @@ public class BudgetLogController extends BaseController {
     public ResultBean list(BudgetLogSH sf) {
         String budgetKey = sf.getBudgetKey();
         if (StringUtil.isNotEmpty(budgetKey)) {
-            if (budgetKey.startsWith("p")) {
+            if (budgetKey.startsWith(BUDGET_PERIOD_PX)) {
                 //说明是分组过来的，即period的大节点
-                int period = Integer.valueOf(sf.getBudgetKey().replace("p", ""));
+                int period = Integer.valueOf(sf.getBudgetKey().replace(BUDGET_PERIOD_PX, ""));
                 PeriodType bp = PeriodType.getPeriodType(period);
                 sf.setPeriod(bp);
             } else {

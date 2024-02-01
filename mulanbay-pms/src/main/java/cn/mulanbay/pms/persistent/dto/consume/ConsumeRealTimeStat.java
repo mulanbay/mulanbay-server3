@@ -8,6 +8,16 @@ public class ConsumeRealTimeStat {
     private String name;
     private BigDecimal value;
 
+    public void add(BigDecimal v){
+        if(v==null){
+            return;
+        }
+        if(value ==null){
+            value = new BigDecimal(0);
+        }
+        value = value.add(v);
+    }
+
     public Long getId() {
         return id;
     }

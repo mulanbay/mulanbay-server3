@@ -128,6 +128,9 @@ mulanbay:
     oaPicUrl: < set in local properties>
   #消费相关
   consume:
+    stat:
+      #商品类型分组时是否以顶层分组
+      groupTop: true
     tag:
       #历史tag统计天数
       statDays: 365

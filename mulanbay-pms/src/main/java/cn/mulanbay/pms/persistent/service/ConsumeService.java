@@ -13,13 +13,12 @@ import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 消费记录
@@ -30,6 +29,12 @@ import java.util.List;
 @Service
 @Transactional
 public class ConsumeService extends BaseHibernateDao {
+
+    /**
+     * 商品类型分组时是否以顶层分组
+     */
+    @Value("${mulanbay.consume.stat.groupTop:true}")
+    boolean groupTop;
 
     /**
      * 新增消费记录
@@ -218,6 +223,10 @@ public class ConsumeService extends BaseHibernateDao {
                 sql.append(" order by cc desc");
             }
             List<Object[]> list = this.getEntityListSI(sql.toString(),NO_PAGE,NO_PAGE_SIZE,Object[].class, pr.getParameterValue());
+            boolean gt = sf.getGroupTop()==null ? groupTop:sf.getGroupTop();
+            if(gt && groupField.equals(GroupField.GOODS_TYPE)){
+                return this.groupGoodsType(list,sf.getUserId());
+            }
             List<ConsumeRealTimeStat> result = new ArrayList();
             for (Object[] oo : list) {
                 ConsumeRealTimeStat bb = new ConsumeRealTimeStat();
@@ -232,8 +241,6 @@ public class ConsumeService extends BaseHibernateDao {
                     }
                     String name = getSeriesName(serierIdObj.toString(), groupField);
                     bb.setName(name);
-                    // ID值大部分情况下不需要
-                    //bb.setId(Integer.valueOf(serierIdObj.toString()));
                 }
                 bb.setValue(new BigDecimal(oo[1].toString()));
                 result.add(bb);
@@ -243,6 +250,56 @@ public class ConsumeService extends BaseHibernateDao {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取实时统计异常", e);
         }
+    }
+
+    private List<ConsumeRealTimeStat> groupGoodsType(List<Object[]> list,Long userId){
+        Map<Long,GoodsType> goodsTypeMap = this.getGoodsTypeMap(userId);
+        Map<String,ConsumeRealTimeStat> resMap = new HashMap<>();
+        for(Object[] oo : list){
+            Object serierIdObj = oo[0];
+            if (serierIdObj == null) {
+                //防止为NULL
+                serierIdObj = "0";
+            }
+            String topTypeName = this.findTopType(goodsTypeMap,Long.valueOf(serierIdObj.toString()));
+            ConsumeRealTimeStat stat = resMap.get(topTypeName);
+            if(stat==null){
+                stat = new ConsumeRealTimeStat();
+            }
+            stat.setName(topTypeName);
+            stat.add(new BigDecimal(oo[1].toString()));
+            resMap.put(topTypeName,stat);
+        }
+        return resMap.values().stream().toList();
+    }
+
+    /**
+     * 查询顶层类型
+     *
+     * @param map
+     * @param typeId
+     * @return
+     */
+    private String findTopType(Map<Long,GoodsType> map,Long typeId){
+        GoodsType g = map.get(typeId);
+        if(g==null){
+            return "未知";
+        }else{
+            if(g.getPid()==0L){
+                return g.getTypeName();
+            }else{
+                return findTopType(map,g.getPid());
+            }
+        }
+    }
+
+    private Map<Long,GoodsType> getGoodsTypeMap(Long userId){
+        Map<Long,GoodsType> map = new HashMap<>();
+        List<GoodsType> typeList = this.getGoodsTypeList(userId);
+        for(GoodsType g : typeList){
+            map.put(g.getTypeId(),g);
+        }
+        return map;
     }
 
     /**
