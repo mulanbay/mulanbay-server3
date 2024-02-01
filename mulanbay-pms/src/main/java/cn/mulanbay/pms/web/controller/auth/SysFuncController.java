@@ -195,6 +195,7 @@ public class SysFuncController extends BaseController {
         }
         bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
+        systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);
     }
 
@@ -225,6 +226,7 @@ public class SysFuncController extends BaseController {
         }
         bean.setModifyTime(new Date());
         baseService.updateObject(bean);
+        systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);
     }
 

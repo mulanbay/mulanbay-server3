@@ -131,8 +131,18 @@ public class CacheHandler extends BaseHandler  {
         }
     }
 
-    public <T> T getHash(String key, String mapKey, Class<T> cls) {
-        return (T) redisTemplate.opsForHash().get(getFullKey(key), mapKey);
+    /**
+     * HashMap模式
+     *
+     * @param key
+     * @param value 需要实现序列化接口
+     */
+    public void setHash(String key, String hashKey,Object value) {
+        redisTemplate.opsForHash().put(getFullKey(key),hashKey, value);
+    }
+
+    public <T> T getHash(String key, String hashKey, Class<T> cls) {
+        return (T) redisTemplate.opsForHash().get(getFullKey(key), hashKey);
     }
 
     /**

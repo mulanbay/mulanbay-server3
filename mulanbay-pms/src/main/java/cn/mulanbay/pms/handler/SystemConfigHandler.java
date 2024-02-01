@@ -87,8 +87,8 @@ public class SystemConfigHandler extends BaseHandler {
                 String[] ss = methods.split(",");
                 for (String s : ss) {
                     // 数据库中功能点路径不需要设置项目名，因为项目名称在实际过程中会被修改过
-                    String key = getUrlMethodKey(sf.getUrlAddress(), s);
-                    functionMap.put(key, sf);
+                    String hashKey = getUrlMethodKey(sf.getUrlAddress(), s);
+                    functionMap.put(hashKey, sf);
                     urlMapSize++;
                 }
             }
@@ -98,6 +98,25 @@ public class SystemConfigHandler extends BaseHandler {
             cacheHandler.setHash(CacheKey.SYS_FUNC, functionMap, 0);
         }
         logger.debug("初始化了" + urlMapSize + "条功能点记录");
+    }
+
+    public void reloadFunction(Long funcId){
+        SysFunc func = baseService.getObject(SysFunc.class,funcId);
+        if(func==null){
+            logger.warn("找不到编号为{}的系统功能点",funcId);
+        }else{
+            String methods = func.getSupportMethods();
+            String[] ss = methods.split(",");
+            for (String s : ss) {
+                String hashKey = getUrlMethodKey(func.getUrlAddress(), s);
+                if (!byMemoryCache) {
+                    cacheHandler.setHash(CacheKey.SYS_FUNC, hashKey, func);
+                }else{
+                    functionMap.put(hashKey, func);
+                }
+            }
+            logger.info("刷新了编号为{}的系统功能点缓存数据",funcId);
+        }
     }
 
     /**
@@ -144,11 +163,11 @@ public class SystemConfigHandler extends BaseHandler {
      * @return
      */
     public SysFunc getFunction(String url, String method) {
-        String key = getUrlMethodKey(url, method);
+        String hashKey = getUrlMethodKey(url, method);
         if (byMemoryCache) {
-            return functionMap.get(key);
+            return functionMap.get(hashKey);
         } else {
-            return cacheHandler.getHash(CacheKey.SYS_FUNC, key, SysFunc.class);
+            return cacheHandler.getHash(CacheKey.SYS_FUNC, hashKey, SysFunc.class);
         }
     }
 

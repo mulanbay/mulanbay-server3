@@ -363,4 +363,5 @@ public class SysFuncForm {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
 }
