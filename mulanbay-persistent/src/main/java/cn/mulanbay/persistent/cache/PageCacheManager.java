@@ -2,6 +2,7 @@ package cn.mulanbay.persistent.cache;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.Md5Util;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
@@ -9,6 +10,7 @@ import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 
+import java.util.Date;
 import java.util.List;
 
 /**

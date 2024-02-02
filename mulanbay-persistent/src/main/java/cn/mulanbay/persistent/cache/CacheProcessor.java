@@ -31,5 +31,4 @@ public interface CacheProcessor {
      */
     public boolean delete(String keyPattern);
 
-
 }

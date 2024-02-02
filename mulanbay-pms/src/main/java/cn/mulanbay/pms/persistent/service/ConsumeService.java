@@ -778,6 +778,25 @@ public class ConsumeService extends BaseHibernateDao {
     }
 
 
+    /**
+     * 获取商品名称列表，相识度比对使用
+     *
+     * @return
+     */
+    public List<String> getGoodsNameList(ConsumeSimilaritySH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String sql = "select goods_name from consume ";
+            sql += pr.getParameterString();
+            sql += " order by " + sf.getOrderByField();
+            return this.getEntityListSI(sql, sf.getPage(), sf.getPageSize(),String.class, pr.getParameterValue());
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取商品名称列表异常", e);
+        }
+    }
+
+
     public static class GroupField{
 
         public static String GOODS_TYPE="goods_type_id";

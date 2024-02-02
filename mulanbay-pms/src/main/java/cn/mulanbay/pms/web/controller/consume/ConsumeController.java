@@ -844,4 +844,15 @@ public class ConsumeController extends BaseController {
         return callback(chartData);
     }
 
+    /**
+     * 商品相似度
+     *
+     * @return
+     */
+    @RequestMapping(value = "/goodsSimilarity", method = RequestMethod.GET)
+    public ResultBean goodsSimilarity(@Valid ConsumeSimilaritySH sf) {
+        List<String> list = consumeService.getGoodsNameList(sf);
+        return callback(nlpProcessor.avgSentenceSimilarity(list));
+    }
+
 }
