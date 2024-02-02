@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,7 +75,6 @@ public class MonitorUserService extends BaseHibernateDao {
                     rf.setUserId(userId);
                     MonitorBussType mbt = MonitorBussType.getMonitorBussType(Integer.parseInt(s));
                     rf.setBussType(mbt);
-                    rf.setCreatedTime(new Date());
                     rf.setSmsNotify(true);
                     rf.setSysMsgNotify(true);
                     rf.setWxNotify(true);

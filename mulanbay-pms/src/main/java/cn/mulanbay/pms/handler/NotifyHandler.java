@@ -227,7 +227,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         message.setExpectSendTime(expectSendTime);
         message.setUserId(userId);
         message.setContent(content);
-        message.setCreatedTime(new Date());
         message.setFailCount(0);
         message.setCode(ec.getCode());
         //没有作用

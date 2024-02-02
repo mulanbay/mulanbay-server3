@@ -18,8 +18,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 /**
  * 数据库清理
  *
@@ -59,7 +57,6 @@ public class DBCleanController extends BaseController {
     public ResultBean create(@RequestBody @Valid DBCleanForm formRequest) {
         DBClean bean = new DBClean();
         BeanCopy.copy(formRequest, bean, true);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -103,7 +100,6 @@ public class DBCleanController extends BaseController {
     public ResultBean edit(@RequestBody @Valid DBCleanForm formRequest) {
         DBClean bean = baseService.getObject(beanClass, formRequest.getId());
         BeanCopy.copy(formRequest, bean, true);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

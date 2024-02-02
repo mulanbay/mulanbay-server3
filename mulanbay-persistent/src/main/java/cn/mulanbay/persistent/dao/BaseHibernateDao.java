@@ -18,8 +18,10 @@ import org.springframework.orm.hibernate5.SessionFactoryUtils;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 数据库基本操作:Hibernate基类
@@ -87,6 +89,10 @@ public class BaseHibernateDao {
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	protected Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
@@ -109,7 +115,11 @@ public class BaseHibernateDao {
 		if(logger.isDebugEnabled()){
 			logger.debug("removeEntity o:" + JsonUtil.beanToJson(o));
 		}
-		getSession().remove(o);
+		try {
+			this.getSession().remove(o);
+		} catch (Exception e) {
+			throw OPUtil.handleException(e);
+		}
 	}
 
 	/**
@@ -123,7 +133,11 @@ public class BaseHibernateDao {
 		if(logger.isDebugEnabled()){
 			logger.debug("removeEntities HQL:" + hql);
 		}
-		return getSession().createQuery(hql,Integer.class).executeUpdate();
+		try {
+			return this.getSession().createQuery(hql,Integer.class).executeUpdate();
+		} catch (Exception e) {
+			throw OPUtil.handleException(e);
+		}
 	}
 
 	/**
@@ -133,21 +147,12 @@ public class BaseHibernateDao {
 	 * @throws BaseException
 	 */
 	@SuppressWarnings("rawtypes")
-	protected void removeEntities(Collection objs) throws BaseException {
+	protected void removeEntities(Object... objs) throws BaseException {
 		if(logger.isDebugEnabled()){
-			logger.debug("removeEntitys objs:" + JsonUtil.beanToJson(objs));
+			logger.debug("removeEntities objs:" + JsonUtil.beanToJson(objs));
 		}
-		if (objs == null) {
-			throw new BaseException("持久化对象为空！");
-		}
-		try {
-			for (Object o : objs) {
-				removeEntity(o);
-			}
-		} catch (HibernateException he) {
-			throw OPUtil.handleException(he);
-		} catch (Exception e) {
-			throw OPUtil.handleException(e);
+		for (Object o : objs) {
+			removeEntity(o);
 		}
 	}
 
@@ -168,7 +173,7 @@ public class BaseHibernateDao {
 		}
 		T obj = null;
 		try {
-			obj = getSession().get(c, id);
+			obj = this.getSession().get(c, id);
 		} catch (Exception he) {
 			throw OPUtil.handleException(he);
 		}
@@ -186,11 +191,8 @@ public class BaseHibernateDao {
 		if(logger.isDebugEnabled()){
 			logger.debug("saveEntity obj:" + JsonUtil.beanToJson(obj));
 		}
-		if (obj == null) {
-			throw new BaseException("保存失败，持久化对象为空！");
-		}
 		try {
-			getSession().persist(obj);
+			this.getSession().persist(obj);
 		} catch (Exception e) {
 			logger.error("保持对象失败，Object="+ JsonUtil.beanToJson(obj));
 			throw OPUtil.handleException(e);
@@ -204,24 +206,12 @@ public class BaseHibernateDao {
 	 *            对象数据
 	 * @throws BaseException
 	 */
-	protected void saveEntities(Object[] objs) throws BaseException {
+	protected void saveEntities(Object... objs) throws BaseException {
 		if(logger.isDebugEnabled()){
 			logger.debug("saveEntities objs:" + JsonUtil.beanToJson(objs));
 		}
-		if (objs == null) {
-			throw new BaseException("保存失败，持久化对象为空！");
-		}
-		try {
-			for (Object element : objs) {
-				if (element == null) {
-					throw new BaseException("保存失败，持久化对象为空！");
-				}
-				getSession().persist(element);
-			}
-		} catch (HibernateException he) {
-			throw OPUtil.handleException(he);
-		} catch (Exception e) {
-			throw OPUtil.handleException(e);
+		for (Object element : objs) {
+			saveEntity(element);
 		}
 	}
 
@@ -235,7 +225,11 @@ public class BaseHibernateDao {
 		if(logger.isDebugEnabled()){
 			logger.debug("updateEntity obj:" + JsonUtil.beanToJson(obj));
 		}
-		updateEntities(new Object[] { obj });
+		try {
+			this.getSession().merge(obj);
+		} catch (Exception e) {
+			throw OPUtil.handleException(e);
+		}
 	}
 
 	/**
@@ -248,14 +242,8 @@ public class BaseHibernateDao {
 		if(logger.isDebugEnabled()){
 			logger.debug("mergeEntity obj:" + JsonUtil.beanToJson(obj));
 		}
-		if (obj == null) {
-			throw new BaseException("持久化对象为空！");
-		}
 		try {
-
-			getSession().merge(obj);
-		} catch (HibernateException he) {
-			throw OPUtil.handleException(he);
+			this.getSession().merge(obj);
 		} catch (Exception e) {
 			throw OPUtil.handleException(e);
 		}
@@ -267,24 +255,12 @@ public class BaseHibernateDao {
 	 * @param objs
 	 * @throws BaseException
 	 */
-	protected void updateEntities(Object[] objs) throws BaseException {
+	protected void updateEntities(Object... objs) throws BaseException {
 		if(logger.isDebugEnabled()){
 			logger.debug("updateEntities objs:" + JsonUtil.beanToJson(objs));
 		}
-		if (objs == null) {
-			throw new BaseException("持久化对象为空！");
-		}
-		try {
-			for (Object element : objs) {
-				if (element == null) {
-					throw new BaseException("更新失败，持久化对象为空！");
-				}
-				getSession().merge(element);
-			}
-		} catch (HibernateException he) {
-			throw OPUtil.handleException(he);
-		} catch (Exception e) {
-			throw OPUtil.handleException(e);
+		for (Object element : objs) {
+			this.updateEntity(element);
 		}
 	}
 

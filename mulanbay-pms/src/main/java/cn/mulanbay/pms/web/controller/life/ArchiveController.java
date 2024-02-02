@@ -17,8 +17,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 /**
  * 人生档案
  *
@@ -60,7 +58,6 @@ public class ArchiveController extends BaseController {
     public ResultBean create(@RequestBody @Valid ArchiveForm form) {
         Archive bean = new Archive();
         BeanCopy.copy(form, bean);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -76,13 +73,11 @@ public class ArchiveController extends BaseController {
         if (bean == null) {
             bean = new Archive();
             BeanCopy.copy(form, bean);
-            bean.setCreatedTime(new Date());
             baseService.saveObject(bean);
         } else {
             Long archiveId = bean.getArchiveId();
             BeanCopy.copy(form, bean);
             bean.setArchiveId(archiveId);
-            bean.setModifyTime(new Date());
             baseService.updateObject(bean);
         }
         return callback(null);
@@ -122,7 +117,6 @@ public class ArchiveController extends BaseController {
     public ResultBean edit(@RequestBody @Valid ArchiveForm form) {
         Archive bean = baseService.getObject(beanClass,form.getArchiveId());
         BeanCopy.copy(form, bean);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

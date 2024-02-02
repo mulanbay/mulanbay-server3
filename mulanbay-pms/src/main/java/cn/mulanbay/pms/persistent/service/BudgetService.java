@@ -312,7 +312,6 @@ public class BudgetService extends BaseHibernateDao {
                 snapshot.setBussKey(budgetLog.getBussKey());
                 snapshot.setBussDay(budgetLog.getBussDay());
                 snapshot.setStatPeriod(budgetLog.getStatPeriod());
-                snapshot.setCreatedTime(new Date());
                 snapshot.setModifyTime(null);
                 //计算
                 int factor = FundUtil.getFactor(statType,statDate,b);

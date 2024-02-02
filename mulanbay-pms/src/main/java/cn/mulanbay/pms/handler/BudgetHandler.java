@@ -307,7 +307,6 @@ public class BudgetHandler extends BaseHandler {
         bl.setNcAmount(cb.getNcAmount()==null? new BigDecimal(0):cb.getNcAmount());
         bl.setBcAmount(cb.getBcAmount()==null? new BigDecimal(0):cb.getBcAmount());
         bl.setTrAmount(cb.getTreatAmount()==null? new BigDecimal(0):cb.getTreatAmount());
-        bl.setCreatedTime(new Date());
         bl.setBussDay(startTime);
         bl.setUserId(userId);
         bl.setStatPeriod(period);

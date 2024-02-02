@@ -20,7 +20,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,7 +86,6 @@ public class ConsumeSourceController extends BaseController {
     public ResultBean create(@RequestBody @Valid ConsumeSourceForm form) {
         ConsumeSource bean = new ConsumeSource();
         BeanCopy.copyProperties(form,bean);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -113,7 +111,6 @@ public class ConsumeSourceController extends BaseController {
     public ResultBean edit(@RequestBody @Valid ConsumeSourceForm form) {
         ConsumeSource bean = baseService.getObject(beanClass,form.getSourceId());
         BeanCopy.copyProperties(form, bean);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

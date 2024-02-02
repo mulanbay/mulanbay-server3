@@ -116,7 +116,6 @@ public class UserScoreHandler extends BaseHandler {
             bean.setStatValue(vv);
             bean.setScore(score);
             bean.setUserId(userId);
-            bean.setCreatedTime(new Date());
             list.add(bean);
         }
         return list;
@@ -138,7 +137,6 @@ public class UserScoreHandler extends BaseHandler {
         }
         UserScore us = new UserScore();
         us.setUserId(userId);
-        us.setCreatedTime(new Date());
         us.setStartTime(startTime);
         us.setEndTime(endTime);
         us.setScore(totalScore);

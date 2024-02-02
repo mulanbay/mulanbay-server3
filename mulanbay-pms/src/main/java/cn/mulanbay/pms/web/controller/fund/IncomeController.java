@@ -73,7 +73,6 @@ public class IncomeController extends BaseController {
     public ResultBean create(@RequestBody @Valid IncomeForm form) {
         Income income = new Income();
         BeanCopy.copy(form, income);
-        income.setCreatedTime(new Date());
         if (form.getAccountId() != null) {
             Account account = baseService.getObject(Account.class,form.getAccountId());
             income.setAccount(account);
@@ -115,7 +114,6 @@ public class IncomeController extends BaseController {
     public ResultBean edit(@RequestBody @Valid IncomeForm form) {
         Income income = baseService.getObject(beanClass,form.getIncomeId());
         BeanCopy.copy(form, income);
-        income.setModifyTime(new Date());
         if (form.getAccountId() != null) {
             Account account = baseService.getObject(Account.class,form.getAccountId());
             income.setAccount(account);

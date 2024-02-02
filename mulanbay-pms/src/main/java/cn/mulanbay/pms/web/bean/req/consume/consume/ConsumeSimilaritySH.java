@@ -33,10 +33,10 @@ public class ConsumeSimilaritySH extends PageSearch implements BindUser, FullEnd
     @Query(fieldName = "total_price", op = Operator.LTE)
     private Double endTotalPrice;
 
-    @Query(fieldName = "goodsType.typeId", op = Operator.EQ)
+    @Query(fieldName = "goods_type_id", op = Operator.EQ)
     private Long goodsTypeId;
 
-    @Query(fieldName = "source.sourceId", op = Operator.EQ)
+    @Query(fieldName = "source_id", op = Operator.EQ)
     private Long sourceId;
 
 

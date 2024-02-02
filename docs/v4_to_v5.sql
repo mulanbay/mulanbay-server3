@@ -335,3 +335,6 @@ ALTER TABLE `budget_snapshot`
     ADD COLUMN `stat_period` SMALLINT(5) NULL AFTER `budget_log_id`;
 
 update budget_snapshot ss,budget_log log set ss.stat_period = log.stat_period where log.log_id = ss.budget_Log_id and ss.snapshot_id>0;
+
+ALTER TABLE `user_reward`
+    ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`;

@@ -214,7 +214,6 @@ public class UserScoreService extends BaseHibernateDao {
             ScoreGroup group = new ScoreGroup();
             group.setCode(code);
             group.setGroupName(name);
-            group.setCreatedTime(new Date());
             group.setStatus(CommonStatus.DISABLE);
             group.setRemark("从模板信息,templateId=" + templateId);
             this.saveEntity(group);
@@ -225,7 +224,6 @@ public class UserScoreService extends BaseHibernateDao {
                 BeanCopy.copy(sc, newSc);
                 newSc.setConfigId(null);
                 newSc.setGroupId(group.getGroupId());
-                newSc.setCreatedTime(new Date());
                 newSc.setModifyTime(null);
                 this.saveEntity(newSc);
             }

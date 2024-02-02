@@ -170,7 +170,6 @@ public class BudgetController extends BaseController {
     public ResultBean create(@RequestBody @Valid BudgetForm form) {
         Budget budget = new Budget();
         BeanCopy.copy(form, budget);
-        budget.setCreatedTime(new Date());
         baseService.saveObject(budget);
         return callback(null);
     }
@@ -204,7 +203,6 @@ public class BudgetController extends BaseController {
         }
         Budget budget = baseService.getObject(beanClass,form.getBudgetId());
         BeanCopy.copyProperties(form, budget);
-        budget.setModifyTime(new Date());
         baseService.updateObject(budget);
         return callback(null);
     }

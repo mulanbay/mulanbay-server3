@@ -222,7 +222,6 @@ public class BudgetTimelineController extends BaseController {
             BudgetTimeline timeline = new BudgetTimeline();
             BudgetLog bl = budgetHandler.statBudget(re.getUserId(), budgetAmount, firstDay, cc, bussKey, false, re.getStatPeriod());
             BeanCopy.copyProperties(bl, timeline);
-            timeline.setCreatedTime(new Date());
             timeline.setModifyTime(null);
             timeline.setBussDay(cc);
             timeline.setTotalDays(tds);

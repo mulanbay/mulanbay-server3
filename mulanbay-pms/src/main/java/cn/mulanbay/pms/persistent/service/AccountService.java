@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,7 +83,6 @@ public class AccountService extends BaseHibernateDao {
             af.setBeforeAmount(account.getAmount());
             af.setAfterAmount(account.getAmount());
             af.setUserId(account.getUserId());
-            af.setCreatedTime(new Date());
             af.setAccountName(account.getAccountName());
             af.setCardNo(account.getCardNo());
             af.setType(account.getType());
@@ -117,7 +115,6 @@ public class AccountService extends BaseHibernateDao {
                 af.setCardNo(account.getCardNo());
                 af.setType(account.getType());
                 af.setStatus(account.getStatus());
-                af.setCreatedTime(new Date());
                 af.setRemark(remark);
                 this.saveEntity(af);
             }
@@ -219,7 +216,6 @@ public class AccountService extends BaseHibernateDao {
                 asi = new AccountSnapshot();
                 asi.setBussKey(bussKey);
                 asi.setPeriod(period);
-                asi.setCreatedTime(new Date());
                 asi.setSnapshotName(snapshotName);
                 asi.setRemark(remark);
                 asi.setUserId(userId);
@@ -228,7 +224,6 @@ public class AccountService extends BaseHibernateDao {
                 this.updateEntities("delete from AccountFlow where snapshotId=?1 ",bussKey);
                 asi.setBussKey(bussKey);
                 asi.setPeriod(period);
-                asi.setModifyTime(new Date());
                 asi.setSnapshotName(snapshotName);
                 asi.setRemark(remark);
                 this.updateEntity(asi);

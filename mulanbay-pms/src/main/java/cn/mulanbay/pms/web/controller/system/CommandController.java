@@ -19,8 +19,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 /**
  * 命令配置
  *
@@ -75,7 +73,6 @@ public class CommandController extends BaseController {
     public ResultBean create(@RequestBody @Valid CommandForm formRequest) {
         Command bean = new Command();
         BeanCopy.copy(formRequest, bean, true);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -101,7 +98,6 @@ public class CommandController extends BaseController {
     public ResultBean edit(@RequestBody @Valid CommandForm formRequest) {
         Command bean = baseService.getObject(beanClass, formRequest.getId());
         BeanCopy.copy(formRequest, bean, true);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

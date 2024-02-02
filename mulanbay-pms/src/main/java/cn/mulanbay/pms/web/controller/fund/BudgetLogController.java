@@ -11,7 +11,6 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.BudgetLog;
-import cn.mulanbay.pms.persistent.domain.BudgetSnapshot;
 import cn.mulanbay.pms.persistent.dto.fund.UserBudgetAndIncomeStat;
 import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
@@ -19,7 +18,6 @@ import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.fund.budgetLog.*;
-import cn.mulanbay.pms.web.bean.req.fund.budgetSnapshot.BudgetSnapshotSH;
 import cn.mulanbay.pms.web.bean.res.chart.ChartData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartYData;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -104,7 +102,6 @@ public class BudgetLogController extends BaseController {
         budgetLog.setTrAmount(new BigDecimal(0));
         budgetLog.setIncomeAmount(new BigDecimal(0));
         budgetLog.setSource(BudgetLogSource.MANUAL);
-        budgetLog.setCreatedTime(new Date());
         budgetService.saveBudgetLog(budgetLog, false);
         return callback(null);
     }
@@ -144,7 +141,6 @@ public class BudgetLogController extends BaseController {
         budgetLog.setTrAmount(new BigDecimal(0));
         budgetLog.setIncomeAmount(new BigDecimal(0));
         budgetLog.setBussKey(bussKey);
-        budgetLog.setModifyTime(new Date());
         baseService.updateObject(budgetLog);
         return callback(null);
     }

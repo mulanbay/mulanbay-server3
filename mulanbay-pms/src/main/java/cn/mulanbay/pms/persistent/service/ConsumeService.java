@@ -74,7 +74,6 @@ public class ConsumeService extends BaseHibernateDao {
                     if (!NumberUtil.priceEquals(consume.getSoldPrice(), income.getAmount())) {
                         //价格有改变更新
                         income.setAmount(consume.getSoldPrice());
-                        income.setModifyTime(new Date());
                         this.updateEntity(income);
                     }
                 }
@@ -94,7 +93,6 @@ public class ConsumeService extends BaseHibernateDao {
         try {
             //自动增加一条收入
             Income income = new Income();
-            income.setCreatedTime(new Date());
             income.setAmount(consume.getSoldPrice());
             income.setIncomeName(consume.getGoodsName() + " 出售");
             income.setOccurTime(consume.getInvalidTime());
@@ -108,7 +106,6 @@ public class ConsumeService extends BaseHibernateDao {
             refer.setConsumeId(consume.getConsumeId());
             refer.setReferId(income.getIncomeId());
             refer.setType(BussType.INCOME);
-            refer.setCreatedTime(new Date());
             this.saveEntity(refer);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,

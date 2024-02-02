@@ -465,7 +465,6 @@ public class WXHandler extends BaseHandler {
             uw = new WxAccount();
             uw.setAppId(appId);
             uw.setOpenId(openId);
-            uw.setCreatedTime(new Date());
             uw.setRemark("微信消息回调加入");
             uw.setSubscribe(subscribe);
             uw.setSubscribeTime(new Date());

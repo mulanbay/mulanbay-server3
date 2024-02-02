@@ -7,6 +7,8 @@ import cn.mulanbay.pms.persistent.enums.MessageType;
 import cn.mulanbay.pms.persistent.enums.MonitorBussType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.Objects;
@@ -88,12 +90,16 @@ public class Message implements java.io.Serializable {
     @Column(name = "remark", length = 200)
     private String remark;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time", length = 19)
+    @Column(name = "created_time",updatable = false)
     private Date createdTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "modify_time", length = 19)
+    @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
 

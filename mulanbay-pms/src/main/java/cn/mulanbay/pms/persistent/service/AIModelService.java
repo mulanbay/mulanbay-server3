@@ -12,7 +12,6 @@ import cn.mulanbay.pms.util.BeanCopy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,6 @@ public class AIModelService extends BaseHibernateDao implements ModelHandle {
             this.updateEntities(hql, CommonStatus.DISABLE, bean.getCode());
 
             bean.setStatus(CommonStatus.ENABLE);
-            bean.setModifyTime(new Date());
             this.updateEntity(bean);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,

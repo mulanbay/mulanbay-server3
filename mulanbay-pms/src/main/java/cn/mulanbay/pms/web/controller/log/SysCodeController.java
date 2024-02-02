@@ -15,8 +15,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 /**
  * 系统代码
  *
@@ -74,7 +72,6 @@ public class SysCodeController extends BaseController {
         SysCode bean = new SysCode();
         BeanCopy.copyProperties(formRequest, bean);
         bean.setCount(0);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
     }
 
@@ -87,7 +84,6 @@ public class SysCodeController extends BaseController {
     public ResultBean edit(@RequestBody @Valid SysCodeForm formRequest) {
         SysCode bean = baseService.getObject(beanClass, formRequest.getCode());
         BeanCopy.copyProperties(formRequest, bean);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         systemConfigHandler.refreshSysCode(bean.getCode());
         return callback(null);

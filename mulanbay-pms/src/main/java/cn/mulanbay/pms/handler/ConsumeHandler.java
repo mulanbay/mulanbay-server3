@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -314,7 +313,6 @@ public class ConsumeHandler extends BaseHandler {
             }
             float acMatch = (float) NumberUtil.getPercentValue(m,total,4)/100;
             bean.setAcMatch(acMatch);
-            bean.setCreatedTime(new Date());
             baseService.saveObject(bean);
         } catch (BeansException e) {
             logger.error("增加消费记录匹配日志异常",e);

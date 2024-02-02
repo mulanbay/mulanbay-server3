@@ -4,6 +4,8 @@ import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.RewardSource;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -43,9 +45,17 @@ public class UserReward implements Serializable {
     @Column(name = "remark")
     private String remark;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time")
+    @Column(name = "created_time",updatable = false)
     private Date createdTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
+    @Column(name = "modify_time",insertable = false)
+    private Date modifyTime;
 
     public Long getId() {
         return id;
@@ -117,6 +127,14 @@ public class UserReward implements Serializable {
 
     public void setCreatedTime(Date createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     @Override

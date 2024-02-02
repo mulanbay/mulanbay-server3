@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -193,7 +192,6 @@ public class SysFuncController extends BaseController {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);
         }
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);
@@ -224,7 +222,6 @@ public class SysFuncController extends BaseController {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);
         }
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);

@@ -133,7 +133,6 @@ public class AccountController extends BaseController {
     public ResultBean create(@RequestBody @Valid AccountForm bean) {
         Account account = new Account();
         BeanCopy.copy(bean, account);
-        account.setCreatedTime(new Date());
         accountService.saveAccount(account);
         return callback(null);
     }
@@ -148,7 +147,6 @@ public class AccountController extends BaseController {
         Account account = baseService.getObject(beanClass,bean.getAccountId());
         BigDecimal beforeAmount = account.getAmount();
         account.setAmount(bean.getAfterAmount());
-        account.setModifyTime(new Date());
         accountService.updateAccount(account, beforeAmount, bean.getRemark());
         return callback(null);
     }
@@ -175,7 +173,6 @@ public class AccountController extends BaseController {
         Account account = baseService.getObject(beanClass,bean.getAccountId());
         BigDecimal beforeAmount = account.getAmount();
         BeanCopy.copy(bean, account);
-        account.setModifyTime(new Date());
         accountService.updateAccount(account, beforeAmount, "用户修改账户余额自动写入");
         return callback(null);
     }

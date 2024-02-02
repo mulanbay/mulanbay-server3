@@ -11,7 +11,6 @@ import cn.mulanbay.pms.persistent.enums.FamilyUserStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,14 +85,12 @@ public class FamilyService extends BaseHibernateDao {
      */
     public void createFamily(Family family) {
         try {
-            family.setCreatedTime(new Date());
             this.saveEntity(family);
             //创建默认家庭成员
             FamilyUser fu = new FamilyUser();
             fu.setAdmin(true);
             User user = (User) this.getEntityById(User.class, family.getUserId());
             fu.setAliasName(user.getNickname());
-            fu.setCreatedTime(new Date());
             fu.setFamilyId(family.getFamilyId());
             fu.setStatus(FamilyUserStatus.PASSED);
             fu.setRemark("家庭创建时自动创建");

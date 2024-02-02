@@ -184,13 +184,11 @@ public class UserController extends BaseController {
         String encodePassword = tokenHandler.encodePassword(bean.getPassword());
         user.setPassword(encodePassword);
         user.setSecAuthType(bean.getSecAuthType());
-        user.setCreatedTime(new Date());
         user.setLevel(Constant.USER_LEVEL);
         user.setPoints(0);
         UserSet us = new UserSet();
         us.setSendWx(true);
         us.setSendEmail(true);
-        us.setCreatedTime(new Date());
         authService.createUser(user, us);
         return callback(null);
     }
@@ -225,9 +223,7 @@ public class UserController extends BaseController {
         } else {
             user.setPassword(op);
         }
-        user.setModifyTime(new Date());
         UserSet us = baseService.getObject(UserSet.class, bean.getUserId());
-        us.setModifyTime(new Date());
         authService.updateUser(user, us);
         return callback(null);
     }
@@ -298,7 +294,6 @@ public class UserController extends BaseController {
         }
         String newPP = tokenHandler.encodePassword(eui.getNewPassword());
         user.setPassword(newPP);
-        user.setModifyTime(new Date());
         baseService.updateObject(user);
         return callback(null);
     }
@@ -328,7 +323,6 @@ public class UserController extends BaseController {
         user.setPhone(eui.getPhone());
         user.setEmail(eui.getEmail());
         user.setSecAuthType(eui.getSecAuthType());
-        user.setModifyTime(new Date());
         if (!StringUtil.isEmpty(eui.getNewPassword())) {
             // 密码设置
             String encodePassword = tokenHandler.encodePassword(eui.getNewPassword());
@@ -336,7 +330,6 @@ public class UserController extends BaseController {
         }
         baseService.updateObject(user);
         BeanCopy.copyProperties(eui, us);
-        us.setModifyTime(new Date());
         baseService.updateObject(us);
         return callback(null);
     }
@@ -469,13 +462,11 @@ public class UserController extends BaseController {
             uw.setOpenId(eui.getOpenId());
             uw.setUserId(eui.getUserId());
             uw.setAppId(wxHandler.getAppId());
-            uw.setCreatedTime(new Date());
             baseService.saveObject(uw);
         } else {
             WxAccount uw = baseService.getObject(WxAccount.class, eui.getId());
             uw.setOpenId(eui.getOpenId());
             uw.setUserId(eui.getUserId());
-            uw.setModifyTime(new Date());
             baseService.updateByMergeObject(uw);
         }
         return callback(null);

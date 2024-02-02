@@ -135,7 +135,6 @@ public class ConsumeController extends BaseController {
     public ResultBean create(@RequestBody @Valid ConsumeForm form) {
         Consume bean = new Consume();
         changeFormToBean(form, bean);
-        bean.setCreatedTime(new Date());
         consumeService.saveConsume(bean);
         consumeHandler.addToCache(bean);
         String traceId = form.getTraceId();
@@ -177,7 +176,6 @@ public class ConsumeController extends BaseController {
     public ResultBean edit(@RequestBody @Valid ConsumeForm form) {
         Consume consume = baseService.getObject(beanClass,form.getConsumeId());
         changeFormToBean(form, consume);
-        consume.setModifyTime(new Date());
         consumeService.updateConsume(consume);
         //lifeExperienceService.updateLifeExperienceConsumeByBuyRecord(buyRecord);
         return callback(null);

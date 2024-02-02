@@ -20,7 +20,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,7 +127,6 @@ public class GoodsTypeController extends BaseController {
         if (bean.getBehaviorName() == null) {
             bean.setBehaviorName(bean.getTypeName());
         }
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -157,7 +155,6 @@ public class GoodsTypeController extends BaseController {
         if (bean.getBehaviorName() == null) {
             bean.setBehaviorName(bean.getTypeName());
         }
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

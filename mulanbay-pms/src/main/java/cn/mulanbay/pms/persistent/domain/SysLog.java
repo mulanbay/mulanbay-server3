@@ -4,8 +4,10 @@ import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.Map;
@@ -105,12 +107,16 @@ public class SysLog implements java.io.Serializable {
     @Column(name = "remark", length = 200)
     private String remark;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time", length = 19)
+    @Column(name = "created_time",updatable = false)
     private Date createdTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "modify_time", length = 19)
+    @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
     /**

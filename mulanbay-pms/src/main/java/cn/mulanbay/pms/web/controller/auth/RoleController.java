@@ -22,7 +22,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 角色
@@ -94,7 +97,6 @@ public class RoleController extends BaseController {
     public ResultBean create(@RequestBody @Valid RoleForm formRequest) {
         Role bean = new Role();
         BeanCopy.copy(formRequest, bean);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -120,7 +122,6 @@ public class RoleController extends BaseController {
     public ResultBean edit(@RequestBody @Valid RoleForm formRequest) {
         Role bean = baseService.getObject(beanClass, formRequest.getRoleId());
         BeanCopy.copyProperties(formRequest, bean);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

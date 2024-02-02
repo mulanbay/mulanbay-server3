@@ -22,8 +22,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-
 /**
  * 商品寿命配置
  *
@@ -70,7 +68,6 @@ public class GoodsLifetimeController extends BaseController {
     public ResultBean create(@RequestBody @Valid GoodsLifetimeForm form) {
         GoodsLifetime bean = new GoodsLifetime();
         BeanCopy.copy(form, bean);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -96,7 +93,6 @@ public class GoodsLifetimeController extends BaseController {
     public ResultBean edit(@RequestBody @Valid GoodsLifetimeForm form) {
         GoodsLifetime bean = baseService.getObject(beanClass,form.getLifetimeId());
         BeanCopy.copyProperties(form, bean);
-        bean.setModifyTime(new Date());
         baseService.updateObject(bean);
         return callback(null);
     }

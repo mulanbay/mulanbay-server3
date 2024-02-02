@@ -5,6 +5,8 @@ import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -77,12 +79,16 @@ public class BudgetLog implements java.io.Serializable {
     @Column(name = "remark")
     private String remark;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time")
+    @Column(name = "created_time",updatable = false)
     private Date createdTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "modify_time")
+    @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
     public Long getLogId() {

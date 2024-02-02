@@ -5,6 +5,8 @@ import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -54,12 +56,16 @@ public class Command implements Serializable {
     @Column(name = "remark")
     private String remark;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time")
+    @Column(name = "created_time",updatable = false)
     private Date createdTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "modify_time")
+    @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
 
