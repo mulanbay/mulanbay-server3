@@ -6,7 +6,7 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum MusicPracticeTuneLevel {
+public enum TuneLevel {
 
     PRACTICE(0, "练习"),
     SKILLED(1, "熟练"),
@@ -15,7 +15,7 @@ public enum MusicPracticeTuneLevel {
     private int value;
     private String name;
 
-    MusicPracticeTuneLevel(int value, String name) {
+    TuneLevel(int value, String name) {
         this.value = value;
         this.name = name;
     }
@@ -36,8 +36,8 @@ public enum MusicPracticeTuneLevel {
         this.name = name;
     }
 
-    public static MusicPracticeTuneLevel getLevel(int ordinal) {
-        for (MusicPracticeTuneLevel level : MusicPracticeTuneLevel.values()) {
+    public static TuneLevel getLevel(int ordinal) {
+        for (TuneLevel level : TuneLevel.values()) {
             if (level.ordinal() == ordinal) {
                 return level;
             }

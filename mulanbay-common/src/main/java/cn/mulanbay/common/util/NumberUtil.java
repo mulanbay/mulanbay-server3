@@ -38,34 +38,16 @@ public class NumberUtil {
 		return numStr.toString();
 	}
 
-	public static long getLongValue(Object o) {
-		if (o == null) {
-			return 0L;
-		} else {
-			return Long.valueOf(o.toString());
-		}
-	}
-
-	public static long getLongValueFromFloat(Object o) {
-		if (o == null) {
-			return 0L;
-		} else {
-			return Float.valueOf(o.toString()).longValue();
-		}
-	}
-
-	public static Long[] stringArrayToLongArray(String[] ss){
+	/**
+	 * 字符转换为Long数组
+	 * @param ids
+	 * @return
+	 */
+	public static Long[] stringToLongArray(String ids){
+		String[] ss = ids.split(",");
 		Long[] result = new Long[ss.length];
 		for(int i=0; i< ss.length;i++){
 			result[i]=Long.valueOf(ss[i]);
-		}
-		return result;
-	}
-
-	public static Integer[] stringArrayToIntegerArray(String[] ss){
-		Integer[] result = new Integer[ss.length];
-		for(int i=0; i< ss.length;i++){
-			result[i]=Integer.valueOf(ss[i]);
 		}
 		return result;
 	}

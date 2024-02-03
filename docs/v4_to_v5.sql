@@ -338,3 +338,30 @@ update budget_snapshot ss,budget_log log set ss.stat_period = log.stat_period wh
 
 ALTER TABLE `user_reward`
     ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`;
+
+ALTER TABLE `music_instrument`  RENAME TO  `instrument` ;
+ALTER TABLE `instrument`
+    CHANGE COLUMN `id` `instrument_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `instrument_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `music_practice`
+    CHANGE COLUMN `id` `practice_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `music_instrument_id` `instrument_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `practice_start_time` `start_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `practice_end_time` `end_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `music_practice_tune`  RENAME TO  `music_practice_detail` ;
+
+ALTER TABLE `music_practice_detail`
+DROP FOREIGN KEY `music_practice_fk1`;
+ALTER TABLE `mulanbay_db3`.`music_practice_detail`
+    ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `music_practice_id` `practice_id` BIGINT NOT NULL COMMENT '练习外键' ,
+DROP INDEX `music_practice_fk1` ;
+
+ALTER TABLE `instrument`
+    ADD COLUMN `status` SMALLINT(5) NULL DEFAULT 1 AFTER `user_id`;

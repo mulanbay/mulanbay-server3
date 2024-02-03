@@ -6,7 +6,7 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum MusicPracticeTuneType {
+public enum TuneType {
 
     TUNE(0, "曲子"), TECH(1, "技术");
 
@@ -14,7 +14,7 @@ public enum MusicPracticeTuneType {
 
     private String name;
 
-    MusicPracticeTuneType(int value, String name) {
+    TuneType(int value, String name) {
         this.value = value;
         this.name = name;
     }

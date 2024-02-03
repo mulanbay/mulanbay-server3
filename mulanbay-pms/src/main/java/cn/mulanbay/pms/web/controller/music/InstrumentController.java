@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.web.controller.consume;
+package cn.mulanbay.pms.web.controller.music;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
@@ -6,54 +6,57 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.persistent.domain.ConsumeSource;
-import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.domain.Instrument;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.consume.consumeSource.ConsumeSourceForm;
-import cn.mulanbay.pms.web.bean.req.consume.consumeSource.ConsumeSourceSH;
+import cn.mulanbay.pms.web.bean.req.music.instrument.InstrumentForm;
+import cn.mulanbay.pms.web.bean.req.music.instrument.InstrumentSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
- * 购买类型（消费来源）
+ * 乐器管理
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @RestController
-@RequestMapping("/consumeSource")
-public class ConsumeSourceController extends BaseController {
+@RequestMapping("/instrument")
+public class InstrumentController extends BaseController {
 
-    private static Class<ConsumeSource> beanClass = ConsumeSource.class;
+    private static Class<Instrument> beanClass = Instrument.class;
 
     /**
-     * 来源树
+     * 获取乐器树
+     *
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(ConsumeSourceSH sf) {
+    public ResultBean tree(InstrumentSH sf) {
+
         try {
-            sf.setStatus(CommonStatus.ENABLE);
-            PageResult<ConsumeSource> pr = getResult(sf);
+            sf.setPage(PageRequest.NO_PAGE);
+            PageResult<Instrument> pr = getResult(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
-            List<ConsumeSource> gtList = pr.getBeanList();
-            for (ConsumeSource gt : gtList) {
+            List<Instrument> gtList = pr.getBeanList();
+            for (Instrument gt : gtList) {
                 TreeBean tb = new TreeBean();
-                tb.setId(gt.getSourceId());
-                tb.setText(gt.getSourceName());
+                tb.setId(gt.getInstrumentId());
+                tb.setText(gt.getInstrumentName());
                 list.add(tb);
             }
             return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取购买来源树异常",
+            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取乐器树异常",
                     e);
         }
     }
@@ -64,16 +67,17 @@ public class ConsumeSourceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultBean list(ConsumeSourceSH sf) {
-        return callbackDataGrid(getResult(sf));
+    public ResultBean list(InstrumentSH sf) {
+        PageResult<Instrument> qr = getResult(sf);
+        return callbackDataGrid(qr);
     }
 
-    private PageResult<ConsumeSource> getResult(ConsumeSourceSH sf) {
+    private PageResult<Instrument> getResult(InstrumentSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort sort = new Sort("orderIndex", Sort.ASC);
-        pr.addSort(sort);
-        PageResult<ConsumeSource> qr = baseService.getBeanResult(pr);
+        Sort s = new Sort("orderIndex", Sort.ASC);
+        pr.addSort(s);
+        PageResult<Instrument> qr = baseService.getBeanResult(pr);
         return qr;
     }
 
@@ -83,11 +87,11 @@ public class ConsumeSourceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResultBean create(@RequestBody @Valid ConsumeSourceForm form) {
-        ConsumeSource bean = new ConsumeSource();
-        BeanCopy.copyProperties(form,bean);
+    public ResultBean create(@RequestBody @Valid InstrumentForm form) {
+        Instrument bean = new Instrument();
+        BeanCopy.copy(form, bean);
         baseService.saveObject(bean);
-        return callback(null);
+        return callback(bean);
     }
 
 
@@ -97,8 +101,8 @@ public class ConsumeSourceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(@RequestParam(name = "sourceId") Long sourceId) {
-        ConsumeSource bean = baseService.getObject(beanClass,sourceId);
+    public ResultBean get(@RequestParam(name = "instrumentId") Long instrumentId) {
+        Instrument bean = baseService.getObject(beanClass,instrumentId);
         return callback(bean);
     }
 
@@ -108,11 +112,11 @@ public class ConsumeSourceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ResultBean edit(@RequestBody @Valid ConsumeSourceForm form) {
-        ConsumeSource bean = baseService.getObject(beanClass,form.getSourceId());
-        BeanCopy.copyProperties(form, bean);
+    public ResultBean edit(@RequestBody @Valid InstrumentForm form) {
+        Instrument bean = baseService.getObject(beanClass,form.getInstrumentId());
+        BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
-        return callback(null);
+        return callback(bean);
     }
 
     /**

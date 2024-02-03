@@ -234,7 +234,7 @@ public class SysFuncController extends BaseController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
-        Long[] ids = NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(","));
+        Long[] ids = NumberUtil.stringToLongArray(deleteRequest.getIds());
         for(Long id : ids){
             sysFuncService.deleteFunctions(id);
         }

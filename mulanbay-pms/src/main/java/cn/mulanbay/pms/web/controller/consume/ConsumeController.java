@@ -199,7 +199,7 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
-        baseService.deleteObjects(beanClass, NumberUtil.stringArrayToLongArray(deleteRequest.getIds().split(",")));
+        baseService.deleteObjects(beanClass, NumberUtil.stringToLongArray(deleteRequest.getIds()));
         return callback(null);
     }
 

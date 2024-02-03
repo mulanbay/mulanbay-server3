@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -535,13 +536,12 @@ public class DateUtil {
 	 * @param minutes
 	 * @return
 	 */
-	public static double minutesToHours(Double minutes){
+	public static double minutesToHours(BigDecimal minutes){
 		if(minutes==null){
 			return 0;
 		}
-		double l =minutes/60.0;
-		BigDecimal b = new BigDecimal(l);
-		double value  =  b.setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue();
+		BigDecimal b =minutes.divide(new BigDecimal(60), RoundingMode.HALF_UP);
+		double value  =  b.setScale(1,RoundingMode.HALF_UP).doubleValue();
 		return value;
 	}
 
