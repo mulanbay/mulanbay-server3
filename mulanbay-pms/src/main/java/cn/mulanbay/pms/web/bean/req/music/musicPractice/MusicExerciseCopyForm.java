@@ -3,6 +3,7 @@ package cn.mulanbay.pms.web.bean.req.music.musicPractice;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -13,6 +14,8 @@ public class MusicExerciseCopyForm implements BindUser {
 
     private Long instrumentId;
 
+    @NotNull(message = "模版日期不能为空")
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     private Date templateDate;
 

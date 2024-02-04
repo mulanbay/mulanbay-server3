@@ -47,8 +47,19 @@ mulanbay:
       cacheBeans: SystemLog
   #安全相关
   security:
-    #图形验证码类型
-    captchaType: math
+    lock:
+      #系统状态解锁码位数
+      unlockRandoms: 6
+      #白名单
+      whitList:
+        - /system/unlock
+        - /captcha/captchaImage
+    #图形验证码
+    captcha:
+      #类型
+      type: math
+      #失效时间(秒)
+      expires: 300
     login:
       # 登录是否需要持久
       persist: true

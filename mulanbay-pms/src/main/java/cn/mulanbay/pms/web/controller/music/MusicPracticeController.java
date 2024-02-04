@@ -106,8 +106,8 @@ public class MusicPracticeController extends BaseController {
                 MusicPractice nn = new MusicPractice();
                 BeanCopy.copy(se, nn);
                 nn.setPracticeId(null);
-                nn.setPracticeDate(ed);
-                nn.setRemark("以模板新增");
+                nn.setPracticeDate(DateUtil.getDate(ed,DateUtil.FormatDay1));
+                nn.setRemark("以模板新增,模版日期:"+DateUtil.getFormatDate(form.getTemplateDate(),DateUtil.FormatDay1));
                 nn.setStartTime(ed);
                 ed = new Date(ed.getTime() + nn.getMinutes() * 60 * 1000);
                 nn.setEndTime(ed);

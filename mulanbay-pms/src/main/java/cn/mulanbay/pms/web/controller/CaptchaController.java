@@ -42,8 +42,11 @@ public class CaptchaController extends BaseController {
     private CacheHandler cacheHandler;
 
     // 验证码类型
-    @Value("${mulanbay.security.captchaType}")
+    @Value("${mulanbay.security.captcha.type}")
     private String captchaType;
+
+    @Value("${mulanbay.security.captcha.expires:300}")
+    private int expires;
 
     /**
      * 生成验证码
@@ -66,7 +69,7 @@ public class CaptchaController extends BaseController {
             capStr = code = captchaProducer.createText();
             image = captchaProducer.createImage(capStr);
         }
-        cacheHandler.set(verifyKey, code, 300);
+        cacheHandler.set(verifyKey, code, expires);
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try {

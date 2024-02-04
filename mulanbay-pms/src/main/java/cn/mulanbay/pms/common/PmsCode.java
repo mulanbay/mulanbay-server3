@@ -55,7 +55,6 @@ public class PmsCode {
 
     public final static int USER_SEC_AUTH_FAIL=10019;
 
-
     public final static int USER_VERIFY_CODE_ERROR =10022;
 
     public final static int USER_LOGIN_FAMILY_FAIL =10023;

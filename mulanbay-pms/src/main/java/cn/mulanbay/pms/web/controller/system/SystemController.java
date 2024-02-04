@@ -1,5 +1,9 @@
 package cn.mulanbay.pms.web.controller.system;
 
+import cn.mulanbay.business.handler.CacheHandler;
+import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemStatusHandler;
 import cn.mulanbay.pms.web.bean.req.system.system.SystemLockForm;
 import cn.mulanbay.pms.web.bean.req.system.system.SystemUnlockForm;
@@ -25,6 +29,9 @@ public class SystemController extends BaseController {
     @Autowired
     SystemStatusHandler systemStatusHandler;
 
+    @Autowired
+    CacheHandler cacheHandler;
+
     /**
      * 锁定
      * @param hc
@@ -32,7 +39,7 @@ public class SystemController extends BaseController {
      */
     @RequestMapping(value = "/lock", method = RequestMethod.POST)
     public ResultBean lock(@RequestBody @Valid SystemLockForm hc) {
-        Boolean b = systemStatusHandler.setStatus(hc.getCode(),hc.getMessage(),hc.getExpireTime());
+        Boolean b = systemStatusHandler.lock(hc.getCode(),hc.getMessage(),hc.getExpireTime());
         return callback(b);
     }
 
@@ -43,6 +50,12 @@ public class SystemController extends BaseController {
      */
     @RequestMapping(value = "/unlock", method = RequestMethod.POST)
     public ResultBean unlock(@RequestBody @Valid SystemUnlockForm hc) {
+        //判定验证码
+        String verifyKey = CacheKey.getKey(CacheKey.CAPTCHA_CODE, hc.getUuid());
+        String serverCode = cacheHandler.getForString(verifyKey);
+        if (StringUtil.isEmpty(serverCode) || !serverCode.equals(hc.getCode())) {
+            return callbackErrorCode(PmsCode.USER_VERIFY_CODE_ERROR);
+        }
         Boolean b = systemStatusHandler.unlock(hc.getUnlockCode());
         return callback(b);
     }

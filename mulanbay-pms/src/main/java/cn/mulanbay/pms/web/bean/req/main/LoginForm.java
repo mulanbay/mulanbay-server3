@@ -3,19 +3,26 @@ package cn.mulanbay.pms.web.bean.req.main;
 import cn.mulanbay.pms.persistent.enums.FamilyMode;
 import jakarta.validation.constraints.NotEmpty;
 
-public class LoginReq {
+public class LoginForm {
 
-    @NotEmpty(message = "{validate.user.username.notNull}")
+    @NotEmpty(message = "用户名不能为空")
     private String username;
 
-    @NotEmpty(message = "{validate.user.password.notNull}")
+    @NotEmpty(message = "密码不能为空")
     private String password;
 
-    @NotEmpty(message = "{validate.user.uuid.notNull}")
+    /**
+     * 图形验证码ID
+     */
+    @NotEmpty(message = "图形验证码ID不能为空")
     private String uuid;
 
-    @NotEmpty(message = "{validate.user.code.notNull}")
+    /**
+     * 图形验证码
+     */
+    @NotEmpty(message = "图形验证码不能为空")
     private String code;
+
 
     //家庭模式
     private FamilyMode familyMode;

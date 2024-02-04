@@ -97,6 +97,11 @@ public class CacheKey {
     public static final String WX_JSAPI_TICKET = "wx:jsApi:ticket:{0}";
 
     /**
+     * 微信WX_ACCESS_TOKEN（appid）
+     */
+    public static final String WX_ACCESS_TOKEN = "wx:accessToken:{0}";
+
+    /**
      * 用户最新的一条消息（用户编号）
      */
     public static final String USER_LATEST_MESSAGE = "user:latestMessage:{0}";

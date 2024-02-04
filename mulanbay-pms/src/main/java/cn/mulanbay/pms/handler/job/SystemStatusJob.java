@@ -38,7 +38,7 @@ public class SystemStatusJob extends AbstractBaseJob {
         String msg = null;
         if(ns){
             if(status!=code){
-                res = systemStatusHandler.setStatus(code,para.getMessage(),null);
+                res = systemStatusHandler.lock(code,para.getMessage(),null);
                 msg = "关闭系统，code = "+code+",执行结果:"+res;
             }
         }else{

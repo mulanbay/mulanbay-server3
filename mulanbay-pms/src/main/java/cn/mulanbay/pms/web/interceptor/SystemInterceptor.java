@@ -25,6 +25,9 @@ public class SystemInterceptor extends BaseInterceptor {
     @Autowired
     SystemStatusHandler systemStatusHandler;
 
+    @Autowired
+    LockProperties lockProperties;
+
     public SystemInterceptor() {
     }
 
@@ -33,8 +36,8 @@ public class SystemInterceptor extends BaseInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         int code = systemStatusHandler.getStatus();
         if(code!= ErrorCode.SUCCESS){
-            String url = request.getServletPath();
-            if(url.equals("/system/unlock")){
+            String path = request.getServletPath();
+            if(lockProperties.auth(path)){
                 //白名单
                 return true;
             }

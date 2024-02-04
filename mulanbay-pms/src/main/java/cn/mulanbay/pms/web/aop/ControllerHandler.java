@@ -87,12 +87,8 @@ public class ControllerHandler {
             String url = request.getServletPath();
             String method = request.getMethod();
             SysFunc sf = systemConfigHandler.getFunction(url, method);
-            if (sf == null && !skipUnDefineFunc) {
-                logger.warn("url:" + url + ",method:" + method + "未配置功能定义");
-                throw new ApplicationException(PmsCode.FUNCTION_UN_DEFINE);
-            } else if (sf.getStatus() == CommonStatus.DISABLE) {
-                throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_DISABLED);
-            }
+            //检查系统功能
+            checkSysFunc(sf);
             boolean autoLoad = !sf.getSecAuth();
             LoginUser loginUser = tokenHandler.getLoginUser(request, autoLoad);
             if (sf.getLoginAuth()) {
@@ -101,42 +97,14 @@ public class ControllerHandler {
                 }
                 //刷新用户
                 tokenHandler.verifyToken(loginUser);
-                if (sf.getRequestLimit()) {
-                    String key = "request_limit:" + loginUser.getUserId() + ":" + url;
-                    //请求限制
-                    String s = cacheHandler.getForString(key);
-                    if (s != null) {
-                        throw new ApplicationException(PmsCode.USER_REQUEST_TOO_FREQ);
-                    } else {
-                        cacheHandler.set(key, "123", sf.getRequestLimitPeriod());
-                    }
-                }
-                if (sf.getDayLimit() > 0) {
-                    String key = "request_limit_day:" + DateUtil.getToday(DateUtil.FormatDay1) + ":" + loginUser.getUserId() + ":" + url;
-                    //请求限制
-                    Integer s = cacheHandler.get(key, Integer.class);
-                    if (s != null) {
-                        if (s.intValue() < sf.getDayLimit()) {
-                            s = s + 1;
-                            cacheHandler.set(key, s, 24 * 3600);
-                        } else {
-                            throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
-                        }
-                    } else {
-                        cacheHandler.set(key, 1, 24 * 3600);
-                    }
-                }
-                if (sf.getPermissionAuth()) {
-                    // 权限认证
-                    Long roleId = loginUser.getRoleId();
-                    if (roleId == null) {
-                        throw new ApplicationException(PmsCode.USER_NOT_AUTH);
-                    }
-                    boolean b = systemConfigHandler.isRoleAuth(roleId, sf.getFuncId());
-                    if (!b) {
-                        throw new ApplicationException(PmsCode.USER_NOT_AUTH);
-                    }
-                }
+                Long userId = loginUser.getUserId();
+                //请求限制检查
+                checkRequestLimit(userId,url,sf);
+                //每日限制检查
+                checkDayLimit(userId,url,sf);
+                // 权限认证
+                Long roleId = loginUser.getRoleId();
+                checkPermission(roleId,sf);
             }
             //设置用户等信息
             handleRequestInfoSet(joinPoint, loginUser);
@@ -144,6 +112,79 @@ public class ControllerHandler {
             throw e;
         } catch (Exception e) {
             logger.error("do beforeBuss error", e);
+        }
+    }
+
+    /**
+     * 请求限制验证
+     * @param userId
+     * @param url
+     * @param sf
+     */
+    private void checkRequestLimit(Long userId,String url,SysFunc sf){
+        if (sf.getRequestLimit()) {
+            String key = "request_limit:" + userId + ":" + url;
+            //请求限制
+            String s = cacheHandler.getForString(key);
+            if (s != null) {
+                throw new ApplicationException(PmsCode.USER_REQUEST_TOO_FREQ);
+            } else {
+                cacheHandler.set(key, "123", sf.getRequestLimitPeriod());
+            }
+        }
+    }
+
+    /**
+     * 请求限制验证
+     * @param userId
+     * @param url
+     * @param sf
+     */
+    private void checkDayLimit(Long userId,String url,SysFunc sf){
+        if (sf.getDayLimit() > 0) {
+            String key = "request_limit_day:" + DateUtil.getToday(DateUtil.FormatDay1) + ":" + userId + ":" + url;
+            //请求限制
+            Integer s = cacheHandler.get(key, Integer.class);
+            if (s != null) {
+                if (s.intValue() < sf.getDayLimit()) {
+                    s = s + 1;
+                    cacheHandler.set(key, s, 24 * 3600);
+                } else {
+                    throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
+                }
+            } else {
+                cacheHandler.set(key, 1, 24 * 3600);
+            }
+        }
+    }
+
+    /**
+     * 检查系统功能
+     * @param sf
+     */
+    private void checkSysFunc(SysFunc sf){
+        if (sf == null && !skipUnDefineFunc) {
+            logger.warn("url:" + sf.getUrlAddress() + ",method:" + sf.getSupportMethods() + "未配置功能定义");
+            throw new ApplicationException(PmsCode.FUNCTION_UN_DEFINE);
+        } else if (sf.getStatus() == CommonStatus.DISABLE) {
+            throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_DISABLED);
+        }
+    }
+
+    /**
+     * 检查权限
+     * @param roleId 用户当前登录的角色
+     * @param sf 当前访问的功能点
+     */
+    private void checkPermission(Long roleId,SysFunc sf){
+        if (sf.getPermissionAuth()) {
+            if (roleId == null) {
+                throw new ApplicationException(PmsCode.USER_NOT_AUTH);
+            }
+            boolean b = systemConfigHandler.isRoleAuth(roleId, sf.getFuncId());
+            if (!b) {
+                throw new ApplicationException(PmsCode.USER_NOT_AUTH);
+            }
         }
     }
 

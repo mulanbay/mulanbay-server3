@@ -24,7 +24,7 @@ import cn.mulanbay.pms.persistent.service.IncomeService;
 import cn.mulanbay.pms.util.FundUtil;
 import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.web.bean.LoginUser;
-import cn.mulanbay.pms.web.bean.req.main.LoginReq;
+import cn.mulanbay.pms.web.bean.req.main.LoginForm;
 import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.req.main.UserGeneralStatSH;
 import cn.mulanbay.pms.web.bean.res.main.GeneralStatVo;
@@ -93,7 +93,7 @@ public class MainController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/loginAuth", method = RequestMethod.POST)
-    public ResultBean loginAuth(@RequestBody @Valid LoginReq login) {
+    public ResultBean loginAuth(@RequestBody @Valid LoginForm login) {
         //判定验证码
         String verifyKey = CacheKey.getKey(CacheKey.CAPTCHA_CODE, login.getUuid());
         String serverCode = cacheHandler.getForString(verifyKey);

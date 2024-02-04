@@ -206,11 +206,11 @@ public class WXHandler extends BaseHandler {
     /**
      * 获取模板列表
      *
-     * @param accessTocken
+     * @param accessToken
      * @return
      */
-    public HttpResult getTemplateList(String accessTocken) {
-        String url = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=" + accessTocken;
+    public HttpResult getTemplateList(String accessToken) {
+        String url = "https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=" + accessToken;
         HttpResult hr = HttpUtils.doGet(url);
         return hr;
     }
@@ -222,6 +222,7 @@ public class WXHandler extends BaseHandler {
      */
     public String getAccessToken() {
         String accessToken = null;
+        String cacheKey = CacheKey.getKey(CacheKey.WX_ACCESS_TOKEN,appId);
         try{
             //lock.readLock().lock();
             boolean b = lock.readLock().tryLock(5, TimeUnit.SECONDS);
@@ -229,7 +230,7 @@ public class WXHandler extends BaseHandler {
                 logger.error("无法获取到获取授权token的读锁");
                 return null;
             }
-            accessToken = cacheHandler.getForString("wx:accessToken:" + appId);
+            accessToken = cacheHandler.getForString(cacheKey);
             if (accessToken == null) {
                 /**
                  * Must release read lock before acquiring write lock
@@ -244,7 +245,7 @@ public class WXHandler extends BaseHandler {
                     if (hr.getStatusCode() == Constant.SC_OK) {
                         AccessToken at = (AccessToken) JsonUtil.jsonToBean(hr.getBody(), AccessToken.class);
                         accessToken = at.getAccess_token();
-                        cacheHandler.set("wx:accessToken:" + appId, accessToken, at.getExpires_in() - 10);
+                        cacheHandler.set(cacheKey, accessToken, at.getExpires_in() - 10);
                     } else {
                         logger.warn("无法获取到AccessToken");
                     }
