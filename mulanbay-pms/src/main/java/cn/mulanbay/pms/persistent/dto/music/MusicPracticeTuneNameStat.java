@@ -17,8 +17,7 @@ public class MusicPracticeTuneNameStat {
 
     private Long totalCounts;
 
-    public MusicPracticeTuneNameStat(String tune, Date minPracticeDate, Date maxPracticeDate, BigDecimal totalTimes, Long totalCounts) {
-        this.tune = tune;
+    public MusicPracticeTuneNameStat(Date minPracticeDate, Date maxPracticeDate, BigDecimal totalTimes, Long totalCounts) {
         this.minPracticeDate = minPracticeDate;
         this.maxPracticeDate = maxPracticeDate;
         this.totalTimes = totalTimes;

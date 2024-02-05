@@ -45,11 +45,11 @@ public class MusicPracticeService extends BaseHibernateDao {
             PageRequest pr = sf.buildQuery();
             String statSql = """
                     select tune as name,sum(times) as totalTimes from MusicPracticeDetail
-                    ({query_para})
+                    {query_para}
                     group by tune order by totalTimes desc
                     """;
             statSql = statSql.replace("{query_para}",pr.getParameterString());
-            List<MusicPracticeTuneStat> list = this.getEntityListSI(statSql, pr.getPage(), pr.getPageSize(), MusicPracticeTuneStat.class, pr.getParameterValue());
+            List<MusicPracticeTuneStat> list = this.getEntityListHI(statSql, pr.getPage(), pr.getPageSize(), MusicPracticeTuneStat.class, pr.getParameterValue());
             return list;
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -390,12 +390,12 @@ public class MusicPracticeService extends BaseHibernateDao {
             pr.setNeedWhere(true);
             DateGroupType dateGroupType = sf.getDateGroupType();
             String sql= """
-                    select indexValue,music_instrument_id as musicInstrumentId,count(0) as totalCount,sum(minutes) as totalMinutes
-                    from (select music_instrument_id,minutes,{date_group_field} as indexValue from music_practice
+                    select indexValue,instrument_id as instrumentId,count(0) as totalCount,sum(minutes) as totalMinutes
+                    from (select instrument_id,minutes,{date_group_field} as indexValue from music_practice
                     {query_para}
-                    ) as res group by music_instrument_id,indexValue order by indexValue
+                    ) as res group by instrument_id,indexValue order by indexValue
                     """;
-            sql = sql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("practice_start_time", dateGroupType))
+            sql = sql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("start_time", dateGroupType))
                     .replace("{query_para}",pr.getParameterString());
             List<MusicPracticeOverallStat> list = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE, MusicPracticeOverallStat.class, pr.getParameterValue());
             return list;

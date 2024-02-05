@@ -96,7 +96,7 @@ public class ChartData extends BaseChartData {
      */
     public void addXData(DateStat dateStat, DateGroupType dateGroupType) {
         this.getIntXData().add(dateStat.getDateIndexValue());
-        this.getXdata().add(ChartUtil.getStringXdata(dateGroupType, dateStat.getDateIndexValue()));
+        this.getXdata().add(ChartUtil.getStringXData(dateGroupType, dateStat.getDateIndexValue()));
     }
 
     /**

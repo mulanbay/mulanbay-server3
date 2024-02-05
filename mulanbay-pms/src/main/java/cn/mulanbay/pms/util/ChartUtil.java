@@ -49,7 +49,7 @@ public class ChartUtil {
                 if (i < nextValue || nn == data.getIntXData().size()) {
                     // 没有，则增加
                     data.getIntXData().add(nn, i);
-                    data.getXdata().add(nn, getStringXdata(sf.getDateGroupType(), i));
+                    data.getXdata().add(nn, getStringXData(sf.getDateGroupType(), i));
                     for (ChartYData ydata : data.getYdata()) {
                         ydata.getData().add(nn, 0);
                     }
@@ -179,7 +179,7 @@ public class ChartUtil {
     public static List<String> getStringXdataList(DateGroupType dateGroupType, int min,int max){
         List<String> res = new ArrayList<>();
         for(int i=min;i<=max;i++){
-            String s = getStringXdata(dateGroupType,i);
+            String s = getStringXData(dateGroupType,i);
             res.add(s);
         }
         return res;
@@ -192,7 +192,7 @@ public class ChartUtil {
      * @param value
      * @return
      */
-    public static String getStringXdata(DateGroupType dateGroupType, int value) {
+    public static String getStringXData(DateGroupType dateGroupType, int value) {
         if (dateGroupType == DateGroupType.MONTH) {
             return value + "月份";
         } else if (dateGroupType == DateGroupType.MINUTE) {

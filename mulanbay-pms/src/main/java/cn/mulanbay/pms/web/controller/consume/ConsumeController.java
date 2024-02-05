@@ -636,7 +636,17 @@ public class ConsumeController extends BaseController {
     public ResultBean yoyStat(@Valid ConsumeYoyStatSH sf) {
         if (sf.getDateGroupType() == DateGroupType.DAY) {
             return callback(createChartCalendarMultiData(sf));
+        }else {
+            return callback(createYoyChartData(sf));
         }
+    }
+
+    /**
+     * 同期对比数据
+     * @param sf
+     * @return
+     */
+    private ChartData createYoyChartData(ConsumeYoyStatSH sf){
         String unit = sf.getGroupType().getUnit();
         ChartData chartData = initYoyCharData(sf, "消费统计同期对比", null);
         chartData.setUnit(unit);
@@ -667,8 +677,7 @@ public class ConsumeController extends BaseController {
             chartData.getYdata().add(temp.getYdata().get(0));
         }
         chartData.setLegendData(legendData);
-
-        return callback(chartData);
+        return chartData;
     }
 
     private ConsumeDateStatSH generateSearch(int year, ConsumeYoyStatSH sf) {

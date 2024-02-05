@@ -14,8 +14,7 @@ public class MusicPracticeTuneLevelStat {
 
     private Short levelIndex;
 
-    public MusicPracticeTuneLevelStat(String tune, Date minPracticeDate, Date maxPracticeDate, Short levelIndex) {
-        this.tune = tune;
+    public MusicPracticeTuneLevelStat(Date minPracticeDate, Date maxPracticeDate, Short levelIndex) {
         this.minPracticeDate = minPracticeDate;
         this.maxPracticeDate = maxPracticeDate;
         this.levelIndex = levelIndex;

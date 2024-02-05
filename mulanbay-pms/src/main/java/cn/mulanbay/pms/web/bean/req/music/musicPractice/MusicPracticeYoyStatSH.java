@@ -4,11 +4,13 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
+import jakarta.validation.constraints.NotNull;
 
 public class MusicPracticeYoyStatSH extends BaseYoyStatSH implements BindUser {
 
     private Long userId;
 
+    @NotNull(message = "乐器不能为空")
     @Query(fieldName = "instrumentId", op = Parameter.Operator.EQ)
     private Long instrumentId;
 
