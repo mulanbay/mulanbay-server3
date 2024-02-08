@@ -159,6 +159,9 @@ mulanbay:
       goodsTypeExpireTime: 3600
       #匹配追踪有效时长(秒)
       traceExpires: 180
+  sport:
+    #最大的基准心率
+    maxHeartRate: 220
   nlp:
     model:
       #模型是否要初始化

@@ -143,8 +143,8 @@ public class MusicPracticeService extends BaseHibernateDao {
                     {query_para}
                     ) tt group by indexValue order by indexValue
                     """;
-            statSql = statSql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("practice_date", dateGroupType))
-                             .replace("{query_para}",pr.getParameterString());
+            statSql = statSql.replace("{date_group_field}", MysqlUtil.dateTypeMethod("practice_date", dateGroupType))
+                    .replace("{query_para}", pr.getParameterString());
             List<MusicPracticeDateStat> list = this.getEntityListSI(statSql, NO_PAGE,NO_PAGE_SIZE, MusicPracticeDateStat.class, pr.getParameterValue());
             return list;
         } catch (BaseException e) {

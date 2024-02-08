@@ -75,7 +75,7 @@ public class MusicPracticeController extends BaseController {
         BeanCopy.copy(form, bean);
         bean.setCreatedTime(new Date());
         bean.setPracticeDate(DateUtil.getDate(bean.getStartTime(), DateUtil.FormatDay1));
-        Instrument instrument = baseService.getObject(Instrument.class,form.getInstrumentId());
+        Instrument instrument = baseService.getObject(Instrument.class, form.getInstrumentId());
         bean.setInstrument(instrument);
         baseService.saveObject(bean);
         return callback(bean);
@@ -107,8 +107,8 @@ public class MusicPracticeController extends BaseController {
                 MusicPractice nn = new MusicPractice();
                 BeanCopy.copy(se, nn);
                 nn.setPracticeId(null);
-                nn.setPracticeDate(DateUtil.getDate(ed,DateUtil.FormatDay1));
-                nn.setRemark("以模板新增,模版日期:"+DateUtil.getFormatDate(form.getTemplateDate(),DateUtil.FormatDay1));
+                nn.setPracticeDate(DateUtil.getDate(ed, DateUtil.FormatDay1));
+                nn.setRemark("以模板新增,模版日期:" + DateUtil.getFormatDate(form.getTemplateDate(), DateUtil.FormatDay1));
                 nn.setStartTime(ed);
                 ed = new Date(ed.getTime() + nn.getMinutes() * 60 * 1000);
                 nn.setEndTime(ed);
@@ -136,7 +136,7 @@ public class MusicPracticeController extends BaseController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResultBean get(@RequestParam(name = "practiceId") Long practiceId) {
-        MusicPractice bean = baseService.getObject(beanClass,practiceId);
+        MusicPractice bean = baseService.getObject(beanClass, practiceId);
         return callback(bean);
     }
 
@@ -147,10 +147,10 @@ public class MusicPracticeController extends BaseController {
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid MusicPracticeForm form) {
-        MusicPractice bean = baseService.getObject(beanClass,form.getPracticeId());
+        MusicPractice bean = baseService.getObject(beanClass, form.getPracticeId());
         BeanCopy.copyProperties(form, bean);
         bean.setPracticeDate(DateUtil.getDate(bean.getStartTime(), DateUtil.FormatDay1));
-        Instrument instrument = baseService.getObject(Instrument.class,form.getInstrumentId());
+        Instrument instrument = baseService.getObject(Instrument.class, form.getInstrumentId());
         bean.setInstrument(instrument);
         baseService.updateObject(bean);
         return callback(bean);
@@ -165,7 +165,7 @@ public class MusicPracticeController extends BaseController {
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ids = deleteRequest.getIds().split(",");
         for (String id : ids) {
-            MusicPractice bean = baseService.getObject(beanClass,Long.valueOf(id));
+            MusicPractice bean = baseService.getObject(beanClass, Long.valueOf(id));
             musicPracticeService.deleteMusicPractice(bean);
         }
         return callback(null);
@@ -178,7 +178,7 @@ public class MusicPracticeController extends BaseController {
      */
     @RequestMapping(value = "/tillNowStat", method = RequestMethod.GET)
     public ResultBean tillNowStat(@RequestParam(name = "practiceId") Long practiceId) {
-        MusicPractice bean = baseService.getObject(beanClass,practiceId);
+        MusicPractice bean = baseService.getObject(beanClass, practiceId);
         MusicPracticeSummaryStat stat = musicPracticeService.getTillNowStat(bean.getPracticeDate(), bean.getUserId(), bean.getInstrument().getInstrumentId());
         return callback(stat);
     }
@@ -227,30 +227,39 @@ public class MusicPracticeController extends BaseController {
      */
     @RequestMapping(value = "/dateStat")
     public ResultBean dateStat(MusicPracticeDateStatSH sf) {
-        switch (sf.getDateGroupType()){
-            case DAYCALENDAR :
+        switch (sf.getDateGroupType()) {
+            case DAYCALENDAR:
                 //日历
                 return callback(createChartCalendarData(sf));
-            case HOURMINUTE :
+            case HOURMINUTE:
                 //散点图
                 PageRequest pr = sf.buildQuery();
                 pr.setBeanClass(beanClass);
                 List<Date> dateList = musicPracticeService.getPracticeDateList(sf);
-                return callback(ChartUtil.createHMChartData(dateList,"音乐练习分析","练习时间点"));
+                return callback(ChartUtil.createHMChartData(dateList, "音乐练习分析", "练习时间点"));
             default:
-                break;
+                return callback(createDateStatChartData(sf));
         }
+    }
+
+    /**
+     * 按时间属性统计
+     *
+     * @param sf
+     * @return
+     */
+    private ChartData createDateStatChartData(MusicPracticeDateStatSH sf) {
         List<MusicPracticeDateStat> list = musicPracticeService.getDateStat(sf);
         ChartData chartData = new ChartData();
         chartData.setTitle(getChartTitle(sf.getInstrumentId()));
-        chartData.setLegendData(new String[]{ "总时长","次数"});
+        chartData.setLegendData(new String[]{"总时长", "次数"});
         //混合图形下使用
-        chartData.addYAxis("时长","小时");
-        chartData.addYAxis("次数","次");
-        ChartYData yData1 = new ChartYData("次数","次");
-        ChartYData yData2 = new ChartYData("总时长","小时");
-        ChartYData yData3 = new ChartYData("平均每天","小时");
-        ChartYData yData4 = new ChartYData("平均每次","小时");
+        chartData.addYAxis("时长", "小时");
+        chartData.addYAxis("次数", "次");
+        ChartYData yData1 = new ChartYData("次数", "次");
+        ChartYData yData2 = new ChartYData("总时长", "小时");
+        ChartYData yData3 = new ChartYData("平均每天", "小时");
+        ChartYData yData4 = new ChartYData("平均每次", "小时");
         //总的值
         BigDecimal totalCount = new BigDecimal(0);
         BigDecimal totalValue = new BigDecimal(0);
@@ -260,34 +269,34 @@ public class MusicPracticeController extends BaseController {
             if (sf.getDateGroupType() == DateGroupType.MONTH) {
                 chartData.getXdata().add(bean.getDateIndexValue() + "月份");
                 int days = DateUtil.getDayOfMonth(year, bean.getDateIndexValue() - 1);
-                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(days),ROUNDING_MODE)));
+                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(days), ROUNDING_MODE)));
             } else if (sf.getDateGroupType() == DateGroupType.YEAR) {
                 chartData.getXdata().add(bean.getDateIndexValue() + "年");
             } else if (sf.getDateGroupType() == DateGroupType.WEEK) {
                 chartData.getXdata().add("第" + bean.getDateIndexValue() + "周");
-                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(Constant.DAYS_WEEK),ROUNDING_MODE)));
+                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(Constant.DAYS_WEEK), ROUNDING_MODE)));
             } else {
                 chartData.getXdata().add(bean.getDateIndexValue().toString());
             }
             yData1.getData().add(bean.getTotalCount());
             yData2.getData().add(minutesToHours(bean.getTotalMinutes()));
-            yData4.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(bean.getTotalCount()),ROUNDING_MODE)));
+            yData4.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(bean.getTotalCount()), ROUNDING_MODE)));
             totalCount = totalCount.add(new BigDecimal(bean.getTotalCount()));
             totalValue = totalValue.add(bean.getTotalMinutes());
         }
         chartData.getYdata().add(yData2);
         if (sf.getDateGroupType() == DateGroupType.WEEK || sf.getDateGroupType() == DateGroupType.MONTH || sf.getDateGroupType() == DateGroupType.YEAR) {
             //如果是周，计算每天锻炼值
-            chartData.setLegendData(new String[]{ "总时长", "平均每天", "平均每次","次数"});
+            chartData.setLegendData(new String[]{"总时长", "平均每天", "平均每次", "次数"});
             chartData.getYdata().add(yData3);
             chartData.getYdata().add(yData4);
         }
         //次数放最后
         chartData.getYdata().add(yData1);
         String totalString = totalCount.longValue() + "(次)," + minutesToHours(totalValue) + "(小时)";
-        chartData.setSubTitle(this.getDateTitle(sf)+",总计:"+totalString);
+        chartData.setSubTitle(this.getDateTitle(sf) + ",总计:" + totalString);
         chartData = ChartUtil.completeDate(chartData, sf);
-        return callback(chartData);
+        return chartData;
     }
 
     private ChartCalendarData createChartCalendarData(MusicPracticeDateStatSH sf) {
@@ -318,7 +327,7 @@ public class MusicPracticeController extends BaseController {
     public ResultBean yoyStat(@Valid MusicPracticeYoyStatSH sf) {
         if (sf.getDateGroupType() == DateGroupType.DAY) {
             return callback(createChartCalendarMultiData(sf));
-        }else {
+        } else {
             return callback(createYoyChartData(sf));
         }
     }
@@ -364,10 +373,11 @@ public class MusicPracticeController extends BaseController {
 
     /**
      * 同期对比数据
+     *
      * @param sf
      * @return
      */
-    private ChartData createYoyChartData(MusicPracticeYoyStatSH sf){
+    private ChartData createYoyChartData(MusicPracticeYoyStatSH sf) {
         ChartData chartData = initYoyCharData(sf, musicPracticeService.getInstrumentName(sf.getInstrumentId()) + "练习统计同期对比", null);
         chartData.setUnit(sf.getGroupType().getUnit());
         String[] legendData = new String[sf.getYears().size()];
@@ -457,7 +467,7 @@ public class MusicPracticeController extends BaseController {
             totalValue = totalValue.add(new BigDecimal(bean.getTotalCount()));
         }
         String subTitle = this.getDateTitle(sf);
-        chartPieData.setSubTitle(subTitle+",总计:"+totalValue.longValue() + "次");
+        chartPieData.setSubTitle(subTitle + ",总计:" + totalValue.longValue() + "次");
         chartPieData.getDetailData().add(serieData);
         return callback(chartPieData);
     }
@@ -488,7 +498,7 @@ public class MusicPracticeController extends BaseController {
         chartData.getYdata().add(yData1);
         chartData = ChartUtil.completeDate(chartData, sf);
         String subTitle = this.getDateTitle(sf);
-        chartData.setSubTitle(subTitle+",总计:"+ totalValue.longValue()+ "次");
+        chartData.setSubTitle(subTitle + ",总计:" + totalValue.longValue() + "次");
         return callback(chartData);
     }
 
@@ -552,43 +562,43 @@ public class MusicPracticeController extends BaseController {
         ChartHeatmapData chartData = new ChartHeatmapData();
         chartData.setTitle("音乐练习统计");
         DateGroupType dateGroupType = sf.getDateGroupType();
-        int[] minMax = ChartUtil.getMinMax(dateGroupType,sf.getStartDate(),sf.getEndDate());
+        int[] minMax = ChartUtil.getMinMax(dateGroupType, sf.getStartDate(), sf.getEndDate());
         int min = minMax[0];
         int max = minMax[1];
-        List<String> xdata = ChartUtil.getStringXdataList(dateGroupType,min, max);
+        List<String> xdata = ChartUtil.getStringXdataList(dateGroupType, min, max);
         chartData.setXdata(xdata);
         //Y轴
         List<Instrument> miLIst = musicPracticeService.getInstrumentList(sf.getUserId());
-        Map<String,OverallYIndex> yMap = new HashMap<>();
+        Map<String, OverallYIndex> yMap = new HashMap<>();
         int stn = miLIst.size();
-        for(int i=0;i<stn;i++){
+        for (int i = 0; i < stn; i++) {
             Instrument st = miLIst.get(i);
-            yMap.put(st.getInstrumentId().toString(),new OverallYIndex(st.getInstrumentId().toString(),st.getInstrumentName(),"分钟",i));
+            yMap.put(st.getInstrumentId().toString(), new OverallYIndex(st.getInstrumentId().toString(), st.getInstrumentName(), "分钟", i));
             chartData.addYData(st.getInstrumentName());
         }
         List<MusicPracticeOverallStat> list = musicPracticeService.getOverallStat(sf);
         GroupType valueType = sf.getValueType();
         ChartHeatmapSerieData serieData = new ChartHeatmapSerieData(valueType.getName());
         int vn = list.size();
-        for (int i=0;i<vn;i++) {
+        for (int i = 0; i < vn; i++) {
             MusicPracticeOverallStat seos = list.get(i);
             int indexValue = seos.getIndexValue();
-            if(dateGroupType==DateGroupType.DAY){
-                indexValue = DateUtil.getDayOfYear(DateUtil.getDate(indexValue+"","yyyyMMdd"));
+            if (dateGroupType == DateGroupType.DAY) {
+                indexValue = DateUtil.getDayOfYear(DateUtil.getDate(indexValue + "", "yyyyMMdd"));
             }
-            int xIndex = ChartUtil.getXIndex(dateGroupType,indexValue,min,xdata) ;
+            int xIndex = ChartUtil.getXIndex(dateGroupType, indexValue, min, xdata);
             OverallYIndex yi = yMap.get(seos.getInstrumentId().toString());
             int yIndex = yi.getIndex();
-            double value =0;
-            String unit ="次";
-            if(valueType==GroupType.COUNT){
+            double value = 0;
+            String unit = "次";
+            if (valueType == GroupType.COUNT) {
                 value = seos.getTotalCount().doubleValue();
-            }else if(valueType==GroupType.MINUTES){
-                value = NumberUtil.getValue(seos.getTotalMinutes().divide(new BigDecimal(60.0), RoundingMode.HALF_UP),1);
-                unit ="小时";
+            } else if (valueType == GroupType.DURATION) {
+                value = NumberUtil.getValue(seos.getTotalMinutes().divide(new BigDecimal(60.0), RoundingMode.HALF_UP), 1);
+                unit = "小时";
             }
             chartData.updateMinMaxValue(value);
-            serieData.addData(new Object[]{xIndex,yIndex,value,unit});
+            serieData.addData(new Object[]{xIndex, yIndex, value, unit});
         }
         chartData.addSerieData(serieData);
         return callback(chartData);

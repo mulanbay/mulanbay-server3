@@ -59,11 +59,11 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getAverageValue(BigDecimal value,BigInteger counts,int scale){
+	public static double getAvg(BigDecimal value, BigInteger counts, int scale){
 		if(value==null){
 			return 0;
 		}
-		return getAverageValue(value.doubleValue(),counts.intValue(),scale);
+		return getAvg(value.doubleValue(),counts.intValue(),scale);
 	}
 
 	/**
@@ -73,7 +73,35 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getAverageValue(double value,int counts,int scale){
+	public static double getAvg(BigDecimal value, Long counts, int scale){
+		if(value==null){
+			return 0;
+		}
+		return getAvg(value.doubleValue(),counts.intValue(),scale);
+	}
+
+	/**
+	 * 获取平均值
+	 * @param value
+	 * @param counts
+	 * @param scale
+	 * @return
+	 */
+	public static double getAvg(BigInteger value, Long counts, int scale){
+		if(value==null){
+			return 0;
+		}
+		return getAvg(value.doubleValue(),counts.intValue(),scale);
+	}
+
+	/**
+	 * 获取平均值
+	 * @param value
+	 * @param counts
+	 * @param scale
+	 * @return
+	 */
+	public static double getAvg(double value, int counts, int scale){
 		if(counts==0){
 			return 0;
 		}

@@ -1,6 +1,7 @@
 package cn.mulanbay.persistent.query;
 
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.dao.BaseHibernateDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class PageRequest {
 	/**
 	 * 不分页的页码定义
 	 */
-	public static final int NO_PAGE=0;
+	public static final int NO_PAGE= BaseHibernateDao.NO_PAGE;
 
 	/**
 	 * 第一个参数下标，针对Hibernate5升级

@@ -288,7 +288,7 @@ public class BudgetController extends BaseController {
         basf.setEndDate(as.getEndDate());
         Budget budget = baseService.getObject(beanClass,as.getBudgetId());
         basf.setTags(budget.getTags());
-        basf.setType(GroupType.TOTALPRICE);
+        basf.setType(GroupType.TOTAL_PRICE);
         List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(basf);
         ChartPieData chartPieData = new ChartPieData();
         chartPieData.setTitle("[" + budget.getBudgetName() + "]预算的消费分析");

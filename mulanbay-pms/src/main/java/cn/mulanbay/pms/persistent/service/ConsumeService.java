@@ -206,7 +206,7 @@ public class ConsumeService extends BaseHibernateDao {
             if (type == GroupType.COUNT) {
                 //统计次数
                 sql.append(" ,count(*) as cc from consume ");
-            } else if (type == GroupType.TOTALPRICE) {
+            } else if (type == GroupType.TOTAL_PRICE) {
                 //价格
                 sql.append(" ,sum(total_price) as cc from consume ");
             } else if (type == GroupType.SHIPMENT) {
@@ -317,7 +317,7 @@ public class ConsumeService extends BaseHibernateDao {
             if (type == GroupType.COUNT) {
                 //统计次数
                 sql.append(" ,count(0) as value from consume ");
-            } else if (type == GroupType.TOTALPRICE) {
+            } else if (type == GroupType.TOTAL_PRICE) {
                 //价格
                 sql.append(" ,sum(total_price) as value from consume ");
             } else if (type == GroupType.SHIPMENT) {

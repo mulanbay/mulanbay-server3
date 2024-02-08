@@ -365,3 +365,42 @@ DROP INDEX `music_practice_fk1` ;
 
 ALTER TABLE `instrument`
     ADD COLUMN `status` SMALLINT(5) NULL DEFAULT 1 AFTER `user_id`;
+
+ALTER TABLE `sport_type` RENAME TO  `sport` ;
+
+ALTER TABLE `sport`
+    ADD COLUMN `remark` VARCHAR(200) NULL AFTER `order_index`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `sport_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `name` `sport_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ;
+
+ALTER TABLE `sport_milestone`
+    CHANGE COLUMN `id` `milestone_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `milestone_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `sport_type_id` `sport_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `kilometres` `value` DECIMAL(5,2) NOT NULL ,
+    CHANGE COLUMN `minutes` `duration` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `sport_exercise_id` `exercise_id` BIGINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `from_exercise_date` `start_time` DATE NULL DEFAULT NULL ,
+    CHANGE COLUMN `to_exercise_date` `end_time` DATE NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `sport_exercise` RENAME TO  `exercise` ;
+
+ALTER TABLE `exercise`
+DROP FOREIGN KEY `FK_pkkjnt72kmbvk9n87ht1wxeq9`;
+ALTER TABLE `mulanbay_db3`.`exercise`
+    CHANGE COLUMN `remark` `remark` VARCHAR(200) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT '备注' AFTER `fast_best`,
+    CHANGE COLUMN `id` `exercise_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `sport_type_id` `sport_id` BIGINT NOT NULL COMMENT '锻炼类型' ,
+    CHANGE COLUMN `exercise_date` `exercise_time` DATETIME NOT NULL ,
+    CHANGE COLUMN `kilometres` `value` DECIMAL(5,2) NOT NULL COMMENT '锻炼公里数' ,
+    CHANGE COLUMN `minutes` `duration` INT NOT NULL COMMENT '锻炼时间' ,
+    CHANGE COLUMN `average_heart_rate` `avg_heart_rate` INT NULL DEFAULT NULL COMMENT '平均心率' ,
+    CHANGE COLUMN `mileage_best` `value_best` SMALLINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
+DROP INDEX `FK_pkkjnt72kmbvk9n87ht1wxeq9` ;
+;
+
+

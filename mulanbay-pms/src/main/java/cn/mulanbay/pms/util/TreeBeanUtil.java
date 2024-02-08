@@ -74,8 +74,8 @@ public class TreeBeanUtil {
             return list;
         } else {
             TreeBean root = new TreeBean();
-            root.setId("");
-            root.setText("请选择");
+            root.setId(null);
+            root.setText("根");
             root.setChildren(list);
             List<TreeBean> newList = new ArrayList<TreeBean>();
             newList.add(root);

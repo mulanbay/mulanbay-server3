@@ -688,7 +688,7 @@ public class ConsumeController extends BaseController {
         dateSearch.setUserId(sf.getUserId());
         dateSearch.setStartTotalPrice(sf.getStartTotalPrice());
         dateSearch.setEndTotalPrice(sf.getEndTotalPrice());
-        dateSearch.setGroupType(GroupType.TOTALPRICE);
+        dateSearch.setGroupType(GroupType.TOTAL_PRICE);
         dateSearch.setSourceId(sf.getSourceId());
         dateSearch.setGoodsTypeId(sf.getGoodsTypeId());
         dateSearch.setConsumeType(sf.getConsumeType());
@@ -768,7 +768,7 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/tagsDetailStat", method = RequestMethod.GET)
     public ResultBean tagsDetailStat(ConsumeAnalyseStatSH basf) {
-        basf.setType(GroupType.TOTALPRICE);
+        basf.setType(GroupType.TOTAL_PRICE);
         List<ConsumeRealTimeStat> list = consumeService.getAnalyseStat(basf);
         ChartPieData chartPieData = new ChartPieData();
         chartPieData.setTitle("[" + basf.getTags() + "]的消费分析");

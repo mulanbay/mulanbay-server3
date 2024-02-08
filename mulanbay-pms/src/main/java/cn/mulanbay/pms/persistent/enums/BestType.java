@@ -8,7 +8,8 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum BestType {
 
-    ONCE(0, "曾经"), CURRENT(1, "当前");
+    ONCE(0, "曾经"),
+    CURRENT(1, "当前");
 
     private int value;
 
