@@ -240,7 +240,7 @@ public class ChartUtil {
      * @param list
      * @return
      */
-    public static ChartCalendarData createChartCalendarData(String title, String legendOne, String unit, DateStatSH sf, List list) {
+    public static ChartCalendarData createChartCalendarData(String title, String legendOne, String unit, DateStatSH sf,List<? extends CalendarDateStat> list) {
         ChartCalendarData chartData = new ChartCalendarData();
         int year = DateUtil.getYear(sf.getStartDate());
         int endYear = DateUtil.getYear(sf.getEndDate());
@@ -253,8 +253,7 @@ public class ChartUtil {
         chartData.setUnit(unit);
         if (list != null && !list.isEmpty()) {
             chartData.setSubTitle("总次数：" + list.size());
-            for (Object oo : list) {
-                CalendarDateStat stat = (CalendarDateStat) oo;
+            for (CalendarDateStat stat : list) {
                 String dateString = DateUtil.getFormatDateString(String.valueOf(stat.getDayIndexValue()), "yyyyMMdd", DateUtil.FormatDay1);
                 double vv = stat.getCalendarStatValue();
                 chartData.addSerieData(new Object[]{dateString, vv});

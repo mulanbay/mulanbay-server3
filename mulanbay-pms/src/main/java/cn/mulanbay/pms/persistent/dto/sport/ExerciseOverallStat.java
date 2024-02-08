@@ -12,9 +12,9 @@ public class ExerciseOverallStat{
     private Long totalCount;
 
     private BigDecimal totalValue;
-    private BigInteger totalDuration;
+    private BigDecimal totalDuration;
 
-    public ExerciseOverallStat(Integer indexValue, Long sportId, Long totalCount, BigDecimal totalValue, BigInteger totalDuration) {
+    public ExerciseOverallStat(Integer indexValue, Long sportId, Long totalCount, BigDecimal totalValue, BigDecimal totalDuration) {
         this.indexValue = indexValue;
         this.sportId = sportId;
         this.totalCount = totalCount;
@@ -54,11 +54,11 @@ public class ExerciseOverallStat{
         this.totalValue = totalValue;
     }
 
-    public BigInteger getTotalDuration() {
+    public BigDecimal getTotalDuration() {
         return totalDuration;
     }
 
-    public void setTotalDuration(BigInteger totalDuration) {
+    public void setTotalDuration(BigDecimal totalDuration) {
         this.totalDuration = totalDuration;
     }
 }

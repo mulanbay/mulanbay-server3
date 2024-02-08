@@ -9,10 +9,7 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.Exercise;
 import cn.mulanbay.pms.persistent.domain.Sport;
 import cn.mulanbay.pms.persistent.domain.SportMilestone;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseDateStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseMultiStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseOverallStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseStat;
+import cn.mulanbay.pms.persistent.dto.sport.*;
 import cn.mulanbay.pms.persistent.enums.BestType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.NextMilestoneType;
@@ -526,14 +523,18 @@ public class ExerciseService extends BaseHibernateDao {
      * @param sf
      * @return
      */
-    public List<Exercise> getBestMilestoneExerciseList(ExerciseDateStatSH sf) {
+    public List<ExerciseBestDTO> getBestMilestoneExerciseList(ExerciseDateStatSH sf) {
         try {
             PageRequest pr = sf.buildQuery();
-            StringBuffer sb = new StringBuffer();
-            sb.append("from Exercise ");
-            sb.append(pr.getParameterString());
-            sb.append(" and " + sf.getBestField() + " is not null order by exerciseDate");
-            return this.getEntityListHI(sb.toString(),NO_PAGE,NO_PAGE_SIZE,Exercise.class, pr.getParameterValue());
+            String statSql = """
+                    select exercise_time as exerciseTime,value,max_speed as maxSpeed from exercise
+                    {query_para}
+                    and {bestField} is not null order by exercise_time
+                    """;
+            statSql = statSql
+                    .replace("{query_para}",pr.getParameterString())
+                    .replace("{bestField}",sf.getBestField());
+            return this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE,ExerciseBestDTO.class, pr.getParameterValue());
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
                     "获取最佳的锻炼异常", e);
@@ -553,9 +554,9 @@ public class ExerciseService extends BaseHibernateDao {
             DateGroupType dateGroupType = sf.getDateGroupType();
             String statSql = """
                     select indexValue,sport_id as sportId,count(0) as totalCount,sum(value) as totalValue,sum(duration) as totalDuration
-                    from ( select {date_group_field} as indexValue,sport_id，value,duration from exercise
+                    from ( select {date_group_field} as indexValue,sport_id,value,duration from exercise
                     {query_para}
-                    ) as res group by sport_type_id,indexValue order by indexValue
+                    ) as res group by sport_id,indexValue order by indexValue
                     """;
             statSql = statSql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("exercise_time", dateGroupType))
                              .replace("{query_para}",pr.getParameterString());

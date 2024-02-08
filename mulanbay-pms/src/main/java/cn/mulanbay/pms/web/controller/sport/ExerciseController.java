@@ -9,10 +9,7 @@ import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.Exercise;
 import cn.mulanbay.pms.persistent.domain.Sport;
 import cn.mulanbay.pms.persistent.domain.SportMilestone;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseDateStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseMultiStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseOverallStat;
-import cn.mulanbay.pms.persistent.dto.sport.ExerciseStat;
+import cn.mulanbay.pms.persistent.dto.sport.*;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.NextMilestoneType;
 import cn.mulanbay.pms.persistent.service.ExerciseService;
@@ -330,13 +327,21 @@ public class ExerciseController extends BaseController {
     }
 
     private ChartCalendarData createChartCalendarData(ExerciseDateStatSH sf){
+        String valueName = "公里数";
+        String unit = "公里";
+        Long sportId = sf.getSportId();
+        if(sportId!=null){
+            Sport sport = baseService.getObject(Sport.class,sportId);
+            valueName = sport.getUnit()+"数";
+            unit = sport.getUnit();
+        }
         //日历
         List<ExerciseDateStat> list = exerciseService.getDateStat(sf);
-        ChartCalendarData calendarData = ChartUtil.createChartCalendarData("锻炼统计", "公里数", "km", sf, list);
+        ChartCalendarData calendarData = ChartUtil.createChartCalendarData("锻炼统计", valueName, unit, sf, list);
         if (!StringUtil.isEmpty(sf.getBestField())) {
             //获取最佳记录
-            List<Exercise> bests = exerciseService.getBestMilestoneExerciseList(sf);
-            for (Exercise se : bests) {
+            List<ExerciseBestDTO> bests = exerciseService.getBestMilestoneExerciseList(sf);
+            for (ExerciseBestDTO se : bests) {
                 if ("mileageBest".equals(sf.getBestField())) {
                     calendarData.addGraph(se.getExerciseTime(), se.getValue());
                 } else {

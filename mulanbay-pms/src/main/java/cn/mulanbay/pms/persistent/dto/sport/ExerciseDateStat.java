@@ -12,12 +12,12 @@ public class ExerciseDateStat implements DateStat, CalendarDateStat {
     private BigDecimal totalValue;
     private Long totalCount;
     private BigDecimal totalMaxHeartRate;
-    private BigInteger totalAvgHeartRate;
+    private BigDecimal totalAvgHeartRate;
     private BigDecimal totalSpeed;
-    private BigInteger totalDuration;
+    private BigDecimal totalDuration;
     private BigDecimal totalPace;
 
-    public ExerciseDateStat(Number indexValue, BigDecimal totalValue, Long totalCount, BigDecimal totalMaxHeartRate, BigInteger totalAvgHeartRate, BigDecimal totalSpeed, BigInteger totalDuration, BigDecimal totalPace) {
+    public ExerciseDateStat(Number indexValue, BigDecimal totalValue, Long totalCount, BigDecimal totalMaxHeartRate, BigDecimal totalAvgHeartRate, BigDecimal totalSpeed, BigDecimal totalDuration, BigDecimal totalPace) {
         this.indexValue = indexValue;
         this.totalValue = totalValue;
         this.totalCount = totalCount;
@@ -60,11 +60,11 @@ public class ExerciseDateStat implements DateStat, CalendarDateStat {
         this.totalMaxHeartRate = totalMaxHeartRate;
     }
 
-    public BigInteger getTotalAvgHeartRate() {
+    public BigDecimal getTotalAvgHeartRate() {
         return totalAvgHeartRate;
     }
 
-    public void setTotalAvgHeartRate(BigInteger totalAvgHeartRate) {
+    public void setTotalAvgHeartRate(BigDecimal totalAvgHeartRate) {
         this.totalAvgHeartRate = totalAvgHeartRate;
     }
 
@@ -76,11 +76,11 @@ public class ExerciseDateStat implements DateStat, CalendarDateStat {
         this.totalSpeed = totalSpeed;
     }
 
-    public BigInteger getTotalDuration() {
+    public BigDecimal getTotalDuration() {
         return totalDuration;
     }
 
-    public void setTotalDuration(BigInteger totalDuration) {
+    public void setTotalDuration(BigDecimal totalDuration) {
         this.totalDuration = totalDuration;
     }
 
@@ -94,16 +94,16 @@ public class ExerciseDateStat implements DateStat, CalendarDateStat {
 
     @Override
     public double getCalendarStatValue() {
-        return 0;
+        return totalValue.doubleValue();
     }
 
     @Override
     public int getDayIndexValue() {
-        return 0;
+        return this.getDateIndexValue();
     }
 
     @Override
     public Integer getDateIndexValue() {
-        return null;
+        return indexValue==null ? null : indexValue.intValue();
     }
 }

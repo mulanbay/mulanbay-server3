@@ -586,18 +586,29 @@ public class ConsumeController extends BaseController {
     public ResultBean dateStat(ConsumeDateStatSH sf) {
         switch (sf.getDateGroupType()){
             case DAYCALENDAR :
-                //日历
-                List<ConsumeDateStat> list = consumeService.getDateStat(sf);
-                return callback(ChartUtil.createChartCalendarData("消费统计", "次数", "次", sf, list));
+                return callback(createChartCalendarData(sf));
             case HOURMINUTE :
-                //散点图
-                PageRequest pr = sf.buildQuery();
-                pr.setBeanClass(beanClass);
-                List<Date> dateList = consumeService.getDateList(sf);
-                return callback(ChartUtil.createHMChartData(dateList,"消费分析","消费时间点"));
+                return callback(createScatterChartData(sf));
             default:
-                break;
+                return callback(createDateStatChart(sf));
         }
+    }
+
+    private ChartCalendarData createChartCalendarData(ConsumeDateStatSH sf){
+        //日历
+        List<ConsumeDateStat> list = consumeService.getDateStat(sf);
+        return ChartUtil.createChartCalendarData("消费统计", "次数", "次", sf, list);
+    }
+
+    private ScatterChartData createScatterChartData(ConsumeDateStatSH sf){
+        //散点图
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        List<Date> dateList = consumeService.getDateList(sf);
+        return ChartUtil.createHMChartData(dateList,"消费分析","消费时间点");
+    }
+
+    private ChartData createDateStatChart(ConsumeDateStatSH sf){
         ChartData chartData = new ChartData();
         chartData.setTitle("消费统计");
         chartData.setSubTitle(this.getDateTitle(sf));
@@ -624,9 +635,8 @@ public class ConsumeController extends BaseController {
         String subTitle = this.getDateTitle(sf)+",总计"+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
-        return callback(chartData);
+        return chartData;
     }
-
     /**
      * 同期比对统计
      *
