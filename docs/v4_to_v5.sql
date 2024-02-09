@@ -401,6 +401,72 @@ ALTER TABLE `mulanbay_db3`.`exercise`
     CHANGE COLUMN `mileage_best` `value_best` SMALLINT NULL DEFAULT NULL ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
 DROP INDEX `FK_pkkjnt72kmbvk9n87ht1wxeq9` ;
+
+ALTER TABLE `body_abnormal_record` RENAME TO  `body_abnormal` ;
+ALTER TABLE `body_abnormal`
+    CHANGE COLUMN `last_days` `last_days` INT NOT NULL COMMENT '持续天数' AFTER `finish_date`,
+    CHANGE COLUMN `important_level` `important` DECIMAL(5,1) NOT NULL COMMENT '重要等级' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `body_basic_info` RENAME TO  `body_info` ;
+
+ALTER TABLE `body_info`
+    CHANGE COLUMN `record_date` `record_time` DATETIME NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `treat_record` RENAME TO  `treat` ;
+
+ALTER TABLE `treat`
+    CHANGE COLUMN `id` `treat_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `important_level` `important` DECIMAL(5,1) NOT NULL COMMENT '重要等级' ,
+    CHANGE COLUMN `diagnosed_disease` `confirm_disease` VARCHAR(32) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT '确诊疾病' ,
+    CHANGE COLUMN `is_sick` `sick` SMALLINT NOT NULL COMMENT '是否有病' ,
+    CHANGE COLUMN `treat_date` `treat_time` DATETIME NOT NULL COMMENT '看病日期' ,
+    CHANGE COLUMN `os_name` `os` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+    CHANGE COLUMN `registered_fee` `reg_fee` DECIMAL(9,2) NOT NULL COMMENT '挂号费' ,
+    CHANGE COLUMN `medical_insurance_paid_fee` `mi_fee` DECIMAL(9,2) NOT NULL COMMENT '医保担负费用' ,
+    CHANGE COLUMN `personal_paid_fee` `pd_fee` DECIMAL(9,2) NOT NULL COMMENT '个人支付费用' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `treat_drug`
+DROP FOREIGN KEY `FK_h13ygwsedoyd7oe9owa4u0nct`;
+ALTER TABLE `treat_drug`
+    CHANGE COLUMN `id` `drug_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `treat_record_id` `treat_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `name` `drug_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '药名称' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
+DROP INDEX `FK_h13ygwsedoyd7oe9owa4u0nct` ;
 ;
+
+ALTER TABLE `treat_drug_detail`
+    CHANGE COLUMN `eu` `eu` VARCHAR(32) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL AFTER `occur_time`,
+    CHANGE COLUMN `id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `treat_drug_id` `drug_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `treat_operation`
+DROP FOREIGN KEY `FK_c2k7741waiya3f10forpyfsv0`;
+ALTER TABLE `treat_operation`
+    CHANGE COLUMN `id` `operation_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `treat_record_id` `treat_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `name` `operation_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '手术名' ,
+    CHANGE COLUMN `is_sick` `sick` BIT(1) NOT NULL DEFAULT b'0' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
+DROP INDEX `FK_c2k7741waiya3f10forpyfsv0` ;
+;
+
+ALTER TABLE `treat_test`
+    CHANGE COLUMN `id` `test_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `treat_operation_id` `operation_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `test_date` `test_time` DATETIME NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `body_abnormal`  CHANGE COLUMN `last_days` `days` INT NOT NULL COMMENT '持续天数' ;
+
+ALTER TABLE `user_set`
+DROP COLUMN `buy_type_id`,
+DROP COLUMN `treat_sub_goods_type_id`,
+CHANGE COLUMN `treat_buy_type_id` `treat_source_id` INT NULL DEFAULT NULL ;
+
 
 

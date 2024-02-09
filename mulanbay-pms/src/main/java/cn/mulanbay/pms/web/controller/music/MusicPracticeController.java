@@ -232,16 +232,19 @@ public class MusicPracticeController extends BaseController {
                 //日历
                 return callback(createChartCalendarData(sf));
             case HOURMINUTE:
-                //散点图
-                PageRequest pr = sf.buildQuery();
-                pr.setBeanClass(beanClass);
-                List<Date> dateList = musicPracticeService.getPracticeDateList(sf);
-                return callback(ChartUtil.createHMChartData(dateList, "音乐练习分析", "练习时间点"));
+                return callback(createScatterChartData(sf));
             default:
                 return callback(createDateStatChartData(sf));
         }
     }
 
+    private ScatterChartData createScatterChartData(MusicPracticeDateStatSH sf){
+        //散点图
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        List<Date> dateList = musicPracticeService.getPracticeDateList(sf);
+        return ChartUtil.createHMChartData(dateList, "音乐练习分析", "练习时间点");
+    }
     /**
      * 按时间属性统计
      *
@@ -294,7 +297,7 @@ public class MusicPracticeController extends BaseController {
         //次数放最后
         chartData.getYdata().add(yData1);
         String totalString = totalCount.longValue() + "(次)," + minutesToHours(totalValue) + "(小时)";
-        chartData.setSubTitle(this.getDateTitle(sf) + ",总计:" + totalString);
+        chartData.setSubTitle(this.getDateTitle(sf,totalString));
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
     }

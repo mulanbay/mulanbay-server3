@@ -42,7 +42,7 @@ public class ExerciseController extends BaseController {
     private static Class<Exercise> beanClass = Exercise.class;
 
     /**
-     * 消费记录的缓存队列的过期时间
+     * 最大心率
      */
     @Value("${mulanbay.sport.maxHeartRate}")
     int maxHeartRate;
@@ -301,7 +301,7 @@ public class ExerciseController extends BaseController {
             totalKilometres = totalKilometres.add(bean.getTotalValue());
         }
         String totalString = totalCount.longValue() + "(次)," + totalKilometres.doubleValue() + "(" + unit + ")";
-        chartData.setSubTitle(this.getDateTitle(sf)+",总计:"+totalString);
+        chartData.setSubTitle(this.getDateTitle(sf,totalString));
         chartData.getYdata().add(kilometresData);
         if (sf.getFullStat()) {
             if (dateGroupType != DateGroupType.DAY) {

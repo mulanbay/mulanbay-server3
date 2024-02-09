@@ -162,6 +162,9 @@ mulanbay:
   sport:
     #最大的基准心率
     maxHeartRate: 220
+  health:
+    #分类分组的时长
+    categoryDays: 365
   nlp:
     model:
       #模型是否要初始化

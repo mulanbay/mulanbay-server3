@@ -5,6 +5,7 @@ import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.ValidateError;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.Constant;
@@ -149,6 +150,20 @@ public class BaseController {
             return DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" +
                     DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
         }
+    }
+
+    /**
+     * 获取日期的标题，只要用于报表的子标题
+     *
+     * @param sf
+     * @return
+     */
+    protected String getDateTitle(DateStatSH sf,String cs) {
+        String title = this.getDateTitle(sf);
+        if(StringUtil.isNotEmpty(cs)){
+            title+=",总计:"+cs;
+        }
+        return title;
     }
 
     /**

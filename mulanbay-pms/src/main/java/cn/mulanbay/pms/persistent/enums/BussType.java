@@ -1,9 +1,6 @@
 package cn.mulanbay.pms.persistent.enums;
 
-import cn.mulanbay.pms.persistent.domain.Account;
-import cn.mulanbay.pms.persistent.domain.Consume;
-import cn.mulanbay.pms.persistent.domain.Exercise;
-import cn.mulanbay.pms.persistent.domain.Income;
+import cn.mulanbay.pms.persistent.domain.*;
 
 /**
  * 业务类型
@@ -19,7 +16,7 @@ public enum BussType {
     MUSIC_PRACTICE(3, "音乐练习"),
     READING_RECORD(4,  "阅读"),
     EXERCISE(5, Exercise.class,"锻炼"),
-    TREAT_RECORD(6, "看病记录"),
+    TREAT(6, Treat.class, "看病记录"),
     COMMON_RECORD(7, "通用记录"),
     DIARY(8, "日记"),
     WORK_OVER_TIME(9,  "加班记录"),

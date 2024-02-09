@@ -52,27 +52,16 @@ public class UserSet implements java.io.Serializable {
     private Long treatGoodsTypeId;
 
     /**
-     * 看病记录商品子类型
-     */
-    @Column(name = "treat_sub_goods_type_id")
-    private Long treatSubGoodsTypeId;
-
-    /**
      * 看病记录购买来源
      */
-    @Column(name = "treat_buy_type_id")
-    private Long treatBuyTypeId;
+    @Column(name = "treat_source_id")
+    private Long treatSourceId;
     /**
      * 默认支付方式
      */
     @Column(name = "payment")
     private Payment payment;
 
-    /**
-     * 默认购买来源
-     */
-    @Column(name = "buy_type_id")
-    private Long buyTypeId;
     @Column(name = "remark")
     private String remark;
 
@@ -136,20 +125,12 @@ public class UserSet implements java.io.Serializable {
         this.treatGoodsTypeId = treatGoodsTypeId;
     }
 
-    public Long getTreatSubGoodsTypeId() {
-        return treatSubGoodsTypeId;
+    public Long getTreatSourceId() {
+        return treatSourceId;
     }
 
-    public void setTreatSubGoodsTypeId(Long treatSubGoodsTypeId) {
-        this.treatSubGoodsTypeId = treatSubGoodsTypeId;
-    }
-
-    public Long getTreatBuyTypeId() {
-        return treatBuyTypeId;
-    }
-
-    public void setTreatBuyTypeId(Long treatBuyTypeId) {
-        this.treatBuyTypeId = treatBuyTypeId;
+    public void setTreatSourceId(Long treatSourceId) {
+        this.treatSourceId = treatSourceId;
     }
 
     public Payment getPayment() {
@@ -158,14 +139,6 @@ public class UserSet implements java.io.Serializable {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
-    }
-
-    public Long getBuyTypeId() {
-        return buyTypeId;
-    }
-
-    public void setBuyTypeId(Long buyTypeId) {
-        this.buyTypeId = buyTypeId;
     }
 
     public String getRemark() {
@@ -191,7 +164,6 @@ public class UserSet implements java.io.Serializable {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
-
 
     @Override
     public boolean equals(Object other) {

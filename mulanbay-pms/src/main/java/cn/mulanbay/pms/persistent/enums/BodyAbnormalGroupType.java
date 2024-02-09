@@ -6,13 +6,13 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum BodyAbnormalRecordGroupType {
+public enum BodyAbnormalGroupType {
 
     ORGAN("organ", 0, "器官"),
     DISEASE("disease", 1, "疾病"),
-    PAINLEVEL("pain_level", 1, "疼痛级别"),
-    IMPORTANTLEVEL("important_level", 1, "重要等级"),
-    LASTDAYS("last_days", 1, "持续天数");
+    PAIN_LEVEL("pain_level", 2, "疼痛级别"),
+    IMPORTANT("important", 3, "重要等级"),
+    DAYS("days", 4, "持续天数");
 
     private String field;
 
@@ -20,11 +20,11 @@ public enum BodyAbnormalRecordGroupType {
 
     private String name;
 
-    BodyAbnormalRecordGroupType(String field) {
+    BodyAbnormalGroupType(String field) {
         this.field = field;
     }
 
-    BodyAbnormalRecordGroupType(String field, int value, String name) {
+    BodyAbnormalGroupType(String field, int value, String name) {
         this.field = field;
         this.value = value;
         this.name = name;

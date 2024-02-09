@@ -164,7 +164,7 @@ public class ControllerHandler {
      */
     private void checkSysFunc(SysFunc sf){
         if (sf == null && !skipUnDefineFunc) {
-            logger.warn("url:" + sf.getUrlAddress() + ",method:" + sf.getSupportMethods() + "未配置功能定义");
+            //logger.warn("url:" + sf.getUrlAddress() + ",method:" + sf.getSupportMethods() + "未配置功能定义");
             throw new ApplicationException(PmsCode.FUNCTION_UN_DEFINE);
         } else if (sf.getStatus() == CommonStatus.DISABLE) {
             throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_DISABLED);

@@ -260,7 +260,7 @@ public class ConsumeController extends BaseController {
             if(bean.getCompareId()==null){
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());
-                bean.setSourceId(us.getBuyTypeId());
+                bean.setSourceId(us.getTreatSourceId());
                 bean.setPayment(us.getPayment());
             }
         } catch (Exception e) {
@@ -498,7 +498,7 @@ public class ConsumeController extends BaseController {
             mdd.addChild(child);
         }
         chartData.setData(new ArrayList<>(dataMap.values()));
-        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(), totalValue);
+        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
         chartData.setSubTitle(subTitle);
         return chartData;
 
@@ -527,7 +527,7 @@ public class ConsumeController extends BaseController {
             seriesData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(), totalValue);
+        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(seriesData);
         return chartPieData;
@@ -554,7 +554,7 @@ public class ConsumeController extends BaseController {
             yData.getData().add(bean.getValue());
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf)+",总计"+getSubTitlePostfix(sf.getType(),totalValue);
+        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(),totalValue));
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         return chartData;
@@ -632,7 +632,7 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf)+",总计"+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
+        String subTitle = this.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -765,7 +765,7 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf)+",总计"+totalCount.longValue() + "次，" + totalValue.doubleValue() + "元";
+        String subTitle = this.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return callback(chartData);
