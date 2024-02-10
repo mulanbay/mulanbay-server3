@@ -15,8 +15,8 @@ import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.GoodsConsumeType;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
-import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugDetailSH;
-import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugDetailStatSH;
+import cn.mulanbay.pms.web.bean.req.health.drugDetail.TreatDrugDetailSH;
+import cn.mulanbay.pms.web.bean.req.health.drugDetail.TreatDrugDetailStatSH;
 import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugGroupSH;
 import cn.mulanbay.pms.web.bean.req.health.operation.TreatOperationGroupSH;
 import cn.mulanbay.pms.web.bean.req.health.operation.TreatOperationStatSH;
@@ -254,6 +254,26 @@ public class TreatService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除药品异常", e);
+        }
+    }
+
+    /**
+     * 删除手术
+     *
+     * @param operationId
+     */
+    public void deleteOperation(Long operationId) {
+        try {
+            // step 1 删除检验
+            String hql = "delete from TreatTest where operation.operationId=?1 ";
+            this.updateEntities(hql, operationId);
+
+            // step 2 删除手术记录
+            hql = "delete from TreatOperation where operationId=?1 ";
+            this.updateEntities(hql, operationId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除手术异常", e);
         }
     }
 
@@ -815,6 +835,33 @@ public class TreatService extends BaseHibernateDao {
      * @param syncToConsume
      * @param us
      */
+    public void copyTreat(Treat treat,boolean syncToConsume,UserSet us,List<TreatDrug> copyDrugList,List<TreatOperation> copyOperationList) {
+        try {
+            this.saveTreat(treat,syncToConsume,us);
+            if(StringUtil.isNotEmpty(copyDrugList)){
+                for(TreatDrug drug : copyDrugList){
+                    drug.setTreat(treat);
+                    this.saveEntity(drug);
+                }
+            }
+            if(StringUtil.isNotEmpty(copyOperationList)){
+                for(TreatOperation operation : copyOperationList){
+                    operation.setTreat(treat);
+                    this.saveEntity(operation);
+                }
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR, "保存记录异常", e);
+        }
+    }
+
+
+    /**
+     * 保存记录
+     * @param treat
+     * @param syncToConsume
+     * @param us
+     */
     public void saveTreat(Treat treat,boolean syncToConsume,UserSet us) {
         try {
             if(treat.getTreatId()==null){
@@ -905,6 +952,31 @@ public class TreatService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取时间列表异常", e);
+        }
+    }
+
+    /**
+     * 查找明细数量
+     * @param startTime
+     * @param endTime
+     * @param userId
+     * @param drugId
+     * @return
+     */
+    public long getDetailCount(Date startTime,Date endTime,Long userId,Long drugId,Long detailId) {
+        try {
+            String sql = """
+                    select count(0) from treat_drug_detail
+                    where occur_time>=?1 and occur_time<=?2 and user_id=?3 and drug_id=?4
+                    """;
+            if(detailId!=null){
+                sql+=" and detail_id!="+detailId;
+            }
+            long n = this.getCountSQL(sql,startTime,endTime,userId,drugId);
+            return n;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "查找明细数量异常", e);
         }
     }
 

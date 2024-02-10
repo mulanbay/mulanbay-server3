@@ -16,6 +16,9 @@ public class TreatOperationStat {
 
     private Date maxDate;
 
+    public TreatOperationStat() {
+    }
+
     public TreatOperationStat(String name, BigInteger totalCount, BigDecimal totalFee, Date minDate, Date maxDate) {
         this.name = name;
         this.totalCount = totalCount;

@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.web.bean.req.health.drug;
+package cn.mulanbay.pms.web.bean.req.health.drugDetail;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;

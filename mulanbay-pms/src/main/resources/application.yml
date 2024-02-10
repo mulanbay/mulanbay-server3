@@ -165,6 +165,9 @@ mulanbay:
   health:
     #分类分组的时长
     categoryDays: 365
+    drug:
+      #用药的最小间隔（分钟）
+      detailMinInv: 30
   nlp:
     model:
       #模型是否要初始化

@@ -3,10 +3,8 @@ package cn.mulanbay.pms.web.bean.req.health.drug;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -53,12 +51,12 @@ public class TreatDrugForm implements BindUser {
     @NotEmpty(message = "使用方式不能为空")
     private String useWay;
 
-    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "使用方式不能为空")
     private Date treatDate;
 
     //开始于结束用药时间
-    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "开始日期不能为空")
     private Date beginDate;
 

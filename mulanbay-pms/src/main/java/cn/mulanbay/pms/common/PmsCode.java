@@ -244,7 +244,7 @@ public class PmsCode {
     /**
      * 健康类 start
      **/
-    public static final int TREAT_DRUG_DETAIL_OCCURTIME_INCORRECT = 1090101;
+    public static final int TREAT_DRUG_DETAIL_OCCUR_TIME_INCORRECT = 1090101;
 
     public static final int TREAT_SYNC_UN_CONFIG = 1090102;
 

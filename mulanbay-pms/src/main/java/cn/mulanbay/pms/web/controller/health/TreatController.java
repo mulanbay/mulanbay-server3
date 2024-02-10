@@ -5,6 +5,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
@@ -13,6 +14,8 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.UserHandler;
 import cn.mulanbay.pms.persistent.domain.Treat;
+import cn.mulanbay.pms.persistent.domain.TreatDrug;
+import cn.mulanbay.pms.persistent.domain.TreatOperation;
 import cn.mulanbay.pms.persistent.domain.UserSet;
 import cn.mulanbay.pms.persistent.dto.health.*;
 import cn.mulanbay.pms.persistent.enums.ChartType;
@@ -23,7 +26,9 @@ import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.GroupType;
-import cn.mulanbay.pms.web.bean.req.health.drug.TreatForm;
+import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugSH;
+import cn.mulanbay.pms.web.bean.req.health.operation.TreatOperationSH;
+import cn.mulanbay.pms.web.bean.req.health.treat.TreatForm;
 import cn.mulanbay.pms.web.bean.req.health.treat.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
@@ -166,6 +171,63 @@ public class TreatController extends BaseController {
         BeanCopy.copy(form, bean);
         treatService.saveTreat(bean, form.getSyncToConsume(),us);
         return callback(bean);
+    }
+
+    /**
+     * 复制
+     *
+     * @return
+     */
+    @RequestMapping(value = "/copy", method = RequestMethod.POST)
+    public ResultBean copy(@RequestBody @Valid TreatCopyForm form) {
+        UserSet us = userHandler.getUserSet(form.getUserId());
+        this.checkConsumeSync(form.getSyncToConsume(), us);
+        Treat bean = baseService.getObject(beanClass, form.getTreatId());
+        Treat copyBean = new Treat();
+        BeanCopy.copy(bean,copyBean);
+        copyBean.setTreatId(null);
+        copyBean.setTreatTime(form.getTreatTime());
+        copyBean.setStage(form.getStage());
+        copyBean.setCreatedTime(null);
+        copyBean.setModifyTime(null);
+        List<TreatDrug> copyDrugList = new ArrayList<>();
+        if(form.getCopyDrug()){
+            TreatDrugSH ds = new TreatDrugSH();
+            ds.setUserId(form.getUserId());
+            ds.setTreatId(form.getTreatId());
+            ds.setPage(BaseHibernateDao.NO_PAGE);
+            PageRequest pr = ds.buildQuery();
+            pr.setBeanClass(TreatDrug.class);
+            List<TreatDrug> drugList = baseService.getBeanList(pr);
+            for(TreatDrug d : drugList){
+                TreatDrug copy = new TreatDrug();
+                BeanCopy.copy(d,copy);
+                copy.setDrugId(null);
+                copy.setCreatedTime(null);
+                copy.setModifyTime(null);
+                copyDrugList.add(copy);
+            }
+        }
+        List<TreatOperation> copyOperationList = new ArrayList<>();
+        if(form.getCopyOperation()){
+            TreatOperationSH ds = new TreatOperationSH();
+            ds.setUserId(form.getUserId());
+            ds.setTreatId(form.getTreatId());
+            ds.setPage(BaseHibernateDao.NO_PAGE);
+            PageRequest pr = ds.buildQuery();
+            pr.setBeanClass(TreatDrug.class);
+            List<TreatOperation> operationList = baseService.getBeanList(pr);
+            for(TreatOperation d : operationList){
+                TreatOperation copy = new TreatOperation();
+                BeanCopy.copy(d,copy);
+                copy.setOperationId(null);
+                copy.setCreatedTime(null);
+                copy.setModifyTime(null);
+                copyOperationList.add(copy);
+            }
+        }
+        treatService.copyTreat(copyBean, form.getSyncToConsume(), us,copyDrugList,copyOperationList);
+        return callback(null);
     }
 
     /**

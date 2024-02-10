@@ -43,6 +43,10 @@ public class TreatDrugDetail implements java.io.Serializable {
     //实际食用的量，可能半颗
     @Column(name = "ec")
     private Double ec;
+
+    @Column(name = "remark")
+    private String remark;
+
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
@@ -101,6 +105,14 @@ public class TreatDrugDetail implements java.io.Serializable {
 
     public void setEc(Double ec) {
         this.ec = ec;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Date getCreatedTime() {
