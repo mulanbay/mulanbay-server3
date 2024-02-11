@@ -569,7 +569,7 @@ public class TreatService extends BaseHibernateDao {
      */
     public TreatTest getLastTest(String name, Long userId) {
         try {
-            String hql = "from TreatTest where name=?1 and userId=?2 order by testDate desc ";
+            String hql = "from TreatTest where name=?1 and userId=?2 order by testTime desc ";
             return this.getEntity(hql,TreatTest.class, name, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,

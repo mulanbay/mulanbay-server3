@@ -16,7 +16,7 @@ public class TreatDrugSH extends PageSearch implements BindUser, FullEndDateTime
     @Query(fieldName = "treat.tags", op = Parameter.Operator.EQ)
     private String tags;
 
-    @Query(fieldName = "name,disease", op = Parameter.Operator.LIKE)
+    @Query(fieldName = "drugName,disease", op = Parameter.Operator.LIKE, crossType = CrossType.OR)
     private String name;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)

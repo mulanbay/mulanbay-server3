@@ -4,6 +4,7 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.EnumIdType;
 import cn.mulanbay.web.bean.request.PageSearch;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -68,4 +69,5 @@ public class TreatDrugGroupSH extends PageSearch implements BindUser {
     public void setGroupField(String groupField) {
         this.groupField = groupField;
     }
+
 }

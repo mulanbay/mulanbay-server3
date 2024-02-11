@@ -20,9 +20,11 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +39,13 @@ public class TreatDrugController extends BaseController {
 
     private static Class<TreatDrug> beanClass = TreatDrug.class;
 
+    /**
+     * 分类分组的时长
+     * 例：365天则说明统计最近一年内的分组信息
+     */
+    @Value("${mulanbay.health.categoryDays}")
+    int categoryDays;
+
     @Autowired
     TreatService treatService;
 
@@ -47,8 +56,11 @@ public class TreatDrugController extends BaseController {
      */
     @RequestMapping(value = "/tree")
     public ResultBean tree(TreatDrugGroupSH sf) {
-
         try {
+            Date endDate = new Date();
+            Date startDate = DateUtil.getDate(-categoryDays,endDate);
+            sf.setStartDate(startDate);
+            sf.setEndDate(endDate);
             List<String> categoryList = treatService.getDrugCateList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
             int i = 0;

@@ -74,6 +74,7 @@ public class TreatDrugDetailController extends BaseController {
         BeanCopy.copy(form, bean);
         TreatDrug treatDrug = baseService.getObject(TreatDrug.class,form.getDrugId());
         bean.setDrug(treatDrug);
+        checkTreatDrugDetail(bean);
         treatService.saveOrUpdateTreatDrugDetail(bean);
         return callback(bean);
     }
@@ -102,7 +103,7 @@ public class TreatDrugDetailController extends BaseController {
             //现在和模板时间相差的天数
             int days = DateUtil.getIntervalDays(form.getBeginDate(), form.getEndDate());
             List<TreatDrugDetail> newList = new ArrayList<>();
-            for(int i=0;i<days;i++){
+            for(int i=0;i<=days;i++){
                 Date date = DateUtil.getDate(i,form.getBeginDate());
                 for (TreatDrugDetail se : list) {
                     TreatDrugDetail nn = new TreatDrugDetail();
@@ -126,7 +127,7 @@ public class TreatDrugDetailController extends BaseController {
         Date endTime = new Date(bean.getOccurTime().getTime()+60*1000L*minInterval);
         long n = treatService.getDetailCount(startTime,endTime,bean.getUserId(),bean.getDrug().getDrugId(),bean.getDetailId());
         if (n>0) {
-            String msg = "在此用药时间段的"+minInterval+"分钟间隔内，一共还有"+n+"个用药记录，重复输入.";
+            String msg = "在此用药时间段的"+minInterval+"分钟间隔内，一共还有"+n+"个用药记录，请勿重复输入.";
             throw new ApplicationException(PmsCode.TREAT_DRUG_DETAIL_OCCUR_TIME_INCORRECT,msg);
         }
     }

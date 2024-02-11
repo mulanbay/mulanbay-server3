@@ -2,6 +2,7 @@ package cn.mulanbay.pms.web.controller.health;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -18,11 +19,13 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,6 +39,13 @@ import java.util.List;
 public class TreatOperationController extends BaseController {
 
     private static Class<TreatOperation> beanClass = TreatOperation.class;
+
+    /**
+     * 分类分组的时长
+     * 例：365天则说明统计最近一年内的分组信息
+     */
+    @Value("${mulanbay.health.categoryDays}")
+    int categoryDays;
 
     @Autowired
     TreatService treatService;
@@ -63,6 +73,10 @@ public class TreatOperationController extends BaseController {
     @RequestMapping(value = "/tree")
     public ResultBean tree(TreatOperationGroupSH sf) {
         try {
+            Date endDate = new Date();
+            Date startDate = DateUtil.getDate(-categoryDays,endDate);
+            sf.setStartDate(startDate);
+            sf.setEndDate(endDate);
             List<String> categoryList = treatService.getOperationCateList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
             for (String gt : categoryList) {

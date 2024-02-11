@@ -45,9 +45,9 @@ public class TreatTest implements java.io.Serializable {
     @Column(name = "value")
     private String value;
     //如果检查结果是数字类的minValue，maxValue为参考范围的最小最大值
-    @Column(name = "min_malue")
+    @Column(name = "min_value")
     private Double minValue;
-    @Column(name = "max_malue")
+    @Column(name = "max_value")
     private Double maxValue;
     //如果检查结果是普通的汉字类，则referScope为参考范围
     @Column(name = "refer_scope")
@@ -60,7 +60,7 @@ public class TreatTest implements java.io.Serializable {
     @Column(name = "result")
     private TreatTestResult result;
     //分类/试验方法
-    @Column(name = "type_ame")
+    @Column(name = "type_name")
     private String typeName;
     @Column(name = "remark")
     private String remark;
