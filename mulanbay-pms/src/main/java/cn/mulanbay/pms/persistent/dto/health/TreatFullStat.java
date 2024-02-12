@@ -8,7 +8,7 @@ public class TreatFullStat {
 
     private String tags;
 
-    private BigInteger totalCount;
+    private Long totalCount;
 
     private Date minTreatTime;
 
@@ -27,7 +27,7 @@ public class TreatFullStat {
     // 个人支付费用
     private BigDecimal pdFee;
 
-    public TreatFullStat(String tags, BigInteger totalCount, Date minTreatTime, Date maxTreatTime, BigDecimal regFee, BigDecimal drugFee, BigDecimal operationFee, BigDecimal totalFee, BigDecimal miFee, BigDecimal pdFee) {
+    public TreatFullStat(String tags, Long totalCount, Date minTreatTime, Date maxTreatTime, BigDecimal regFee, BigDecimal drugFee, BigDecimal operationFee, BigDecimal totalFee, BigDecimal miFee, BigDecimal pdFee) {
         this.tags = tags;
         this.totalCount = totalCount;
         this.minTreatTime = minTreatTime;
@@ -48,11 +48,11 @@ public class TreatFullStat {
         this.tags = tags;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

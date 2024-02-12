@@ -248,6 +248,8 @@ public class PmsCode {
 
     public static final int TREAT_SYNC_UN_CONFIG = 1090102;
 
+    public static final int TREAT_TEST_NAME_DUPLICATE = 1090103;
+
     /** 健康类 end **/
 
     /**

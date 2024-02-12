@@ -8,7 +8,7 @@ public class TreatOperationStat {
 
     private String name;
 
-    private BigInteger totalCount;
+    private Long totalCount;
 
     private BigDecimal totalFee;
 
@@ -19,7 +19,7 @@ public class TreatOperationStat {
     public TreatOperationStat() {
     }
 
-    public TreatOperationStat(String name, BigInteger totalCount, BigDecimal totalFee, Date minDate, Date maxDate) {
+    public TreatOperationStat(String name, Long totalCount, BigDecimal totalFee, Date minDate, Date maxDate) {
         this.name = name;
         this.totalCount = totalCount;
         this.totalFee = totalFee;
@@ -35,11 +35,11 @@ public class TreatOperationStat {
         this.name = name;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

@@ -169,7 +169,7 @@ public class TreatService extends BaseHibernateDao {
         try {
             PageRequest pr = sf.buildQuery();
             String sql= """
-                    select {group_field} as name,count(0) as totalCount,sum({fee_field}) as totalFee from Treat
+                    select {group_field} as name,count(0) as totalCount,sum({fee_field}) as totalFee from treat
                      {query_para}
                      group by {group_field} order by totalCount desc
                     """;
@@ -196,7 +196,7 @@ public class TreatService extends BaseHibernateDao {
             PageRequest pr = sf.buildQuery();
             pr.setNeedWhere(false);
             String sql= """
-                    select name,min(date) as minDate,max(date) as maxDate,count(0) as totalCount,sum(total_fee) as totalFee from (
+                    select name,count(0) as totalCount,sum(total_fee) as totalFee,min(date) as minDate,max(date) as maxDate from (
                     select operation.{field} as name,operation.treat_date as date,treat.total_fee from treat_operation operation,treat treat
                     where operation.treat_id= treat.treat_id
                      {query_para}
@@ -507,6 +507,26 @@ public class TreatService extends BaseHibernateDao {
     }
 
     /**
+     * 获取检验测试的次数
+     * @param operationId
+     * @param userId
+     * @param name
+     * @return
+     */
+    public long getTestNameCount(Long operationId, Long userId,String name,Long testId) {
+        try {
+            String hql = "select count(0) as n from TreatTest where operation.operationId=?1 and userId=?2 and name=?3 ";
+            if(testId!=null){
+                hql+="and testId!="+testId;
+            }
+            return this.getCount(hql, operationId, userId, name);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取用药次数异常", e);
+        }
+    }
+
+    /**
      * 获取看病记录关键字
      *
      * @return
@@ -534,9 +554,9 @@ public class TreatService extends BaseHibernateDao {
     public List<TreatDrugDetailStat> getDrugDetailStat(TreatDrugDetailStatSH sf) {
         try {
             PageRequest pr = sf.buildQuery();
-            pr.setNeedWhere(false);
+            //pr.setNeedWhere(false);
             String sql= """
-                    select td.drug_id as drugId ,td.drug_name as drugName,td.treat_time as treatTime,
+                    select td.drug_id as drugId ,td.drug_name as drugName,td.treat_date as treatDate,
                     min(tdd.occur_time) as minTime,max(tdd.occur_time) as maxTime,count(0) as totalCount,datediff(max(tdd.occur_time) ,min(tdd.occur_time)) as days
                     from treat_drug_detail tdd,treat_drug td
                     {query_para}
@@ -799,7 +819,7 @@ public class TreatService extends BaseHibernateDao {
      */
     public List<TreatUnionDTO> getTreatList(String tags,Long userId,Date startDate,Date endDate) {
         try {
-            int index =0;
+            int index =START_OPL;
             List args = new ArrayList();
             String sql= """
                     select tr.hospital,tr.department,tr.organ,tr.disease,tr.confirm_disease as confirmDisease,td.drug_name as drugName,op.operation_name as operationName

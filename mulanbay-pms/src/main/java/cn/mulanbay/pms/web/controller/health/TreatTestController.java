@@ -8,6 +8,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.TreatOperation;
 import cn.mulanbay.pms.persistent.domain.TreatTest;
 import cn.mulanbay.pms.persistent.enums.ChartType;
@@ -112,6 +113,7 @@ public class TreatTestController extends BaseController {
                 bean.setResult(getResult(bean));
             }
         }
+        checkTest(bean);
         baseService.saveObject(bean);
         return callback(bean);
     }
@@ -151,6 +153,12 @@ public class TreatTestController extends BaseController {
         }
     }
 
+    private void checkTest(TreatTest test){
+        long n = treatService.getTestNameCount(test.getOperation().getOperationId(),test.getUserId(),test.getName(),test.getTestId());
+        if(n>0){
+            throw new ApplicationException(PmsCode.TREAT_TEST_NAME_DUPLICATE);
+        }
+    }
 
     /**
      * 获取详情
@@ -174,6 +182,7 @@ public class TreatTestController extends BaseController {
         BeanCopy.copy(form, bean);
         TreatOperation operation = baseService.getObject(TreatOperation.class,form.getOperationId());
         bean.setOperation(operation);
+        checkTest(bean);
         baseService.updateObject(bean);
         return callback(bean);
     }

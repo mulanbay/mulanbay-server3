@@ -5,22 +5,22 @@ import java.util.Date;
 
 public class TreatDrugDetailStat {
 
-    private BigInteger drugId;
+    private Long drugId;
 
     private String drugName;
 
-    private Date treatTime;
+    private Date treatDate;
 
     private Date minTime;
 
     private Date maxTime;
 
-    private BigInteger totalCount;
+    private Object totalCount;
 
     //用药天数
     private Object days;
 
-    public TreatDrugDetailStat(String drugName, Date minTime, Date maxTime, BigInteger totalCount, Object days) {
+    public TreatDrugDetailStat(String drugName, Date minTime, Date maxTime, Object totalCount, Object days) {
         this.drugName = drugName;
         this.minTime = minTime;
         this.maxTime = maxTime;
@@ -28,21 +28,21 @@ public class TreatDrugDetailStat {
         this.days = days;
     }
 
-    public TreatDrugDetailStat(BigInteger drugId, String drugName, Date treatTime, Date minTime, Date maxTime, BigInteger totalCount, Object days) {
+    public TreatDrugDetailStat(Long drugId, String drugName, Date treatDate, Date minTime, Date maxTime, Object totalCount, Object days) {
         this.drugId = drugId;
         this.drugName = drugName;
-        this.treatTime = treatTime;
+        this.treatDate = treatDate;
         this.minTime = minTime;
         this.maxTime = maxTime;
         this.totalCount = totalCount;
         this.days = days;
     }
 
-    public BigInteger getDrugId() {
+    public Long getDrugId() {
         return drugId;
     }
 
-    public void setDrugId(BigInteger drugId) {
+    public void setDrugId(Long drugId) {
         this.drugId = drugId;
     }
 
@@ -54,12 +54,12 @@ public class TreatDrugDetailStat {
         this.drugName = drugName;
     }
 
-    public Date getTreatTime() {
-        return treatTime;
+    public Date getTreatDate() {
+        return treatDate;
     }
 
-    public void setTreatTime(Date treatTime) {
-        this.treatTime = treatTime;
+    public void setTreatDate(Date treatDate) {
+        this.treatDate = treatDate;
     }
 
     public Date getMinTime() {
@@ -78,11 +78,11 @@ public class TreatDrugDetailStat {
         this.maxTime = maxTime;
     }
 
-    public BigInteger getTotalCount() {
+    public Object getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Object totalCount) {
         this.totalCount = totalCount;
     }
 
@@ -100,7 +100,7 @@ public class TreatDrugDetailStat {
      * @return
      */
     public long getTotalCountValue() {
-        return totalCount.longValue();
+        return Long.parseLong(totalCount.toString());
     }
 
     /**

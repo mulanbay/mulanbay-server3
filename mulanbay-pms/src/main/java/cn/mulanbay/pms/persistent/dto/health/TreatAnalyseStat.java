@@ -7,11 +7,11 @@ public class TreatAnalyseStat {
 
     private String name;
 
-    private BigInteger totalCount;
+    private Long totalCount;
 
     private BigDecimal totalFee;
 
-    public TreatAnalyseStat(String name, BigInteger totalCount, BigDecimal totalFee) {
+    public TreatAnalyseStat(String name, Long totalCount, BigDecimal totalFee) {
         this.name = name;
         this.totalCount = totalCount;
         this.totalFee = totalFee;
@@ -25,11 +25,11 @@ public class TreatAnalyseStat {
         this.name = name;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

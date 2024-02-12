@@ -157,10 +157,10 @@ public class TreatOperationController extends BaseController {
     public ResultBean stat(TreatOperationStatSH sf) {
         List<TreatOperationStat> data = treatService.getOperationStat(sf);
         TreatOperationStat total = new TreatOperationStat();
-        BigInteger n = BigInteger.ZERO;
+        long n = 0L;
         BigDecimal totalFee = BigDecimal.ZERO;
         for (TreatOperationStat bean : data) {
-            n = n.add(bean.getTotalCount());
+            n += bean.getTotalCount();
             totalFee = totalFee.add(bean.getTotalFee());
         }
         total.setName("小计");

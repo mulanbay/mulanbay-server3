@@ -28,7 +28,6 @@ import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugSH;
 import cn.mulanbay.pms.web.bean.req.health.operation.TreatOperationSH;
-import cn.mulanbay.pms.web.bean.req.health.treat.TreatForm;
 import cn.mulanbay.pms.web.bean.req.health.treat.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
@@ -562,31 +561,6 @@ public class TreatController extends BaseController {
             }
         }
         return data;
-    }
-
-
-    /**
-     * 关键字列表
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getTagsTree")
-    public ResultBean getTagsTree(TreatTagsSH sf) {
-        List<TreeBean> list = new ArrayList<TreeBean>();
-        Date endDate = new Date();
-        Date startDate = DateUtil.getDate(-categoryDays,endDate);
-        sf.setStartDate(startDate);
-        sf.setEndDate(endDate);
-        List<String> tagsList = treatService.getTagsList(sf);
-        //去重,不需要，实际上每次看病只会是一个病，如果是两种病，肯定也是两个科室去看，会有两条看病记录
-        //Set<String> tagsSet = deleteDuplicate(tagsList);
-        for (String s : tagsList) {
-            TreeBean tb = new TreeBean();
-            tb.setText(s);
-            tb.setId(s);
-            list.add(tb);
-        }
-        return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
     }
 
     /**
