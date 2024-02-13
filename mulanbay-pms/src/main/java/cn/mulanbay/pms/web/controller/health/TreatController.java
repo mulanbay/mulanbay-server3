@@ -419,7 +419,7 @@ public class TreatController extends BaseController {
     }
 
     private ChartData createDateStatChartData(TreatDateStatSH sf){
-        List<TreatDateStat> list = treatService.statDateTreatRecord(sf);
+        List<TreatDateStat> list = treatService.getDateStat(sf);
         ChartData chartData = new ChartData();
         chartData.setTitle("看病统计");
         chartData.setLegendData(new String[]{"费用","次数"});
@@ -461,7 +461,7 @@ public class TreatController extends BaseController {
      * @return
      */
     private ChartCalendarData createChartCalendarDataDateStat(TreatDateStatSH sf) {
-        List<TreatDateStat> list = treatService.statDateTreatRecord(sf);
+        List<TreatDateStat> list = treatService.getDateStat(sf);
         ChartCalendarData calendarData = ChartUtil.createChartCalendarData("看病统计", "次数", "次", sf, list);
         if (!StringUtil.isEmpty(sf.getDisease())) {
             List<Date> dateList = treatService.getTreatDateList(sf);
@@ -498,7 +498,7 @@ public class TreatController extends BaseController {
             legendData[i] = sf.getYears().get(i).toString();
             TreatDateStatSH monthStatSearch = this.generateSearch(sf.getYears().get(i), sf);
             ChartYData yData = new ChartYData(sf.getYears().get(i).toString(),unit);
-            List<TreatDateStat> list = treatService.statDateTreatRecord(monthStatSearch);
+            List<TreatDateStat> list = treatService.getDateStat(monthStatSearch);
             //临时内容，作为补全用
             ChartData temp = new ChartData();
             for (TreatDateStat bean : list) {
@@ -550,7 +550,7 @@ public class TreatController extends BaseController {
         }
         for (int i = 0; i < sf.getYears().size(); i++) {
             TreatDateStatSH monthStatSearch = this.generateSearch(sf.getYears().get(i), sf);
-            List<TreatDateStat> list = treatService.statDateTreatRecord(monthStatSearch);
+            List<TreatDateStat> list = treatService.getDateStat(monthStatSearch);
             for (TreatDateStat bean : list) {
                 String dateString = DateUtil.getFormatDateString(bean.getDateIndexValue().toString(), "yyyyMMdd", "yyyy-MM-dd");
                 if (sf.getGroupType() == GroupType.COUNT) {

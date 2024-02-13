@@ -5,18 +5,21 @@ import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.persistent.query.QueryBuilder;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.req.GroupType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class TreatOverallStatSH extends QueryBuilder implements DateStatSH, BindUser {
 
-
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "treat_time", op = Parameter.Operator.GTE)
     private Date startDate;
 
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "treat_time", op = Parameter.Operator.LTE)
     private Date endDate;
 

@@ -108,6 +108,7 @@ public class ModelEvaluatorManager {
             this.modelHandle = fi;
         }
         if(initModel){
+            logger.info("系统设置为初始化模型文件");
             List<ModelFile> list = this.modelHandle.getModelFileList();
             if(StringUtil.isEmpty(list)){
                 logger.warn("模型文件列表为空");

@@ -7,10 +7,10 @@ public class TreatOverallStat {
 
     private Integer indexValue;
     private String name;
-    private BigInteger totalCount;
+    private Long totalCount;
     private BigDecimal totalFee;
 
-    public TreatOverallStat(Integer indexValue, String name, BigInteger totalCount, BigDecimal totalFee) {
+    public TreatOverallStat(Integer indexValue, String name, Long totalCount, BigDecimal totalFee) {
         this.indexValue = indexValue;
         this.name = name;
         this.totalCount = totalCount;
@@ -33,11 +33,11 @@ public class TreatOverallStat {
         this.name = name;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

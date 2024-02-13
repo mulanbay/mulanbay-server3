@@ -9,10 +9,10 @@ import java.math.BigInteger;
 public class TreatDateStat implements DateStat, CalendarDateStat {
     // 月份
     private Number indexValue;
-    private BigInteger totalCount;
+    private Long totalCount;
     private BigDecimal totalFee;
 
-    public TreatDateStat(Number indexValue, BigInteger totalCount, BigDecimal totalFee) {
+    public TreatDateStat(Number indexValue, Long totalCount, BigDecimal totalFee) {
         this.indexValue = indexValue;
         this.totalCount = totalCount;
         this.totalFee = totalFee;
@@ -39,11 +39,11 @@ public class TreatDateStat implements DateStat, CalendarDateStat {
         this.totalFee = totalFee;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

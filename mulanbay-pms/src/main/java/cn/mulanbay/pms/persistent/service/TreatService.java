@@ -387,13 +387,13 @@ public class TreatService extends BaseHibernateDao {
      * @param sf
      * @return
      */
-    public List<TreatDateStat> statDateTreatRecord(TreatDateStatSH sf) {
+    public List<TreatDateStat> getDateStat(TreatDateStatSH sf) {
         try {
             PageRequest pr = sf.buildQuery();
             DateGroupType dateGroupType = sf.getDateGroupType();
             String feeField = sf.getFeeField();
             String sql= """
-                    select indexValue,count(0) as totalCount,sum(weight) as totalWeight,sum({fee_field}) as totalFee
+                    select indexValue,count(0) as totalCount,sum({fee_field}) as totalFee
                     from ( select {date_group_field} as indexValue,{fee_field} from treat
                     {query_para}
                     ) tt group by indexValue order by indexValue
@@ -799,6 +799,7 @@ public class TreatService extends BaseHibernateDao {
                     ) as res group by name,indexValue order by indexValue
                     """;
             sql = sql.replace("{query_para}",pr.getParameterString())
+                     .replace("{group_field}",sf.getGroupField())
                      .replace("{fee_field}",feeField)
                      .replace("{date_group_field}",MysqlUtil.dateTypeMethod("treat_time", dateGroupType));
             List<TreatOverallStat> list = this.getEntityListSI(sql, pr.getPage(), pr.getPageSize(), TreatOverallStat.class, pr.getParameterValue());
