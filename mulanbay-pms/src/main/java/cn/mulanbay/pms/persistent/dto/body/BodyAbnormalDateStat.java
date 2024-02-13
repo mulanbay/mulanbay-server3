@@ -9,10 +9,10 @@ import java.math.BigInteger;
 public class BodyAbnormalDateStat implements DateStat, CalendarDateStat {
 
     private Number indexValue;
-    private BigInteger totalCount;
+    private Long totalCount;
     private BigDecimal totalDays;
 
-    public BodyAbnormalDateStat(Number indexValue, BigInteger totalCount, BigDecimal totalDays) {
+    public BodyAbnormalDateStat(Number indexValue, Long totalCount, BigDecimal totalDays) {
         this.indexValue = indexValue;
         this.totalCount = totalCount;
         this.totalDays = totalDays;
@@ -31,11 +31,11 @@ public class BodyAbnormalDateStat implements DateStat, CalendarDateStat {
         this.indexValue = indexValue;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

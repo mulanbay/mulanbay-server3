@@ -13,9 +13,11 @@ import cn.mulanbay.pms.persistent.dto.body.BodyInfoDateStat;
 import cn.mulanbay.pms.persistent.enums.BodyAbnormalGroupType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
+import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalCateSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalDateStatSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalStatSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyInfoDateStatSH;
+import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugGroupSH;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,27 @@ import java.util.List;
 @Transactional
 public class BodyService  extends BaseHibernateDao {
 
+    /**
+     * 获取分类列表，统计聚合
+     *
+     * @return
+     */
+    public List<String> getAbnormalCateList(BodyAbnormalCateSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String hql= """
+                    select distinct {group_field} from BodyAbnormal
+                     {query_para}
+                     order by {group_field}
+                    """;
+            hql = hql.replace("{query_para}",pr.getParameterString())
+                    .replace("{group_field}",sf.getGroupField());
+            return this.getEntityListHI(hql, NO_PAGE,NO_PAGE_SIZE,String.class, pr.getParameterValue());
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取看病用药的分类列表异常", e);
+        }
+    }
 
     /**
      * 获取身体不适统计
@@ -50,7 +73,7 @@ public class BodyService  extends BaseHibernateDao {
                 //数字转换为字符
                 sb.append("CAST(" + groupField.getField() + " AS CHAR) as name");
             }
-            sb.append(",last_days,occur_date from body_abnormal_record ");
+            sb.append(",days,occur_date from body_abnormal ");
             sb.append(pr.getParameterString());
             int lastIndex = pr.getNextIndex();
             if (!StringUtil.isEmpty(sf.getName())) {

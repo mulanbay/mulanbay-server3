@@ -1,27 +1,41 @@
-package cn.mulanbay.pms.persistent.dto.body;
+package cn.mulanbay.pms.web.bean.res.body;
+
+
+import cn.mulanbay.pms.persistent.dto.health.TreatAnalyseDetailStat;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
-public class BodyAbnormalStat {
+public class BodyAbnormalAnalyseVo {
 
+    private long id;
+    //器官名称
     private String name;
 
+    //持续次数
     private Long totalCount;
 
+    //持续天数
     private BigDecimal totalDays;
 
     private Date maxOccurDate;
 
     private Date minOccurDate;
 
-    public BodyAbnormalStat(String name, Long totalCount, BigDecimal totalDays, Date maxOccurDate, Date minOccurDate) {
-        this.name = name;
-        this.totalCount = totalCount;
-        this.totalDays = totalDays;
-        this.maxOccurDate = maxOccurDate;
-        this.minOccurDate = minOccurDate;
+    private TreatAnalyseDetailStat treatStat;
+
+    //平均体重
+    private BigDecimal avgWeight;
+
+    //平均身高
+    private BigDecimal avgHeight;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -62,5 +76,29 @@ public class BodyAbnormalStat {
 
     public void setMinOccurDate(Date minOccurDate) {
         this.minOccurDate = minOccurDate;
+    }
+
+    public TreatAnalyseDetailStat getTreatStat() {
+        return treatStat;
+    }
+
+    public void setTreatStat(TreatAnalyseDetailStat treatStat) {
+        this.treatStat = treatStat;
+    }
+
+    public BigDecimal getAvgWeight() {
+        return avgWeight;
+    }
+
+    public void setAvgWeight(BigDecimal avgWeight) {
+        this.avgWeight = avgWeight;
+    }
+
+    public BigDecimal getAvgHeight() {
+        return avgHeight;
+    }
+
+    public void setAvgHeight(BigDecimal avgHeight) {
+        this.avgHeight = avgHeight;
     }
 }

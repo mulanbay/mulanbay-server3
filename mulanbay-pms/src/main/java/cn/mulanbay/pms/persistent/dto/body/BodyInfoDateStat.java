@@ -8,12 +8,12 @@ import java.math.BigInteger;
 public class BodyInfoDateStat implements DateStat {
 
     private Number indexValue;
-    private BigInteger totalCount;
+    private Long totalCount;
     private BigDecimal totalWeight;
     private BigDecimal totalHeight;
     private BigDecimal totalBmi;
 
-    public BodyInfoDateStat(Number indexValue, BigInteger totalCount, BigDecimal totalWeight, BigDecimal totalHeight, BigDecimal totalBmi) {
+    public BodyInfoDateStat(Number indexValue, Long totalCount, BigDecimal totalWeight, BigDecimal totalHeight, BigDecimal totalBmi) {
         this.indexValue = indexValue;
         this.totalCount = totalCount;
         this.totalWeight = totalWeight;
@@ -34,11 +34,11 @@ public class BodyInfoDateStat implements DateStat {
         this.indexValue = indexValue;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 

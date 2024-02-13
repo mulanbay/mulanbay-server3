@@ -4,17 +4,18 @@ import cn.mulanbay.pms.persistent.domain.Treat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class TreatAnalyseDetailStat {
 
-    private BigInteger totalCount;
+    private Long totalCount;
 
     private BigDecimal totalFee;
 
-    private Date minTreatTime;
+    private Timestamp minTreatTime;
 
-    private Date maxTreatTime;
+    private Timestamp maxTreatTime;
 
     //最早一次
     private Treat minTreat;
@@ -22,18 +23,18 @@ public class TreatAnalyseDetailStat {
     //最近一次
     private Treat maxTreat;
 
-    public TreatAnalyseDetailStat(BigInteger totalCount, BigDecimal totalFee, Date minTreatTime, Date maxTreatTime) {
+    public TreatAnalyseDetailStat(Long totalCount, BigDecimal totalFee, Timestamp minTreatTime, Timestamp maxTreatTime) {
         this.totalCount = totalCount;
         this.totalFee = totalFee;
         this.minTreatTime = minTreatTime;
         this.maxTreatTime = maxTreatTime;
     }
 
-    public BigInteger getTotalCount() {
+    public Long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(BigInteger totalCount) {
+    public void setTotalCount(Long totalCount) {
         this.totalCount = totalCount;
     }
 
@@ -45,19 +46,19 @@ public class TreatAnalyseDetailStat {
         this.totalFee = totalFee;
     }
 
-    public Date getMinTreatTime() {
+    public Timestamp getMinTreatTime() {
         return minTreatTime;
     }
 
-    public void setMinTreatTime(Date minTreatTime) {
+    public void setMinTreatTime(Timestamp minTreatTime) {
         this.minTreatTime = minTreatTime;
     }
 
-    public Date getMaxTreatTime() {
+    public Timestamp getMaxTreatTime() {
         return maxTreatTime;
     }
 
-    public void setMaxTreatTime(Date maxTreatTime) {
+    public void setMaxTreatTime(Timestamp maxTreatTime) {
         this.maxTreatTime = maxTreatTime;
     }
 

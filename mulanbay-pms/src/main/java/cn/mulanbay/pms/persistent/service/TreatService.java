@@ -315,7 +315,7 @@ public class TreatService extends BaseHibernateDao {
             List args = pr.getParameterValueList();
             String statSql = """
                     select count(0) as totalCount,sum(totalFee) as totalFee ,min(treatTime) as minTreatTime,max(treatTime) as maxTreatTime
-                    from treat
+                    from Treat
                     """;
             statSql+=paraString;
             TreatAnalyseDetailStat stat = this.getEntity(statSql, TreatAnalyseDetailStat.class, args.toArray());
