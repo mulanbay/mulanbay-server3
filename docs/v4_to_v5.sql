@@ -468,5 +468,13 @@ DROP COLUMN `buy_type_id`,
 DROP COLUMN `treat_sub_goods_type_id`,
 CHANGE COLUMN `treat_buy_type_id` `treat_source_id` INT NULL DEFAULT NULL ;
 
+ALTER TABLE `sleep`
+    CHANGE COLUMN `id` `sleep_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `first_wake_up_time` `fwp_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_wake_up_time` `lwp_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `wake_up_count` `wps` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `total_minutes` `duration` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
 
 
