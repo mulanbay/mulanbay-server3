@@ -27,9 +27,7 @@ public class ExperienceDateStatSH extends QueryBuilder implements DateStatSH, Bi
     public Long userId;
 
     @Query(fieldName = "type", op = Parameter.Operator.IN)
-    private String inTypes;
-
-    private List<ExperienceType> types;
+    private String types;
 
     private DateGroupType dateGroupType;
 
@@ -86,34 +84,11 @@ public class ExperienceDateStatSH extends QueryBuilder implements DateStatSH, Bi
         return completeDate;
     }
 
-    public String getInTypes() {
-        return inTypes;
-    }
-
-    public void setInTypes(String inTypes) {
-        this.inTypes = inTypes;
-    }
-
-    public List<ExperienceType> getTypes() {
+    public String getTypes() {
         return types;
     }
 
-    public void setTypes(List<ExperienceType> types) {
+    public void setTypes(String types) {
         this.types = types;
     }
-
-    public void setIntTypes(List<ExperienceType> types) {
-        if (types != null && !types.isEmpty()) {
-            int n = types.size();
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < n; i++) {
-                sb.append(types.get(i).getValue());
-                if (i < n - 1) {
-                    sb.append(",");
-                }
-            }
-            this.inTypes = sb.toString();
-        }
-    }
-
 }

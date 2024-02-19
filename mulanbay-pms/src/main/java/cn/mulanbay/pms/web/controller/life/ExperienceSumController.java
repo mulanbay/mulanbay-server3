@@ -126,6 +126,7 @@ public class ExperienceSumController extends BaseController {
         PageResult<ExperienceSum> qr = baseService.getBeanResult(pr);
         String title = "人生经历汇总分析";
         ChartShadowData chartShadowData = new ChartShadowData();
+        chartShadowData.setUnit("天");
         chartShadowData.setTitle(title);
         chartShadowData.addLegend("学习");
         chartShadowData.addLegend("旅行");
@@ -167,6 +168,7 @@ public class ExperienceSumController extends BaseController {
         chartPieData.getXdata().add(String.valueOf(totalStudyDays));
         ChartPieSerieDetailData studyDataDetail = new ChartPieSerieDetailData();
         studyDataDetail.setName("学习");
+        chartPieData.getXdata().add("学习");
         studyDataDetail.setValue(totalStudyDays);
         serieData.getData().add(studyDataDetail);
 
@@ -174,6 +176,7 @@ public class ExperienceSumController extends BaseController {
         chartPieData.getXdata().add(String.valueOf(totalWorkDays));
         ChartPieSerieDetailData workDataDetail = new ChartPieSerieDetailData();
         workDataDetail.setName("工作");
+        chartPieData.getXdata().add("工作");
         workDataDetail.setValue(totalWorkDays);
         serieData.getData().add(workDataDetail);
 
@@ -181,6 +184,7 @@ public class ExperienceSumController extends BaseController {
         chartPieData.getXdata().add(String.valueOf(totalTravelDays));
         ChartPieSerieDetailData travelDataDetail = new ChartPieSerieDetailData();
         travelDataDetail.setName("旅行");
+        chartPieData.getXdata().add("旅行");
         travelDataDetail.setValue(totalTravelDays);
         serieData.getData().add(travelDataDetail);
 
@@ -188,6 +192,7 @@ public class ExperienceSumController extends BaseController {
         chartPieData.getXdata().add(String.valueOf(totalRestDays));
         ChartPieSerieDetailData restDataDetail = new ChartPieSerieDetailData();
         restDataDetail.setName("休息");
+        chartPieData.getXdata().add("休息");
         restDataDetail.setValue(totalRestDays);
         serieData.getData().add(restDataDetail);
 

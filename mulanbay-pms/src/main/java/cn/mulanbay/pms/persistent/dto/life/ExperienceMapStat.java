@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 public class ExperienceMapStat {
 
-    private Long id;
+    private Number id;
 
     private String name;
 
@@ -13,32 +13,26 @@ public class ExperienceMapStat {
     private Long totalCount;
 
     //天数
-    private BigInteger totalDays;
+    private Long totalDays;
 
     private BigDecimal totalCost;
 
     public ExperienceMapStat() {
     }
 
-    public ExperienceMapStat(Long id, Long totalCount, BigInteger totalDays, BigDecimal totalCost) {
+    public ExperienceMapStat(Number id, String name, Long totalCount, Long totalDays, BigDecimal totalCost) {
         this.id = id;
-        this.totalCount = totalCount;
-        this.totalDays = totalDays;
-        this.totalCost = totalCost;
-    }
-
-    public ExperienceMapStat(String name, Long totalCount, BigInteger totalDays, BigDecimal totalCost) {
         this.name = name;
         this.totalCount = totalCount;
         this.totalDays = totalDays;
         this.totalCost = totalCost;
     }
 
-    public Long getId() {
+    public Number getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Number id) {
         this.id = id;
     }
 
@@ -58,11 +52,11 @@ public class ExperienceMapStat {
         this.totalCount = totalCount;
     }
 
-    public BigInteger getTotalDays() {
+    public Long getTotalDays() {
         return totalDays;
     }
 
-    public void setTotalDays(BigInteger totalDays) {
+    public void setTotalDays(Long totalDays) {
         this.totalDays = totalDays;
     }
 

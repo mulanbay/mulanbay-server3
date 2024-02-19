@@ -44,25 +44,27 @@ public class ExperienceService extends BaseHibernateDao {
             String groupCdn = null;
             String groupField = null;
             if (mapType == MapType.CHINA) {
-                groupCdn ="province_id as id";
+                groupCdn ="province_id as id,null as name";
                 groupField = "province_id";
             } else if (mapType == MapType.WORLD) {
-                groupCdn ="country_id as id";
+                groupCdn ="country_id as id,null as name";
                 groupField = "country_id";
             } else if (mapType == MapType.LOCATION) {
-                groupCdn ="arrive_city as id";
-                groupField = "arrive_city as name";
+                groupCdn ="null as id,arrive_city as name";
+                groupField = "arrive_city";
             }
             statSql = statSql.replace("{query_para}",pr.getParameterString())
                              .replace("{group_cdn}",groupCdn)
                              .replace("{group_field}",groupField);
             List<ExperienceMapStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, ExperienceMapStat.class, pr.getParameterValue());
             for (ExperienceMapStat bb : list) {
-                if (mapType == MapType.CHINA) {
-                    Province province = this.getEntityById(Province.class, bb.getId());
+                if(bb.getId()==null){
+
+                }else if (mapType == MapType.CHINA) {
+                    Province province = this.getEntityById(Province.class, bb.getId().longValue());
                     bb.setName(province.getMapName());
                 }else if (mapType == MapType.WORLD) {
-                    Country country = this.getEntityById(Country.class, bb.getId());
+                    Country country = this.getEntityById(Country.class, bb.getId().longValue());
                     bb.setName(country.getCnName());
                 }
             }
@@ -92,7 +94,7 @@ public class ExperienceService extends BaseHibernateDao {
             List<ExperienceWorldMapStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, ExperienceWorldMapStat.class, pr.getParameterValue());
             for(ExperienceWorldMapStat ms : list){
                 //toDo 后期缓存或者map
-                Country c = this.getEntityById(Country.class,ms.getCountryId());
+                Country c = this.getEntityById(Country.class,ms.getCountryId().longValue());
                 ms.setCountryName(c.getCnName());
             }
             return list;

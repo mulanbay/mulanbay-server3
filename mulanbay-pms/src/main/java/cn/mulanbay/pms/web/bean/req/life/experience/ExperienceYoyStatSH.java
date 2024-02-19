@@ -1,16 +1,12 @@
 package cn.mulanbay.pms.web.bean.req.life.experience;
 
-import cn.mulanbay.pms.persistent.enums.ExperienceType;
 import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
-
-import java.util.List;
-
 
 public class ExperienceYoyStatSH extends BaseYoyStatSH {
 
     private Long userId;
 
-    private List<ExperienceType> types;
+    private String types;
 
     public Long getUserId() {
         return userId;
@@ -20,11 +16,11 @@ public class ExperienceYoyStatSH extends BaseYoyStatSH {
         this.userId = userId;
     }
 
-    public List<ExperienceType> getTypes() {
+    public String getTypes() {
         return types;
     }
 
-    public void setTypes(List<ExperienceType> types) {
+    public void setTypes(String types) {
         this.types = types;
     }
 }

@@ -37,11 +37,11 @@ public class Company implements java.io.Serializable {
     private Integer days;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)
-    @Column(name = "entry_time")
+    @Column(name = "entry_date")
     private Date entryDate;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)
-    @Column(name = "quit_time")
+    @Column(name = "quit_date")
     private Date quitDate;
 
     @Column(name = "remark")

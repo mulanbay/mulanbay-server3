@@ -8,6 +8,13 @@ public class WorldTransferMapStat {
     //抵达城市地理位置
     private String acLocation;
 
+    public WorldTransferMapStat(String startCity, String scLocation, String arriveCity, String acLocation) {
+        this.startCity = startCity;
+        this.scLocation = scLocation;
+        this.arriveCity = arriveCity;
+        this.acLocation = acLocation;
+    }
+
     public String getStartCity() {
         return startCity;
     }

@@ -13,7 +13,7 @@ public class ExperienceSumAnalyseSH extends QueryBuilder implements BindUser {
     @Query(fieldName = "year", op = Operator.LTE)
     private Integer endYear;
 
-    @Query(fieldName = "user_id", op = Operator.EQ)
+    @Query(fieldName = "userId", op = Operator.EQ)
     private Long userId;
 
     public Integer getStartYear() {

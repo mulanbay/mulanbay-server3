@@ -442,7 +442,7 @@ public class ExperienceController extends BaseController {
                 map.put(name, newStat);
             } else {
                 stat.setTotalCount(stat.getTotalCount()+dd.getTotalCount());
-                stat.setTotalDays(stat.getTotalDays().add(dd.getTotalDays()));
+                stat.setTotalDays(stat.getTotalDays()+(dd.getTotalDays()));
             }
         }
         List<ExperienceMapStat> result = new ArrayList<>();
@@ -612,7 +612,6 @@ public class ExperienceController extends BaseController {
      */
     @RequestMapping(value = "/dateStat", method = RequestMethod.GET)
     public ResultBean dateStat(ExperienceDateStatSH sf) {
-        sf.setIntTypes(sf.getTypes());
         List<ExperienceDateStat> list = experienceService.getDateStat(sf);
         if (sf.getDateGroupType() == DateGroupType.DAYCALENDAR) {
             return callback(ChartUtil.createChartCalendarData("人生经历统计", "次数", "次", sf, list));
@@ -654,7 +653,6 @@ public class ExperienceController extends BaseController {
             dateSearch.setStartDate(DateUtil.getDate(sf.getYears().get(i) + "-01-01", DateUtil.FormatDay1));
             dateSearch.setEndDate(DateUtil.getDate(sf.getYears().get(i) + "-12-31", DateUtil.FormatDay1));
             dateSearch.setUserId(sf.getUserId());
-            dateSearch.setIntTypes(sf.getTypes());
             ChartYData yData = new ChartYData(sf.getYears().get(i).toString(),sf.getGroupType().getUnit());
             List<ExperienceDateStat> list = experienceService.getDateStat(dateSearch);
             //临时内容，作为补全用
