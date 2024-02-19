@@ -6,7 +6,7 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum LifeExperienceCostStatType {
+public enum ExperienceCostStatType {
 
     CONSUME_TYPE("消费类型", 0),
     TYPE("经历类型", 1),
@@ -16,12 +16,12 @@ public enum LifeExperienceCostStatType {
 
     private int value;
 
-    LifeExperienceCostStatType(String name) {
+    ExperienceCostStatType(String name) {
         this.name = name;
     }
 
 
-    LifeExperienceCostStatType(String name, int value) {
+    ExperienceCostStatType(String name, int value) {
         this.name = name;
         this.value = value;
     }

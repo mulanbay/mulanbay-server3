@@ -78,7 +78,6 @@ public class ModelEvaluatorManager {
             logger.info(moduleFile+"模型加载成功");
             return modelEvaluator;
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("加载模型文件"+moduleFile+"异常",e);
         }
         return null;

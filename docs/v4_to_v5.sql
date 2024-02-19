@@ -476,5 +476,77 @@ ALTER TABLE `sleep`
     CHANGE COLUMN `total_minutes` `duration` INT NULL DEFAULT NULL ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+ALTER TABLE `city`
+    ADD COLUMN `status` SMALLINT(5) NULL DEFAULT 1 AFTER `zip_code`,
+ADD COLUMN `remark` VARCHAR(200) NULL AFTER `status`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `city_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT 'ID' ,
+CHANGE COLUMN `name` `city_name` VARCHAR(20) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT 'Name' ,
+CHANGE COLUMN `province_id` `province_id` BIGINT(20) NULL DEFAULT NULL COMMENT 'PROVINCE' ;
 
+ALTER TABLE `country`
+    ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `country_id` BIGINT(20) NOT NULL ;
 
+ALTER TABLE `district`
+    ADD COLUMN `order_index` SMALLINT(5) NULL AFTER `city_id`,
+ADD COLUMN `status` SMALLINT(5) NULL AFTER `order_index`,
+ADD COLUMN `remark` VARCHAR(200) NULL AFTER `status`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `district_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT 'ID' ,
+CHANGE COLUMN `name` `district_name` VARCHAR(20) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT 'NAME' ,
+CHANGE COLUMN `city_id` `city_id` BIGINT(20) NULL DEFAULT NULL COMMENT 'CITY' ;
+
+ALTER TABLE `province`
+    ADD COLUMN `order_index` SMALLINT(5) NULL AFTER `map_name`,
+ADD COLUMN `status` SMALLINT(5) NULL AFTER `order_index`,
+ADD COLUMN `remark` VARCHAR(200) NULL AFTER `status`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `province_id` BIGINT(20) NOT NULL COMMENT 'ID' ,
+CHANGE COLUMN `name` `province_name` VARCHAR(20) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL COMMENT '名称' ;
+
+ALTER TABLE `life_experience` RENAME TO  `experience` ;
+ALTER TABLE `experience`
+    CHANGE COLUMN `id` `exp_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `name` `exp_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `life_experience_consume` RENAME TO  `experience_consume` ;
+ALTER TABLE `experience_consume`
+    CHANGE COLUMN `id` `consume_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `name` `consume_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+    CHANGE COLUMN `life_experience_detail_id` `detail_id` BIGINT NOT NULL COMMENT '人生经历明细' ,
+    CHANGE COLUMN `consume_type_id` `goods_type_id` BIGINT NOT NULL COMMENT '消费类型编号' ,
+    CHANGE COLUMN `buy_record_id` `sc_id` BIGINT NULL DEFAULT NULL COMMENT '消费记录ID' ,
+    CHANGE COLUMN `statable` `stat` BIT(1) NOT NULL COMMENT '是否加入统计' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `life_experience_detail` RENAME TO  `experience_detail` ;
+ALTER TABLE `experience_detail`
+    CHANGE COLUMN `id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `life_experience_id` `exp_id` BIGINT NOT NULL COMMENT '人生经历ID' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `life_experience_sum` RENAME TO  `experience_sum` ;
+ALTER TABLE `experience_sum`
+    CHANGE COLUMN `id` `sum_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `company`
+    CHANGE COLUMN `id` `company_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `name` `company_name` VARCHAR(32) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+#人生经历消费类型与商品类型转换(需要各自匹配转换)
+update experience_consume set goods_type_id =13 where goods_type_id=1 and consume_id>0;
+update experience_consume set goods_type_id =71 where goods_type_id=2 and consume_id>0;
+update experience_consume set goods_type_id =72 where goods_type_id=3 and consume_id>0;
+update experience_consume set goods_type_id =73 where goods_type_id=4 and consume_id>0;
+update experience_consume set goods_type_id =29 where goods_type_id=5 and consume_id>0;
+update experience_consume set goods_type_id =28 where goods_type_id=6 and consume_id>0;
+update experience_consume set goods_type_id =30 where goods_type_id=7 and consume_id>0;
+update experience_consume set goods_type_id =103 where goods_type_id=26 and consume_id>0;
