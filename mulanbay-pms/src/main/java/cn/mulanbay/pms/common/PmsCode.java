@@ -186,11 +186,11 @@ public class PmsCode {
     /**
      * 阅读类 start
      **/
-    public static final int READING_RECORD_STATUS_ERROR = 1060101;
+    public static final int BOOK_STATUS_ERROR = 1060101;
 
-    public static final int READING_RECORD_ISBN_EXIT = 1060102;
+    public static final int BOOK_ISBN_EXIT = 1060102;
 
-    public static final int READING_RECORD_SCORE_NULL = 1060103;
+    public static final int BOOK_SCORE_NULL = 1060103;
 
     /** 阅读类 end **/
 

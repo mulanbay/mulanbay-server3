@@ -550,3 +550,38 @@ update experience_consume set goods_type_id =29 where goods_type_id=5 and consum
 update experience_consume set goods_type_id =28 where goods_type_id=6 and consume_id>0;
 update experience_consume set goods_type_id =30 where goods_type_id=7 and consume_id>0;
 update experience_consume set goods_type_id =103 where goods_type_id=26 and consume_id>0;
+
+ALTER TABLE `reading_record`  RENAME TO  `book` ;
+ALTER TABLE `book`
+    CHANGE COLUMN `id` `book_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `book_category_id` `cate_id` BIGINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `published_year` `publish_year` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `proposed_date` `expert_finish_date` DATE NULL DEFAULT NULL COMMENT '对于未读的书期望时间' ,
+    CHANGE COLUMN `finished_date` `finish_date` DATE NULL DEFAULT NULL COMMENT '完成时间' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `book_category`
+    CHANGE COLUMN `id` `cate_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `cate_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `reading_record_detail` RENAME TO  `read` ;
+ALTER TABLE `read`
+    CHANGE COLUMN `id` `read_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `reading_record_id` `book_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `minutes` `duration` INT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+update book set source=2 where source is null and book_id >0;
+ALTER TABLE `book`
+    CHANGE COLUMN `language` `language` SMALLINT NULL DEFAULT NULL AFTER `book_type`;
+
+ALTER TABLE `book`
+    CHANGE COLUMN `country_id` `country_id` BIGINT(20) NULL DEFAULT NULL ,
+    CHANGE COLUMN `book_type` `book_type` SMALLINT(5) NULL DEFAULT NULL ;
+
+ALTER TABLE `read`  RENAME TO  `read_detail` ;
+ALTER TABLE `read_detail`
+    CHANGE COLUMN `read_id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+

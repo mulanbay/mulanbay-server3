@@ -6,7 +6,7 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum ReadingStatus {
+public enum BookStatus {
 
     READING(0, "正在读"),
     UNREAD(1, "未读"),
@@ -15,7 +15,7 @@ public enum ReadingStatus {
     private int value;
     private String name;
 
-    ReadingStatus(int value, String name) {
+    BookStatus(int value, String name) {
         this.value = value;
         this.name = name;
     }
@@ -36,8 +36,8 @@ public enum ReadingStatus {
         this.name = name;
     }
 
-    public static ReadingStatus getReadingStatus(int ordinal) {
-        for (ReadingStatus readingStatus : ReadingStatus.values()) {
+    public static BookStatus getReadingStatus(int ordinal) {
+        for (BookStatus readingStatus : BookStatus.values()) {
             if (readingStatus.ordinal() == ordinal) {
                 return readingStatus;
             }
