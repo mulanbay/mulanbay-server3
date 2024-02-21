@@ -112,6 +112,7 @@ public class ControllerHandler {
             throw e;
         } catch (Exception e) {
             logger.error("do beforeBuss error", e);
+            throw new ApplicationException(PmsCode.AOP_ERROR,e.getMessage());
         }
     }
 

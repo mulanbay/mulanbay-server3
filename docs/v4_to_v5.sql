@@ -584,4 +584,37 @@ ALTER TABLE `read`  RENAME TO  `read_detail` ;
 ALTER TABLE `read_detail`
     CHANGE COLUMN `read_id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT ;
 
+ALTER TABLE `dream`
+DROP COLUMN `reward_point`,
+DROP COLUMN `date_change_history`,
+DROP COLUMN `max_money`,
+CHANGE COLUMN `id` `dream_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `name` `dream_name` VARCHAR(64) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '梦想名称' ,
+CHANGE COLUMN `min_money` `cost` DECIMAL(9,2) NULL DEFAULT NULL COMMENT '最低资金要求' ,
+CHANGE COLUMN `important_level` `important` DECIMAL(5,1) NOT NULL COMMENT '重要等级' ,
+CHANGE COLUMN `proposed_date` `expect_date` DATE NOT NULL COMMENT '提出日期' ,
+CHANGE COLUMN `finished_date` `finish_date` DATE NULL DEFAULT NULL COMMENT '实现日期' ,
+CHANGE COLUMN `user_plan_id` `plan_id` BIGINT NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
 
+ALTER TABLE `dream_remind`
+    CHANGE COLUMN `id` `remind_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `from_proposed_days` `form_expect_days` INT NOT NULL ,
+    CHANGE COLUMN `finished_remind` `finish_remind` TINYINT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+CREATE TABLE `dream_delay` (
+  `delay_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT(20) NULL,
+  `dream_id` BIGINT(20) NOT NULL,
+  `from_date` DATETIME NULL,
+  `to_date` DATETIME NULL,
+  `remark` VARCHAR(200) NULL,
+  `created_time` DATETIME NOT NULL,
+  `modify_time` DATETIME NULL,
+  PRIMARY KEY (`delay_id`),
+  UNIQUE INDEX `delay_id_UNIQUE` (`delay_id` ASC) VISIBLE);
+
+ALTER TABLE `dream_remind`
+    CHANGE COLUMN `form_rate` `from_rate` INT NOT NULL ,
+    CHANGE COLUMN `form_expect_days` `from_expect_days` INT NOT NULL ;

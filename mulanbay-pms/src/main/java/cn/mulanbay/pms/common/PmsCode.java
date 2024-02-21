@@ -115,6 +115,8 @@ public class PmsCode {
 
     public static final int CLASS_NOT_FOUND = 1010011;
 
+    public static final int AOP_ERROR = 1010012;
+
     /** 通用类 end **/
 
     /**

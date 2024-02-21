@@ -306,7 +306,7 @@ public class ReadService extends BaseHibernateDao {
             String sql2 = "delete from book where book_id=?1 ";
             this.execSqlUpdate(sql2, bookId);
         } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除阅读记录异常", e);
         }
     }

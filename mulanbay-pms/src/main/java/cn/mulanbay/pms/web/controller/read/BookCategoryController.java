@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 乐器管理
@@ -45,18 +46,16 @@ public class BookCategoryController extends BaseController {
             sf.setUserId(scts.getUserId());
             sf.setPage(PageRequest.NO_PAGE);
             PageResult<BookCategory> pr = getResult(sf);
-            List<TreeBean> list = new ArrayList<TreeBean>();
             List<BookCategory> gtList = pr.getBeanList();
-            for (BookCategory gt : gtList) {
+            List<TreeBean> list = gtList.stream().map((cate) -> {
                 TreeBean tb = new TreeBean();
-                tb.setId(gt.getCateId());
-                tb.setText(gt.getCateName());
-                list.add(tb);
-            }
+                tb.setId(cate.getCateId());
+                tb.setText(cate.getCateName());
+                return tb;
+            }).collect(Collectors.toList());
             return callback(list);
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取书籍分类树异常",
-                    e);
+            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取书籍分类树异常", e);
         }
     }
 
@@ -101,7 +100,7 @@ public class BookCategoryController extends BaseController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResultBean get(@RequestParam(name = "cateId") Long cateId) {
-        BookCategory br = baseService.getObject(beanClass,cateId);
+        BookCategory br = baseService.getObject(beanClass, cateId);
         return callback(br);
     }
 
@@ -112,7 +111,7 @@ public class BookCategoryController extends BaseController {
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid BookCategoryForm form) {
-        BookCategory bean = baseService.getObject(beanClass,form.getCateId());
+        BookCategory bean = baseService.getObject(beanClass, form.getCateId());
         BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(null);
