@@ -26,7 +26,6 @@ import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.consume.consume.*;
-import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.consume.consume.ConsumeCostStatVo;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -95,15 +94,8 @@ public class ConsumeController extends BaseController {
         }
         List<String> tagList = consumeService.getTagsList(sf);
         //去重
-        List<String> newList = tagList.stream().distinct().collect(Collectors.toList());
-        List<TreeBean> list = new ArrayList();
-        for (String s : newList) {
-            TreeBean tb = new TreeBean();
-            tb.setId(s);
-            tb.setText(s);
-            list.add(tb);
-        }
-        return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
+        Set<String> tagSet = TreeBeanUtil.deleteDuplicate(tagList);
+        return callback(TreeBeanUtil.creatTreeList(tagSet, sf.getNeedRoot()));
     }
 
     /**

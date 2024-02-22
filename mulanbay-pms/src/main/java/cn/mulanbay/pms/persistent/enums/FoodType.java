@@ -8,7 +8,12 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum FoodType {
 
-    RICE(0, "米饭"), NOODLE(1, "面食"), OTHER(2, "其他"), FRUIT(3, "水果"), SNACKS(4, "零食"), TEA(5, "茶");
+    RICE(0, "米饭"),
+    NOODLE(1, "面食"),
+    OTHER(2, "其他"),
+    FRUIT(3, "水果"),
+    SNACKS(4, "零食"),
+    TEA(5, "茶");
 
     private int value;
 

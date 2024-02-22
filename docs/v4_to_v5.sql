@@ -621,3 +621,28 @@ ALTER TABLE `dream_remind`
 
 ALTER TABLE `task_trigger`
     ADD COLUMN `undo_check` TINYINT NOT NULL DEFAULT 0 AFTER `redo_type`;
+
+ALTER TABLE `diet_category`  RENAME TO  `food_category` ;
+ALTER TABLE `food_category`
+    CHANGE COLUMN `user_id` `cate_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `keywords` `tags` VARCHAR(200) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`, `cate_id`);
+
+ALTER TABLE `diet`
+    CHANGE COLUMN `id` `diet_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `diet_variety_log`
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `food_category`
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`);
+;
+
+ALTER TABLE `food_category` DROP COLUMN `cate_id`;
+
+ALTER TABLE `food_category`
+    CHANGE COLUMN `id` `cate_id` BIGINT NOT NULL AUTO_INCREMENT ;

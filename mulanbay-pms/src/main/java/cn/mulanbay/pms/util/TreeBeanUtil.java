@@ -124,4 +124,21 @@ public class TreeBeanUtil {
         return keywordsSet;
     }
 
+    /**
+     * 组装
+     * @param cc
+     * @param needRoot
+     * @return
+     */
+    public static List<TreeBean> creatTreeList(Collection<String> cc,Boolean needRoot) {
+        List<TreeBean> list = new ArrayList<TreeBean>();
+        for (String s : cc) {
+            TreeBean tb = new TreeBean();
+            tb.setId(s);
+            tb.setText(s);
+            list.add(tb);
+        }
+        return addRoot(list, needRoot);
+    }
+
 }

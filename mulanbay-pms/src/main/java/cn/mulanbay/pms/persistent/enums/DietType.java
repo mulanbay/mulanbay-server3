@@ -9,7 +9,10 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum DietType {
 
-    BREAKFAST(0, "早餐"), LUNCH(1, "午餐"), DINNER(2, "晚餐"), OTHER(3, "其他");
+    BREAKFAST(0, "早餐"),
+    LUNCH(1, "午餐"),
+    DINNER(2, "晚餐"),
+    OTHER(3, "其他");
 
     private int value;
 
