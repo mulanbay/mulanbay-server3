@@ -1,6 +1,6 @@
 package cn.mulanbay.schedule;
 
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 
 /**
  * 调度执行结果
@@ -10,33 +10,33 @@ import cn.mulanbay.schedule.enums.JobExecuteResult;
  */
 public class TaskResult {
 
-	private JobExecuteResult executeResult =JobExecuteResult.SKIP;
+	private JobResult result = JobResult.SKIP;
 	
-	private String subTaskExecuteResults;
+	private String subResults;
 	
 	private String comment;
 
 	public TaskResult() {
 	}
 
-	public TaskResult(JobExecuteResult executeResult) {
-		this.executeResult = executeResult;
+	public TaskResult(JobResult executeResult) {
+		this.result = executeResult;
 	}
 
-	public JobExecuteResult getExecuteResult() {
-		return executeResult;
+	public JobResult getResult() {
+		return result;
 	}
 
-	public void setExecuteResult(JobExecuteResult executeResult) {
-		this.executeResult = executeResult;
+	public void setResult(JobResult result) {
+		this.result = result;
 	}
 
-	public String getSubTaskExecuteResults() {
-		return subTaskExecuteResults;
+	public String getSubResults() {
+		return subResults;
 	}
 
-	public void setSubTaskExecuteResults(String subTaskExecuteResults) {
-		this.subTaskExecuteResults = subTaskExecuteResults;
+	public void setSubResults(String subResults) {
+		this.subResults = subResults;
 	}
 
 	public String getComment() {

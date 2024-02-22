@@ -6,7 +6,7 @@ package cn.mulanbay.schedule.enums;
  * @author fenghong
  * @create 2017-10-19 22:56
  **/
-public enum JobExecuteResult {
+public enum JobResult {
     SUCCESS(0,"成功"),
     FAIL(1,"失败"),
     SKIP(2,"跳过"),
@@ -16,7 +16,7 @@ public enum JobExecuteResult {
 
     private String name;
 
-    JobExecuteResult(Integer value, String name) {
+    JobResult(Integer value, String name) {
         this.value = value;
         this.name = name;
     }

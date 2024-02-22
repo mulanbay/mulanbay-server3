@@ -1,12 +1,11 @@
 package cn.mulanbay.schedule.domain;
 
 import cn.mulanbay.schedule.QuartzConstant;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -83,7 +82,7 @@ public class TaskLog implements java.io.Serializable {
 	 * 任务执行结果
 	 */
 	@Column(name = "execute_result")
-	private JobExecuteResult executeResult;
+	private JobResult executeResult;
 
 	/**
 	 * 子任务执行结果
@@ -133,7 +132,7 @@ public class TaskLog implements java.io.Serializable {
 	}
 
 	/** minimal constructor */
-	public TaskLog(Date bussDate, JobExecuteResult executeResult) {
+	public TaskLog(Date bussDate, JobResult executeResult) {
 		this.bussDate = bussDate;
 		this.executeResult = executeResult;
 	}
@@ -195,11 +194,11 @@ public class TaskLog implements java.io.Serializable {
 		this.costTime = costTime;
 	}
 
-	public JobExecuteResult getExecuteResult() {
+	public JobResult getExecuteResult() {
 		return executeResult;
 	}
 
-	public void setExecuteResult(JobExecuteResult executeResult) {
+	public void setExecuteResult(JobResult executeResult) {
 		this.executeResult = executeResult;
 	}
 

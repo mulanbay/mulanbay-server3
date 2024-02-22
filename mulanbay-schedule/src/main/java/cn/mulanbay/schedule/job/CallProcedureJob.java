@@ -6,7 +6,7 @@ import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ProcedureProcessor;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,7 @@ public class CallProcedureJob extends AbstractBaseJob {
 			default:
 		}
 		logger.debug("开始执行存储过程:" + procedureName);
-		tr.setExecuteResult(JobExecuteResult.SUCCESS);
+		tr.setResult(JobResult.SUCCESS);
 		tr.setComment(comment + ",时间参数类型：" + dateParaType);
 		logger.debug("执行存储过程:" + procedureName + "结束");
 		return tr;

@@ -9,7 +9,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.schedule.*;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskTrigger;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.enums.TaskUniqueType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 import cn.mulanbay.schedule.enums.TriggerType;
@@ -174,7 +174,7 @@ public abstract class AbstractBaseJob implements Job {
 						+ "]已经在执行");
 				taskLog.setLogComment("任务[" + taskTrigger.getTriggerName()
 						+ "]已经在执行，跳过本次执行。");
-				taskTrigger.setLastExecuteResult(JobExecuteResult.DUPLICATE);
+				taskTrigger.setLastExecuteResult(JobResult.DUPLICATE);
 				return;
 			}
 			isDoing = true;
@@ -188,23 +188,23 @@ public abstract class AbstractBaseJob implements Job {
 			// 执行任务
 			TaskResult ar = checkParaAndDoTask();
 
-			taskLog.setExecuteResult(ar.getExecuteResult());
-			taskLog.setSubTaskExecuteResults(ar.getSubTaskExecuteResults());
+			taskLog.setExecuteResult(ar.getResult());
+			taskLog.setSubTaskExecuteResults(ar.getSubResults());
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),ar.getComment()));
 
 			// TODO 需要重新加载taskTrigger
-			taskTrigger.setLastExecuteResult(ar.getExecuteResult());
+			taskTrigger.setLastExecuteResult(ar.getResult());
 			logger.debug("[" + taskTrigger.getTriggerName() + "]执行结束");
 		} catch (ApplicationException ae) {
 			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", ae);
-			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
-			taskLog.setExecuteResult(JobExecuteResult.FAIL);
+			taskTrigger.setLastExecuteResult(JobResult.FAIL);
+			taskLog.setExecuteResult(JobResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),
 					"调度执行遇到ApplicationException。"+ae.getMessageDetail()));
 		} catch (Exception e) {
 			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", e);
-			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
-			taskLog.setExecuteResult(JobExecuteResult.FAIL);
+			taskTrigger.setLastExecuteResult(JobResult.FAIL);
+			taskLog.setExecuteResult(JobResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),e.getMessage()));
 		} finally {
 			long costTime=0L;
@@ -218,7 +218,7 @@ public abstract class AbstractBaseJob implements Job {
 
 					taskTrigger.setNextExecuteTime(arg0.getNextFireTime());
 					taskTrigger.setTotalCount(taskTrigger.getTotalCount() + 1);
-					if (taskTrigger.getLastExecuteResult() == JobExecuteResult.FAIL) {
+					if (taskTrigger.getLastExecuteResult() == JobResult.FAIL) {
 						taskTrigger.setFailCount(taskTrigger.getFailCount() + 1);
 					}
 					taskTrigger.setLastExecuteTime(new Date());
@@ -229,7 +229,7 @@ public abstract class AbstractBaseJob implements Job {
 					// 更新执行调度
 					processor.updateTaskTriggerForNewJob(taskTrigger);
 					//需要记录日志或者没运行成功的都需要记录
-					if(taskTrigger.getLoggable()||JobExecuteResult.FAIL==taskLog.getExecuteResult()){
+					if(taskTrigger.getLoggable()|| JobResult.FAIL==taskLog.getExecuteResult()){
 						// 新的
 						taskLog.setEndTime(endTime);
 						taskLog.setBussDate(getBussDay());
@@ -278,21 +278,21 @@ public abstract class AbstractBaseJob implements Job {
 			// 执行任务
 			TaskResult ar = checkParaAndDoTask();
 
-			taskLog.setExecuteResult(ar.getExecuteResult());
-			taskLog.setSubTaskExecuteResults(ar.getSubTaskExecuteResults());
+			taskLog.setExecuteResult(ar.getResult());
+			taskLog.setSubTaskExecuteResults(ar.getSubResults());
 			taskLog.setLogComment(ar.getComment());
 			logger.debug("[" + taskLog.getTaskTrigger().getTriggerName()
 					+ "]执行结束");
 		} catch (ApplicationException ae) {
 			logger.error("[" + taskTrigger.getTriggerName() + "]执行异常", ae);
-			taskTrigger.setLastExecuteResult(JobExecuteResult.FAIL);
-			taskLog.setExecuteResult(JobExecuteResult.FAIL);
+			taskTrigger.setLastExecuteResult(JobResult.FAIL);
+			taskLog.setExecuteResult(JobResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),
 					"调度执行遇到ApplicationException。"+ae.getMessageDetail()));
 		} catch (Exception e) {
 			logger.error("[" + taskLog.getTaskTrigger().getTriggerName()
 					+ "]执行异常", e);
-			taskLog.setExecuteResult(JobExecuteResult.FAIL);
+			taskLog.setExecuteResult(JobResult.FAIL);
 			taskLog.setLogComment(appendComment(taskLog.getLogComment(),e.getMessage()));
 		} finally {
 			if(lockStatus ==LockStatus.SUCCESS){
@@ -325,7 +325,7 @@ public abstract class AbstractBaseJob implements Job {
 					}
 					if (isUpdateTrigger) {
 						taskTrigger.setTotalCount(taskTrigger.getTotalCount() + 1);
-						if (taskLog.getExecuteResult() == JobExecuteResult.FAIL) {
+						if (taskLog.getExecuteResult() == JobResult.FAIL) {
 							taskTrigger
 									.setFailCount(taskTrigger.getFailCount() + 1);
 						}
@@ -440,8 +440,8 @@ public abstract class AbstractBaseJob implements Job {
 	 */
 	private void notifyMessage(){
 		if(quartzSource.getNotifiableProcessor()!=null){
-			JobExecuteResult jer = taskLog.getExecuteResult();
-			if(jer==JobExecuteResult.FAIL||jer==JobExecuteResult.DUPLICATE){
+			JobResult jer = taskLog.getExecuteResult();
+			if(jer== JobResult.FAIL||jer== JobResult.DUPLICATE){
 				Long taskTriggerId = taskTrigger.getTriggerId();
 				String title="调度器["+taskTrigger.getTriggerName()+"]调度执行异常";
 				String content="调度器["+taskTrigger.getTriggerName()+"]调度在"+
@@ -491,7 +491,7 @@ public abstract class AbstractBaseJob implements Job {
 
 	private TaskResult checkParaAndDoTask() {
 		if(!checkNeedExec()){
-			return new TaskResult(JobExecuteResult.SKIP);
+			return new TaskResult(JobResult.SKIP);
 		}
 		if (isParaChecked) {
 			// 已经检查过
@@ -502,7 +502,7 @@ public abstract class AbstractBaseJob implements Job {
 			ParaCheckResult pcr = checkTriggerPara();
 			if (pcr.getErrorCode() != ErrorCode.SUCCESS) {
 				TaskResult tr = new TaskResult();
-				tr.setExecuteResult(JobExecuteResult.FAIL);
+				tr.setResult(JobResult.FAIL);
 				tr.setComment("检查参数异常，错误代码：" + pcr.getErrorCode() + ","
 						+ pcr.getMessage());
 				return tr;

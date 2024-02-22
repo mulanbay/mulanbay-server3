@@ -67,6 +67,12 @@ public class TaskTrigger implements java.io.Serializable {
 	private RedoType redoType;
 
 	/**
+	 * 检查未做的
+	 */
+	@Column(name = "undo_check", nullable = false)
+	private Boolean undoCheck;
+
+	/**
 	 * 重做最大的支持次数
 	 */
 	@Column(name = "allowed_redo_times")
@@ -143,7 +149,7 @@ public class TaskTrigger implements java.io.Serializable {
 	 * 最近一次调度执行结果
 	 */
 	@Column(name = "last_execute_result")
-	private JobExecuteResult lastExecuteResult;
+	private JobResult lastExecuteResult;
 
 	/**
 	 * 最近一次调度执行时间
@@ -269,6 +275,14 @@ public class TaskTrigger implements java.io.Serializable {
 		this.redoType = redoType;
 	}
 
+	public Boolean getUndoCheck() {
+		return undoCheck;
+	}
+
+	public void setUndoCheck(Boolean undoCheck) {
+		this.undoCheck = undoCheck;
+	}
+
 	public Integer getAllowedRedoTimes() {
 		return allowedRedoTimes;
 	}
@@ -357,11 +371,11 @@ public class TaskTrigger implements java.io.Serializable {
 		this.triggerStatus = triggerStatus;
 	}
 
-	public JobExecuteResult getLastExecuteResult() {
+	public JobResult getLastExecuteResult() {
 		return lastExecuteResult;
 	}
 
-	public void setLastExecuteResult(JobExecuteResult lastExecuteResult) {
+	public void setLastExecuteResult(JobResult lastExecuteResult) {
 		this.lastExecuteResult = lastExecuteResult;
 	}
 

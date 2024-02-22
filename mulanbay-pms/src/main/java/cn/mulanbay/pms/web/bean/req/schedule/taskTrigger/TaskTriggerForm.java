@@ -34,6 +34,9 @@ public class TaskTriggerForm implements BindUser {
     @NotNull(message = "重做类型不能为空")
     private RedoType redoType;
 
+    @NotNull(message = "未做检查不能为空")
+    private Boolean undoCheck;
+
     @NotNull(message = "允许重做次数不能为空")
     private Integer allowedRedoTimes;
 
@@ -137,6 +140,14 @@ public class TaskTriggerForm implements BindUser {
 
     public void setRedoType(RedoType redoType) {
         this.redoType = redoType;
+    }
+
+    public Boolean getUndoCheck() {
+        return undoCheck;
+    }
+
+    public void setUndoCheck(Boolean undoCheck) {
+        this.undoCheck = undoCheck;
     }
 
     public Integer getAllowedRedoTimes() {

@@ -169,4 +169,19 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
                     "最近的调度异常", e);
         }
     }
+
+    /**
+     * 获取需要检查的日志列表
+     *
+     * @return
+     */
+    public List<TaskLog> getCheckLogList(Date minDate) {
+        try {
+            String hql ="from TaskLog where bussDate<=?1 order by taskTrigger.triggerId,bussDate ";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskLog.class,minDate);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取需要检查的日志列表异常", e);
+        }
+    }
 }

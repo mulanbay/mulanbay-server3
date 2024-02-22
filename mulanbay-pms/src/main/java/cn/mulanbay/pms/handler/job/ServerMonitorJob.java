@@ -16,7 +16,7 @@ import cn.mulanbay.pms.server.ServerDetail;
 import cn.mulanbay.pms.server.SysFile;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +75,9 @@ public class ServerMonitorJob extends AbstractBaseJob {
         }
         addTimeline(sd);
         if (n == 0) {
-            tr.setExecuteResult(JobExecuteResult.SKIP);
+            tr.setResult(JobResult.SKIP);
         } else {
-            tr.setExecuteResult(JobExecuteResult.SUCCESS);
+            tr.setResult(JobResult.SUCCESS);
             tr.setComment("一共发送了" + n + "个报警提醒");
         }
         return tr;

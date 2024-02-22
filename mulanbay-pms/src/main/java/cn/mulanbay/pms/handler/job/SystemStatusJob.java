@@ -8,7 +8,7 @@ import cn.mulanbay.pms.handler.SystemStatusHandler;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +49,9 @@ public class SystemStatusJob extends AbstractBaseJob {
         if(res!=null){
             tr.setComment(msg);
             if(res){
-                tr.setExecuteResult(JobExecuteResult.SUCCESS);
+                tr.setResult(JobResult.SUCCESS);
             }else{
-                tr.setExecuteResult(JobExecuteResult.FAIL);
+                tr.setResult(JobResult.FAIL);
             }
             //写系统日志
             LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);

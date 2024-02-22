@@ -12,7 +12,7 @@ import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class PmsCommandJob extends AbstractBaseJob {
             res = res.substring(0, 200);
         }
         tr.setComment(res);
-        tr.setExecuteResult(JobExecuteResult.SUCCESS);
+        tr.setResult(JobResult.SUCCESS);
         return tr;
     }
 

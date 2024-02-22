@@ -2,7 +2,7 @@ package cn.mulanbay.schedule.job;
 
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,27 +34,27 @@ public class CallMultiProcedureJob extends CallProcedureJob {
 			return tr;
 		}
 		String subTaskExecuteResults = "";
-		JobExecuteResult executeResult = JobExecuteResult.SUCCESS;
+		JobResult executeResult = JobResult.SUCCESS;
 		StringBuffer sb = new StringBuffer();
 		sb.append("");
 		for (ProcedureConfig pc : procedures) {
 			TaskResult tt = doSingleProcedure(pc.getProcedureName(),
 					pc.getDateParaType());
-			subTaskExecuteResults += tt.getExecuteResult() + ",";
+			subTaskExecuteResults += tt.getResult() + ",";
 			sb.append(tt.getComment() + ",");
 			if (iSChain
-					&& tt.getExecuteResult() == JobExecuteResult.FAIL) {
-				executeResult = JobExecuteResult.FAIL;
+					&& tt.getResult() == JobResult.FAIL) {
+				executeResult = JobResult.FAIL;
 				break;
 			}
 		}
-		tr.setExecuteResult(executeResult);
+		tr.setResult(executeResult);
 		tr.setComment(sb.toString());
 		if (subTaskExecuteResults.length() > 0) {
 			subTaskExecuteResults = subTaskExecuteResults.substring(0,
 					subTaskExecuteResults.length() - 1);
 		}
-		tr.setSubTaskExecuteResults(subTaskExecuteResults);
+		tr.setSubResults(subTaskExecuteResults);
 		return tr;
 	}
 
@@ -65,7 +65,7 @@ public class CallMultiProcedureJob extends CallProcedureJob {
 			logger.error("执行存储过程[" + procedureName + "],dateParaType["
 					+ dateParaType + "]异常", e);
 			TaskResult tr = new TaskResult();
-			tr.setExecuteResult(JobExecuteResult.FAIL);
+			tr.setResult(JobResult.FAIL);
 			tr.setComment("执行存储过程[" + procedureName + "],dateParaType["
 					+ dateParaType + "]异常：" + e.getMessage());
 			return tr;

@@ -618,3 +618,6 @@ CREATE TABLE `dream_delay` (
 ALTER TABLE `dream_remind`
     CHANGE COLUMN `form_rate` `from_rate` INT NOT NULL ,
     CHANGE COLUMN `form_expect_days` `from_expect_days` INT NOT NULL ;
+
+ALTER TABLE `task_trigger`
+    ADD COLUMN `undo_check` TINYINT NOT NULL DEFAULT 0 AFTER `redo_type`;

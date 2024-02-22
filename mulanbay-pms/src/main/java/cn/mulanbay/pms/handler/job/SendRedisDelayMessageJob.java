@@ -8,7 +8,7 @@ import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +39,9 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
         messageSendHandler = BeanFactoryUtil.getBean(MessageSendHandler.class);
         Set<Message> set = redisDelayQueueHandler.getNeedSendMessage(new Date());
         if (StringUtil.isEmpty(set)) {
-            tr.setExecuteResult(JobExecuteResult.SKIP);
+            tr.setResult(JobResult.SKIP);
         } else {
-            tr.setExecuteResult(JobExecuteResult.SUCCESS);
+            tr.setResult(JobResult.SUCCESS);
             int success = 0;
             int fail = 0;
             for (Message message : set) {

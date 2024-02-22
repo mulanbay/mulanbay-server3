@@ -5,7 +5,7 @@ import cn.mulanbay.pms.persistent.domain.DBClean;
 import cn.mulanbay.pms.persistent.service.DBCleanService;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class DBCleanJob extends AbstractBaseJob {
         for (DBClean dc : list) {
             dbCleanService.exeClean(dc);
         }
-        return new TaskResult(JobExecuteResult.SUCCESS);
+        return new TaskResult(JobResult.SUCCESS);
     }
 
     @Override

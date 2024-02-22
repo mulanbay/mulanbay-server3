@@ -6,7 +6,7 @@ import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.domain.TaskLog;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.thread.RedoThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class AutoRedoJob extends AbstractBaseJob {
                 autoRedo(taskLog);
             }
         }
-        tr.setExecuteResult(JobExecuteResult.SUCCESS);
+        tr.setResult(JobResult.SUCCESS);
         tr.setComment("一共自动重做了"+list.size()+"个调度.");
         return tr;
     }

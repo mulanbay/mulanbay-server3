@@ -7,7 +7,7 @@ import cn.mulanbay.common.util.ZipUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class FileClearJob extends AbstractBaseJob {
 			// 删除文件夹
 			FileUtil.deleteFolder(new File(desPath));
 		}
-		tr.setExecuteResult(JobExecuteResult.SUCCESS);
+		tr.setResult(JobResult.SUCCESS);
 		return tr;
 	}
 

@@ -9,7 +9,7 @@ import cn.mulanbay.schedule.SchedulePersistentProcessor;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 
@@ -194,7 +194,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             }else{
                 hql+=" and tt.deployId=?6 ";
             }
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskLog.class, JobExecuteResult.FAIL,
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskLog.class, JobResult.FAIL,
                     RedoType.AUTO_REDO,RedoType.ALL_REDO,startDate,endDate,deployId);
         } catch (BaseException e) {
             throw new PersistentException(ScheduleCode.TRIGGER_GET_AUTO_REDO_LOG_ERROR,"获取自动重做的调度任务失败！",e);

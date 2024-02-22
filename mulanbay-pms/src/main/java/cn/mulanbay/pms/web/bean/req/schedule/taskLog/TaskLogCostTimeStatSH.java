@@ -4,7 +4,7 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.schedule.enums.JobExecuteResult;
+import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.web.bean.request.PageSearch;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,7 +24,7 @@ public class TaskLogCostTimeStatSH extends PageSearch implements FullEndDateTime
     private Date endDate;
 
     @Query(fieldName = "executeResult", op = Parameter.Operator.EQ)
-    private JobExecuteResult executeResult;
+    private JobResult executeResult;
 
     public Date getStartDate() {
         return startDate;
@@ -52,11 +52,11 @@ public class TaskLogCostTimeStatSH extends PageSearch implements FullEndDateTime
         this.triggerId = triggerId;
     }
 
-    public JobExecuteResult getExecuteResult() {
+    public JobResult getExecuteResult() {
         return executeResult;
     }
 
-    public void setExecuteResult(JobExecuteResult executeResult) {
+    public void setExecuteResult(JobResult executeResult) {
         this.executeResult = executeResult;
     }
 }
