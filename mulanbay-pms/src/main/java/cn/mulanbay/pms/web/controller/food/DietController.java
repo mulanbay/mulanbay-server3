@@ -218,6 +218,7 @@ public class DietController extends BaseController {
         ChartCalendarCompareData chartData = new ChartCalendarCompareData();
         chartData.setTitle(sf.getYear() + "饮食习惯分析");
         chartData.setUnit("次");
+        //chartData.setTop(3);
         chartData.setYear(sf.getYear());
         //获取列表
         DietSH ds = new DietSH();
@@ -237,8 +238,8 @@ public class DietController extends BaseController {
         }
         String s1 = sf.getDietType().getName();
         String s2 = "没吃" + sf.getDietType().getName();
-        chartData.setLegendData(new String[]{s1, s2});
-
+        chartData.setSeriesName(s1);
+        chartData.setSeries2Name(s2);
         return chartData;
     }
 
@@ -741,10 +742,11 @@ public class DietController extends BaseController {
         DietType dietType = sf.getDietType();
         String dietTypeName = dietType == null ? "" : dietType.getName();
         chartData.setTitle("[" + dietTypeName + "]多样性");
+        chartData.setLegendData(new String[]{"重复度"});
         chartData.setUnit("%");
-        chartData.setLegendData(new String[]{"重复度(%)"});
         ChartYData yData1 = new ChartYData();
-        yData1.setName("重复度(%)");
+        yData1.setName("重复度");
+        yData1.setUnit("%");
         for (DietVarietyLog bean : list) {
             chartData.getXdata().add(DateUtil.getFormatDate(bean.getEndDate(), DateUtil.FormatDay1));
             yData1.getData().add(NumberUtil.getValue(bean.getVariety() * 100,0));

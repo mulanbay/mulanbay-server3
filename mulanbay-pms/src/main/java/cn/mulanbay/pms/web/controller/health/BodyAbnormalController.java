@@ -289,6 +289,7 @@ public class BodyAbnormalController extends BaseController {
             PageRequest pr = bards.buildQuery();
             pr.setBeanClass(beanClass);
             List<BodyAbnormal> dd = baseService.getBeanList(pr);
+            calendarData.setGraphName("["+sf.getDisease()+"]追踪");
             for (BodyAbnormal bar : dd) {
                 calendarData.addGraph(bar.getOccurDate(), bar.getDays());
             }

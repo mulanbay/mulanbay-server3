@@ -15,9 +15,15 @@ import java.util.List;
  */
 public class ChartCalendarCompareData extends BaseChartData {
 
+    private int top;
+
     private int year;
 
-    private String[] legendData;
+    private String seriesName;
+
+    private String series2Name;
+
+    private String graphName;
 
     //最大值、最小值用于界面计算每个点的大小使用，目前没有使用
     private double minValue;
@@ -40,6 +46,7 @@ public class ChartCalendarCompareData extends BaseChartData {
     //数据类型：['2016-01-01',111]
     private List<Object[]> series = new ArrayList<>();
 
+    //第二个
     private List<Object[]> series2 = new ArrayList<>();
 
     //绘图使用，比如锻炼管理可以绘制里程碑，数据结构是：o[0]2017-01-01，o[1]值
@@ -119,12 +126,36 @@ public class ChartCalendarCompareData extends BaseChartData {
         }
     }
 
-    public String[] getLegendData() {
-        return legendData;
+    public String getSeriesName() {
+        return seriesName;
     }
 
-    public void setLegendData(String[] legendData) {
-        this.legendData = legendData;
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
+    }
+
+    public String getSeries2Name() {
+        return series2Name;
+    }
+
+    public void setSeries2Name(String series2Name) {
+        this.series2Name = series2Name;
+    }
+
+    public String getGraphName() {
+        return graphName;
+    }
+
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
+    public void setTop(int top) {
+        this.top = top;
     }
 
     public int getYear() {
@@ -190,7 +221,6 @@ public class ChartCalendarCompareData extends BaseChartData {
 
     @Override
     public String getSubTitle() {
-        int yearDays = DateUtil.getDays(year);
         String ss = super.getSubTitle();
         if (ss == null) {
             ss = "";

@@ -52,6 +52,8 @@ public class DietPriceAnalyseSH extends QueryBuilder implements BindUser, DateSt
      */
     private Boolean predict = false;
 
+    private DateGroupType dateGroupType;
+
     @Override
     public Date getStartDate() {
         return startDate;
@@ -64,11 +66,6 @@ public class DietPriceAnalyseSH extends QueryBuilder implements BindUser, DateSt
     @Override
     public Date getEndDate() {
         return endDate;
-    }
-
-    @Override
-    public DateGroupType getDateGroupType() {
-        return null;
     }
 
     @Override
@@ -152,5 +149,14 @@ public class DietPriceAnalyseSH extends QueryBuilder implements BindUser, DateSt
 
     public void setPredict(Boolean predict) {
         this.predict = predict;
+    }
+
+    @Override
+    public DateGroupType getDateGroupType() {
+        return dateGroupType;
+    }
+
+    public void setDateGroupType(DateGroupType dateGroupType) {
+        this.dateGroupType = dateGroupType;
     }
 }

@@ -341,6 +341,7 @@ public class ExerciseController extends BaseController {
         if (!StringUtil.isEmpty(sf.getBestField())) {
             //获取最佳记录
             List<ExerciseBestDTO> bests = exerciseService.getBestMilestoneExerciseList(sf);
+            calendarData.setGraphName("["+sf.getBestField()+"]追踪");
             for (ExerciseBestDTO se : bests) {
                 if ("mileageBest".equals(sf.getBestField())) {
                     calendarData.addGraph(se.getExerciseTime(), se.getValue());

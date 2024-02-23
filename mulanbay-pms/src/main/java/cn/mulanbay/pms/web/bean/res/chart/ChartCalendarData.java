@@ -17,7 +17,9 @@ public class ChartCalendarData extends BaseChartData {
 
     private int year;
 
-    private String[] legendData;
+    private String seriesName;
+
+    private String graphName;
 
     //最大值、最小值用于界面计算每个点的大小使用，目前没有使用
     private double minValue;
@@ -106,17 +108,25 @@ public class ChartCalendarData extends BaseChartData {
         }
     }
 
-    public String[] getLegendData() {
-        return legendData;
+    public String getSeriesName() {
+        return seriesName;
     }
 
-    public void setLegendData(String[] legendData) {
-        this.legendData = legendData;
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
+    }
+
+    public String getGraphName() {
+        return graphName;
+    }
+
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
     }
 
     public void setLegendData(String cateTitle, int top) {
         this.top = top;
-        this.legendData = new String[]{cateTitle, "前" + top + "名"};
+        this.seriesName = cateTitle;
     }
 
 

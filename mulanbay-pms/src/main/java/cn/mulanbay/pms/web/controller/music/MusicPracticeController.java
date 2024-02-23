@@ -310,6 +310,7 @@ public class MusicPracticeController extends BaseController {
             BeanCopy.copy(sf, mpts);
             PageRequest pr = mpts.buildQuery();
             pr.setBeanClass(MusicPracticeDetail.class);
+            calendarData.setGraphName("["+sf.getTune()+"]追踪");
             List<MusicPracticeDetail> dd = baseService.getBeanList(pr);
             //添加监控走势数据
             for (MusicPracticeDetail tt : dd) {

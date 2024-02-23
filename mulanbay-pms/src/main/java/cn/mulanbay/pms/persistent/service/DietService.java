@@ -326,7 +326,7 @@ public class DietService extends BaseHibernateDao {
             PageRequest pr = sf.buildQuery();
             DateGroupType dateGroupType = sf.getDateGroupType();
             String statSql = """
-                    select indexValue,sum(price) as totalPrice ,count(0) as totalCount
+                    select indexValue,count(0) as totalCount,sum(price) as totalPrice
                     from (
                     select {date_group_field} as indexValue,price from diet
                     {query_para}
@@ -384,7 +384,7 @@ public class DietService extends BaseHibernateDao {
                     from
                     (select {field_name} as col from diet
                     {query_para}
-                    ) as a
+                    ) as a join
                     mysql.help_topic as b
                     on b.help_topic_id < (char_length(a.col) - char_length(replace(a.col,',',''))+1)
                     ) as res group by name

@@ -464,6 +464,7 @@ public class TreatController extends BaseController {
         List<TreatDateStat> list = treatService.getDateStat(sf);
         ChartCalendarData calendarData = ChartUtil.createChartCalendarData("看病统计", "次数", "次", sf, list);
         if (!StringUtil.isEmpty(sf.getDisease())) {
+            calendarData.setGraphName("["+sf.getDisease()+"]追踪");
             List<Date> dateList = treatService.getTreatDateList(sf);
             for (Date tb : dateList) {
                 calendarData.addGraph(tb, 1);
