@@ -87,4 +87,21 @@ public class GeoService extends BaseHibernateDao {
                     "获取县（地区）列表异常", e);
         }
     }
+
+    public void updateGeo(String name,String code,String location) {
+        try {
+            String sql1 = "update province set code=?1,location=?2 where province_name=?3 ";
+            this.execSqlUpdate(sql1,code,location,name);
+
+            String sql2 = "update city set code=?1,location=?2 where city_name=?3 ";
+            this.execSqlUpdate(sql2,code,location,name);
+
+            String sql3 = "update district set code=?1,location=?2 where district_name=?3 ";
+            this.execSqlUpdate(sql3,code,location,name);
+
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取县（地区）列表异常", e);
+        }
+    }
 }

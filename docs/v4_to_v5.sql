@@ -667,3 +667,21 @@ CHANGE COLUMN `id` `trip_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
 CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
 DROP INDEX `FK_ecy3fln5j24pu5jpcfx5mxgm2` ;
 ;
+
+ALTER TABLE `province`
+    ADD COLUMN `location` VARCHAR(64) NULL AFTER `map_name`;
+
+ALTER TABLE `city`
+    ADD COLUMN `location` VARCHAR(64) NULL AFTER `zip_code`;
+
+ALTER TABLE `district`
+    ADD COLUMN `location` VARCHAR(64) NULL AFTER `city_id`;
+
+ALTER TABLE `province`
+    ADD COLUMN `code` VARCHAR(32) NULL AFTER `map_name`;
+
+ALTER TABLE `city`
+    ADD COLUMN `code` VARCHAR(32) NULL AFTER `zip_code`;
+
+ALTER TABLE `district`
+    ADD COLUMN `code` VARCHAR(32) NULL AFTER `city_id`;

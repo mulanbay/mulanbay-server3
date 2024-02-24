@@ -6,6 +6,7 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.enums.AccountType;
 import cn.mulanbay.pms.persistent.enums.BussType;
+import cn.mulanbay.pms.persistent.service.GeoService;
 import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.common.EnumDictSH;
@@ -16,6 +17,7 @@ import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +42,9 @@ public class CommonController extends BaseController {
     private static List<TreeBean> domainClassList;
 
     private static List<TreeBean> enumClassList;
+
+    @Autowired
+    GeoService geoService;
 
     @PostConstruct
     public void init(){
@@ -159,4 +164,25 @@ public class CommonController extends BaseController {
         return callback(domainClassList);
     }
 
+    @RequestMapping(value = "/initGeo", method = RequestMethod.GET)
+    public ResultBean initGeo() throws Exception{
+//        FileInputStream file = new FileInputStream(new File("geo.xlsx"));
+//        Workbook workbook = WorkbookFactory.create(file);
+//        Sheet sheet = workbook.getSheet("adcode_lng_lat");
+//        Iterator<Row> rowIterator = sheet.iterator();
+//        while (rowIterator.hasNext()) {
+//            Row row = rowIterator.next();
+//            Cell id = row.getCell(0);
+//            Cell code = row.getCell(1);
+//            String s_code = String.valueOf((int)code.getNumericCellValue());
+//            Cell name = row.getCell(2);
+//            String s_name = name.getStringCellValue();
+//            Cell longitude = row.getCell(3);
+//            Cell latitude = row.getCell(4);
+//            String location = longitude.getNumericCellValue()+","+latitude.getNumericCellValue();
+//            System.out.println(s_name+" "+s_code+" "+location);
+//            geoService.updateGeo(s_name,s_code,location);
+//        }
+        return callback(null);
+    }
 }

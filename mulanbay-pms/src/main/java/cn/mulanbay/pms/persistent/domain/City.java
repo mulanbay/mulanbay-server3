@@ -38,6 +38,17 @@ public class City implements java.io.Serializable {
     @Column(name = "zip_code")
     private String zipCode;
 
+    /**
+     * 数字编号
+     */
+    @Column(name = "code")
+    private String code;
+
+    /**
+     * 地理坐标，经纬度
+     */
+    @Column(name = "location")
+    private String location;
 
     @Column(name = "status")
     private CommonStatus status;
@@ -95,6 +106,22 @@ public class City implements java.io.Serializable {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public CommonStatus getStatus() {

@@ -34,6 +34,18 @@ public class Province implements java.io.Serializable {
     @Column(name = "map_name")
     private String mapName;
 
+    /**
+     * 数字编号
+     */
+    @Column(name = "code")
+    private String code;
+
+    /**
+     * 地理坐标，经纬度
+     */
+    @Column(name = "location")
+    private String location;
+
     @Column(name = "order_index")
     private Short orderIndex;
 
@@ -77,6 +89,22 @@ public class Province implements java.io.Serializable {
 
     public void setMapName(String mapName) {
         this.mapName = mapName;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Short getOrderIndex() {

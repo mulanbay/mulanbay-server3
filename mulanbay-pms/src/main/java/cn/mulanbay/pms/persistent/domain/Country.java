@@ -48,6 +48,7 @@ public class Country implements java.io.Serializable {
      */
     @Column(name = "en_code3")
     private String enCode3;
+
     /**
      * 数字编号
      */
