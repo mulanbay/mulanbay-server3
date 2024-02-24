@@ -225,7 +225,7 @@ public class ChartCalendarCompareData extends BaseChartData {
         if (ss == null) {
             ss = "";
         }
-        ss += "源次数:" + series.size() + ",目标次数:" + series2.size() + ",(占比" + NumberUtil.getPercentValue(series2.size(), series.size(), 1) + "%)";
+        ss += "源次数:" + series.size() + ",目标次数:" + series2.size() + ",(占比" + NumberUtil.getPercent(series2.size(), series.size(), 1) + "%)";
         int size = graphData.size();
         if (size > 0) {
             ss += ",所选跟踪项总点数:" + size;

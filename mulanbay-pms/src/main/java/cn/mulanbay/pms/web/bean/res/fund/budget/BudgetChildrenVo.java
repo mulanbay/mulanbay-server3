@@ -37,7 +37,7 @@ public class BudgetChildrenVo  {
      * @return
      */
     public BigDecimal getRate(){
-        return NumberUtil.getPercentValue(this.cpPaidAmount,this.budgetAmount,2);
+        return NumberUtil.getPercent(this.cpPaidAmount,this.budgetAmount,2);
     }
 
     public String getBudgetName() {

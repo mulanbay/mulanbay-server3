@@ -40,7 +40,7 @@ public class BudgetDetailVo extends Budget {
      * @return
      */
     public BigDecimal getRate(){
-        return NumberUtil.getPercentValue(this.cpPaidAmount,this.getAmount(),2);
+        return NumberUtil.getPercent(this.cpPaidAmount,this.getAmount(),2);
     }
 
     public Long getSnapshotId() {

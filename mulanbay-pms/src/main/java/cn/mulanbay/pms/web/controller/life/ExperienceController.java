@@ -179,7 +179,7 @@ public class ExperienceController extends BaseController {
         List<ExperienceMapStat> list = experienceService.getMapStat(sf);
         int ps = list.size();
         String subText = "一共去过" + ps + "个省或直辖市";
-        subText += "(占比:" + (int) NumberUtil.getPercentValue(ps, 34, 0) + "%)";
+        subText += "(占比:" + (int) NumberUtil.getPercent(ps, 34, 0) + "%)";
         if (sf.getStartDate() != null && sf.getEndDate() != null) {
             subText += "," + DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" + DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
         }

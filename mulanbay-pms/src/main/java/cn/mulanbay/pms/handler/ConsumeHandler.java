@@ -311,7 +311,7 @@ public class ConsumeHandler extends BaseHandler {
                 }
                 bean.setCompareData(JsonUtil.beanToJson(compareBean));
             }
-            float acMatch = (float) NumberUtil.getPercentValue(m,total,4)/100;
+            float acMatch = (float) NumberUtil.getPercent(m,total,4)/100;
             bean.setAcMatch(acMatch);
             baseService.saveObject(bean);
         } catch (BeansException e) {

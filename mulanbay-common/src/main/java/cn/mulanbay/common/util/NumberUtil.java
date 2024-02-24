@@ -1,7 +1,6 @@
 package cn.mulanbay.common.util;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
 /**
@@ -59,11 +58,12 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getAvg(BigDecimal value, BigInteger counts, int scale){
+	public static double getAvg(BigDecimal value, BigDecimal counts, int scale){
 		if(value==null){
 			return 0;
 		}
-		return getAvg(value.doubleValue(),counts.intValue(),scale);
+		BigDecimal avg = value.divide(counts,RoundingMode.HALF_UP);
+		return avg.setScale(scale,RoundingMode.HALF_UP).doubleValue();
 	}
 
 	/**
@@ -74,10 +74,7 @@ public class NumberUtil {
 	 * @return
 	 */
 	public static double getAvg(BigDecimal value, Long counts, int scale){
-		if(value==null){
-			return 0;
-		}
-		return getAvg(value.doubleValue(),counts.intValue(),scale);
+		return getAvg(value,new BigDecimal(counts),scale);
 	}
 
 	/**
@@ -87,11 +84,8 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getAvg(BigInteger value, Long counts, int scale){
-		if(value==null){
-			return 0;
-		}
-		return getAvg(value.doubleValue(),counts.intValue(),scale);
+	public static double getAvg(BigDecimal value, Double counts, int scale){
+		return getAvg(value,new BigDecimal(counts),scale);
 	}
 
 	/**
@@ -102,13 +96,7 @@ public class NumberUtil {
 	 * @return
 	 */
 	public static double getAvg(double value, int counts, int scale){
-		if(counts==0){
-			return 0;
-		}
-		double l =value/counts;
-		BigDecimal b = new BigDecimal(l);
-		double v  =  b.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
-		return v;
+		return getAvg(new BigDecimal(value),new BigDecimal(counts),scale);
 	}
 
 	/**
@@ -140,7 +128,7 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getPercentValue(long value,long total,int scale){
+	public static double getPercent(long value, long total, int scale){
 		if(total==0){
 			return 0;
 		}
@@ -157,7 +145,7 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static double getPercentValue(Double value,Double counts,int scale){
+	public static double getPercent(Double value, Double counts, int scale){
 		if(value==null||counts==null||counts<=0){
 			return 0;
 		}
@@ -208,7 +196,7 @@ public class NumberUtil {
 	 * @param scale
 	 * @return
 	 */
-	public static BigDecimal getPercentValue(BigDecimal value,BigDecimal total,int scale){
+	public static BigDecimal getPercent(BigDecimal value, BigDecimal total, int scale){
 		if(value==null||total==null||total.doubleValue()<=0){
 			return new BigDecimal(0);
 		}

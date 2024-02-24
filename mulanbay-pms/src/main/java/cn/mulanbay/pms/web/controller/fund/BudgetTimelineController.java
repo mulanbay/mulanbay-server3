@@ -123,8 +123,8 @@ public class BudgetTimelineController extends BaseController {
                     consumeAmount = consumeAmount.add(timeline.getBcAmount()) ;
                 }
                 if (sf.getStatType() == BudgetTimelineSH.StatType.RATE) {
-                    BigDecimal cbRate = NumberUtil.getPercentValue(consumeAmount, timeline.getBudgetAmount(), 0);
-                    double dayRate = NumberUtil.getPercentValue(timeline.getPassDays(), timeline.getTotalDays(), 0);
+                    BigDecimal cbRate = NumberUtil.getPercent(consumeAmount, timeline.getBudgetAmount(), 0);
+                    double dayRate = NumberUtil.getPercent(timeline.getPassDays(), timeline.getTotalDays(), 0);
                     cbData.getData().add(cbRate);
                     timeData.getData().add(dayRate);
                 } else {

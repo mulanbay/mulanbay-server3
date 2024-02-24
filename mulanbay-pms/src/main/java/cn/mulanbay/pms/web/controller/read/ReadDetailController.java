@@ -136,14 +136,14 @@ public class ReadDetailController extends BaseController {
         for (ReadDetailDateStat bean : list) {
             chartData.addXData(bean, sf.getDateGroupType());
             yData1.getData().add(bean.getTotalCount());
-            double hours = NumberUtil.getAvg(bean.getTotalDuration(), BigInteger.valueOf(60L), 1);
+            double hours = NumberUtil.getAvg(bean.getTotalDuration(), 60L, 1);
             yData2.getData().add(hours);
             totalCounts = totalCounts.add(new BigDecimal(bean.getTotalCount()));
             totalMinutes = totalMinutes.add(bean.getTotalDuration());
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String total = totalCounts.longValue() + "次," + NumberUtil.getAvg(totalMinutes, BigInteger.valueOf(60L), 1) + "小时";
+        String total = totalCounts.longValue() + "次," + NumberUtil.getAvg(totalMinutes, 60L, 1) + "小时";
         String subTitle = this.getDateTitle(sf, total);
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);

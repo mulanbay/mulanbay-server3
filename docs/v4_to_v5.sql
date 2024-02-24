@@ -646,3 +646,24 @@ ALTER TABLE `food_category` DROP COLUMN `cate_id`;
 
 ALTER TABLE `food_category`
     CHANGE COLUMN `id` `cate_id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `work_overtime`
+    CHANGE COLUMN `id` `overtime_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+    CHANGE COLUMN `work_start_time` `start_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `work_end_time` `end_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+ALTER TABLE `business_trip`
+DROP FOREIGN KEY `FK_ecy3fln5j24pu5jpcfx5mxgm2`;
+ALTER TABLE `mulanbay_db3`.`business_trip`
+DROP COLUMN `city`,
+DROP COLUMN `province`,
+DROP COLUMN `country`,
+ADD COLUMN `country_id` BIGINT(20) NULL AFTER `company_id`,
+ADD COLUMN `province_id` BIGINT(20) NULL AFTER `country_id`,
+ADD COLUMN `city_id` BIGINT(20) NULL AFTER `province_id`,
+ADD COLUMN `district_id` BIGINT(20) NULL AFTER `city_id`,
+CHANGE COLUMN `id` `trip_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID' ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ,
+DROP INDEX `FK_ecy3fln5j24pu5jpcfx5mxgm2` ;
+;

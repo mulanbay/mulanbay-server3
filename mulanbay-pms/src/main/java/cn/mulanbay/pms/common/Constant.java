@@ -73,6 +73,21 @@ public class Constant {
     public static final int MAX_WEEK = 53;
 
     /**
+     * 每月的工作天数
+     */
+    public static final double MONTH_WORK_DAY = 20.83;
+
+    /**
+     * 每周的工作天数
+     */
+    public static final double WEEK_WORK_DAY = 5;
+
+    /**
+     * 每年的工作天数
+     */
+    public static final double YEAR_WORK_DAY = 250;
+
+    /**
      * 价格符号
      */
     public static final String MONEY_SYMBOL = "￥";

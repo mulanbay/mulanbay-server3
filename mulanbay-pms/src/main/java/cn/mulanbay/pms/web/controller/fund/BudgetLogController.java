@@ -208,7 +208,7 @@ public class BudgetLogController extends BaseController {
                 consume = consume.add(bean.getBcAmount());
             }
             consumeData.getData().add(NumberUtil.getValue(consume,0));
-            double rate = NumberUtil.getPercentValue(consume.doubleValue(),bean.getBudgetAmount().doubleValue(),0);
+            double rate = NumberUtil.getPercent(consume.doubleValue(),bean.getBudgetAmount().doubleValue(),0);
             rateData.getData().add(rate);
             incomeData.getData().add(bean.getTotalIncome() == null ? 0 : bean.getTotalIncome());
         }
@@ -249,7 +249,7 @@ public class BudgetLogController extends BaseController {
             BigDecimal ev = bean.getAccountChangeAmount();
             BigDecimal e = ev.subtract(mv);
             yData1.getData().add(NumberUtil.getValue(e,SCALE));
-            double pp = NumberUtil.getPercentValue(e.doubleValue(),Math.abs(mv.doubleValue()),0);
+            double pp = NumberUtil.getPercent(e.doubleValue(),Math.abs(mv.doubleValue()),0);
             yData2.getData().add(pp);
         }
         chartData.getYdata().add(yData1);

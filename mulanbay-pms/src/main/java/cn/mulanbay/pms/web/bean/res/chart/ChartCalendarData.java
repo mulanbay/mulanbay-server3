@@ -190,7 +190,7 @@ public class ChartCalendarData extends BaseChartData {
         if (ss == null) {
             ss = "";
         }
-        ss += "总次数:" + count + ",总值:" + totalValue + unit + ",总点数:" + daysCount + " (全年占比" + NumberUtil.getPercentValue(daysCount, yearDays, 1) + "%)";
+        ss += "总次数:" + count + ",总值:" + totalValue + unit + ",总点数:" + daysCount + " (全年占比" + NumberUtil.getPercent(daysCount, yearDays, 1) + "%)";
         int size = graphData.size();
         if (size > 0) {
             ss += ",所选跟踪项总点数:" + size;
