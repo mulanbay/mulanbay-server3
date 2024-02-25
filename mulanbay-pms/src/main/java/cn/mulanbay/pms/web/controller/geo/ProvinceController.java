@@ -8,6 +8,7 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -32,9 +33,9 @@ public class ProvinceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree() {
+    public ResultBean tree(@RequestParam(name = "countryId") Long countryId) {
         List<TreeBean> list = new ArrayList<TreeBean>();
-        List<Province> gtList = geoService.getProvinceList();
+        List<Province> gtList = geoService.getProvinceList(countryId);
         for (Province gt : gtList) {
             TreeBean tb = new TreeBean();
             tb.setId(gt.getProvinceId());

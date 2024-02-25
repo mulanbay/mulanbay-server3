@@ -20,13 +20,13 @@ public class BusinessTripForm implements BindUser {
     @NotNull(message = "国家不能为空")
     private Long countryId;
 
-    @NotNull(message = "省份不能为空")
+    //@NotNull(message = "省份不能为空")
     private Long provinceId;
 
-    @NotNull(message = "城市不能为空")
+    //@NotNull(message = "城市不能为空")
     private Long cityId;
 
-    @NotNull(message = "县不能为空")
+    //@NotNull(message = "县不能为空")
     private Long districtId;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)

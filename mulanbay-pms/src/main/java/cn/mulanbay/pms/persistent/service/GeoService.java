@@ -29,10 +29,10 @@ public class GeoService extends BaseHibernateDao {
      *
      * @return
      */
-    public List<Province> getProvinceList() {
+    public List<Province> getProvinceList(Long countryId) {
         try {
-            String hql = "from Province ";
-            List<Province> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Province.class);
+            String hql = "from Province where countryId=?1";
+            List<Province> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Province.class,countryId);
             return list;
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

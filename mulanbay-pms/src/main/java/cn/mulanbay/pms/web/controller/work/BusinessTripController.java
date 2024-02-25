@@ -88,12 +88,18 @@ public class BusinessTripController extends BaseController {
         bean.setCompany(company);
         Country country = baseService.getObject(Country.class,form.getCountryId());
         bean.setCountry(country);
-        Province province = baseService.getObject(Province.class,form.getProvinceId());
-        bean.setProvince(province);
-        City city = baseService.getObject(City.class,form.getCityId());
-        bean.setCity(city);
-        District district = baseService.getObject(District.class,form.getDistrictId());
-        bean.setDistrict(district);
+        if(form.getProvinceId()!=null){
+            Province province = baseService.getObject(Province.class,form.getProvinceId());
+            bean.setProvince(province);
+        }
+        if(form.getCityId()!=null){
+            City city = baseService.getObject(City.class,form.getCityId());
+            bean.setCity(city);
+        }
+        if(form.getDistrictId()!=null){
+            District district = baseService.getObject(District.class,form.getDistrictId());
+            bean.setDistrict(district);
+        }
     }
 
     /**

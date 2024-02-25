@@ -34,6 +34,9 @@ public class Province implements java.io.Serializable {
     @Column(name = "map_name")
     private String mapName;
 
+    @Column(name = "country_id")
+    private Long countryId;
+
     /**
      * 数字编号
      */
@@ -89,6 +92,14 @@ public class Province implements java.io.Serializable {
 
     public void setMapName(String mapName) {
         this.mapName = mapName;
+    }
+
+    public Long getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Long countryId) {
+        this.countryId = countryId;
     }
 
     public String getCode() {

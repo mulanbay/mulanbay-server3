@@ -685,3 +685,6 @@ ALTER TABLE `city`
 
 ALTER TABLE `district`
     ADD COLUMN `code` VARCHAR(32) NULL AFTER `city_id`;
+
+ALTER TABLE `province`
+    ADD COLUMN `country_id` BIGINT(20) NULL DEFAULT 290 AFTER `map_name`;
