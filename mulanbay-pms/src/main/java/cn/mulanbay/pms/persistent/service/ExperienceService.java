@@ -12,9 +12,10 @@ import cn.mulanbay.pms.persistent.dto.life.*;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.ExperienceType;
-import cn.mulanbay.pms.persistent.enums.MapType;
+import cn.mulanbay.pms.persistent.enums.MapField;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.life.experience.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,167 +27,56 @@ import java.util.List;
 @Transactional
 public class ExperienceService extends BaseHibernateDao {
 
+    @Value("${mulanbay.experience.mapStat.field}")
+    String mapStatField;
+
     /**
-     * 人生经历地图统计
+     * 旅行地图统计
      *
      * @param sf
      * @return
      */
     public List<ExperienceMapStat> getMapStat(ExperienceMapStatSH sf) {
         try {
+            sf.setCountryField(mapStatField+"_"+"country_id");
             PageRequest pr = sf.buildQuery();
-            MapType mapType = sf.getMapType();
+            MapField field = sf.getField();
             String statSql = """
-                    select {group_cdn},count(0) as totalCount,count(0) as totalDays,sum(cost) as totalCost from experience_detail
-                     {query_para}
-                    and map_stat=1 group by {group_field}
+                    select {field_name} as id,count(0) as totalCount,count(0) as totalDays,sum(cost) as totalCost from experience_detail
+                     {query_para} and {field_name} is not null
+                    group by {field_name}
                     """;
-            String groupCdn = null;
-            String groupField = null;
-            if (mapType == MapType.CHINA) {
-                groupCdn ="province_id as id,null as name";
-                groupField = "province_id";
-            } else if (mapType == MapType.WORLD) {
-                groupCdn ="country_id as id,null as name";
-                groupField = "country_id";
-            } else if (mapType == MapType.LOCATION) {
-                groupCdn ="null as id,arrive_city as name";
-                groupField = "arrive_city";
-            }
             statSql = statSql.replace("{query_para}",pr.getParameterString())
-                             .replace("{group_cdn}",groupCdn)
-                             .replace("{group_field}",groupField);
+                             .replace("{field_name}",mapStatField+"_"+field.getField());
             List<ExperienceMapStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, ExperienceMapStat.class, pr.getParameterValue());
             for (ExperienceMapStat bb : list) {
-                if(bb.getId()==null){
-
-                }else if (mapType == MapType.CHINA) {
-                    Province province = this.getEntityById(Province.class, bb.getId().longValue());
-                    bb.setName(province.getMapName());
-                }else if (mapType == MapType.WORLD) {
-                    Country country = this.getEntityById(Country.class, bb.getId().longValue());
-                    bb.setName(country.getCnName());
+                switch (field){
+                    case COUNTRY -> {
+                        Country country = this.getEntityById(Country.class, bb.getId().longValue());
+                        bb.setName(country.getCnName());
+                        bb.setLocation(country.getLocation());
+                    }
+                    case PROVINCE -> {
+                        Province province = this.getEntityById(Province.class, bb.getId().longValue());
+                        bb.setName(province.getMapName());
+                        bb.setLocation(province.getLocation());
+                    }
+                    case CITY -> {
+                        City city = this.getEntityById(City.class, bb.getId().longValue());
+                        bb.setName(city.getCityName());
+                        bb.setLocation(city.getLocation());
+                    }
+                    case DISTRICT -> {
+                        District district = this.getEntityById(District.class, bb.getId().longValue());
+                        bb.setName(district.getDistrictName());
+                        bb.setLocation(district.getLocation());
+                    }
                 }
             }
             return list;
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "人生经历地图统计", e);
-        }
-    }
-
-    /**
-     * 人生经历地图统计
-     *
-     * @param sf
-     * @return
-     */
-    public List<ExperienceWorldMapStat> getWorldMapStat(ExperienceMapStatSH sf) {
-        try {
-            PageRequest pr = sf.buildQuery();
-            String statSql = """
-                    select country_id as countryId,max(country_location) as countryLocation,count(0) as totalCount,count(0) as totalDays,sum(cost) as totalCost
-                     from experience_detail
-                     {query_para}
-                    and map_stat=1 group by country_id
-                    """;
-            statSql = statSql.replace("{query_para}",pr.getParameterString());
-            List<ExperienceWorldMapStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, ExperienceWorldMapStat.class, pr.getParameterValue());
-            for(ExperienceWorldMapStat ms : list){
-                //toDo 后期缓存或者map
-                Country c = this.getEntityById(Country.class,ms.getCountryId().longValue());
-                ms.setCountryName(c.getCnName());
-            }
-            return list;
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "人生经历地图统计", e);
-        }
-    }
-
-    /**
-     * 获取出发城市列表
-     *
-     * @return
-     */
-    public List<String> getStartCityList(Long userId) {
-        try {
-            String statSql = """
-                    select distinct start_city as startCity from experience_detail led,
-                    (select exp_id as lid,min(occur_date) as occur_date from experience_detail group by exp_id )  as tt
-                    where led.occur_date = tt.occur_date and led.exp_id = tt.lid and led.user_id=?1
-                    """;
-            return this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE,String.class, userId);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "获取出发城市列表异常", e);
-        }
-    }
-
-    /**
-     * 获取迁徙地图的数据
-     *
-     * @param sf
-     * @return
-     */
-    public List<WorldTransferMapStat> getWorldTransMapStat(ExperienceMapStatSH sf) {
-        try {
-            PageRequest pr = sf.buildQuery();
-            String statSql = """
-                    select start_city as startCity,sc_location as scLocation,arrive_city as arriveCity,ac_location as acLocation
-                    from experience_detail
-                    {query_para}
-                    and map_stat=1 and international=1
-                    """;
-            statSql = statSql.replace("{query_para}",pr.getParameterString());
-            List<WorldTransferMapStat> list = this.getEntityListSI(statSql,
-                    NO_PAGE,NO_PAGE_SIZE, WorldTransferMapStat.class, pr.getParameterValue());
-            return list;
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "人生经历地图统计", e);
-        }
-    }
-
-    /**
-     * 获取国家地理位置信息
-     *
-     * @param countryId
-     * @return
-     */
-    public String getCountryLocation(Long countryId) {
-        try {
-            String hql = "select countryLocation from ExperienceDetail where countryId=?1 ";
-            String s = this.getEntity(hql,String.class,countryId);
-            return s;
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "获取国家地理位置信息异常", e);
-        }
-    }
-
-    /**
-     * 获取城市地理位置信息
-     *
-     * @param city
-     * @return
-     */
-    public String getCityLocation(String city) {
-        try {
-            String hql = "from ExperienceDetail where startCity=?1 or arriveCity=?2";
-            ExperienceDetail ed = this.getEntity(hql,ExperienceDetail.class,city,city);
-            if(ed==null){
-                return null;
-            }else{
-                if(ed.getStartCity().equals(city)){
-                    return ed.getScLocation();
-                }else{
-                    return ed.getAcLocation();
-                }
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "获取城市地理位置信息异常", e);
+                    "旅行地图统计异常", e);
         }
     }
 
@@ -593,6 +483,22 @@ public class ExperienceService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
                     "获取人生档案异常", e);
+        }
+    }
+
+    /**
+     * 最近的明细
+     *
+     * @param expId
+     * @return
+     */
+    public ExperienceDetail getLastDetail(Long expId) {
+        try {
+            String hql = "from ExperienceDetail where experience.expId=?1 order by occurDate desc,createdTime desc";
+            return this.getEntity(hql,ExperienceDetail.class, expId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "最近的明细异常", e);
         }
     }
 

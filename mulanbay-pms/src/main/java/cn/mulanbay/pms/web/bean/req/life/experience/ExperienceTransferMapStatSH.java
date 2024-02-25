@@ -13,9 +13,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class ExperienceMapStatSH extends QueryBuilder implements DateStatSH, BindUser {
+public class ExperienceTransferMapStatSH extends QueryBuilder implements DateStatSH, BindUser {
 
-    @Query(fieldName = "country_id", op = Parameter.Operator.EQ, referFieldName = "countryField")
+    @Query(fieldName = "country_id", op = Parameter.Operator.EQ)
     private Long countryId;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
@@ -29,22 +29,15 @@ public class ExperienceMapStatSH extends QueryBuilder implements DateStatSH, Bin
     @Query(fieldName = "user_id", op = Parameter.Operator.EQ)
     public Long userId;
 
+    @Query(fieldName = "map_stat", op = Parameter.Operator.EQ)
+    private Boolean mapStat;
+
     @Query(fieldName = "international", op = Parameter.Operator.EQ)
     private Boolean international;
 
     private MapField field;
 
     private GroupType groupType;
-
-    /**
-     * 使用明细，直接安装列表数据进行设置
-     */
-    private Boolean ud;
-
-    /**
-     * 省份的字段名称，根据配置文件不同，字段也不同，分出发和抵达两种
-     */
-    private String countryField;
 
     public Long getCountryId() {
         return countryId;
@@ -92,6 +85,14 @@ public class ExperienceMapStatSH extends QueryBuilder implements DateStatSH, Bin
         this.userId = userId;
     }
 
+    public Boolean getMapStat() {
+        return mapStat;
+    }
+
+    public void setMapStat(Boolean mapStat) {
+        this.mapStat = mapStat;
+    }
+
     public Boolean getInternational() {
         return international;
     }
@@ -116,19 +117,4 @@ public class ExperienceMapStatSH extends QueryBuilder implements DateStatSH, Bin
         this.groupType = groupType;
     }
 
-    public Boolean getUd() {
-        return ud;
-    }
-
-    public void setUd(Boolean ud) {
-        this.ud = ud;
-    }
-
-    public String getCountryField() {
-        return countryField;
-    }
-
-    public void setCountryField(String countryField) {
-        this.countryField = countryField;
-    }
 }

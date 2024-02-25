@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class LocationMapStatChartData extends BaseChartData {
 
+    private String mapName="china";
+
     /**
      * 最小值
      */
@@ -35,6 +37,14 @@ public class LocationMapStatChartData extends BaseChartData {
      * geo坐标信息
      */
     private Map<String, double[]> geoCoordMapData;
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
 
     public int getMin() {
         return min;

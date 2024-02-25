@@ -688,3 +688,26 @@ ALTER TABLE `district`
 
 ALTER TABLE `province`
     ADD COLUMN `country_id` BIGINT(20) NULL DEFAULT 290 AFTER `map_name`;
+
+ALTER TABLE `experience`
+DROP COLUMN `location`,
+DROP COLUMN `lc_name`,
+ADD COLUMN `country_id` BIGINT(20) NULL DEFAULT 290 AFTER `tags`,
+ADD COLUMN `province_id` BIGINT(20) NULL AFTER `country_id`,
+ADD COLUMN `city_id` BIGINT(20) NULL AFTER `province_id`,
+ADD COLUMN `district_id` BIGINT(20) NULL AFTER `city_id`;
+
+ALTER TABLE `experience_detail`
+DROP COLUMN `ac_location`,
+DROP COLUMN `arrive_city`,
+DROP COLUMN `sc_location`,
+DROP COLUMN `start_city`,
+DROP COLUMN `country_location`,
+ADD COLUMN `start_country_id` BIGINT(20) NULL DEFAULT 290 AFTER `exp_id`,
+ADD COLUMN `start_province_id` BIGINT(20) NULL AFTER `start_country_id`,
+ADD COLUMN `start_city_id` BIGINT(20) NULL AFTER `start_province_id`,
+ADD COLUMN `start_district_id` BIGINT(20) NULL AFTER `start_city_id`,
+CHANGE COLUMN `country_id` `arrive_country_id` BIGINT(20) NULL DEFAULT 290 ,
+CHANGE COLUMN `province_id` `arrive_province_id` BIGINT(20) NULL DEFAULT NULL ,
+CHANGE COLUMN `city_id` `arrive_city_id` BIGINT(20) NULL DEFAULT NULL ,
+CHANGE COLUMN `district_id` `arrive_district_id` BIGINT(20) NULL DEFAULT NULL ;

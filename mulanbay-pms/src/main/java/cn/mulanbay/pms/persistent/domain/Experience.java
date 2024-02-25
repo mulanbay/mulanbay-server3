@@ -2,7 +2,6 @@ package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.ExperienceType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -55,11 +54,22 @@ public class Experience implements java.io.Serializable {
     @Column(name = "tags")
     private String tags;
 
-    @Column(name = "lc_name")
-    private String lcName;
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private Country country;
 
-    @Column(name = "location")
-    private String location;
+    @ManyToOne
+    @JoinColumn(name = "province_id")
+    private Province province;
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    @ManyToOne
+    @JoinColumn(name = "district_id")
+    private District district;
+
     @Column(name = "remark")
     private String remark;
 
@@ -147,20 +157,36 @@ public class Experience implements java.io.Serializable {
         this.tags = tags;
     }
 
-    public String getLcName() {
-        return lcName;
+    public Country getCountry() {
+        return country;
     }
 
-    public void setLcName(String lcName) {
-        this.lcName = lcName;
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
-    public String getLocation() {
-        return location;
+    public Province getProvince() {
+        return province;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setProvince(Province province) {
+        this.province = province;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
+    public District getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(District district) {
+        this.district = district;
     }
 
     public String getRemark() {

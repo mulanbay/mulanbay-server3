@@ -665,18 +665,12 @@ public class BaseHibernateDao {
 	protected  <T> T getEntity(String hql,Class<T> clazz, Object... objects)
 			throws BaseException {
 		try {
-			Query query = getSession().createQuery(hql,clazz);
-			int i = START_OPL;
-			for (Object object : objects) {
-				query.setParameter(i++, object);
-			}
-			List<T> list = query.getResultList();
+			List<T> list = this.getEntityListHI(hql,1,1,clazz,objects);
 			if(list==null||list.isEmpty()){
 				return null;
 			}else{
 				return list.get(0);
 			}
-			//return (T) query.getSingleResult();
 		} catch (NoResultException e) {
 			logger.error("未找到数据",e);
 			return null;

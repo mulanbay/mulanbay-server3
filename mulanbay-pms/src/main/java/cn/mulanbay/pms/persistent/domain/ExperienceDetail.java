@@ -35,36 +35,42 @@ public class ExperienceDetail implements java.io.Serializable {
     @JoinColumn(name = "exp_id", nullable = true)
     private Experience experience;
 
-    @Column(name = "country_id")
-    private Long countryId;
+    @ManyToOne
+    @JoinColumn(name = "start_country_id")
+    private Country startCountry;
 
-    @Column(name = "country_location")
-    private String countryLocation;
+    @ManyToOne
+    @JoinColumn(name = "start_province_id")
+    private Province startProvince;
 
-    @Column(name = "province_id")
-    private Long provinceId;
+    @ManyToOne
+    @JoinColumn(name = "start_city_id")
+    private City startCity;
 
-    @Column(name = "city_id")
-    private Long cityId;
+    @ManyToOne
+    @JoinColumn(name = "start_district_id")
+    private District startDistrict;
 
-    @Column(name = "district_id")
-    private Long districtId;
+    @ManyToOne
+    @JoinColumn(name = "arrive_country_id")
+    private Country arriveCountry;
+
+    @ManyToOne
+    @JoinColumn(name = "arrive_province_id")
+    private Province arriveProvince;
+
+    @ManyToOne
+    @JoinColumn(name = "arrive_city_id")
+    private City arriveCity;
+
+    @ManyToOne
+    @JoinColumn(name = "arrive_district_id")
+    private District arriveDistrict;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)
     @Column(name = "occur_date")
     private Date occurDate;
 
-    @Column(name = "start_city")
-    private String startCity;
-    //出发城市地理位置
-    @Column(name = "sc_location")
-    private String scLocation;
-
-    @Column(name = "arrive_city")
-    private String arriveCity;
-    //抵达城市地理位置
-    @Column(name = "ac_location")
-    private String acLocation;
     @Column(name = "cost",precision = 9,scale = 2)
     private BigDecimal cost;
     //是否加入到地图的绘制
@@ -112,44 +118,68 @@ public class ExperienceDetail implements java.io.Serializable {
         this.experience = experience;
     }
 
-    public Long getCountryId() {
-        return countryId;
+    public Country getStartCountry() {
+        return startCountry;
     }
 
-    public void setCountryId(Long countryId) {
-        this.countryId = countryId;
+    public void setStartCountry(Country startCountry) {
+        this.startCountry = startCountry;
     }
 
-    public String getCountryLocation() {
-        return countryLocation;
+    public Province getStartProvince() {
+        return startProvince;
     }
 
-    public void setCountryLocation(String countryLocation) {
-        this.countryLocation = countryLocation;
+    public void setStartProvince(Province startProvince) {
+        this.startProvince = startProvince;
     }
 
-    public Long getProvinceId() {
-        return provinceId;
+    public City getStartCity() {
+        return startCity;
     }
 
-    public void setProvinceId(Long provinceId) {
-        this.provinceId = provinceId;
+    public void setStartCity(City startCity) {
+        this.startCity = startCity;
     }
 
-    public Long getCityId() {
-        return cityId;
+    public District getStartDistrict() {
+        return startDistrict;
     }
 
-    public void setCityId(Long cityId) {
-        this.cityId = cityId;
+    public void setStartDistrict(District startDistrict) {
+        this.startDistrict = startDistrict;
     }
 
-    public Long getDistrictId() {
-        return districtId;
+    public Country getArriveCountry() {
+        return arriveCountry;
     }
 
-    public void setDistrictId(Long districtId) {
-        this.districtId = districtId;
+    public void setArriveCountry(Country arriveCountry) {
+        this.arriveCountry = arriveCountry;
+    }
+
+    public Province getArriveProvince() {
+        return arriveProvince;
+    }
+
+    public void setArriveProvince(Province arriveProvince) {
+        this.arriveProvince = arriveProvince;
+    }
+
+    public City getArriveCity() {
+        return arriveCity;
+    }
+
+    public void setArriveCity(City arriveCity) {
+        this.arriveCity = arriveCity;
+    }
+
+    public District getArriveDistrict() {
+        return arriveDistrict;
+    }
+
+    public void setArriveDistrict(District arriveDistrict) {
+        this.arriveDistrict = arriveDistrict;
     }
 
     public Date getOccurDate() {
@@ -158,38 +188,6 @@ public class ExperienceDetail implements java.io.Serializable {
 
     public void setOccurDate(Date occurDate) {
         this.occurDate = occurDate;
-    }
-
-    public String getStartCity() {
-        return startCity;
-    }
-
-    public void setStartCity(String startCity) {
-        this.startCity = startCity;
-    }
-
-    public String getScLocation() {
-        return scLocation;
-    }
-
-    public void setScLocation(String scLocation) {
-        this.scLocation = scLocation;
-    }
-
-    public String getArriveCity() {
-        return arriveCity;
-    }
-
-    public void setArriveCity(String arriveCity) {
-        this.arriveCity = arriveCity;
-    }
-
-    public String getAcLocation() {
-        return acLocation;
-    }
-
-    public void setAcLocation(String acLocation) {
-        this.acLocation = acLocation;
     }
 
     public BigDecimal getCost() {

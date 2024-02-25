@@ -16,37 +16,33 @@ public class ExperienceDetailForm implements BindUser {
     @NotNull(message = "经历编号不能为空")
     private Long expId;
 
-    @NotNull(message = "国家编号不能为空")
-    private Long countryId;
+    @NotNull(message = "出发国家不能为空")
+    private Long startCountryId;
 
-    @NotNull(message = "国家地理位置不能为空")
-    private String countryLocation;
+    //@NotNull(message = "省份不能为空")
+    private Long startProvinceId;
 
-    @NotNull(message = "省份编号不能为空")
-    private Long provinceId;
+    //@NotNull(message = "城市不能为空")
+    private Long startCityId;
 
-    @NotNull(message = "城市编号不能为空")
-    private Long cityId;
+    //@NotNull(message = "县不能为空")
+    private Long startDistrictId;
 
-    @NotNull(message = "县市编号不能为空")
-    private Long districtId;
+    @NotNull(message = "抵达国家不能为空")
+    private Long arriveCountryId;
+
+    //@NotNull(message = "省份不能为空")
+    private Long arriveProvinceId;
+
+    //@NotNull(message = "城市不能为空")
+    private Long arriveCityId;
+
+    //@NotNull(message = "县不能为空")
+    private Long arriveDistrictId;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "出发日期不能为空")
     private Date occurDate;
-
-    @NotNull(message = "出发城市不能为空")
-    private String startCity;
-    //出发城市地理位置
-    @NotNull(message = "出发城市不能为空")
-    private String scLocation;
-
-    @NotNull(message = "出发城市不能为空")
-    private String arriveCity;
-
-    //抵达城市地理位置
-    @NotNull(message = "出发城市位置不能为空")
-    private String acLocation;
 
     private BigDecimal cost;
 
@@ -82,44 +78,68 @@ public class ExperienceDetailForm implements BindUser {
         this.expId = expId;
     }
 
-    public Long getCountryId() {
-        return countryId;
+    public Long getStartCountryId() {
+        return startCountryId;
     }
 
-    public void setCountryId(Long countryId) {
-        this.countryId = countryId;
+    public void setStartCountryId(Long startCountryId) {
+        this.startCountryId = startCountryId;
     }
 
-    public String getCountryLocation() {
-        return countryLocation;
+    public Long getStartProvinceId() {
+        return startProvinceId;
     }
 
-    public void setCountryLocation(String countryLocation) {
-        this.countryLocation = countryLocation;
+    public void setStartProvinceId(Long startProvinceId) {
+        this.startProvinceId = startProvinceId;
     }
 
-    public Long getProvinceId() {
-        return provinceId;
+    public Long getStartCityId() {
+        return startCityId;
     }
 
-    public void setProvinceId(Long provinceId) {
-        this.provinceId = provinceId;
+    public void setStartCityId(Long startCityId) {
+        this.startCityId = startCityId;
     }
 
-    public Long getCityId() {
-        return cityId;
+    public Long getStartDistrictId() {
+        return startDistrictId;
     }
 
-    public void setCityId(Long cityId) {
-        this.cityId = cityId;
+    public void setStartDistrictId(Long startDistrictId) {
+        this.startDistrictId = startDistrictId;
     }
 
-    public Long getDistrictId() {
-        return districtId;
+    public Long getArriveCountryId() {
+        return arriveCountryId;
     }
 
-    public void setDistrictId(Long districtId) {
-        this.districtId = districtId;
+    public void setArriveCountryId(Long arriveCountryId) {
+        this.arriveCountryId = arriveCountryId;
+    }
+
+    public Long getArriveProvinceId() {
+        return arriveProvinceId;
+    }
+
+    public void setArriveProvinceId(Long arriveProvinceId) {
+        this.arriveProvinceId = arriveProvinceId;
+    }
+
+    public Long getArriveCityId() {
+        return arriveCityId;
+    }
+
+    public void setArriveCityId(Long arriveCityId) {
+        this.arriveCityId = arriveCityId;
+    }
+
+    public Long getArriveDistrictId() {
+        return arriveDistrictId;
+    }
+
+    public void setArriveDistrictId(Long arriveDistrictId) {
+        this.arriveDistrictId = arriveDistrictId;
     }
 
     public Date getOccurDate() {
@@ -128,38 +148,6 @@ public class ExperienceDetailForm implements BindUser {
 
     public void setOccurDate(Date occurDate) {
         this.occurDate = occurDate;
-    }
-
-    public String getStartCity() {
-        return startCity;
-    }
-
-    public void setStartCity(String startCity) {
-        this.startCity = startCity;
-    }
-
-    public String getScLocation() {
-        return scLocation;
-    }
-
-    public void setScLocation(String scLocation) {
-        this.scLocation = scLocation;
-    }
-
-    public String getArriveCity() {
-        return arriveCity;
-    }
-
-    public void setArriveCity(String arriveCity) {
-        this.arriveCity = arriveCity;
-    }
-
-    public String getAcLocation() {
-        return acLocation;
-    }
-
-    public void setAcLocation(String acLocation) {
-        this.acLocation = acLocation;
     }
 
     public BigDecimal getCost() {

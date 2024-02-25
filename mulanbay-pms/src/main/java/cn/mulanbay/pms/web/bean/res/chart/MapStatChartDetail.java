@@ -7,6 +7,7 @@ package cn.mulanbay.pms.web.bean.res.chart;
  */
 public class MapStatChartDetail {
 
+    //与地理位置的信息
     private String name;
 
     //默认显示值
@@ -20,6 +21,9 @@ public class MapStatChartDetail {
 
     //花费
     private int cost;
+
+    //标签
+    private String label;
 
     public String getName() {
         return name;
@@ -59,5 +63,13 @@ public class MapStatChartDetail {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

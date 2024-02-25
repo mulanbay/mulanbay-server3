@@ -4,13 +4,12 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.persistent.domain.Experience;
-import cn.mulanbay.pms.persistent.domain.ExperienceDetail;
+import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.service.ExperienceService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailSH;
 import cn.mulanbay.pms.web.bean.req.life.detail.ExperienceDetailForm;
+import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailSH;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -57,14 +56,47 @@ public class ExperienceDetailController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid ExperienceDetailForm form) {
         ExperienceDetail bean = new ExperienceDetail();
-        BeanCopy.copy(form, bean);
-        Experience experience = baseService.getObject(Experience.class,form.getExpId());
-        bean.setExperience(experience);
-        bean.setCost(new BigDecimal(0));
+        this.formToBean(form,bean);
         experienceService.saveOrUpdateDetail(bean, true);
         return callback(bean);
     }
 
+    private void formToBean(ExperienceDetailForm form, ExperienceDetail bean){
+        BeanCopy.copy(form, bean);
+        Experience experience = baseService.getObject(Experience.class,form.getExpId());
+        bean.setExperience(experience);
+        bean.setCost(new BigDecimal(0));
+        //出发
+        Country startCountry = baseService.getObject(Country.class,form.getStartCountryId());
+        bean.setStartCountry(startCountry);
+        if(form.getStartProvinceId()!=null){
+            Province startProvince = baseService.getObject(Province.class,form.getStartProvinceId());
+            bean.setStartProvince(startProvince);
+        }
+        if(form.getStartCityId()!=null){
+            City startCity = baseService.getObject(City.class,form.getStartCityId());
+            bean.setStartCity(startCity);
+        }
+        if(form.getStartDistrictId()!=null){
+            District startDistrict = baseService.getObject(District.class,form.getStartDistrictId());
+            bean.setStartDistrict(startDistrict);
+        }
+        //抵达
+        Country arriveCountry = baseService.getObject(Country.class,form.getArriveCountryId());
+        bean.setArriveCountry(arriveCountry);
+        if(form.getArriveProvinceId()!=null){
+            Province arriveProvince = baseService.getObject(Province.class,form.getArriveProvinceId());
+            bean.setArriveProvince(arriveProvince);
+        }
+        if(form.getArriveCityId()!=null){
+            City arriveCity = baseService.getObject(City.class,form.getArriveCityId());
+            bean.setArriveCity(arriveCity);
+        }
+        if(form.getArriveDistrictId()!=null){
+            District arriveDistrict = baseService.getObject(District.class,form.getArriveDistrictId());
+            bean.setArriveDistrict(arriveDistrict);
+        }
+    }
 
     /**
      * 获取详情
@@ -78,6 +110,17 @@ public class ExperienceDetailController extends BaseController {
     }
 
     /**
+     * 最近的明细
+     *
+     * @return
+     */
+    @RequestMapping(value = "/lastDetail", method = RequestMethod.GET)
+    public ResultBean lastDetail(@RequestParam(name = "expId") Long expId) {
+        ExperienceDetail bean = experienceService.getLastDetail(expId);
+        return callback(bean);
+    }
+
+    /**
      * 修改
      *
      * @return
@@ -85,9 +128,7 @@ public class ExperienceDetailController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ExperienceDetailForm form) {
         ExperienceDetail bean = baseService.getObject(beanClass,form.getDetailId());
-        BeanCopy.copy(form, bean);
-        Experience experience = baseService.getObject(Experience.class,form.getExpId());
-        bean.setExperience(experience);
+        this.formToBean(form,bean);
         experienceService.saveOrUpdateDetail(bean, true);
         return callback(bean);
     }
@@ -104,30 +145,6 @@ public class ExperienceDetailController extends BaseController {
             experienceService.deleteExperienceDetail(id, deleteRequest.getUserId(), false);
         }
         return callback(null);
-    }
-
-    /**
-     * 获取国际位置
-     *
-     * @param countryId
-     * @return
-     */
-    @RequestMapping(value = "/getCountryLocation", method = RequestMethod.GET)
-    public ResultBean getCountryLocation(@RequestParam(name = "countryId") Long countryId) {
-        String s = experienceService.getCountryLocation(countryId);
-        return callback(s);
-    }
-
-    /**
-     * 根据城市位置
-     *
-     * @param city
-     * @return
-     */
-    @RequestMapping(value = "/getCityLocation", method = RequestMethod.GET)
-    public ResultBean getCityLocation(@RequestParam(name = "city") String city) {
-        String s = experienceService.getCityLocation(city);
-        return callback(s);
     }
 
 }

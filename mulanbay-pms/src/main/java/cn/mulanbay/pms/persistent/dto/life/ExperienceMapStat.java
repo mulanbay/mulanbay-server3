@@ -17,12 +17,16 @@ public class ExperienceMapStat {
 
     private BigDecimal totalCost;
 
+    /**
+     * 经纬度
+     */
+    private String location;
+
     public ExperienceMapStat() {
     }
 
-    public ExperienceMapStat(Number id, String name, Long totalCount, Long totalDays, BigDecimal totalCost) {
+    public ExperienceMapStat(Number id,Long totalCount, Long totalDays, BigDecimal totalCost) {
         this.id = id;
-        this.name = name;
         this.totalCount = totalCount;
         this.totalDays = totalDays;
         this.totalCost = totalCost;
@@ -66,5 +70,13 @@ public class ExperienceMapStat {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

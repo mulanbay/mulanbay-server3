@@ -16,6 +16,9 @@ public class BusinessTripMapStatSH extends QueryBuilder implements BindUser {
     @Query(fieldName = "company_id", op = Parameter.Operator.EQ)
     private Long companyId;
 
+    @Query(fieldName = "country_id", op = Parameter.Operator.EQ)
+    private Long countryId;
+
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "trip_date", op = Parameter.Operator.GTE)
     private Date startDate;
@@ -31,12 +34,25 @@ public class BusinessTripMapStatSH extends QueryBuilder implements BindUser {
 
     private GroupType groupType;
 
+    /**
+     * 使用明细，直接安装列表数据进行设置
+     */
+    private Boolean ud;
+
     public Long getCompanyId() {
         return companyId;
     }
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Long countryId) {
+        this.countryId = countryId;
     }
 
     public Date getStartDate() {
@@ -79,5 +95,13 @@ public class BusinessTripMapStatSH extends QueryBuilder implements BindUser {
 
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
+    }
+
+    public Boolean getUd() {
+        return ud;
+    }
+
+    public void setUd(Boolean ud) {
+        this.ud = ud;
     }
 }

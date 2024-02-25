@@ -172,6 +172,16 @@ mulanbay:
     cate:
       #分类的统计天数
       days: 14
+  experience:
+    mapStat:
+      #地图统计使用字段，出发城市或者抵达,值：start / arrive
+      field: arrive
+      #明细统计时时间格式化
+      dateFormat: yyyy
+  businessTrip:
+    mapStat:
+      #明细统计时时间格式化
+      dateFormat: yyyy
   nlp:
     model:
       #模型是否要初始化

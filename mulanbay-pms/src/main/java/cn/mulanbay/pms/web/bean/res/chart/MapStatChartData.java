@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class MapStatChartData extends BaseChartData {
 
-    private String mapName;
+    private String mapName = "china";;
 
     private int maxValue;
 

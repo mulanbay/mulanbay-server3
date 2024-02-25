@@ -9,28 +9,37 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.persistent.domain.Experience;
-import cn.mulanbay.pms.persistent.domain.ExperienceDetail;
-import cn.mulanbay.pms.persistent.dto.life.*;
+import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.persistent.dto.life.ExperienceCostStat;
+import cn.mulanbay.pms.persistent.dto.life.ExperienceDateStat;
+import cn.mulanbay.pms.persistent.dto.life.ExperienceMapStat;
+import cn.mulanbay.pms.persistent.dto.life.NameCountDTO;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.ExperienceCostStatType;
+import cn.mulanbay.pms.persistent.enums.MapField;
 import cn.mulanbay.pms.persistent.service.ExperienceService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.GroupType;
 import cn.mulanbay.pms.web.bean.req.life.experience.*;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
+import cn.mulanbay.pms.web.bean.res.life.ExperienceLocationVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.mulanbay.pms.common.Constant.SCALE;
 
@@ -43,6 +52,11 @@ import static cn.mulanbay.pms.common.Constant.SCALE;
 @RestController
 @RequestMapping("/experience")
 public class ExperienceController extends BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExperienceController.class);
+
+    @Value("${mulanbay.experience.mapStat.dateFormat}")
+    String dateFormat;
 
     @Autowired
     ExperienceService experienceService;
@@ -103,9 +117,28 @@ public class ExperienceController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid ExperienceForm form) {
         Experience bean = new Experience();
-        BeanCopy.copy(form, bean);
+        this.formToBean(form,bean);
         baseService.saveObject(bean);
         return callback(bean);
+    }
+
+    private void formToBean(ExperienceForm form, Experience bean){
+        BeanCopy.copy(form,bean);
+        bean.setCost(new BigDecimal(0));
+        Country country = baseService.getObject(Country.class,form.getCountryId());
+        bean.setCountry(country);
+        if(form.getProvinceId()!=null){
+            Province province = baseService.getObject(Province.class,form.getProvinceId());
+            bean.setProvince(province);
+        }
+        if(form.getCityId()!=null){
+            City city = baseService.getObject(City.class,form.getCityId());
+            bean.setCity(city);
+        }
+        if(form.getDistrictId()!=null){
+            District district = baseService.getObject(District.class,form.getDistrictId());
+            bean.setDistrict(district);
+        }
     }
 
 
@@ -128,7 +161,7 @@ public class ExperienceController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ExperienceForm form) {
         Experience bean = baseService.getObject(beanClass,form.getExpId());
-        BeanCopy.copy(form, bean);
+        this.formToBean(form,bean);
         baseService.updateObject(bean);
         return callback(null);
     }
@@ -153,17 +186,16 @@ public class ExperienceController extends BaseController {
      */
     @RequestMapping(value = "/mapStat", method = RequestMethod.GET)
     public ResultBean mapStat(ExperienceMapStatSH sf) {
-        switch (sf.getMapType() ){
-            case LOCATION:
-                List<ExperienceMapStat> list = experienceService.getMapStat(sf);
-                return this.callback(createLocationMapStat(list, sf.getStatType(), sf.getUserId(), sf.getStartDate(), sf.getEndDate()));
-            case LC_NAME:
-                return this.callback(createLcNameMapStat(sf));
-            case WORLD:
+        MapField field = sf.getField();
+        switch (field){
+            case COUNTRY:
                 return this.callback(createWorldMapData(sf));
-            default:
-                return this.callback(createChinaMapData(sf));
+            case PROVINCE:
+                return this.callback(createCountryMapData(sf));
+            case CITY,DISTRICT:
+                return this.callback(createLocationMapStat(sf));
         }
+        return callback(null);
     }
 
     /**
@@ -171,11 +203,12 @@ public class ExperienceController extends BaseController {
      * @param sf
      * @return
      */
-    private MapStatChartData createChinaMapData(ExperienceMapStatSH sf){
+    private MapStatChartData createCountryMapData(ExperienceMapStatSH sf){
         MapStatChartData chartData = new MapStatChartData();
+        //Country country = baseService.getObject(Country.class,sf.getCountryId());
+        //todo 根据不同国家设置地图名称
         chartData.setMapName("china");
         chartData.setTitle("人生去过的地方统计");
-
         List<ExperienceMapStat> list = experienceService.getMapStat(sf);
         int ps = list.size();
         String subText = "一共去过" + ps + "个省或直辖市";
@@ -184,17 +217,18 @@ public class ExperienceController extends BaseController {
             subText += "," + DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" + DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
         }
         chartData.setSubTitle(subText);
+        GroupType groupType = sf.getGroupType();
         int maxValue = 0;
         for (ExperienceMapStat dd : list) {
             String name = dd.getName();
             MapStatChartDetail detail = new MapStatChartDetail();
             detail.setName(name);
-            if (sf.getStatType() == ExperienceMapStatSH.StatType.COUNT) {
+            if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
                 if (dd.getTotalCount().intValue() > maxValue) {
                     maxValue = dd.getTotalCount().intValue();
                 }
-            } else if (sf.getStatType() == ExperienceMapStatSH.StatType.DAYS) {
+            } else if (groupType == GroupType.DAYS) {
                 detail.setValue(dd.getTotalDays().intValue());
                 if (dd.getTotalDays().intValue() > maxValue) {
                     maxValue = dd.getTotalDays().intValue();
@@ -223,20 +257,20 @@ public class ExperienceController extends BaseController {
         WorldMapStatChartData chartData = new WorldMapStatChartData();
         chartData.setMapName("world");
         chartData.setTitle("人生去过的国家统计");
-
-        List<ExperienceWorldMapStat> list = experienceService.getWorldMapStat(sf);
+        List<ExperienceMapStat> list = experienceService.getMapStat(sf);
         int maxValue = 0;
         Map<String, double[]> geoMapData = new HashMap<>();
-        for (ExperienceWorldMapStat dd : list) {
-            String name = dd.getCountryName();
+        GroupType groupType = sf.getGroupType();
+        for (ExperienceMapStat dd : list) {
+            String name = dd.getName();
             MapStatChartDetail detail = new MapStatChartDetail();
             detail.setName(name);
-            if (sf.getStatType() == ExperienceMapStatSH.StatType.COUNT) {
+            if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
                 if (dd.getTotalCount().intValue() > maxValue) {
                     maxValue = dd.getTotalCount().intValue();
                 }
-            } else if (sf.getStatType() == ExperienceMapStatSH.StatType.DAYS) {
+            } else if (groupType == GroupType.DAYS) {
                 detail.setValue(dd.getTotalDays().intValue());
                 if (dd.getTotalDays().intValue() > maxValue) {
                     maxValue = dd.getTotalDays().intValue();
@@ -248,25 +282,13 @@ public class ExperienceController extends BaseController {
                 }
             }
             //地理位置
-            if(StringUtil.isEmpty(dd.getCountryLocation())){
-                geoMapData.put(name, new double[]{0, 0});
-            }else{
-                String[] geo = dd.getCountryLocation().split(",");
-                geoMapData.put(name,new double[]{Double.valueOf(geo[0]), Double.valueOf(geo[1])});
-            }
+            geoMapData.put(name,this.createGeo(dd.getLocation()));
             detail.setCounts(dd.getTotalCount().intValue());
             detail.setDays(dd.getTotalDays().intValue());
             detail.setCost(dd.getTotalCost().intValue());
             chartData.addDetail(detail);
         }
-        ExperienceMapStatSH.StatType statType = sf.getStatType();
-        if (statType == ExperienceMapStatSH.StatType.COUNT){
-            chartData.setUnit("次");
-        }else if (statType == ExperienceMapStatSH.StatType.DAYS){
-            chartData.setUnit("天");
-        }else{
-            chartData.setUnit("元");
-        }
+        chartData.setUnit(groupType.getUnit());
         chartData.setMaxValue(maxValue);
         chartData.setGeoCoordMapData(geoMapData);
         return chartData;
@@ -275,16 +297,23 @@ public class ExperienceController extends BaseController {
     /**
      * 基于地点的统计
      *
-     * @param list
+     * @param sf
      * @return
      */
-    private LocationMapStatChartData createLocationMapStat(List<ExperienceMapStat> list, ExperienceMapStatSH.StatType statType, Long userId, Date startDate, Date endDate) {
+    private LocationMapStatChartData createLocationMapStat(ExperienceMapStatSH sf) {
+        List<ExperienceMapStat> list = null;
+        if(sf.getUd()){
+            list = this.createDetailMapStat(sf);
+        }else{
+            list = experienceService.getMapStat(sf);
+        }
         LocationMapStatChartData chartData = new LocationMapStatChartData();
         chartData.setTitle("人生去过的地方统计");
-        if (statType == ExperienceMapStatSH.StatType.COUNT){
+        GroupType groupType = sf.getGroupType();
+        if (groupType == GroupType.COUNT){
             chartData.setName("旅行次数");
             chartData.setUnit("次");
-        }else if (statType == ExperienceMapStatSH.StatType.DAYS){
+        }else if (groupType == GroupType.DAYS){
             chartData.setName("旅行天数");
             chartData.setUnit("天");
         }else{
@@ -292,11 +321,11 @@ public class ExperienceController extends BaseController {
             chartData.setUnit("元");
         }
         List<MapData> dataList = new ArrayList<>();
-        List<ExperienceMapStat> newList = convertMapStatLocation(list);
+        Map<String, double[]> geoMap= new HashMap<>();
         int maxValue = 0;
         int minValue = 0;
-        for (ExperienceMapStat dd : newList) {
-            if (statType == ExperienceMapStatSH.StatType.COUNT) {
+        for (ExperienceMapStat dd : list) {
+            if (groupType == GroupType.COUNT) {
                 int count = dd.getTotalCount().intValue();
                 MapData c = new MapData(dd.getName(), count);
                 dataList.add(c);
@@ -306,7 +335,7 @@ public class ExperienceController extends BaseController {
                 if (count < minValue) {
                     minValue = count;
                 }
-            }else if (statType == ExperienceMapStatSH.StatType.DAYS) {
+            }else if (groupType == GroupType.DAYS) {
                 int days = dd.getTotalDays().intValue();
                 MapData c = new MapData(dd.getName(), days );
                 dataList.add(c);
@@ -327,35 +356,27 @@ public class ExperienceController extends BaseController {
                     minValue = (int) money;
                 }
             }
+            if(StringUtil.isNotEmpty(dd.getLocation())){
+                String[] geo = dd.getLocation().split(",");
+                geoMap.put(dd.getName(),new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
+            }else {
+                logger.warn("未找到{}的地理位置信息",dd.getName());
+            }
         }
         chartData.setDataList(dataList);
         chartData.setMax(maxValue);
         chartData.setMin(minValue);
-        chartData.setGeoCoordMapData(getGeoMapData(userId, startDate, endDate));
+        chartData.setGeoCoordMapData(geoMap);
         return chartData;
 
     }
 
     /**
-     * 基于经历的统计(即采用LifeExperience表数据)
-     *
+     * 创建明细的Map统计
      * @param sf
      * @return
      */
-    private LocationMapStatChartData createLcNameMapStat(ExperienceMapStatSH sf) {
-        LocationMapStatChartData chartData = new LocationMapStatChartData();
-        chartData.setTitle("人生去过的地方统计");
-        if (sf.getStatType() == ExperienceMapStatSH.StatType.COUNT){
-            chartData.setName("旅行次数");
-            chartData.setUnit("次");
-        }else if (sf.getStatType() == ExperienceMapStatSH.StatType.DAYS){
-            chartData.setName("旅行天数");
-            chartData.setUnit("天");
-        }else{
-            chartData.setName("旅行花费");
-            chartData.setUnit("元");
-        }
-        List<MapData> dataList = new ArrayList<>();
+    private List<ExperienceMapStat> createDetailMapStat(ExperienceMapStatSH sf){
         //获取经历列表
         ExperienceSH les = new ExperienceSH();
         BeanCopy.copy(sf,les);
@@ -363,138 +384,46 @@ public class ExperienceController extends BaseController {
         PageRequest pr = les.buildQuery();
         pr.setBeanClass(beanClass);
         List<Experience> list = baseService.getBeanList(pr);
-        Map<String, double[]> geoMap = new HashMap<>();
-        int maxValue = 0;
-        for (Experience dd : list) {
-            if(StringUtil.isEmpty(dd.getLocation())){
-                continue;
-            }
-            String name = dd.getExpName();
-            if (sf.getStatType() == ExperienceMapStatSH.StatType.COUNT) {
-                MapData c = new MapData(name, 1);
-                dataList.add(c);
-            }else if (sf.getStatType() == ExperienceMapStatSH.StatType.DAYS) {
-                int days = dd.getDays();
-                MapData c = new MapData(name, days);
-                dataList.add(c);
-                if (days > maxValue) {
-                    maxValue = days;
-                }
-            }else {
-                double m = dd.getCost()==null ? 0 : dd.getCost().doubleValue();
-                MapData c = new MapData(name, m);
-                dataList.add(c);
-                if (m > maxValue) {
-                    maxValue = (int) m;
-                }
-            }
-            String[] geo = dd.getLocation().split(",");
-            geoMap.put(name,new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
-        }
-        chartData.setDataList(dataList);
-        chartData.setMax(maxValue);
-        chartData.setGeoCoordMapData(geoMap);
-        return chartData;
-
-    }
-
-    /**
-     * 获取地理位置数据定义
-     *
-     * @param userId
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    private Map<String, double[]> getGeoMapData(Long userId, Date startDate, Date endDate) {
-        if (startDate == null) {
-            startDate = new Date(0L);
-        }
-        if (endDate == null) {
-            endDate = new Date();
-        }
-        List<CityLocationDTO> list = experienceService.statCityLocation(userId, startDate, endDate);
-        Map<String, double[]> geoMapData = new HashMap<>();
-        for (CityLocationDTO ss : list) {
-            String[] geo = ss.getLocation().split(",");
-            geoMapData.put(ss.getCity(), new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
-
-        }
-        return geoMapData;
-    }
-
-    /**
-     * 把location字段根据分割符重新统计
-     *
-     * @param list
-     * @return
-     */
-    private List<ExperienceMapStat> convertMapStatLocation(List<ExperienceMapStat> list) {
-        Map<String, ExperienceMapStat> map = new HashMap<>();
-        for (ExperienceMapStat dd : list) {
-            String name = dd.getName();
-            ExperienceMapStat stat = map.get(name);
-            if (stat == null) {
-                ExperienceMapStat newStat = new ExperienceMapStat();
-                newStat.setName(name);
-                newStat.setTotalDays(dd.getTotalDays());
-                newStat.setTotalCount(dd.getTotalCount());
-                map.put(name, newStat);
-            } else {
-                stat.setTotalCount(stat.getTotalCount()+dd.getTotalCount());
-                stat.setTotalDays(stat.getTotalDays()+(dd.getTotalDays()));
-            }
-        }
         List<ExperienceMapStat> result = new ArrayList<>();
-        for (ExperienceMapStat stat : map.values()) {
-            result.add(stat);
+        MapField field = sf.getField();
+        for(Experience bt: list){
+            ExperienceMapStat bean = new ExperienceMapStat();
+            bean.setId(bt.getExpId());
+            //bean.setName(DateUtil.getFormatDate(bt.getStartDate(),dateFormat)+","+bt.getExpName());
+            bean.setName(bt.getExpName());
+            if(field==MapField.CITY){
+                bean.setLocation(bt.getCity().getLocation());
+            }else{
+                bean.setLocation(bt.getDistrict().getLocation());
+            }
+            bean.setTotalCount(1L);
+            bean.setTotalDays(bt.getDays().longValue());
+            bean.setTotalCost(bt.getCost());
+            result.add(bean);
         }
         return result;
     }
 
     /**
-     * 获取出发城市树
-     *
-     * @return
-     */
-    @RequestMapping(value = "/startCityTree", method = RequestMethod.GET)
-    public ResultBean startCityTree(UserCommonFrom sf) {
-        try {
-            List<String> citys = experienceService.getStartCityList(sf.getUserId());
-            List<TreeBean> list = new ArrayList<TreeBean>();
-            for (String s : citys) {
-                TreeBean tb = new TreeBean();
-                tb.setId(s);
-                tb.setText(s);
-                list.add(tb);
-            }
-            return callback(list);
-        } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取出发城市树异常",
-                    e);
-        }
-    }
-
-    /**
      * 针对某个经历迁徙地图统计
      *
-     * @param expId
+     * @param sf
      * @return
      */
     @RequestMapping(value = "/transferDetailMap", method = RequestMethod.GET)
-    public ResultBean transferDetailMap(@RequestParam(name = "expId") Long expId) {
-        Experience experience = baseService.getObject(beanClass,expId);
-        ExperienceDetailSH sf = new ExperienceDetailSH();
-        sf.setExpId(expId);
-        sf.setMapStat(true);
-        PageRequest pr = sf.buildQuery();
+    public ResultBean transferDetailMap(@Valid ExperienceTransferDetailMapSH sf) {
+        Experience experience = baseService.getObject(beanClass,sf.getExpId());
+        ExperienceDetailSH eds = new ExperienceDetailSH();
+        eds.setExpId(sf.getExpId());
+        eds.setMapStat(true);
+        PageRequest pr = eds.buildQuery();
         pr.setBeanClass(beanClass);
         Sort s = new Sort("occurDate", Sort.ASC);
         pr.addSort(s);
         pr.setBeanClass(ExperienceDetail.class);
         pr.setPage(PageRequest.NO_PAGE);
         List<ExperienceDetail> detailList = baseService.getBeanList(pr);
-        ChinaTransferChartData chartData = this.createChinaTransferMap(detailList);
+        ChinaTransferChartData chartData = this.createCountryTransferMap(detailList,sf.getField());
         chartData.setTitle("["+experience.getExpName()+"]地图");
         return callback(chartData);
     }
@@ -506,15 +435,15 @@ public class ExperienceController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/transferMapStat", method = RequestMethod.GET)
-    public ResultBean transferMapStat(ExperienceMapStatSH sf) {
-        switch (sf.getMapType()){
-            case CHINA:
-                return callback(this.createChinaTransferMap(sf));
-            case WORLD:
-                return callback(this.createWorldTransferMap(sf));
-            default:
-                return callbackErrorInfo("无效的地图类型");
+    public ResultBean transferMapStat(ExperienceTransferMapStatSH sf) {
+        MapField field = sf.getField();
+        switch (field){
+            case COUNTRY:
+                return this.callback(createWorldTransferMap(sf));
+            case PROVINCE,CITY,DISTRICT:
+                return this.callback(createCountryTransferMap(sf));
         }
+        return callback(null);
     }
 
     /**
@@ -523,51 +452,97 @@ public class ExperienceController extends BaseController {
      * @param sf
      * @return
      */
-    private ChinaTransferChartData createChinaTransferMap(ExperienceMapStatSH sf) {
+    private ChinaTransferChartData createCountryTransferMap(ExperienceTransferMapStatSH sf) {
         ExperienceDetailSH ds = new ExperienceDetailSH();
         ds.setStartDate(sf.getStartDate());
         ds.setEndDate(sf.getEndDate());
         ds.setUserId(sf.getUserId());
         ds.setInternational(false);
+        ds.setMapStat(true);
         PageRequest pr = ds.buildQuery();
         pr.setPage(PageRequest.NO_PAGE);
         pr.setBeanClass(ExperienceDetail.class);
         Sort s = new Sort("occurDate", Sort.ASC);
         pr.addSort(s);
         List<ExperienceDetail> list = baseService.getBeanList(pr);
-        ChinaTransferChartData chartData = this.createChinaTransferMap(list);
+        ChinaTransferChartData chartData = this.createCountryTransferMap(list,sf.getField());
         return chartData;
     }
 
     /**
-     * 中国迁移地图数据封装
+     * 基于国家的迁移地图数据封装
      *
      * @param list
      * @return
      */
-    private ChinaTransferChartData createChinaTransferMap(List<ExperienceDetail> list) {
+    private ChinaTransferChartData createCountryTransferMap(List<ExperienceDetail> list, MapField field) {
         Map<String, double[]> geoMap = new HashMap<>();
         ChinaTransferChartData chartData = new ChinaTransferChartData();
         chartData.setTitle("人生经历线路统计");
-        ExperienceDetailSH ds = new ExperienceDetailSH();
         for(ExperienceDetail dd : list){
             String year = DateUtil.getFormatDate(dd.getOccurDate(),"yyyy");
-            chartData.addDetail(year,dd.getStartCity(),dd.getArriveCity(),1);
-            double[] scGeo = geoMap.get(dd.getStartCity());
+            ExperienceLocationVo lv = this.getLocationInfo(dd,field);
+            chartData.addDetail(year,lv.getStart(),lv.getArrive(),1);
+            double[] scGeo = geoMap.get(lv.getStart());
             if(scGeo==null){
-                String[] geo = dd.getScLocation().split(",");
-                geoMap.put(dd.getStartCity(), new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
+                geoMap.put(lv.getStart(),createGeo(lv.getStartLocation()) );
             }
-            double[] acGeo = geoMap.get(dd.getArriveCity());
+            double[] acGeo = geoMap.get(lv.getArrive());
             if(acGeo==null){
-                String[] geo = dd.getAcLocation().split(",");
-                geoMap.put(dd.getArriveCity(), new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
+                geoMap.put(lv.getArrive(),createGeo(lv.getArriveLocation()) );
             }
         }
-
         chartData.setGeoCoordMapData(geoMap);
         chartData.setUnit("次");
         return chartData;
+    }
+
+    private ExperienceLocationVo getLocationInfo(ExperienceDetail dd,MapField field){
+        String start = null;
+        String arrive = null;
+        String startLocation = null;
+        String arriveLocation = null;
+        switch (field){
+            case COUNTRY -> {
+                start = dd.getStartCountry().getCnName();
+                arrive = dd.getArriveCountry().getCnName();
+                startLocation = dd.getStartCountry().getLocation();
+                arriveLocation = dd.getArriveCountry().getLocation();
+            }
+            case PROVINCE -> {
+                start = dd.getStartProvince().getMapName();
+                arrive = dd.getArriveProvince().getMapName();
+                startLocation = dd.getStartProvince().getLocation();
+                arriveLocation = dd.getArriveProvince().getLocation();
+            }
+            case CITY -> {
+                start = dd.getStartCity().getCityName();
+                arrive = dd.getArriveCity().getCityName();
+                startLocation = dd.getStartCity().getLocation();
+                arriveLocation = dd.getArriveCity().getLocation();
+            }
+            case DISTRICT -> {
+                start = dd.getStartDistrict().getDistrictName();
+                arrive = dd.getArriveDistrict().getDistrictName();
+                startLocation = dd.getStartDistrict().getLocation();
+                arriveLocation = dd.getArriveDistrict().getLocation();
+            }
+        }
+        return new ExperienceLocationVo(start,arrive,startLocation,arriveLocation);
+    }
+
+    /**
+     * 经纬度
+     * @param location
+     * @return
+     */
+    private double[] createGeo(String location){
+        if(StringUtil.isEmpty(location)){
+            return new double[]{0,0};
+        }else{
+            String[] geo = location.split(",");
+            return new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])};
+        }
     }
 
     /**
@@ -576,24 +551,34 @@ public class ExperienceController extends BaseController {
      * @param sf
      * @return
      */
-    private WorldTransferChartData createWorldTransferMap(ExperienceMapStatSH sf) {
-        List<WorldTransferMapStat> list  = experienceService.getWorldTransMapStat(sf);
+    private WorldTransferChartData createWorldTransferMap(ExperienceTransferMapStatSH sf) {
+        ExperienceDetailSH ds = new ExperienceDetailSH();
+        ds.setStartDate(sf.getStartDate());
+        ds.setEndDate(sf.getEndDate());
+        ds.setUserId(sf.getUserId());
+        ds.setInternational(true);
+        ds.setMapStat(true);
+        PageRequest pr = ds.buildQuery();
+        pr.setPage(PageRequest.NO_PAGE);
+        pr.setBeanClass(ExperienceDetail.class);
+        Sort s = new Sort("occurDate", Sort.ASC);
+        pr.addSort(s);
+        List<ExperienceDetail> list = baseService.getBeanList(pr);
         Map<String, double[]> geoMap = new HashMap<>();
         WorldTransferChartData chartData = new WorldTransferChartData();
         chartData.setTitle("人生经历线路统计");
         String centerCity = "北京";
         chartData.setCenterCity(centerCity);
-        for(WorldTransferMapStat dd : list){
-            chartData.addDetail(dd.getStartCity(),dd.getArriveCity(),1);
-            double[] scGeo = geoMap.get(dd.getStartCity());
+        for(ExperienceDetail dd : list){
+            ExperienceLocationVo lv = this.getLocationInfo(dd,sf.getField());
+            chartData.addDetail(lv.getStart(),lv.getArrive(),1);
+            double[] scGeo = geoMap.get(lv.getStart());
             if(scGeo==null){
-                String[] geo = dd.getScLocation().split(",");
-                geoMap.put(dd.getStartCity(), new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
+                geoMap.put(lv.getStart(),createGeo(lv.getStartLocation()) );
             }
-            double[] acGeo = geoMap.get(dd.getArriveCity());
+            double[] acGeo = geoMap.get(lv.getArrive());
             if(acGeo==null){
-                String[] geo = dd.getAcLocation().split(",");
-                geoMap.put(dd.getArriveCity(), new double[]{Double.parseDouble(geo[0]), Double.parseDouble(geo[1])});
+                geoMap.put(lv.getArrive(),createGeo(lv.getArriveLocation()) );
             }
         }
         if(geoMap.get(centerCity)==null){

@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.controller.work;
 
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
@@ -26,12 +27,16 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 
 /**
  * 出差管理
@@ -46,6 +51,9 @@ public class BusinessTripController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(BusinessTripController.class);
 
     private static Class<BusinessTrip> beanClass = BusinessTrip.class;
+
+    @Value("${mulanbay.businessTrip.mapStat.dateFormat}")
+    String dateFormat;
 
     @Autowired
     WorkService workService;
@@ -196,6 +204,35 @@ public class BusinessTripController extends BaseController {
     }
 
     /**
+     * 创建明细的Map统计
+     * @param sf
+     * @return
+     */
+    private List<BusinessTripMapStat> createDetailMapStat(BusinessTripMapStatSH sf){
+        BusinessTripSH dtsh = new BusinessTripSH();
+        BeanCopy.copy(sf,dtsh);
+        dtsh.setPage(NO_PAGE);
+        PageResult<BusinessTrip> pr = this.getResult(dtsh);
+        List<BusinessTripMapStat> result = new ArrayList<>();
+        MapField field = sf.getField();
+        for(BusinessTrip bt: pr.getBeanList()){
+            BusinessTripMapStat bean = new BusinessTripMapStat();
+            bean.setId(bt.getTripId());
+            if(field==MapField.CITY){
+                bean.setName(DateUtil.getFormatDate(bt.getTripDate(),dateFormat)+","+bt.getCity().getCityName());
+                bean.setLocation(bt.getCity().getLocation());
+            }else{
+                bean.setName(DateUtil.getFormatDate(bt.getTripDate(),dateFormat)+","+bt.getDistrict().getDistrictName());
+                bean.setLocation(bt.getDistrict().getLocation());
+            }
+            bean.setTotalCount(1L);
+            bean.setTotalDays(new BigDecimal(1));
+            result.add(bean);
+        }
+        return result;
+    }
+
+    /**
      * 地图统计
      *
      * @return
@@ -208,7 +245,7 @@ public class BusinessTripController extends BaseController {
                 return callback(this.createWorldMapData(sf));
             }
             case PROVINCE -> {
-                return callback(this.createProvinceMapData(sf));
+                return callback(this.createCountryMapData(sf));
             }
             case CITY, DISTRICT -> {
                 return callback(this.createLocationMapStat(sf));
@@ -219,12 +256,14 @@ public class BusinessTripController extends BaseController {
 
 
     /**
-     * 生成统计图表
+     * 基于省份的国家地图
      * @param sf
      * @return
      */
-    private MapStatChartData createProvinceMapData(BusinessTripMapStatSH sf){
+    private MapStatChartData createCountryMapData(BusinessTripMapStatSH sf){
         MapStatChartData chartData = new MapStatChartData();
+        Country country = baseService.getObject(Country.class,sf.getCountryId());
+        //todo 根据不同国家设置地图名称
         chartData.setMapName("china");
         chartData.setTitle("出差统计");
         List<BusinessTripMapStat> list = workService.getBusinessTripMapStat(sf);
@@ -271,7 +310,12 @@ public class BusinessTripController extends BaseController {
             chartData.setUnit("天");
         }
         List<MapData> dataList = new ArrayList<>();
-        List<BusinessTripMapStat> list = workService.getBusinessTripMapStat(sf);
+        List<BusinessTripMapStat> list = null;
+        if(sf.getUd()){
+            list = this.createDetailMapStat(sf);
+        }else{
+            list = workService.getBusinessTripMapStat(sf);
+        }
         int maxValue = 0;
         int minValue = 0;
         Map<String, double[]> geoMap= new HashMap<>();

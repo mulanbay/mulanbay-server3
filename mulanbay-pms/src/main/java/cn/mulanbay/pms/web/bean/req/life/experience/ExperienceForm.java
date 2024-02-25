@@ -37,9 +37,17 @@ public class ExperienceForm implements BindUser {
 
     private String tags;
 
-    private String lcName;
+    @NotNull(message = "国家不能为空")
+    private Long countryId;
 
-    private String location;
+    //@NotNull(message = "省份不能为空")
+    private Long provinceId;
+
+    //@NotNull(message = "城市不能为空")
+    private Long cityId;
+
+    //@NotNull(message = "县不能为空")
+    private Long districtId;
 
     private String remark;
 
@@ -117,20 +125,36 @@ public class ExperienceForm implements BindUser {
         this.tags = tags;
     }
 
-    public String getLcName() {
-        return lcName;
+    public Long getCountryId() {
+        return countryId;
     }
 
-    public void setLcName(String lcName) {
-        this.lcName = lcName;
+    public void setCountryId(Long countryId) {
+        this.countryId = countryId;
     }
 
-    public String getLocation() {
-        return location;
+    public Long getProvinceId() {
+        return provinceId;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setProvinceId(Long provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public Long getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
+    }
+
+    public Long getDistrictId() {
+        return districtId;
+    }
+
+    public void setDistrictId(Long districtId) {
+        this.districtId = districtId;
     }
 
     public String getRemark() {
