@@ -267,7 +267,6 @@ public class BusinessTripController extends BaseController {
         chartData.setMapName("china");
         chartData.setTitle("出差统计");
         List<BusinessTripMapStat> list = workService.getBusinessTripMapStat(sf);
-        int maxValue = 0;
         GroupType groupType = sf.getGroupType();
         for (BusinessTripMapStat dd : list) {
             String name = dd.getName();
@@ -275,20 +274,13 @@ public class BusinessTripController extends BaseController {
             detail.setName(name);
             if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
-                if (dd.getTotalCount().intValue() > maxValue) {
-                    maxValue = dd.getTotalCount().intValue();
-                }
             } else if (groupType == GroupType.VALUE) {
                 detail.setValue(dd.getTotalDays().intValue());
-                if (dd.getTotalDays().intValue() > maxValue) {
-                    maxValue = dd.getTotalDays().intValue();
-                }
             }
             detail.setCounts(dd.getTotalCount().intValue());
             detail.setDays(dd.getTotalDays().intValue());
             chartData.addDetail(detail);
         }
-        chartData.setMaxValue(maxValue);
         return chartData;
     }
 
@@ -316,30 +308,16 @@ public class BusinessTripController extends BaseController {
         }else{
             list = workService.getBusinessTripMapStat(sf);
         }
-        int maxValue = 0;
-        int minValue = 0;
         Map<String, double[]> geoMap= new HashMap<>();
         for (BusinessTripMapStat dd : list) {
             if (groupType == GroupType.COUNT) {
                 int count = dd.getTotalCount().intValue();
                 MapData c = new MapData(dd.getName(), count);
                 dataList.add(c);
-                if (count > maxValue) {
-                    maxValue = count;
-                }
-                if (count < minValue) {
-                    minValue = count;
-                }
             }else{
                 int days = dd.getTotalDays().intValue();
                 MapData c = new MapData(dd.getName(), days );
                 dataList.add(c);
-                if (days > maxValue) {
-                    maxValue = days;
-                }
-                if (days < minValue) {
-                    minValue = days;
-                }
             }
             if(StringUtil.isNotEmpty(dd.getLocation())){
                 String[] geo = dd.getLocation().split(",");
@@ -349,8 +327,6 @@ public class BusinessTripController extends BaseController {
             }
         }
         chartData.setDataList(dataList);
-        chartData.setMax(maxValue);
-        chartData.setMin(minValue);
         chartData.setGeoCoordMapData(geoMap);
         return chartData;
     }
@@ -371,7 +347,6 @@ public class BusinessTripController extends BaseController {
             chartData.setUnit("天");
         }
         List<BusinessTripMapStat> list = workService.getBusinessTripMapStat(sf);
-        int maxValue = 0;
         Map<String, double[]> geoMap = new HashMap<>();
         for (BusinessTripMapStat dd : list) {
             String name = dd.getName();
@@ -379,14 +354,8 @@ public class BusinessTripController extends BaseController {
             detail.setName(name);
             if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
-                if (dd.getTotalCount().intValue() > maxValue) {
-                    maxValue = dd.getTotalCount().intValue();
-                }
             } else{
                 detail.setValue(dd.getTotalDays().intValue());
-                if (dd.getTotalDays().intValue() > maxValue) {
-                    maxValue = dd.getTotalDays().intValue();
-                }
             }
             //地理位置
             if(StringUtil.isNotEmpty(dd.getLocation())){
@@ -400,7 +369,6 @@ public class BusinessTripController extends BaseController {
             detail.setDays(dd.getTotalDays().intValue());
             chartData.addDetail(detail);
         }
-        chartData.setMaxValue(maxValue);
         chartData.setGeoCoordMapData(geoMap);
         return chartData;
     }

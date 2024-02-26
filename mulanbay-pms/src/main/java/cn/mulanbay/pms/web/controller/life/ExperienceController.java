@@ -218,33 +218,22 @@ public class ExperienceController extends BaseController {
         }
         chartData.setSubTitle(subText);
         GroupType groupType = sf.getGroupType();
-        int maxValue = 0;
         for (ExperienceMapStat dd : list) {
             String name = dd.getName();
             MapStatChartDetail detail = new MapStatChartDetail();
             detail.setName(name);
             if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
-                if (dd.getTotalCount().intValue() > maxValue) {
-                    maxValue = dd.getTotalCount().intValue();
-                }
             } else if (groupType == GroupType.DAYS) {
                 detail.setValue(dd.getTotalDays().intValue());
-                if (dd.getTotalDays().intValue() > maxValue) {
-                    maxValue = dd.getTotalDays().intValue();
-                }
             } else {
                 detail.setValue(dd.getTotalCost().intValue());
-                if (dd.getTotalCost().intValue() > maxValue) {
-                    maxValue = dd.getTotalCost().intValue();
-                }
             }
             detail.setCounts(dd.getTotalCount().intValue());
             detail.setDays(dd.getTotalDays().intValue());
             detail.setCost(dd.getTotalCost().intValue());
             chartData.addDetail(detail);
         }
-        chartData.setMaxValue(maxValue);
         return chartData;
     }
 
@@ -258,7 +247,6 @@ public class ExperienceController extends BaseController {
         chartData.setMapName("world");
         chartData.setTitle("人生去过的国家统计");
         List<ExperienceMapStat> list = experienceService.getMapStat(sf);
-        int maxValue = 0;
         Map<String, double[]> geoMapData = new HashMap<>();
         GroupType groupType = sf.getGroupType();
         for (ExperienceMapStat dd : list) {
@@ -267,19 +255,10 @@ public class ExperienceController extends BaseController {
             detail.setName(name);
             if (groupType == GroupType.COUNT) {
                 detail.setValue(dd.getTotalCount().intValue());
-                if (dd.getTotalCount().intValue() > maxValue) {
-                    maxValue = dd.getTotalCount().intValue();
-                }
             } else if (groupType == GroupType.DAYS) {
                 detail.setValue(dd.getTotalDays().intValue());
-                if (dd.getTotalDays().intValue() > maxValue) {
-                    maxValue = dd.getTotalDays().intValue();
-                }
             } else {
                 detail.setValue(dd.getTotalCost().intValue());
-                if (dd.getTotalCost().intValue() > maxValue) {
-                    maxValue = dd.getTotalCost().intValue();
-                }
             }
             //地理位置
             geoMapData.put(name,this.createGeo(dd.getLocation()));
@@ -289,7 +268,6 @@ public class ExperienceController extends BaseController {
             chartData.addDetail(detail);
         }
         chartData.setUnit(groupType.getUnit());
-        chartData.setMaxValue(maxValue);
         chartData.setGeoCoordMapData(geoMapData);
         return chartData;
     }
@@ -322,39 +300,19 @@ public class ExperienceController extends BaseController {
         }
         List<MapData> dataList = new ArrayList<>();
         Map<String, double[]> geoMap= new HashMap<>();
-        int maxValue = 0;
-        int minValue = 0;
         for (ExperienceMapStat dd : list) {
             if (groupType == GroupType.COUNT) {
                 int count = dd.getTotalCount().intValue();
                 MapData c = new MapData(dd.getName(), count);
                 dataList.add(c);
-                if (count > maxValue) {
-                    maxValue = count;
-                }
-                if (count < minValue) {
-                    minValue = count;
-                }
             }else if (groupType == GroupType.DAYS) {
                 int days = dd.getTotalDays().intValue();
                 MapData c = new MapData(dd.getName(), days );
                 dataList.add(c);
-                if (days > maxValue) {
-                    maxValue = days;
-                }
-                if (days < minValue) {
-                    minValue = days;
-                }
             } else {
                 double money = dd.getTotalCost()==null ? 0:dd.getTotalCost().doubleValue();
                 MapData c = new MapData(dd.getName(), money);
                 dataList.add(c);
-                if (money > maxValue) {
-                    maxValue = (int) money;
-                }
-                if (money < minValue) {
-                    minValue = (int) money;
-                }
             }
             if(StringUtil.isNotEmpty(dd.getLocation())){
                 String[] geo = dd.getLocation().split(",");
@@ -364,8 +322,6 @@ public class ExperienceController extends BaseController {
             }
         }
         chartData.setDataList(dataList);
-        chartData.setMax(maxValue);
-        chartData.setMin(minValue);
         chartData.setGeoCoordMapData(geoMap);
         return chartData;
 
