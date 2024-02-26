@@ -711,3 +711,26 @@ CHANGE COLUMN `country_id` `arrive_country_id` BIGINT(20) NULL DEFAULT 290 ,
 CHANGE COLUMN `province_id` `arrive_province_id` BIGINT(20) NULL DEFAULT NULL ,
 CHANGE COLUMN `city_id` `arrive_city_id` BIGINT(20) NULL DEFAULT NULL ,
 CHANGE COLUMN `district_id` `arrive_district_id` BIGINT(20) NULL DEFAULT NULL ;
+
+ALTER TABLE `common_record_type`  RENAME TO  `common_data_type` ;
+ALTER TABLE `common_data_type`
+    ADD COLUMN `remark` VARCHAR(200) NULL AFTER `reward_point`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `id` `type_id` INT NOT NULL ,
+CHANGE COLUMN `name` `type_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ;
+
+ALTER TABLE `common_record` RENAME TO  `common_data` ;
+ALTER TABLE `common_data`
+    CHANGE COLUMN `id` `data_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `common_record_type_id` `type_id` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `name` `data_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `common_data_type`
+    CHANGE COLUMN `type_id` `type_id` BIGINT(20) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `common_data_type`
+    ADD COLUMN `group_name` VARCHAR(45) NULL AFTER `user_id`;
+
+update common_data_type set group_name ='默认' where type_id>0;

@@ -182,6 +182,9 @@ mulanbay:
     mapStat:
       #明细统计时时间格式化
       dateFormat: yyyy
+  commonData:
+    #分类分组的时长
+    categoryDays: 90
   nlp:
     model:
       #模型是否要初始化
