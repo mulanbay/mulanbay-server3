@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.persistent.enums;
 
 /**
- * 提醒类值类型
+ * 统计类值类型
  *
  * @author fenghong
  * @create 2017-07-10 21:44

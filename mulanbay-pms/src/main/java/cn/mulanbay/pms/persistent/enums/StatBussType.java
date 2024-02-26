@@ -6,7 +6,7 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum StatValueType {
+public enum StatBussType {
 
     NOTIFY(0, "提醒"),
     REPORT(1, "报表"),
@@ -19,7 +19,7 @@ public enum StatValueType {
 
     private String name;
 
-    StatValueType(int value, String name) {
+    StatBussType(int value, String name) {
         this.value = value;
         this.name = name;
     }

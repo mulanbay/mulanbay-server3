@@ -162,6 +162,11 @@ public class ScoreConfig implements java.io.Serializable {
         this.modifyTime = modifyTime;
     }
 
+    @Transient
+    public String getCompareTypeName() {
+        return compareType==null? null:compareType.getName();
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof ScoreConfig bean) {

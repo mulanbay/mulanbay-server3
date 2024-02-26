@@ -34,10 +34,10 @@ public class UserSet implements java.io.Serializable {
     private Boolean sendWx;
 
     /**
-     * 评分的配置组，对应的是ScoreConfig中的key
+     * 评分的配置组
      */
-    @Column(name = "score_group")
-    private String scoreGroup;
+    @Column(name = "score_group_id")
+    private Long scoreGroupId;
 
     /**
      * 常住城市
@@ -101,12 +101,12 @@ public class UserSet implements java.io.Serializable {
         this.sendWx = sendWx;
     }
 
-    public String getScoreGroup() {
-        return scoreGroup;
+    public Long getScoreGroupId() {
+        return scoreGroupId;
     }
 
-    public void setScoreGroup(String scoreGroup) {
-        this.scoreGroup = scoreGroup;
+    public void setScoreGroupId(Long scoreGroupId) {
+        this.scoreGroupId = scoreGroupId;
     }
 
     public String getResidentCity() {

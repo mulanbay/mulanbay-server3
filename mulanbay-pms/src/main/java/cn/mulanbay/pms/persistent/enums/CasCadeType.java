@@ -8,7 +8,9 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum CasCadeType {
 
-    NOT_CASCADE(0, "不级联"), CASCADE_NEXT(1, "级联下一层"), BE_CASCADED(2, "级联上一层");
+    NOT_CASCADE(0, "不级联"),
+    CASCADE_NEXT(1, "级联下一层"),
+    BE_CASCADED(2, "级联上一层");
 
     private int value;
 

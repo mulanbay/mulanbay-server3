@@ -288,11 +288,7 @@ public class User implements java.io.Serializable {
 
     @Transient
     public String getStatusName() {
-        if (status != null) {
-            return status.getName();
-        } else {
-            return null;
-        }
+        return status==null ? null:status.getName();
     }
 
     @Override
@@ -311,10 +307,6 @@ public class User implements java.io.Serializable {
 
     @Transient
     public String getSecAuthTypeName() {
-        if (this.secAuthType != null) {
-            return secAuthType.getName();
-        } else {
-            return null;
-        }
+        return secAuthType==null ? null:secAuthType.getName();
     }
 }

@@ -734,3 +734,65 @@ ALTER TABLE `common_data_type`
     ADD COLUMN `group_name` VARCHAR(45) NULL AFTER `user_id`;
 
 update common_data_type set group_name ='默认' where type_id>0;
+
+#转换统计配置
+ALTER TABLE `stat_value_config`
+    ADD COLUMN `config_value` VARCHAR(1000) NULL AFTER `prompt_msg`;
+
+update stat_value_config set config_value=sql_content where source=0 and id>0;
+update stat_value_config set config_value=enum_class where source=1 and id>0;
+update stat_value_config set config_value=dict_group_code where source=2 and id>0;
+update stat_value_config set config_value=json_data where source=3 and id>0;
+
+ALTER TABLE `stat_value_config` RENAME TO  `stat_bind_config` ;
+
+ALTER TABLE `stat_bind_config`
+DROP COLUMN `json_data`,
+DROP COLUMN `dict_group_code`,
+DROP COLUMN `enum_class`,
+DROP COLUMN `sql_content`,
+ADD COLUMN `remark` VARCHAR(200) NULL AFTER `msg`,
+ADD COLUMN `created_time` DATETIME NULL AFTER `remark`,
+ADD COLUMN `modify_time` DATETIME NULL AFTER `created_time`,
+CHANGE COLUMN `config_value` `config_value` VARCHAR(1000) NULL DEFAULT NULL AFTER `fid`,
+CHANGE COLUMN `id` `config_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `config_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `prompt_msg` `msg` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ;
+
+ALTER TABLE `notify_config` RENAME TO  `stat_template` ;
+
+ALTER TABLE `stat_template`
+DROP COLUMN `tab_name`,
+CHANGE COLUMN `status` `status` SMALLINT NOT NULL COMMENT '状态' AFTER `order_index`,
+CHANGE COLUMN `id` `template_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键' ,
+CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
+CHANGE COLUMN `notify_type` `compare_type` SMALLINT NULL DEFAULT NULL COMMENT '提醒类型:0告警类1完成类' ,
+CHANGE COLUMN `related_beans` `bean_name` VARCHAR(200) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `reward_point` `rewards` INT NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `default_calendar_title` `calendar_title` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_notify`  RENAME TO  `user_stat` ;
+
+ALTER TABLE `user_stat`
+DROP COLUMN `show_in_index`,
+CHANGE COLUMN `id` `stat_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `notify_config_id` `template_id` BIGINT NOT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_notify_remind` RENAME TO  `User_stat_remind` ;
+ALTER TABLE `User_stat_remind`
+    CHANGE COLUMN `id` `remind_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `user_notify_id` `stat_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `over_warning_remind` `owr` TINYINT NOT NULL ,
+    CHANGE COLUMN `over_alert_remind` `oar` TINYINT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_set`
+DROP COLUMN `score_group`,
+ADD COLUMN `score_group_id` BIGINT(20) NULL DEFAULT 1 AFTER `send_wx`;
+
+
+
+
+

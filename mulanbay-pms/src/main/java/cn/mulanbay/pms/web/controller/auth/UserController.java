@@ -275,7 +275,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/editProfile", method = RequestMethod.POST)
     public ResultBean editProfile(@RequestBody @Valid UserProfileForm upr) {
         User user = baseService.getObject(beanClass, upr.getUserId());
-        BeanCopy.copyProperties(upr, user);
+        BeanCopy.copy(upr, user);
         baseService.updateObject(user);
         return callback(null);
     }
@@ -329,7 +329,7 @@ public class UserController extends BaseController {
             user.setPassword(encodePassword);
         }
         baseService.updateObject(user);
-        BeanCopy.copyProperties(eui, us);
+        BeanCopy.copy(eui, us);
         baseService.updateObject(us);
         return callback(null);
     }

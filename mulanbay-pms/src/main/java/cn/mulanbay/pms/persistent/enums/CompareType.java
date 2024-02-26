@@ -8,7 +8,8 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum CompareType {
 
-    MORE(0, "大于"), LESS(1, "小于");
+    MORE(0, "大于"),
+    LESS(1, "小于");
 
     private int value;
 

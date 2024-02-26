@@ -79,9 +79,9 @@ public class UserScoreHandler extends BaseHandler {
         return this.getUseScore(userId, dates[0], dates[1]);
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, String scoreGroup, Date bussDay) {
+    public List<UserScoreDetail> getUseScore(Long userId, Long scoreGroupId, Date bussDay) {
         Date[] dates = this.getDays(bussDay);
-        return this.getUseScore(userId, scoreGroup, dates[0], dates[1]);
+        return this.getUseScore(userId, scoreGroupId, dates[0], dates[1]);
     }
 
     public Date[] getDays(Date bussDay) {
@@ -96,15 +96,15 @@ public class UserScoreHandler extends BaseHandler {
          * 比如：不同的年龄阶段可以用不同的评分标准
          */
         UserSet us = baseService.getObject(UserSet.class,userId);
-        String scoreGroup = us.getScoreGroup();
-        if (StringUtil.isEmpty(scoreGroup)) {
-            scoreGroup = "0";
+        Long scoreGroupId = us.getScoreGroupId();
+        if (scoreGroupId==null) {
+            scoreGroupId = 1L;
         }
-        return this.getUseScore(userId, scoreGroup, startTime, endTime);
+        return this.getUseScore(userId, scoreGroupId, startTime, endTime);
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, String scoreGroup, Date startTime, Date endTime) {
-        List<ScoreConfig> scList = userScoreService.selectActiveScoreConfigList(scoreGroup);
+    public List<UserScoreDetail> getUseScore(Long userId, Long scoreGroupId, Date startTime, Date endTime) {
+        List<ScoreConfig> scList = userScoreService.selectActiveScoreConfigList(scoreGroupId);
         List<UserScoreDetail> list = new ArrayList<>();
         for (ScoreConfig sc : scList) {
             double vv = userScoreService.getScoreValue(sc.getSqlContent(), userId, startTime, endTime);
