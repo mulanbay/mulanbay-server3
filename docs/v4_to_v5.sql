@@ -792,7 +792,12 @@ ALTER TABLE `user_set`
 DROP COLUMN `score_group`,
 ADD COLUMN `score_group_id` BIGINT(20) NULL DEFAULT 1 AFTER `send_wx`;
 
+ALTER TABLE `stat_template`
+DROP COLUMN `bean_name`,
+ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `user_field`;
 
+ALTER TABLE `stat_bind_config`
+    CHANGE COLUMN `cas_cade_type` `cascade_type` TINYINT NOT NULL DEFAULT '0' ;
 
 
 

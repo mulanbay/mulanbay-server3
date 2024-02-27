@@ -18,6 +18,11 @@ public class Constant {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
 
     /**
+     * 数据库中用户条件替换符
+     */
+    public static final String SQL_USER_CONDITION = "{user_condition}";
+
+    /**
      * 根节点号
      */
     public static long ROOT_ID=0L;

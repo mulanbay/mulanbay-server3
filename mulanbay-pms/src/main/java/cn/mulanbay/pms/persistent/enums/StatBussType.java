@@ -8,7 +8,7 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum StatBussType {
 
-    NOTIFY(0, "提醒"),
+    STAT(0, "统计"),
     REPORT(1, "报表"),
     PLAN(2, "计划"),
     BEHAVIOR(3, "用户行为"),

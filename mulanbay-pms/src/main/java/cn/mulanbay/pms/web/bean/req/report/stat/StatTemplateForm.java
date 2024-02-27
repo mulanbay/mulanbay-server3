@@ -1,98 +1,70 @@
-package cn.mulanbay.pms.persistent.domain;
+package cn.mulanbay.pms.web.bean.req.report.stat;
 
-import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.*;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-import java.util.Date;
-import java.util.Objects;
+public class StatTemplateForm {
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
-/**
- * 用户提醒配置模板
- *
- * @author fenghong
- * @create 2017-07-10 21:44
- */
-@Entity
-@Table(name = "stat_template")
-public class StatTemplate implements java.io.Serializable {
-
-    private static final long serialVersionUID = 5577140811957103873L;
-
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "template_id", unique = true, nullable = false)
     private Long templateId;
 
-    @Column(name = "template_name")
+    @NotEmpty(message = "名称不能为空")
     private String templateName;
 
-    @Column(name = "title")
+    @NotEmpty(message = "标题不能为空")
     private String title;
 
-    @Column(name = "sql_type")
+    @NotNull(message = "SQL类型不能为空")
     private SqlType sqlType;
 
-    @Column(name = "sql_content")
+    @NotEmpty(message = "SQL不能为空")
     private String sqlContent;
 
-    @Column(name = "result_type")
+    @NotNull(message = "结果返回类型不能为空")
     private ResultType resultType;
 
-    @Column(name = "value_type")
+    @NotNull(message = "值类型不能为空")
     private ValueType valueType;
 
-    @Column(name = "status")
+    @NotNull(message = "状态不能为空")
     private CommonStatus status;
 
-    @Column(name = "order_index")
+    @NotNull(message = "排序号不能为空")
     private Short orderIndex;
 
-    @Column(name = "compare_type")
+    @NotNull(message = "比较类型不能为空")
     private CompareType compareType;
 
-    @Column(name = "user_field")
     private String userField;
 
-    //业务类型
-    @Column(name = "buss_type")
+    @NotNull(message = "业务类型不能为空")
     private BussType bussType;
 
-    @Column(name = "level")
+    @NotNull(message = "级别不能为空")
     private Integer level;
     //奖励积分(正为加，负为减)
-    @Column(name = "rewards")
+    @NotNull(message = "奖励积分不能为空")
     private Integer rewards;
 
-    @Column(name = "buss_key")
     private String bussKey;
 
-    @Column(name = "calendar_title")
     private String calendarTitle;
+
     //链接地址
-    @Column(name = "url")
     private String url;
 
-    @Column(name = "remark")
     private String remark;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "created_time",updatable = false)
-    private Date createdTime;
+    /**
+     * 复制时的模版ID
+     */
+    private Long fromTemplateId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @UpdateTimestamp
-    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @Column(name = "modify_time",insertable = false)
-    private Date modifyTime;
+    /**
+     * 新增时是否拷贝配置项
+     */
+    private Boolean copyItems;
 
     public Long getTemplateId() {
         return templateId;
@@ -238,64 +210,19 @@ public class StatTemplate implements java.io.Serializable {
         this.remark = remark;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public Long getFromTemplateId() {
+        return fromTemplateId;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setFromTemplateId(Long fromTemplateId) {
+        this.fromTemplateId = fromTemplateId;
     }
 
-    public Date getModifyTime() {
-        return modifyTime;
+    public Boolean getCopyItems() {
+        return copyItems;
     }
 
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
+    public void setCopyItems(Boolean copyItems) {
+        this.copyItems = copyItems;
     }
-
-    @Transient
-    public String getStatusName() {
-        return status==null ? null:status.getName();
-    }
-
-    @Transient
-    public String getSqlTypeName() {
-        return sqlType==null ? null:sqlType.getName();
-    }
-
-    @Transient
-    public String getValueTypeName() {
-        return valueType==null ? null:valueType.getName();
-    }
-
-    @Transient
-    public String getResultTypeName() {
-        return resultType==null ? null:resultType.getName();
-    }
-
-    @Transient
-    public String getCompareTypeName() {
-        return compareType==null ? null:compareType.getName();
-    }
-
-    @Transient
-    public String getBussTypeName() {
-        return bussType==null ? null:bussType.getName();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof StatTemplate bean) {
-            return bean.getTemplateId().equals(this.getTemplateId());
-        }else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(templateId);
-    }
-
 }

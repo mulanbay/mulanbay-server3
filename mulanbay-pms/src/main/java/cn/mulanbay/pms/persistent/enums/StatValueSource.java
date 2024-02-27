@@ -8,7 +8,7 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum StatValueSource {
 
-    SQL(0, "数据库查询"),
+    SQL(0, "数据库"),
     ENUM(1, "枚举类"),
     DATA_DICT(2, "数据字典"),
     JSON(3, "Json数据");
