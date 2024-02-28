@@ -4,6 +4,7 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.BindUserLevel;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 
+import cn.mulanbay.pms.persistent.enums.CompareType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -23,11 +24,11 @@ public class UserStatForm implements BindUser, BindUserLevel {
     @NotNull(message = "是否提醒不能为空")
     private Boolean remind;
 
-    @NotNull(message = "警告值不能为空")
-    private Integer warningValue;
+    @NotNull(message = "期望值不能为空")
+    private Long expectValue;
 
-    @NotNull(message = "报警值不能为空")
-    private Integer alertValue;
+    @NotNull(message = "比较类型不能为空")
+    private CompareType compareType;
 
     @NotNull(message = "状态不能为空")
     private CommonStatus status;
@@ -96,20 +97,20 @@ public class UserStatForm implements BindUser, BindUserLevel {
         this.remind = remind;
     }
 
-    public Integer getWarningValue() {
-        return warningValue;
+    public Long getExpectValue() {
+        return expectValue;
     }
 
-    public void setWarningValue(Integer warningValue) {
-        this.warningValue = warningValue;
+    public void setExpectValue(Long expectValue) {
+        this.expectValue = expectValue;
     }
 
-    public Integer getAlertValue() {
-        return alertValue;
+    public CompareType getCompareType() {
+        return compareType;
     }
 
-    public void setAlertValue(Integer alertValue) {
-        this.alertValue = alertValue;
+    public void setCompareType(CompareType compareType) {
+        this.compareType = compareType;
     }
 
     public CommonStatus getStatus() {

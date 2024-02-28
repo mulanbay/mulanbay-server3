@@ -11,7 +11,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.UserStatHandler;
 import cn.mulanbay.pms.persistent.domain.StatTemplate;
 import cn.mulanbay.pms.persistent.domain.UserStat;
-import cn.mulanbay.pms.persistent.dto.stat.StatResultDTO;
+import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CompareType;
 import cn.mulanbay.pms.persistent.service.StatService;
@@ -132,7 +132,6 @@ public class UserStatController extends BaseController {
             return callbackErrorCode(PmsCode.USER_ENTITY_NOT_ALLOWED);
         }
         bean.setTemplate(template);
-        checkUserNotify(bean);
         statService.saveOrUpdateUserStat(bean);
         return callback(bean);
     }
@@ -157,7 +156,7 @@ public class UserStatController extends BaseController {
     @RequestMapping(value = "/stat", method = RequestMethod.GET)
     public ResultBean stat(@RequestParam(name = "statId") Long statId) {
         UserStat bean = baseService.getObject(beanClass,statId);
-        StatResultDTO dto = statService.getStatResult(bean, bean.getUserId());
+        StatResultDTO dto = statService.getStatResult(bean);
         return callback(dto);
     }
 
@@ -175,23 +174,8 @@ public class UserStatController extends BaseController {
             return callbackErrorCode(PmsCode.USER_ENTITY_NOT_ALLOWED);
         }
         bean.setTemplate(template);
-        checkUserNotify(bean);
         statService.saveOrUpdateUserStat(bean);
         return callback(bean);
-    }
-
-    private void checkUserNotify(UserStat userStat) {
-        if (userStat.getTemplate().getCompareType() == CompareType.LESS) {
-            //小于类型
-            if (userStat.getWarningValue() < userStat.getAlertValue()) {
-                throw new ApplicationException(PmsCode.NOTIFY_WARNING_VALUE_LESS_ALERT);
-            }
-        } else {
-            //大于类型
-            if (userStat.getWarningValue() > userStat.getAlertValue()) {
-                throw new ApplicationException(PmsCode.NOTIFY_WARNING_VALUE_MORE_ALERT);
-            }
-        }
     }
 
     /**

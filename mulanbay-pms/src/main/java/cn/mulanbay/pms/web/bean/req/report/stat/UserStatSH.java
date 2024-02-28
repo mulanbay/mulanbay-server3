@@ -9,6 +9,9 @@ import cn.mulanbay.web.bean.request.PageSearch;
 
 public class UserStatSH extends PageSearch implements BindUser {
 
+    @Query(fieldName = "template.templateId", op = Parameter.Operator.EQ)
+    private Long templateId;
+
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     private Long userId;
 
@@ -20,6 +23,14 @@ public class UserStatSH extends PageSearch implements BindUser {
 
     @Query(fieldName = "template.bussType", op = Parameter.Operator.EQ)
     private BussType bussType;
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
 
     @Override
     public Long getUserId() {

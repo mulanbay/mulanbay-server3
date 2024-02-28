@@ -10,20 +10,21 @@ import cn.mulanbay.pms.persistent.domain.*;
  */
 public enum BussType {
 
-    CONSUME(0, Consume.class, "消费记录"),
-    DREAM(1, "梦想"),
-    LIFE_EXPERIENCE(2, "人生经历"),
-    MUSIC_PRACTICE(3, "音乐练习"),
-    READING_RECORD(4,  "阅读"),
+    CONSUME(0, Consume.class, "消费"),
+    DREAM(1, Dream.class, "梦想"),
+    EXPERIENCE(2, Experience.class, "人生经历"),
+    MUSIC_PRACTICE(3, MusicPractice.class, "音乐练习"),
+    BOOK(4, Book.class,  "阅读"),
     EXERCISE(5, Exercise.class,"锻炼"),
-    TREAT(6, Treat.class, "看病记录"),
-    COMMON_RECORD(7, "通用记录"),
+    TREAT(6, Treat.class, "健康"),
+    COMMON_DATA(7, CommonData.class, "通用记录"),
     DIARY(8, "日记"),
-    WORK_OVER_TIME(9,  "加班记录"),
-    SLEEP(10, "睡眠"),
-    DIET(11, "饮食"),
+    WORK_OVER_TIME(9, WorkOvertime.class,  "加班"),
+    SLEEP(10, Sleep.class, "睡眠"),
+    DIET(11, Diet.class, "饮食"),
     ACCOUNT(12, Account.class, "资金"),
-    INCOME(13, Income.class,"收入");
+    INCOME(13, Income.class,"收入"),
+    BODY_INFO(14, BodyInfo.class,"身体数据");
 
     private int value;
 

@@ -17,11 +17,8 @@ import cn.mulanbay.pms.web.bean.res.TreeBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static cn.mulanbay.pms.common.Constant.SQL_USER_CONDITION;
 
 @Service
 @Transactional
@@ -36,7 +33,7 @@ public class StatBindConfigService extends BaseHibernateDao {
      */
     public List<StatBindConfig> getConfigList(Long fid, StatBussType type) {
         try {
-            String hql = "from StatBindConfig where fid=?1 and type =?1 order by orderIndex";
+            String hql = "from StatBindConfig where fid=?1 and type =?2 order by orderIndex";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,StatBindConfig.class,fid,type);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -103,6 +100,10 @@ public class StatBindConfigService extends BaseHibernateDao {
                 details = this.getJsonDetails(svc);
                 break;
             }
+            case ANY: {
+                details = this.getAnyDetails(svc);
+                break;
+            }
             default:
                 break;
         }
@@ -121,15 +122,15 @@ public class StatBindConfigService extends BaseHibernateDao {
     private List<StatBindConfigDetail> getSqlDetails(StatBindConfig svc, String pid, Long userId) {
         try {
             String sql = svc.getConfigValue();
+            List args = new ArrayList();
             if (!StringUtil.isEmpty(pid)) {
-                sql = MessageFormat.format(sql, pid);
+                args.add(pid);
             }
             if (!StringUtil.isEmpty(svc.getUserField())) {
-                String us = svc.getUserField()+"="+userId;
-                sql = sql.replace(SQL_USER_CONDITION,us);
+                args.add(userId);
             }
             List<StatBindConfigDetail> res = new ArrayList<>();
-            List<Object[]> vcs = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Object[].class);
+            List<Object[]> vcs = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Object[].class,args.toArray());
             for (Object[] o : vcs) {
                 StatBindConfigDetail detail = new StatBindConfigDetail();
                 detail.setId(o[0].toString());
@@ -197,5 +198,14 @@ public class StatBindConfigService extends BaseHibernateDao {
         return res;
     }
 
+    /**
+     * 任意类型
+     *
+     * @param svc
+     * @return
+     */
+    private List<StatBindConfigDetail> getAnyDetails(StatBindConfig svc) {
+        return null;
+    }
 
 }

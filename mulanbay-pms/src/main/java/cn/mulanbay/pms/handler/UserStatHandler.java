@@ -4,7 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.persistent.domain.UserStat;
-import cn.mulanbay.pms.persistent.dto.stat.StatResultDTO;
+import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.service.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,7 +69,7 @@ public class UserStatHandler extends BaseHandler {
      * @return
      */
     public StatResultDTO getStatResult(UserStat un) {
-        StatResultDTO nr = statService.getStatResult(un, un.getUserId());
+        StatResultDTO nr = statService.getStatResult(un);
         return nr;
     }
 

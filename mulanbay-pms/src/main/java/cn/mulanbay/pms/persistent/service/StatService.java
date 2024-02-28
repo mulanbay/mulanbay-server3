@@ -4,17 +4,13 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
-import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.domain.StatTemplate;
 import cn.mulanbay.pms.persistent.domain.UserStat;
 import cn.mulanbay.pms.persistent.domain.UserStatRemind;
-import cn.mulanbay.pms.persistent.dto.stat.StatResultDTO;
-import cn.mulanbay.pms.persistent.enums.CommonStatus;
-import cn.mulanbay.pms.persistent.enums.ResultType;
-import cn.mulanbay.pms.persistent.enums.SqlType;
-import cn.mulanbay.pms.persistent.enums.StatBussType;
-import cn.mulanbay.pms.persistent.util.MysqlUtil;
+import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
+import cn.mulanbay.pms.persistent.dto.report.StatSQLDTO;
+import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.schedule.enums.TriggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static cn.mulanbay.pms.common.Constant.SQL_USER_CONDITION;
-
 @Service
 @Transactional
-public class StatService extends BaseHibernateDao {
+public class StatService extends BaseReportService {
 
     private static final Logger logger = LoggerFactory.getLogger(StatService.class);
 
@@ -49,7 +43,7 @@ public class StatService extends BaseHibernateDao {
                 return results;
             } else {
                 for (UserStat nc : userStatList) {
-                    StatResultDTO result = this.getStatResult(nc, userId);
+                    StatResultDTO result = this.getStatResult(nc);
                     if (result != null) {
                         results.add(result);
                     }
@@ -66,24 +60,22 @@ public class StatService extends BaseHibernateDao {
      * 获取提醒的统计结果
      *
      * @param userStat
-     * @param userId
      * @return
      */
-    public StatResultDTO getStatResult(UserStat userStat, Long userId) {
+    public StatResultDTO getStatResult(UserStat userStat) {
         try {
             StatTemplate template = userStat.getTemplate();
             ResultType resultType = template.getResultType();
-            String fullSQL = this.getFullSQL(userStat,userId);
+            StatSQLDTO sqlDTO = this.assembleSQL(userStat);
             List<Object[]> rr = null;
             if (template.getSqlType() == SqlType.HQL) {
-                rr = this.getEntityListHI(fullSQL,NO_PAGE,NO_PAGE_SIZE,Object[].class);
+                rr = this.getEntityListHI(sqlDTO.getSqlContent(),NO_PAGE,NO_PAGE_SIZE,Object[].class,sqlDTO.getArgArray());
             } else {
-                rr = this.getEntityListSI(fullSQL,NO_PAGE,NO_PAGE_SIZE,Object[].class);
+                rr = this.getEntityListSI(sqlDTO.getSqlContent(),NO_PAGE,NO_PAGE_SIZE,Object[].class,sqlDTO.getArgArray());
             }
             if (!rr.isEmpty()) {
                 Object[] rs = rr.get(0);
                 Object value = rs[0];
-                Object nameValue = rs[1];
                 StatResultDTO dto = new StatResultDTO();
                 if (value != null) {
                     switch (resultType){
@@ -95,10 +87,12 @@ public class StatService extends BaseHibernateDao {
                         }
                         case DATE_NAME -> {
                             dto.setValue(((Date) value).getTime());
+                            Object nameValue = rs[1];
                             dto.setNameValue(nameValue == null ? "" : nameValue.toString());
                         }
                         case NUMBER_NAME -> {
                             dto.setValue(Long.valueOf(value.toString()));
+                            Object nameValue = rs[1];
                             dto.setNameValue(nameValue == null ? "" : nameValue.toString());
                         }
                     }
@@ -119,25 +113,6 @@ public class StatService extends BaseHibernateDao {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "统计提醒[" + userStat.getTitle() + "]异常", e);
         }
-    }
-
-    /**
-     * 计算封装SQL
-     *
-     * @param un
-     * @param userId
-     * @return
-     */
-    private String getFullSQL(UserStat un, Long userId) {
-        StatTemplate template = un.getTemplate();
-        String sqlContent = template.getSqlContent();
-        String userField = template.getUserField();
-        if (!StringUtil.isEmpty(userField)) {
-            String us = userField+"="+userId;
-            sqlContent = sqlContent.replace(SQL_USER_CONDITION,us);
-        }
-        sqlContent = MysqlUtil.replaceBindValues(sqlContent, un.getBindValues());
-        return sqlContent;
     }
 
     /**
@@ -235,8 +210,7 @@ public class StatService extends BaseHibernateDao {
             if (remind == null) {
                 //生成默认
                 remind = new UserStatRemind();
-                remind.setOwr(true);
-                remind.setOar(true);
+                remind.setOverRate(80);
                 remind.setRemark("由表单页面自动生成");
                 remind.setRemindTime("08:30");
                 remind.setTriggerInterval(1);
@@ -313,6 +287,22 @@ public class StatService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
                     "查找用户统计的提醒异常", e);
+        }
+    }
+
+    /**
+     * 获取最大排序号
+     *
+     * @param bussType
+     */
+    public Short getTemplateMaxOrderIndex(BussType bussType) {
+        try {
+            String hql = "select max(orderIndex) from StatTemplate where bussType=?1 ";
+            Object o =  this.getEntity(hql,Object.class, bussType);
+            return o==null? null : Short.parseShort(o.toString());
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取最大排序号异常", e);
         }
     }
 

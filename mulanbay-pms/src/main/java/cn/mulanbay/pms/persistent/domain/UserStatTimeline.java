@@ -37,24 +37,20 @@ public class UserStatTimeline implements java.io.Serializable {
     /**
      * 统计值
      */
+    @Column(name = "value")
     private Long value;
 
     /**
      * 有名称的统计值
      */
+    @Column(name = "name_value")
     private String nameValue;
 
     /**
-     * 警告值
+     * 期望值
      */
-    @Column(name = "warning_value")
-    private Integer warningValue;
-
-    /**
-     * 报警值
-     */
-    @Column(name = "alert_value")
-    private Integer alertValue;
+    @Column(name = "expect_value")
+    private Long expectValue;
 
     @Column(name = "unit")
     private String unit;
@@ -113,20 +109,12 @@ public class UserStatTimeline implements java.io.Serializable {
         this.nameValue = nameValue;
     }
 
-    public Integer getWarningValue() {
-        return warningValue;
+    public Long getExpectValue() {
+        return expectValue;
     }
 
-    public void setWarningValue(Integer warningValue) {
-        this.warningValue = warningValue;
-    }
-
-    public Integer getAlertValue() {
-        return alertValue;
-    }
-
-    public void setAlertValue(Integer alertValue) {
-        this.alertValue = alertValue;
+    public void setExpectValue(Long expectValue) {
+        this.expectValue = expectValue;
     }
 
     public String getUnit() {

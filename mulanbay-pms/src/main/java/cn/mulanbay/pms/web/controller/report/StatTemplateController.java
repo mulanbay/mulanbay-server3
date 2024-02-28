@@ -115,7 +115,7 @@ public class StatTemplateController extends BaseController {
     public ResultBean list(StatTemplateSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort s = new Sort("orderIndex", Sort.ASC);
+        Sort s = new Sort("createdTime", Sort.DESC);
         pr.addSort(s);
         PageResult<StatTemplate> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
@@ -159,6 +159,18 @@ public class StatTemplateController extends BaseController {
     public ResultBean get(@RequestParam(name = "templateId") Long templateId) {
         StatTemplate bean = baseService.getObject(beanClass, templateId);
         return callback(bean);
+    }
+
+    /**
+     * 下一个排序号
+     *
+     * @return
+     */
+    @RequestMapping(value = "/nextOrderIndex", method = RequestMethod.GET)
+    public ResultBean nextOrderIndex(@RequestParam(name = "bussType") BussType bussType) {
+        Short index = statService.getTemplateMaxOrderIndex(bussType);
+        short next = index==null? 0:index++;
+        return callback(next);
     }
 
     /**

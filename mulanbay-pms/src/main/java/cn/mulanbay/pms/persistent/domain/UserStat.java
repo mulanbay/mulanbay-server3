@@ -3,6 +3,7 @@ package cn.mulanbay.pms.persistent.domain;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 
+import cn.mulanbay.pms.persistent.enums.CompareType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,16 +47,13 @@ public class UserStat implements java.io.Serializable {
     private Boolean remind;
 
     /**
-     * 警告值
+     * 期望值
      */
-    @Column(name = "warning_value")
-    private Integer warningValue;
+    @Column(name = "expect_value")
+    private Long expectValue;
 
-    /**
-     * 报警值
-     */
-    @Column(name = "alert_value")
-    private Integer alertValue;
+    @Column(name = "compare_type")
+    private CompareType compareType;
 
     @Column(name = "status")
     private CommonStatus status;
@@ -134,21 +132,22 @@ public class UserStat implements java.io.Serializable {
         this.remind = remind;
     }
 
-    public Integer getWarningValue() {
-        return warningValue;
+    public Long getExpectValue() {
+        return expectValue;
     }
 
-    public void setWarningValue(Integer warningValue) {
-        this.warningValue = warningValue;
+    public void setExpectValue(Long expectValue) {
+        this.expectValue = expectValue;
     }
 
-    public Integer getAlertValue() {
-        return alertValue;
+    public CompareType getCompareType() {
+        return compareType;
     }
 
-    public void setAlertValue(Integer alertValue) {
-        this.alertValue = alertValue;
+    public void setCompareType(CompareType compareType) {
+        this.compareType = compareType;
     }
+
 
     public CommonStatus getStatus() {
         return status;
@@ -212,6 +211,11 @@ public class UserStat implements java.io.Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @Transient
+    public String getCompareTypeName() {
+        return compareType==null ? null:compareType.getName();
     }
 
     @Override

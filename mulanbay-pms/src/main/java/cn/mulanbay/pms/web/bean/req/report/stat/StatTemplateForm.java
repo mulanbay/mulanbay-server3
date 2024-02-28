@@ -33,9 +33,6 @@ public class StatTemplateForm {
     @NotNull(message = "排序号不能为空")
     private Short orderIndex;
 
-    @NotNull(message = "比较类型不能为空")
-    private CompareType compareType;
-
     private String userField;
 
     @NotNull(message = "业务类型不能为空")
@@ -136,14 +133,6 @@ public class StatTemplateForm {
 
     public void setOrderIndex(Short orderIndex) {
         this.orderIndex = orderIndex;
-    }
-
-    public CompareType getCompareType() {
-        return compareType;
-    }
-
-    public void setCompareType(CompareType compareType) {
-        this.compareType = compareType;
     }
 
     public String getUserField() {

@@ -20,13 +20,9 @@ public class UserStatRemindForm implements BindUser {
     @NotNull(message = "周期值不能为空")
     private Integer triggerInterval;
 
-    //超过告警值提醒
-    @NotNull(message = "超过告警值提醒值不能为空")
-    private Boolean owr;
-
-    //超过警报值提醒
-    @NotNull(message = "超过警报值提醒值不能为空")
-    private Boolean oar;
+    //告警值提醒
+    @NotNull(message = "报警比例不能为空")
+    private Integer overRate;
 
     //提醒时间
     @NotNull(message = "提醒时间不能为空")
@@ -75,20 +71,12 @@ public class UserStatRemindForm implements BindUser {
         this.triggerInterval = triggerInterval;
     }
 
-    public Boolean getOwr() {
-        return owr;
+    public Integer getOverRate() {
+        return overRate;
     }
 
-    public void setOwr(Boolean owr) {
-        this.owr = owr;
-    }
-
-    public Boolean getOar() {
-        return oar;
-    }
-
-    public void setOar(Boolean oar) {
-        this.oar = oar;
+    public void setOverRate(Integer overRate) {
+        this.overRate = overRate;
     }
 
     public String getRemindTime() {

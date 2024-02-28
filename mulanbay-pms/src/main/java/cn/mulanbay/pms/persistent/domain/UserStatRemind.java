@@ -48,13 +48,14 @@ public class UserStatRemind implements java.io.Serializable {
     @Column(name = "trigger_interval")
     private Integer triggerInterval;
 
-    //超过告警值提醒
-    @Column(name = "owr")
-    private Boolean owr;
+    /**
+     * 超出某个比例时开始提醒
+     * 1. CompareType.LESS: 当统计值>=expectValue*(100-overRate)%
+     * 2. CompareType.MORE: 当统计值<=expectValue*(100-overRate)%
+     */
+    @Column(name = "over_rate")
+    private Integer overRate;
 
-    //超过警报值提醒
-    @Column(name = "oar")
-    private Boolean oar;
     //提醒时间
     @Column(name = "remind_time")
     private String remindTime;
@@ -122,20 +123,12 @@ public class UserStatRemind implements java.io.Serializable {
         this.triggerInterval = triggerInterval;
     }
 
-    public Boolean getOwr() {
-        return owr;
+    public Integer getOverRate() {
+        return overRate;
     }
 
-    public void setOwr(Boolean owr) {
-        this.owr = owr;
-    }
-
-    public Boolean getOar() {
-        return oar;
-    }
-
-    public void setOar(Boolean oar) {
-        this.oar = oar;
+    public void setOverRate(Integer overRate) {
+        this.overRate = overRate;
     }
 
     public String getRemindTime() {

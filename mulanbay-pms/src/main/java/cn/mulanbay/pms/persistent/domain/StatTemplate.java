@@ -54,9 +54,6 @@ public class StatTemplate implements java.io.Serializable {
     @Column(name = "order_index")
     private Short orderIndex;
 
-    @Column(name = "compare_type")
-    private CompareType compareType;
-
     @Column(name = "user_field")
     private String userField;
 
@@ -166,14 +163,6 @@ public class StatTemplate implements java.io.Serializable {
         this.orderIndex = orderIndex;
     }
 
-    public CompareType getCompareType() {
-        return compareType;
-    }
-
-    public void setCompareType(CompareType compareType) {
-        this.compareType = compareType;
-    }
-
     public String getUserField() {
         return userField;
     }
@@ -272,11 +261,6 @@ public class StatTemplate implements java.io.Serializable {
     @Transient
     public String getResultTypeName() {
         return resultType==null ? null:resultType.getName();
-    }
-
-    @Transient
-    public String getCompareTypeName() {
-        return compareType==null ? null:compareType.getName();
     }
 
     @Transient

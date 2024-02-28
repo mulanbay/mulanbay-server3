@@ -1,4 +1,4 @@
-package cn.mulanbay.pms.persistent.dto.stat;
+package cn.mulanbay.pms.persistent.dto.report;
 
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.persistent.domain.StatTemplate;
@@ -31,17 +31,16 @@ public class StatResultDTO implements Serializable {
 
     private UserStat userStat;
 
-    private long compareValue = 0L;
+    /**
+     * 统计值，经过单位转换
+     */
+    private long statValue = 0L;
 
     /**
-     * 超出警告值
+     * 超出期望的值
      */
-    private long owv = 0L;
+    private long overValue = 0L;
 
-    /**
-     * 超出报警值
-     */
-    private long oav = 0L;
 
     public Long getValue() {
         return value;
@@ -67,24 +66,20 @@ public class StatResultDTO implements Serializable {
         this.userStat = userStat;
     }
 
-    public void setCompareValue(long compareValue) {
-        this.compareValue = compareValue;
+    public long getStatValue() {
+        return statValue;
     }
 
-    public long getOwv() {
-        return owv;
+    public void setStatValue(long statValue) {
+        this.statValue = statValue;
     }
 
-    public void setOwv(long owv) {
-        this.owv = owv;
+    public long getOverValue() {
+        return overValue;
     }
 
-    public long getOav() {
-        return oav;
-    }
-
-    public void setOav(long oav) {
-        this.oav = oav;
+    public void setOverValue(long overValue) {
+        this.overValue = overValue;
     }
 
     /**
@@ -92,47 +87,32 @@ public class StatResultDTO implements Serializable {
      */
     public void calculte() {
         StatTemplate template = userStat.getTemplate();
+        if (value == null) {
+            //没有数据
+            return;
+        }
         //计算比较值
         if (template.getResultType() == ResultType.DATE || template.getResultType() == ResultType.DATE_NAME) {
-            if (value == null) {
-                //没有数据
-                return;
-            }
             //计算秒数
             long v = (System.currentTimeMillis() - this.getValue()) / 1000;
             if (template.getValueType() == ValueType.DAY) {
-                this.compareValue = v / (3600 * 24);
+                this.statValue = v / (3600 * 24);
             } else if (template.getValueType() == ValueType.HOUR) {
-                this.compareValue = v / 3600;
+                this.statValue = v / 3600;
             } else if (template.getValueType() == ValueType.MINUTE) {
-                this.compareValue = v / 60;
+                this.statValue = v / 60;
             }
         } else if (template.getResultType() == ResultType.NUMBER || template.getResultType() == ResultType.NUMBER_NAME) {
-            this.compareValue = this.getValue();
+            this.statValue = this.getValue();
         } else {
             //
         }
         //超过warning的值，告警类与统计类的逻辑正好相反
-        if (template.getCompareType() == CompareType.LESS) {
-            this.owv = getCompareValue() - userStat.getWarningValue();
+        if (userStat.getCompareType() == CompareType.LESS) {
+            this.overValue = this.statValue - userStat.getExpectValue();
         } else {
-            this.owv = userStat.getWarningValue() - getCompareValue();
+            this.overValue = userStat.getExpectValue() - this.statValue;
         }
-        // 超过alert的值
-        if (template.getCompareType() == CompareType.LESS) {
-            this.oav = getCompareValue() - userStat.getAlertValue();
-        } else {
-            this.oav = userStat.getAlertValue() - getCompareValue();
-        }
-    }
-
-    /**
-     * 比较值获取
-     *
-     * @return
-     */
-    public long getCompareValue() {
-        return this.compareValue;
     }
 
     /**

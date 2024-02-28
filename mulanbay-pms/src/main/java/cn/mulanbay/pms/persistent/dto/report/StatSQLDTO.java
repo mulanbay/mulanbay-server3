@@ -1,12 +1,15 @@
-package cn.mulanbay.pms.persistent.dto.stat;
+package cn.mulanbay.pms.persistent.dto.report;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommonSqlDTO {
+public class StatSQLDTO {
 
     private String sqlContent;
 
+    /**
+     * 绑定值
+     */
     private List args = new ArrayList();
 
     public String getSqlContent() {
@@ -19,6 +22,14 @@ public class CommonSqlDTO {
 
     public List getArgs() {
         return args;
+    }
+
+    /**
+     * 数组
+     * @return
+     */
+    public Object[] getArgArray() {
+        return args.toArray();
     }
 
     public void addArg(Object arg) {

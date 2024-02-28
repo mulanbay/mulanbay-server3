@@ -11,7 +11,8 @@ public enum StatValueSource {
     SQL(0, "数据库"),
     ENUM(1, "枚举类"),
     DATA_DICT(2, "数据字典"),
-    JSON(3, "Json数据");
+    JSON(3, "Json数据"),
+    ANY(4, "自定义");
 
     private int value;
 

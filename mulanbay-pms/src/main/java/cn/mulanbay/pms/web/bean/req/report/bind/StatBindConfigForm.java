@@ -29,7 +29,7 @@ public class StatBindConfigForm implements java.io.Serializable {
     @NotNull(message = "外键不能为空")
     private Long fid;
 
-    @NotNull(message = "配置值不能为空")
+    //@NotNull(message = "配置值不能为空")
     private String configValue;
 
     //当source为枚举类时有效

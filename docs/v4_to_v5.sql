@@ -799,5 +799,30 @@ ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `user_field`;
 ALTER TABLE `stat_bind_config`
     CHANGE COLUMN `cas_cade_type` `cascade_type` TINYINT NOT NULL DEFAULT '0' ;
 
+ALTER TABLE `user_stat`
+DROP COLUMN `warning_value`,
+CHANGE COLUMN `alert_value` `expect_value` BIGINT(20) NOT NULL DEFAULT '0' ;
 
+ALTER TABLE `User_stat_remind`
+DROP COLUMN `oar`,
+DROP COLUMN `owr`,
+ADD COLUMN `over_rate` INT NOT NULL DEFAULT 80 AFTER `trigger_interval`;
 
+ALTER TABLE `stat_template`
+DROP COLUMN `compare_type`;
+
+ALTER TABLE`user_stat`
+    ADD COLUMN `compare_type` SMALLINT(5) NOT NULL DEFAULT 1 AFTER `expect_value`;
+
+CREATE TABLE `user_stat_timeline` (
+ `timeline_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+ `user_id` BIGINT(20) NOT NULL,
+ `stat_id` BIGINT(20) NOT NULL,
+ `value` BIGINT(20) NULL,
+ `name_value` VARCHAR(200) NULL,
+ `expect_value` BIGINT(20) NULL,
+ `unit` VARCHAR(45) NULL,
+ `remark` VARCHAR(200) NULL,
+ `created_time` DATETIME NOT NULL,
+ `modify_time` DATETIME NULL,
+ PRIMARY KEY (`timeline_id`));
