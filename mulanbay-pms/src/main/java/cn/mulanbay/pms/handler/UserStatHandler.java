@@ -33,11 +33,11 @@ public class UserStatHandler extends BaseHandler {
 
     /**
      * @param un
-     * @param queryExpireSeconds
+     * @param expireSeconds
      * @return
      */
-    public StatResultDTO getStatResult(UserStat un, int queryExpireSeconds) {
-        if (queryExpireSeconds <= 0) {
+    public StatResultDTO getStatResult(UserStat un, int expireSeconds) {
+        if (expireSeconds <= 0) {
             return this.getStatResult(un);
         }
         Long userId = un.getUserId();
@@ -45,7 +45,7 @@ public class UserStatHandler extends BaseHandler {
         StatResultDTO nr = cacheHandler.get(cacheKey, StatResultDTO.class);
         if (nr == null) {
             nr = this.getStatResult(un);
-            cacheStatResult(nr, queryExpireSeconds);
+            cacheStatResult(nr, expireSeconds);
         }
         return nr;
     }
@@ -88,11 +88,11 @@ public class UserStatHandler extends BaseHandler {
      * 清理缓存
      *
      * @param userId
-     * @param userNotifyId
+     * @param statId
      * @return
      */
-    public boolean deleteCache(Long userId,Long userNotifyId) {
-        String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), userNotifyId.toString());
+    public boolean deleteCache(Long userId,Long statId) {
+        String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), statId.toString());
         return cacheHandler.delete(cacheKey);
     }
 }

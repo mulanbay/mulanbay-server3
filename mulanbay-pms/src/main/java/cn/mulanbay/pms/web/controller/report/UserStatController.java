@@ -13,12 +13,12 @@ import cn.mulanbay.pms.persistent.domain.StatTemplate;
 import cn.mulanbay.pms.persistent.domain.UserStat;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.enums.CompareType;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
+import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
@@ -26,6 +26,7 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -44,6 +45,9 @@ import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 public class UserStatController extends BaseController {
 
     private static Class<UserStat> beanClass = UserStat.class;
+
+    @Value("${mulanbay.report.userStat.expires}")
+    int userStatExpires;
 
     @Autowired
     StatService statService;
@@ -160,6 +164,31 @@ public class UserStatController extends BaseController {
         return callback(dto);
     }
 
+
+    /**
+     * 获取列表数据
+     *
+     * @return
+     */
+    @RequestMapping(value = "/statList", method = RequestMethod.GET)
+    public ResultBean statList(UserStatSH sf) {
+        PageRequest pr = sf.buildQuery();
+        Sort s = new Sort("orderIndex", Sort.ASC);
+        pr.addSort(s);
+        pr.setBeanClass(beanClass);
+        PageResult<UserStat> unResult = baseService.getBeanResult(pr);
+        List<StatResultDTO> list = new ArrayList<>();
+        for (UserStat un : unResult.getBeanList()) {
+            StatResultDTO nr = userStatHandler.getStatResult(un, userStatExpires);
+            list.add(nr);
+        }
+        PageResult<StatResultDTO> res = new PageResult<>(sf.getPage(), sf.getPageSize());
+        res.setBeanList(list);
+        res.setMaxRow(unResult.getMaxRow());
+        return callbackDataGrid(res);
+    }
+
+
     /**
      * 修改
      *
@@ -195,9 +224,14 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteStatCache", method = RequestMethod.POST)
-    public ResultBean deleteStatCache(UserCommonFrom ucf) {
-        Long n = userStatHandler.deleteCache(ucf.getUserId());
-        return callback(n);
+    public ResultBean deleteStatCache(UserStatDeleteCacheForm ucf) {
+        Long statId = ucf.getStatId();
+        if(statId==null){
+            userStatHandler.deleteCache(ucf.getUserId());
+        }else{
+            userStatHandler.deleteCache(ucf.getUserId(),statId);
+        }
+        return callback(null);
     }
 
 }

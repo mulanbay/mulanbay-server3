@@ -189,6 +189,10 @@ mulanbay:
     model:
       #模型是否要初始化
       init: false
+  report:
+    userStat:
+      #统计的超时时间，主要是首页统计使用
+      expires: 3600
   ml:
     #机器学习模型文件
     pmml:
