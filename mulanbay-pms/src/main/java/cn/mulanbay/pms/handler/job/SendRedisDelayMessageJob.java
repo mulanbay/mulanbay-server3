@@ -61,7 +61,7 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
         try {
             Message mm = new Message();
             //需要拷贝一个新的，因为sendMessage会修改message内容，导致redisDelayQueueHandler无法删除
-            BeanCopy.copyProperties(message, mm);
+            BeanCopy.copy(message, mm);
             boolean res = messageSendHandler.sendMessage(mm);
             redisDelayQueueHandler.removeMessage(message);
             if (!res && mm.getFailCount() < para.getMaxFails()) {

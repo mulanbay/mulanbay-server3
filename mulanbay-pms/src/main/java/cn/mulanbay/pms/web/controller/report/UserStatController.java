@@ -63,7 +63,7 @@ public class UserStatController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/tree")
+    @RequestMapping(value = "/tree", method = RequestMethod.GET)
     public ResultBean tree(ReportTreeSH sf) {
         try {
             List<TreeBean> list = new ArrayList<TreeBean>();
@@ -72,6 +72,8 @@ public class UserStatController extends BaseController {
             uns.setPage(NO_PAGE);
             PageRequest pr = uns.buildQuery();
             pr.setBeanClass(beanClass);
+            Sort s = new Sort("template.bussType", Sort.ASC);
+            pr.addSort(s);
             List<UserStat> unList = baseService.getBeanList(pr);
             List<TreeBean> result = new ArrayList<>();
             BussType current = unList.get(0).getTemplate().getBussType();

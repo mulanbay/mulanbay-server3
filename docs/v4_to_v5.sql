@@ -826,3 +826,21 @@ CREATE TABLE `user_stat_timeline` (
  `created_time` DATETIME NOT NULL,
  `modify_time` DATETIME NULL,
  PRIMARY KEY (`timeline_id`));
+
+ALTER TABLE `user_calendar`
+    CHANGE COLUMN `id` `calendar_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `delay_counts` `delays` INT NOT NULL ,
+    CHANGE COLUMN `source_id` `source_id` VARCHAR(100) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+    CHANGE COLUMN `finished_time` `finish_time` DATETIME NULL DEFAULT NULL ,
+    CHANGE COLUMN `calendar_config_id` `template_id` BIGINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`calendar_id`);
+;
+
+ALTER TABLE `user_calendar_config` RENAME TO  `calendar_template` ;
+ALTER TABLE `calendar_template`
+    CHANGE COLUMN `id` `template_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键' ,
+    CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+

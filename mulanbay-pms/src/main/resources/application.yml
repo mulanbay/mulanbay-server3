@@ -90,6 +90,8 @@ mulanbay:
     operLog: true
   notify:
     message:
+      #是否重启时清空队列中的消息
+      clearAfterRestart: false
       #期望发送时间
       expectSendTime: 09:00
       #是否需要提醒表单验证类的错误代码

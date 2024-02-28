@@ -37,6 +37,9 @@ public class RedisDelayQueueHandler extends BaseHandler {
     @Value("${mulanbay.notify.message.expiredDays:3}")
     int expiredDays;
 
+    @Value("${mulanbay.notify.message.clearAfterRestart}")
+    boolean clearAfterRestart;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -57,6 +60,9 @@ public class RedisDelayQueueHandler extends BaseHandler {
 
     @Override
     public void init() {
+        if(clearAfterRestart){
+            this.clearMessage();
+        }
     }
 
     /**
@@ -129,8 +135,10 @@ public class RedisDelayQueueHandler extends BaseHandler {
     /**
      * 清除所有的未发送消息
      */
+    @HandlerMethod(desc = "清除所有的未发送消息")
     public void clearMessage() {
         redisTemplate.delete(this.getQueueName());
+        logger.info("清除所有的未发送消息");
     }
 
     /**

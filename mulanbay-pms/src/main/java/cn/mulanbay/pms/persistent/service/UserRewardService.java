@@ -8,6 +8,7 @@ import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserReward;
 import cn.mulanbay.pms.persistent.enums.RewardSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * @author fenghong
  * @date 2024/2/26
  */
+@Transactional
 @Service
 public class UserRewardService  extends BaseHibernateDao {
 

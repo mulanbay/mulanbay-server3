@@ -4,13 +4,16 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
+import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.domain.StatTemplate;
 import cn.mulanbay.pms.persistent.domain.UserStat;
 import cn.mulanbay.pms.persistent.domain.UserStatRemind;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.dto.report.StatSQLDTO;
+import cn.mulanbay.pms.persistent.dto.report.StatTimelineNameValueStat;
 import cn.mulanbay.pms.persistent.enums.*;
+import cn.mulanbay.pms.web.bean.req.report.stat.UserStatTimelineStatSH;
 import cn.mulanbay.schedule.enums.TriggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +156,7 @@ public class StatService extends BaseReportService {
      */
     public List<UserStat> getNeedRemindUserStat() {
         try {
-            String hql = "from UserStat where status=?1 and remind=?2 ";
+            String hql = "from UserStat where status=?1 and remind=?2 and userId>0 ";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,UserStat.class, CommonStatus.ENABLE, true);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -305,5 +308,29 @@ public class StatService extends BaseReportService {
                     "获取最大排序号异常", e);
         }
     }
+
+    /**
+     * 时间线名称值统计
+     *
+     * @param sf
+     * @return
+     */
+    public List<StatTimelineNameValueStat> getTimelineNameValueStat(UserStatTimelineStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String statSql = """
+                    select nameValue as name,count(0) as totalCount from UserStatTimeline
+                    {query_para}
+                    group by nameValue
+                    """;
+            statSql = statSql.replace("{query_para}",pr.getParameterString());
+            List<StatTimelineNameValueStat> list = this.getEntityListHI(statSql, NO_PAGE,NO_PAGE_SIZE, StatTimelineNameValueStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "时间线名称值统计异常", e);
+        }
+    }
+
 
 }
