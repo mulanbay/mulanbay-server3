@@ -40,7 +40,8 @@ public class StatBindConfigForm implements java.io.Serializable {
     private CasCadeType casCadeType;
 
     //是否和用户绑定，空表示不绑定
-    private String userField;
+    @NotNull(message = "是否绑定用户不能为空")
+    private Boolean bindUser;
 
     @NotNull(message = "排序号不能为空")
     private Integer orderIndex;
@@ -123,12 +124,12 @@ public class StatBindConfigForm implements java.io.Serializable {
         this.casCadeType = casCadeType;
     }
 
-    public String getUserField() {
-        return userField;
+    public Boolean getBindUser() {
+        return bindUser;
     }
 
-    public void setUserField(String userField) {
-        this.userField = userField;
+    public void setBindUser(Boolean bindUser) {
+        this.bindUser = bindUser;
     }
 
     public Integer getOrderIndex() {

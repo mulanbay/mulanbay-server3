@@ -14,17 +14,15 @@ import java.util.Objects;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
- * 用户提醒配置模板
+ * 用户计划配置模板
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "stat_template")
-public class StatTemplate implements java.io.Serializable {
-
-    private static final long serialVersionUID = 5577140811957103873L;
-
+@Table(name = "plan_template")
+public class PlanTemplate implements java.io.Serializable {
+    private static final long serialVersionUID = 3222686239313264692L;
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "template_id", unique = true, nullable = false)
@@ -32,7 +30,6 @@ public class StatTemplate implements java.io.Serializable {
 
     @Column(name = "template_name")
     private String templateName;
-
     @Column(name = "title")
     private String title;
 
@@ -42,11 +39,12 @@ public class StatTemplate implements java.io.Serializable {
     @Column(name = "sql_content")
     private String sqlContent;
 
-    @Column(name = "result_type")
-    private ResultType resultType;
-
-    @Column(name = "value_type")
-    private ValueType valueType;
+    /**
+     * 计划值的单位，这里的值只是在配置用户计划时默认加载使用，实际还是根据UserPlan取里面的unit来
+     * 因为比如运动锻炼，跑步的数值单位是公里，而平板支撑的数值单位是分钟
+     */
+    @Column(name = "unit")
+    private String unit;
 
     @Column(name = "status")
     private CommonStatus status;
@@ -128,20 +126,12 @@ public class StatTemplate implements java.io.Serializable {
         this.sqlContent = sqlContent;
     }
 
-    public ResultType getResultType() {
-        return resultType;
+    public String getUnit() {
+        return unit;
     }
 
-    public void setResultType(ResultType resultType) {
-        this.resultType = resultType;
-    }
-
-    public ValueType getValueType() {
-        return valueType;
-    }
-
-    public void setValueType(ValueType valueType) {
-        this.valueType = valueType;
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public CommonStatus getStatus() {
@@ -234,22 +224,12 @@ public class StatTemplate implements java.io.Serializable {
 
     @Transient
     public String getStatusName() {
-        return status==null ? null:status.getName();
+        return status==null? null:status.getName();
     }
 
     @Transient
     public String getSqlTypeName() {
-        return sqlType==null ? null:sqlType.getName();
-    }
-
-    @Transient
-    public String getValueTypeName() {
-        return valueType==null ? null:valueType.getName();
-    }
-
-    @Transient
-    public String getResultTypeName() {
-        return resultType==null ? null:resultType.getName();
+        return sqlType==null? null:sqlType.getName();
     }
 
     @Transient
@@ -259,7 +239,7 @@ public class StatTemplate implements java.io.Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof StatTemplate bean) {
+        if (other instanceof PlanTemplate bean) {
             return bean.getTemplateId().equals(this.getTemplateId());
         }else {
             return false;
@@ -270,5 +250,4 @@ public class StatTemplate implements java.io.Serializable {
     public int hashCode() {
         return Objects.hashCode(templateId);
     }
-
 }

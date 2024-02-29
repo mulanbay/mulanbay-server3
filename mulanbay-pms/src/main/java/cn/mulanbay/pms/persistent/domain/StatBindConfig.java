@@ -60,9 +60,8 @@ public class StatBindConfig implements java.io.Serializable {
     @Column(name = "cascade_type")
     private CasCadeType casCadeType;
 
-    //是否和用户绑定，空表示不绑定
-    @Column(name = "user_field")
-    private String userField;
+    @Column(name = "bind_user")
+    private Boolean bindUser;
 
     @Column(name = "order_index")
     private Integer orderIndex;
@@ -158,12 +157,12 @@ public class StatBindConfig implements java.io.Serializable {
         this.casCadeType = casCadeType;
     }
 
-    public String getUserField() {
-        return userField;
+    public Boolean getBindUser() {
+        return bindUser;
     }
 
-    public void setUserField(String userField) {
-        this.userField = userField;
+    public void setBindUser(Boolean bindUser) {
+        this.bindUser = bindUser;
     }
 
     public Integer getOrderIndex() {

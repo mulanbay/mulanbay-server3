@@ -844,3 +844,98 @@ ALTER TABLE `calendar_template`
     CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
+ALTER TABLE `stat_template`
+DROP COLUMN `user_field`;
+
+ALTER TABLE `stat_bind_config`
+    ADD COLUMN `bind_user` TINYINT NOT NULL DEFAULT 1 AFTER `cascade_type`;
+
+update stat_bind_config set bind_user=1 where user_field is not null and config_id>0;
+update stat_bind_config set bind_user=0 where user_field is null and config_id>0;
+
+ALTER TABLE `stat_bind_config`
+DROP COLUMN `user_field`;
+
+ALTER TABLE `plan_config` RENAME TO  `plan_template` ;
+
+ALTER TABLE `plan_template`
+DROP COLUMN `related_beans`,
+DROP COLUMN `compare_type`,
+DROP COLUMN `user_field`,
+DROP COLUMN `date_field`,
+ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `order_index`,
+CHANGE COLUMN `id` `template_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `reward_point` `rewards` INT NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `default_calendar_title` `calendar_title` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_plan`
+    ADD COLUMN `compare_type` SMALLINT(5) NOT NULL DEFAULT 1 AFTER `bind_values`,
+CHANGE COLUMN `id` `plan_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `plan_config_id` `template_id` BIGINT NOT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_plan_config_value` RENAME TO  `user_plan_config` ;
+ALTER TABLE `user_plan_config`
+    CHANGE COLUMN `id` `config_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `user_plan_id` `plan_id` BIGINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `user_plan_remind`
+    CHANGE COLUMN `id` `remind_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `user_plan_id` `plan_id` BIGINT NOT NULL ,
+    CHANGE COLUMN `form_time_passed_rate` `from_rate` INT NOT NULL ,
+    CHANGE COLUMN `finished_remind` `finish_remind` TINYINT NOT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `plan_report`
+    CHANGE COLUMN `buss_day` `buss_key` VARCHAR(32) NOT NULL ,
+    CHANGE COLUMN `buss_stat_date` `buss_day` DATE NOT NULL ;
+
+ALTER TABLE `plan_report_timeline`
+    CHANGE COLUMN `buss_day` `buss_key` VARCHAR(32) NOT NULL ,
+    CHANGE COLUMN `buss_stat_date` `buss_day` DATE NOT NULL ;
+
+ALTER TABLE `plan_report`
+    CHANGE COLUMN `user_plan_id` `plan_id` BIGINT NOT NULL ;
+ALTER TABLE `plan_report_timeline`
+    CHANGE COLUMN `user_plan_id` `plan_id` BIGINT NOT NULL ;
+
+ALTER TABLE `plan_report`
+    CHANGE COLUMN `id` `report_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `report_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `count_value_stat_result` `count_value_result` SMALLINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `value_stat_result` `value_result` SMALLINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `plan_config_year` `compare_year` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `plan_report_timeline`
+    CHANGE COLUMN `id` `timeline_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `name` `timeline_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+    CHANGE COLUMN `count_value_stat_result` `count_value_result` SMALLINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `value_stat_result` `value_result` SMALLINT NULL DEFAULT NULL ,
+    CHANGE COLUMN `plan_config_year` `compare_year` INT NULL DEFAULT NULL ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `plan_template`
+DROP COLUMN `default_plan_value`,
+DROP COLUMN `default_plan_count_value`;
+
+ALTER TABLE `user_plan`
+ADD COLUMN `plan_count_value` BIGINT(20) NOT NULL DEFAULT 0 AFTER `compare_type`,
+ADD COLUMN `plan_value` BIGINT(20) NOT NULL DEFAULT 0 AFTER `plan_count_value`;
+
+DROP TABLE `user_plan_config`;
+
+ALTER TABLE `plan_report`
+    CHANGE COLUMN `compare_year` `compare_buss_key` VARCHAR(32) NULL DEFAULT NULL ;
+
+ALTER TABLE `user_plan`
+    ADD COLUMN `plan_type` SMALLINT(5) NOT NULL DEFAULT 2 AFTER `bind_values`;
+
+#计划类型从模版转移到用户计划
+update user_plan up set up.plan_type= (select tt.plan_type from plan_template tt where up.template_id=tt.template_id ) where up.plan_id>0;
+
+ALTER TABLE `plan_template`
+DROP COLUMN `plan_type`;

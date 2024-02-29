@@ -1,32 +1,32 @@
 package cn.mulanbay.pms.web.controller.report;
 
+import cn.mulanbay.ai.ml.processor.bean.PlanReportER;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.PmsCode;
-import cn.mulanbay.pms.handler.UserStatHandler;
-import cn.mulanbay.pms.persistent.domain.StatTemplate;
-import cn.mulanbay.pms.persistent.domain.UserStat;
-import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
+import cn.mulanbay.pms.handler.ReportHandler;
+import cn.mulanbay.pms.handler.UserScoreHandler;
+import cn.mulanbay.pms.persistent.domain.PlanReport;
+import cn.mulanbay.pms.persistent.domain.PlanTemplate;
+import cn.mulanbay.pms.persistent.domain.UserPlan;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.service.StatService;
+import cn.mulanbay.pms.persistent.enums.PlanType;
+import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
-import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
-import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
-import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;
+import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanForm;
+import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.report.UserPlanVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -35,57 +35,58 @@ import java.util.List;
 import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 
 /**
- * 用户提醒数据
+ * 用户计划
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @RestController
-@RequestMapping("/userStat")
-public class UserStatController extends BaseController {
+@RequestMapping("/userPlan")
+public class UserPlanController extends BaseController {
 
-    private static Class<UserStat> beanClass = UserStat.class;
 
-    @Value("${mulanbay.report.userStat.expires}")
-    int userStatExpires;
+    private static Class<UserPlan> beanClass = UserPlan.class;
 
     @Autowired
-    StatService statService;
+    PlanService planService;
 
     @Autowired
     CacheHandler cacheHandler;
 
     @Autowired
-    UserStatHandler userStatHandler;
+    UserScoreHandler userScoreHandler;
+
+    @Autowired
+    ReportHandler reportHandler;
 
     /**
-     * 获取用户提醒列表树
+     * 用户计划树
      *
      * @return
      */
-    @RequestMapping(value = "/tree", method = RequestMethod.GET)
+    @RequestMapping(value = "/tree")
     public ResultBean tree(ReportTreeSH sf) {
         try {
-            UserStatSH uns = new UserStatSH();
-            uns.setBussType(sf.getBussType());
-            uns.setPage(NO_PAGE);
-            PageRequest pr = uns.buildQuery();
+            UserPlanSH upsh = new UserPlanSH();
+            upsh.setBussType(sf.getBussType());
+            upsh.setPage(NO_PAGE);
+            PageRequest pr = upsh.buildQuery();
             pr.setBeanClass(beanClass);
-            Sort s = new Sort("template.bussType", Sort.ASC);
+            Sort s = new Sort("planType", Sort.ASC);
             pr.addSort(s);
-            List<UserStat> unList = baseService.getBeanList(pr);
+            List<UserPlan> unList = baseService.getBeanList(pr);
             List<TreeBean> result = new ArrayList<>();
-            BussType current = unList.get(0).getTemplate().getBussType();
+            PlanType current = unList.get(0).getPlanType();
             TreeBean typeTreeBean = new TreeBean();
             typeTreeBean.setId("P_" + current.name());
             typeTreeBean.setText(current.getName());
             int n = unList.size();
             for (int i = 0; i < n; i++) {
-                UserStat pc = unList.get(i);
+                UserPlan pc = unList.get(i);
                 TreeBean tb = new TreeBean();
-                tb.setId(pc.getStatId());
+                tb.setId(pc.getPlanId());
                 tb.setText(pc.getTitle());
-                BussType m = pc.getTemplate().getBussType();
+                PlanType m = pc.getPlanType();
                 if (m == current) {
                     typeTreeBean.addChild(tb);
                 }else{
@@ -103,7 +104,7 @@ public class UserStatController extends BaseController {
             }
             return callback(result);
         } catch (Exception e) {
-            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取用户提醒列表树异常",
+            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取用户计划树异常",
                     e);
         }
     }
@@ -114,12 +115,12 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultBean list(UserStatSH sf) {
+    public ResultBean list(UserPlanSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         Sort s = new Sort("orderIndex", Sort.ASC);
         pr.addSort(s);
-        PageResult<UserStat> qr = baseService.getBeanResult(pr);
+        PageResult<UserPlan> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }
 
@@ -129,16 +130,16 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResultBean create(@RequestBody @Valid UserStatForm form) {
-        UserStat bean = new UserStat();
+    public ResultBean create(@RequestBody @Valid UserPlanForm form) {
+        UserPlan bean = new UserPlan();
         BeanCopy.copy(form, bean);
-        StatTemplate template = statService.getStatTemplate(form.getTemplateId(), form.getLevel());
+        PlanTemplate template = planService.getPlanTemplate(form.getTemplateId(), form.getLevel());
         if (template == null) {
             return callbackErrorCode(PmsCode.USER_ENTITY_NOT_ALLOWED);
         }
         bean.setTemplate(template);
-        statService.saveOrUpdateUserStat(bean);
-        return callback(bean);
+        planService.saveOrUpdateUsePlan(bean);
+        return callback(null);
     }
 
 
@@ -148,8 +149,8 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(@RequestParam(name = "statId") Long statId) {
-        UserStat bean = baseService.getObject(beanClass,statId);
+    public ResultBean get(@RequestParam(name = "planId") Long planId) {
+        UserPlan bean = baseService.getObject(beanClass,planId);
         return callback(bean);
     }
 
@@ -159,12 +160,27 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/stat", method = RequestMethod.GET)
-    public ResultBean stat(@RequestParam(name = "statId") Long statId) {
-        UserStat bean = baseService.getObject(beanClass,statId);
-        StatResultDTO dto = statService.getStatResult(bean);
-        return callback(dto);
+    public ResultBean stat(@RequestParam(name = "planId") Long planId,@RequestParam(name = "predict") Boolean predict) {
+        UserPlan userPlan = baseService.getObject(beanClass,planId);
+        UserPlanVo vo = this.getStatVo(userPlan,predict);
+        return callback(vo);
     }
 
+    private UserPlanVo getStatVo(UserPlan plan,boolean predict){
+        UserPlanVo vo = new UserPlanVo();
+        BeanCopy.copy(plan, vo);
+        //设置PlanReport
+        PlanReport report = planService.statPlanReport(plan);
+        vo.setPlanReport(report);
+        if(predict){
+            PlanReportER pv = reportHandler.predictPlanReport(report);
+            if(pv!=null){
+                vo.setPredictCount(pv.getCountRate()*report.getPlanCountValue());
+                vo.setPredictValue(pv.getValueRate()*report.getPlanValue());
+            }
+        }
+        return vo;
+    }
 
     /**
      * 获取列表数据
@@ -172,18 +188,19 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/statList", method = RequestMethod.GET)
-    public ResultBean statList(UserStatSH sf) {
+    public ResultBean statList(UserPlanSH sf) {
         PageRequest pr = sf.buildQuery();
         Sort s = new Sort("orderIndex", Sort.ASC);
         pr.addSort(s);
         pr.setBeanClass(beanClass);
-        PageResult<UserStat> unResult = baseService.getBeanResult(pr);
-        List<StatResultDTO> list = new ArrayList<>();
-        for (UserStat un : unResult.getBeanList()) {
-            StatResultDTO nr = userStatHandler.getStatResult(un, userStatExpires);
-            list.add(nr);
+        PageResult<UserPlan> unResult = baseService.getBeanResult(pr);
+        List<UserPlanVo> list = new ArrayList<>();
+        Boolean predict = sf.getPredict();
+        for(UserPlan userPlan: unResult.getBeanList()){
+            UserPlanVo vo = this.getStatVo(userPlan,predict);
+            list.add(vo);
         }
-        PageResult<StatResultDTO> res = new PageResult<>(sf.getPage(), sf.getPageSize());
+        PageResult<UserPlanVo> res = new PageResult<>(sf.getPage(), sf.getPageSize());
         res.setBeanList(list);
         res.setMaxRow(unResult.getMaxRow());
         return callbackDataGrid(res);
@@ -196,17 +213,18 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ResultBean edit(@RequestBody @Valid UserStatForm form) {
-        UserStat bean = baseService.getObject(beanClass,form.getStatId());
+    public ResultBean edit(@RequestBody @Valid UserPlanForm form) {
+        UserPlan bean = baseService.getObject(beanClass,form.getPlanId());
         BeanCopy.copy(form, bean);
-        StatTemplate template = statService.getStatTemplate(form.getTemplateId(), form.getLevel());
+        PlanTemplate template = planService.getPlanTemplate(form.getTemplateId(), form.getLevel());
         if (template == null) {
             return callbackErrorCode(PmsCode.USER_ENTITY_NOT_ALLOWED);
         }
         bean.setTemplate(template);
-        statService.saveOrUpdateUserStat(bean);
-        return callback(bean);
+        planService.saveOrUpdateUsePlan(bean);
+        return callback(null);
     }
+
 
     /**
      * 删除
@@ -217,23 +235,7 @@ public class UserStatController extends BaseController {
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ss = deleteRequest.getIds().split(",");
         for(String s :ss){
-            statService.deleteUserStat(Long.valueOf(s));
-        }
-        return callback(null);
-    }
-
-    /**
-     * 清除缓存
-     *
-     * @return
-     */
-    @RequestMapping(value = "/deleteStatCache", method = RequestMethod.POST)
-    public ResultBean deleteStatCache(UserStatDeleteCacheForm ucf) {
-        Long statId = ucf.getStatId();
-        if(statId==null){
-            userStatHandler.deleteCache(ucf.getUserId());
-        }else{
-            userStatHandler.deleteCache(ucf.getUserId(),statId);
+            planService.deleteUsePlan(Long.valueOf(s));
         }
         return callback(null);
     }

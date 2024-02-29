@@ -126,7 +126,7 @@ public class StatBindConfigService extends BaseHibernateDao {
             if (!StringUtil.isEmpty(pid)) {
                 args.add(pid);
             }
-            if (!StringUtil.isEmpty(svc.getUserField())) {
+            if (svc.getBindUser()) {
                 args.add(userId);
             }
             List<StatBindConfigDetail> res = new ArrayList<>();

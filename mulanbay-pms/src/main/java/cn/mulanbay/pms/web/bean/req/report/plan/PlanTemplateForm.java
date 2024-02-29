@@ -1,13 +1,15 @@
-package cn.mulanbay.pms.web.bean.req.report.stat;
+package cn.mulanbay.pms.web.bean.req.report.plan;
 
+import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.persistent.enums.*;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public class StatTemplateForm {
+public class PlanTemplateForm implements BindUser {
 
     private Long templateId;
+    private Long userId;
 
     @NotEmpty(message = "名称不能为空")
     private String templateName;
@@ -21,11 +23,8 @@ public class StatTemplateForm {
     @NotEmpty(message = "SQL不能为空")
     private String sqlContent;
 
-    @NotNull(message = "结果返回类型不能为空")
-    private ResultType resultType;
-
-    @NotNull(message = "值类型不能为空")
-    private ValueType valueType;
+    @NotEmpty(message = "单位不能为空")
+    private String unit;
 
     @NotNull(message = "状态不能为空")
     private CommonStatus status;
@@ -36,8 +35,10 @@ public class StatTemplateForm {
     @NotNull(message = "业务类型不能为空")
     private BussType bussType;
 
+    //等级
     @NotNull(message = "级别不能为空")
     private Integer level;
+
     //奖励积分(正为加，负为减)
     @NotNull(message = "奖励积分不能为空")
     private Integer rewards;
@@ -46,7 +47,6 @@ public class StatTemplateForm {
 
     private String calendarTitle;
 
-    //链接地址
     private String url;
 
     private String remark;
@@ -67,6 +67,16 @@ public class StatTemplateForm {
 
     public void setTemplateId(Long templateId) {
         this.templateId = templateId;
+    }
+
+    @Override
+    public Long getUserId() {
+        return userId;
+    }
+
+    @Override
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getTemplateName() {
@@ -101,20 +111,12 @@ public class StatTemplateForm {
         this.sqlContent = sqlContent;
     }
 
-    public ResultType getResultType() {
-        return resultType;
+    public String getUnit() {
+        return unit;
     }
 
-    public void setResultType(ResultType resultType) {
-        this.resultType = resultType;
-    }
-
-    public ValueType getValueType() {
-        return valueType;
-    }
-
-    public void setValueType(ValueType valueType) {
-        this.valueType = valueType;
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public CommonStatus getStatus() {

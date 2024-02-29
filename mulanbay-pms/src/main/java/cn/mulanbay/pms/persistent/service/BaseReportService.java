@@ -22,34 +22,7 @@ import java.util.List;
  */
 public class BaseReportService extends BaseHibernateDao {
 
-
-    /**
-     * 计算封装SQL
-     *
-     * @param un
-     * @return
-     */
-    protected StatSQLDTO assembleSQL(UserStat un) {
-        StatSQLDTO dto = new StatSQLDTO();
-        StatTemplate template = un.getTemplate();
-        dto.setSqlContent(template.getSqlContent());
-        String bindValues = un.getBindValues();
-        if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.STAT);
-            String[] bs = bindValues.split(",");
-            int n = bs.length;
-            for(int i=0;i<n;i++){
-                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
-            }
-        }
-        //UserField目前只用来判断是否需要绑定userId
-        if (!StringUtil.isEmpty(template.getUserField())) {
-            dto.addArg(un.getUserId());
-        }
-        return dto;
-    }
-
-    private Serializable formatBindValue(StatValueClass vc, String v){
+    protected Serializable formatBindValue(StatValueClass vc, String v){
         switch (vc){
             case LONG -> {
                 return Long.parseLong(v);
@@ -73,7 +46,7 @@ public class BaseReportService extends BaseHibernateDao {
      * @param type
      * @return
      */
-    private List<StatValueClass> getBindValueClassList(Long fid,StatBussType type){
+    protected List<StatValueClass> getBindValueClassList(Long fid,StatBussType type){
         try {
             String hql = "select valueClass from StatBindConfig where fid=?1 and type=?2";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,StatValueClass.class, fid, type);

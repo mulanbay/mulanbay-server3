@@ -8,7 +8,11 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum PlanType {
 
-    DAY(0, "天"), WEEK(1, "周"), MONTH(2, "月"), SEASON(3, "季度"), YEAR(4, "年");
+    DAY(0, "天"),
+    WEEK(1, "周"),
+    MONTH(2, "月"),
+    SEASON(3, "季度"),
+    YEAR(4, "年");
 
     private int value;
 

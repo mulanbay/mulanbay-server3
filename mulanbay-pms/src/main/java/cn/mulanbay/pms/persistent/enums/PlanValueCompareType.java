@@ -6,10 +6,10 @@ package cn.mulanbay.pms.persistent.enums;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum PlanReportReStatCompareType {
+public enum PlanValueCompareType {
 
     ORIGINAL(0, "原始数据"),//PlanReport表中已经写入的planCountValue，planValue
-    ORIGINAL_LATEST(1, "当年最新数据"),//根据PlanReport表中已经写入的year去查询当年最新的数据
+    NEAREST(1, "当年最新数据"),//根据PlanReport表中已经写入的year去查询当年最新的数据
     LATEST(2, "最新"),//获取今年最新的
     SPECIFY(3, "指定年份");
 
@@ -17,7 +17,7 @@ public enum PlanReportReStatCompareType {
 
     private String name;
 
-    PlanReportReStatCompareType(int value, String name) {
+    PlanValueCompareType(int value, String name) {
         this.value = value;
         this.name = name;
     }

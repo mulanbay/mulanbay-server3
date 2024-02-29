@@ -119,6 +119,30 @@ public class StatService extends BaseReportService {
     }
 
     /**
+     * 计算封装SQL
+     *
+     * @param un
+     * @return
+     */
+    protected StatSQLDTO assembleSQL(UserStat un) {
+        StatSQLDTO dto = new StatSQLDTO();
+        StatTemplate template = un.getTemplate();
+        dto.setSqlContent(template.getSqlContent());
+        String bindValues = un.getBindValues();
+        if(StringUtil.isNotEmpty(bindValues)){
+            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.STAT);
+            String[] bs = bindValues.split(",");
+            int n = bs.length;
+            for(int i=0;i<n;i++){
+                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
+            }
+        }
+        //肯定绑定userId
+        dto.addArg(un.getUserId());
+        return dto;
+    }
+
+    /**
      * @param statId
      * @param userId
      * @return
@@ -271,6 +295,31 @@ public class StatService extends BaseReportService {
             //删除模版
             String sql4 = "delete from stat_template where template_id=?1 ";
             this.execSqlUpdate(sql4, templateId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除阅读记录异常", e);
+        }
+    }
+
+    /**
+     * 删除用户统计
+     *
+     * @param statId
+     */
+    public void deleteUserStat(Long statId) {
+        try {
+            //删除用户统计时间线
+            String sql1 = "delete from user_stat_timeline where stat_id=?1 ";
+            this.execSqlUpdate(sql1, statId);
+
+            //删除用户统计时间线
+            String sql2 = "delete from user_stat_remind where stat_id=?1 ";
+            this.execSqlUpdate(sql2, statId);
+
+            //删除用户统计
+            String sql3 = "delete from user_stat where stat_id=?1 ";
+            this.execSqlUpdate(sql3, statId);
+
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除阅读记录异常", e);

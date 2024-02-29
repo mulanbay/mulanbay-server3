@@ -1,20 +1,22 @@
 package cn.mulanbay.pms.persistent.enums;
 
 /**
- * 计划报告数据过滤类型
+ * 计划报告数据统计结果
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public enum PlanReportDataStatFilterType {
+public enum PlanStatResult {
 
-    ORIGINAL(0, "默认"), NO_USER(1, "不过滤用户"), NO_DATE(1, "不过滤时间"), NONE(1, "完全不过滤");
+    ACHIEVED(0, "已实现"),
+    UN_ACHIEVED(1, "未实现"),
+    SKIP(2, "忽略");
 
     private int value;
 
     private String name;
 
-    PlanReportDataStatFilterType(int value, String name) {
+    PlanStatResult(int value, String name) {
         this.value = value;
         this.name = name;
     }
@@ -33,5 +35,14 @@ public enum PlanReportDataStatFilterType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public static PlanStatResult getPlanStatResultType(int ordinal) {
+        for (PlanStatResult ds : PlanStatResult.values()) {
+            if (ds.ordinal() == ordinal) {
+                return ds;
+            }
+        }
+        return null;
     }
 }
