@@ -9,24 +9,29 @@ import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
-public class UserPlanSH extends PageSearch implements BindUser {
+public class PlanReportSH extends PageSearch implements BindUser {
 
+    @NotNull(message = "开始时间不能为空")
     @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.GTE)
     private Date startDate;
 
+    @NotNull(message = "结束时间不能为空")
     @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @Query(fieldName = "bussDay", op = Parameter.Operator.LTE)
     private Date endDate;
 
-    @Query(fieldName = "planId", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.planId", op = Parameter.Operator.EQ)
     private Long planId;
 
-    @Query(fieldName = "template.templateId", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.template.templateId", op = Parameter.Operator.EQ)
     private Long templateId;
 
-    @Query(fieldName = "planType", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.planType", op = Parameter.Operator.EQ)
     private PlanType planType;
 
     @Query(fieldName = "title", op = Parameter.Operator.LIKE)
@@ -38,13 +43,8 @@ public class UserPlanSH extends PageSearch implements BindUser {
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     public Long userId;
 
-    @Query(fieldName = "template.bussType", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.template.bussType", op = Parameter.Operator.EQ)
     private BussType bussType;
-
-    /**
-     * 是否实时数据
-     */
-    private Boolean realtime = false;
 
     /**
      * 是否要预测
@@ -123,14 +123,6 @@ public class UserPlanSH extends PageSearch implements BindUser {
 
     public void setBussType(BussType bussType) {
         this.bussType = bussType;
-    }
-
-    public Boolean getRealtime() {
-        return realtime;
-    }
-
-    public void setRealtime(Boolean realtime) {
-        this.realtime = realtime;
     }
 
     public Boolean getPredict() {

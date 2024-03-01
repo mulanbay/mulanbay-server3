@@ -13,14 +13,15 @@ import cn.mulanbay.pms.handler.UserScoreHandler;
 import cn.mulanbay.pms.persistent.domain.PlanReport;
 import cn.mulanbay.pms.persistent.domain.PlanTemplate;
 import cn.mulanbay.pms.persistent.domain.UserPlan;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
+import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanForm;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanSH;
+import cn.mulanbay.pms.web.bean.req.report.plan.UserReportSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.report.UserPlanVo;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -183,12 +184,26 @@ public class UserPlanController extends BaseController {
     }
 
     /**
-     * 获取列表数据
+     * 统计数据
      *
      * @return
      */
     @RequestMapping(value = "/statList", method = RequestMethod.GET)
     public ResultBean statList(UserPlanSH sf) {
+        Boolean realtime = sf.getRealtime();
+        if(realtime){
+            return callbackDataGrid(this.realtimeStatList(sf));
+        }else{
+            return callbackDataGrid(this.historyStatList(sf));
+        }
+    }
+
+    /**
+     * 实时
+     * @param sf
+     * @return
+     */
+    private PageResult<UserPlanVo> realtimeStatList(UserPlanSH sf){
         PageRequest pr = sf.buildQuery();
         Sort s = new Sort("orderIndex", Sort.ASC);
         pr.addSort(s);
@@ -203,9 +218,43 @@ public class UserPlanController extends BaseController {
         PageResult<UserPlanVo> res = new PageResult<>(sf.getPage(), sf.getPageSize());
         res.setBeanList(list);
         res.setMaxRow(unResult.getMaxRow());
-        return callbackDataGrid(res);
+        return res;
     }
 
+    /**
+     * 历史
+     * @param sf
+     * @return
+     */
+    private PageResult<UserPlanVo> historyStatList(UserPlanSH sf){
+        PlanReportSH ursh = new PlanReportSH();
+        BeanCopy.copy(sf,ursh);
+        PageRequest pr = ursh.buildQuery();
+        Sort s = new Sort("bussDay", Sort.DESC);
+        pr.addSort(s);
+        pr.setBeanClass(PlanReport.class);
+        PageResult<PlanReport> unResult = baseService.getBeanResult(pr);
+        List<UserPlanVo> list = new ArrayList<>();
+        Boolean predict = sf.getPredict();
+        for(PlanReport report: unResult.getBeanList()){
+            UserPlanVo vo = new UserPlanVo();
+            BeanCopy.copy(report.getPlan(), vo);
+            //设置PlanReport
+            vo.setPlanReport(report);
+            if(predict){
+                PlanReportER pv = reportHandler.predictPlanReport(report);
+                if(pv!=null){
+                    vo.setPredictCount(pv.getCountRate()*report.getPlanCountValue());
+                    vo.setPredictValue(pv.getValueRate()*report.getPlanValue());
+                }
+            }
+            list.add(vo);
+        }
+        PageResult<UserPlanVo> res = new PageResult<>(sf.getPage(), sf.getPageSize());
+        res.setBeanList(list);
+        res.setMaxRow(unResult.getMaxRow());
+        return res;
+    }
 
     /**
      * 修改

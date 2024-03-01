@@ -198,7 +198,7 @@ public class PlanService extends BaseReportService {
     public PlanReport statPlanReport(UserPlan userPlan){
         PlanType planType = userPlan.getPlanType();
         String bussKey = createBussKey(planType,new Date());
-        PlanValueDTO upc = this.getPlanValue(PlanValueCompareType.LATEST,null,userPlan.getPlanId());
+        PlanValueDTO upc = this.getPlanValue(PlanValueCompareType.LATEST,bussKey,userPlan.getPlanId());
         return this.statPlanReport(userPlan,bussKey,upc);
     }
 
@@ -210,7 +210,7 @@ public class PlanService extends BaseReportService {
      * @return
      */
     public PlanReport statPlanReport(UserPlan userPlan, String bussKey){
-        PlanValueDTO upc = this.getPlanValue(PlanValueCompareType.LATEST,null,userPlan.getPlanId());
+        PlanValueDTO upc = this.getPlanValue(PlanValueCompareType.LATEST,bussKey,userPlan.getPlanId());
         return this.statPlanReport(userPlan,bussKey,upc);
     }
 
@@ -358,7 +358,7 @@ public class PlanService extends BaseReportService {
         dto.setSqlContent(template.getSqlContent());
         String bindValues = userPlan.getBindValues();
         if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.STAT);
+            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.PLAN);
             String[] bs = bindValues.split(",");
             int n = bs.length;
             for(int i=0;i<n;i++){

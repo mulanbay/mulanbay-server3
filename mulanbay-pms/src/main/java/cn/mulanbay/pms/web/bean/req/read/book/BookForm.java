@@ -60,7 +60,7 @@ public class BookForm implements BindUser {
     private Date beginDate;
 
     @JsonFormat(pattern = Constant.DATE_FORMAT)
-    private Date finishedDate;
+    private Date finishDate;
 
     //保存日期：如购入、借入
     @JsonFormat(pattern = Constant.DATE_FORMAT)
@@ -193,12 +193,12 @@ public class BookForm implements BindUser {
         this.beginDate = beginDate;
     }
 
-    public Date getFinishedDate() {
-        return finishedDate;
+    public Date getFinishDate() {
+        return finishDate;
     }
 
-    public void setFinishedDate(Date finishedDate) {
-        this.finishedDate = finishedDate;
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
     }
 
     public Date getStoreDate() {

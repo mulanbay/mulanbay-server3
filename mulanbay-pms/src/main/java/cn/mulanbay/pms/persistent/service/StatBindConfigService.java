@@ -12,8 +12,10 @@ import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDTO;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDetail;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.enums.StatValueSource;
+import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.consume.goodsType.GoodsTypeVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +82,7 @@ public class StatBindConfigService extends BaseHibernateDao {
         StatBindConfigDTO scb = new StatBindConfigDTO();
         scb.setName(svc.getConfigName());
         scb.setMsg(svc.getMsg());
+        scb.setTree(svc.getTree());
         scb.setCasCadeType(svc.getCasCadeType());
         StatValueSource source = svc.getSource();
         List<StatBindConfigDetail> details = null;
@@ -131,6 +134,13 @@ public class StatBindConfigService extends BaseHibernateDao {
             }
             List<StatBindConfigDetail> res = new ArrayList<>();
             List<Object[]> vcs = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Object[].class,args.toArray());
+            if(StringUtil.isEmpty(vcs)){
+                return res;
+            }
+            if(svc.getTree()){
+                //树形结构
+                return this.createTree(vcs);
+            }
             for (Object[] o : vcs) {
                 StatBindConfigDetail detail = new StatBindConfigDetail();
                 detail.setId(o[0].toString());
@@ -142,6 +152,34 @@ public class StatBindConfigService extends BaseHibernateDao {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "查询配置加载项异常", e);
         }
+    }
+
+    /**
+     * 创建树
+     *
+     * @param vcs
+     * @return
+     */
+    private List<StatBindConfigDetail> createTree(List<Object[]> vcs){
+        return this.getChildren("0",vcs);
+    }
+
+    private List<StatBindConfigDetail> getChildren(String pid,List<Object[]> vcs){
+        List<StatBindConfigDetail> children = new ArrayList<>();
+        for (Object[] o : vcs) {
+            String myPid = o[2].toString();
+            if(myPid.equals(pid)){
+                StatBindConfigDetail child = new StatBindConfigDetail();
+                child.setId(o[0].toString());
+                child.setText(o[1].toString());
+                //寻找下一个子列表
+                List<StatBindConfigDetail> c2 = getChildren(child.getId(), vcs);
+                child.setChildren(c2);
+                //加入到结果集
+                children.add(child);
+            }
+        }
+        return children;
     }
 
     /**

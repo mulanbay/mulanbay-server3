@@ -939,3 +939,6 @@ update user_plan up set up.plan_type= (select tt.plan_type from plan_template tt
 
 ALTER TABLE `plan_template`
 DROP COLUMN `plan_type`;
+
+ALTER TABLE `stat_bind_config`
+    ADD COLUMN `tree` TINYINT NOT NULL DEFAULT 0 AFTER `bind_user`;

@@ -3,30 +3,20 @@ package cn.mulanbay.pms.web.bean.req.report.plan;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
-import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.util.Date;
-
-public class UserPlanSH extends PageSearch implements BindUser {
-
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
-    private Date startDate;
-
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
-    private Date endDate;
+public class UserReportSH extends PageSearch implements BindUser {
 
     @Query(fieldName = "planId", op = Parameter.Operator.EQ)
     private Long planId;
 
-    @Query(fieldName = "template.templateId", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.template.templateId", op = Parameter.Operator.EQ)
     private Long templateId;
 
-    @Query(fieldName = "planType", op = Parameter.Operator.EQ)
+    @Query(fieldName = "template.planType", op = Parameter.Operator.EQ)
     private PlanType planType;
 
     @Query(fieldName = "title", op = Parameter.Operator.LIKE)
@@ -38,34 +28,13 @@ public class UserPlanSH extends PageSearch implements BindUser {
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     public Long userId;
 
-    @Query(fieldName = "template.bussType", op = Parameter.Operator.EQ)
+    @Query(fieldName = "plan.template.bussType", op = Parameter.Operator.EQ)
     private BussType bussType;
-
-    /**
-     * 是否实时数据
-     */
-    private Boolean realtime = false;
 
     /**
      * 是否要预测
      */
     private Boolean predict = false;
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
 
     public Long getPlanId() {
         return planId;
@@ -123,14 +92,6 @@ public class UserPlanSH extends PageSearch implements BindUser {
 
     public void setBussType(BussType bussType) {
         this.bussType = bussType;
-    }
-
-    public Boolean getRealtime() {
-        return realtime;
-    }
-
-    public void setRealtime(Boolean realtime) {
-        this.realtime = realtime;
     }
 
     public Boolean getPredict() {

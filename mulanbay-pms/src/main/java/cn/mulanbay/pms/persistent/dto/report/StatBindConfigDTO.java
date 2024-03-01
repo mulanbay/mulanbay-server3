@@ -11,6 +11,8 @@ public class StatBindConfigDTO {
 
     private String msg;
 
+    private Boolean tree;
+
     private CasCadeType casCadeType;
 
     private List<StatBindConfigDetail> list = new ArrayList<>();
@@ -29,6 +31,14 @@ public class StatBindConfigDTO {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public Boolean getTree() {
+        return tree;
+    }
+
+    public void setTree(Boolean tree) {
+        this.tree = tree;
     }
 
     public List<StatBindConfigDetail> getList() {

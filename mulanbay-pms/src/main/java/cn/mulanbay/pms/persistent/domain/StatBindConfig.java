@@ -63,6 +63,9 @@ public class StatBindConfig implements java.io.Serializable {
     @Column(name = "bind_user")
     private Boolean bindUser;
 
+    @Column(name = "tree")
+    private Boolean tree;
+
     @Column(name = "order_index")
     private Integer orderIndex;
 
@@ -163,6 +166,14 @@ public class StatBindConfig implements java.io.Serializable {
 
     public void setBindUser(Boolean bindUser) {
         this.bindUser = bindUser;
+    }
+
+    public Boolean getTree() {
+        return tree;
+    }
+
+    public void setTree(Boolean tree) {
+        this.tree = tree;
     }
 
     public Integer getOrderIndex() {

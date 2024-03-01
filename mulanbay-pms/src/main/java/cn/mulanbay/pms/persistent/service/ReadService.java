@@ -352,7 +352,7 @@ public class ReadService extends BaseHibernateDao {
      */
     public ReadDetailTimeStat getReadTimeStat(Long bookId) {
         try {
-            String sql = "select min(read_time) as minDate,max(read_time) as maxDate from read_detail where bookId=?1 ";
+            String sql = "select min(read_time) as minDate,max(read_time) as maxDate from read_detail where book_id=?1 ";
             ReadDetailTimeStat stat = this.getEntitySQL(sql, ReadDetailTimeStat.class, bookId);
             return stat;
         } catch (BaseException e) {

@@ -43,6 +43,9 @@ public class StatBindConfigForm implements java.io.Serializable {
     @NotNull(message = "是否绑定用户不能为空")
     private Boolean bindUser;
 
+    @NotNull(message = "是否树形结构不能为空")
+    private Boolean tree;
+
     @NotNull(message = "排序号不能为空")
     private Integer orderIndex;
 
@@ -130,6 +133,14 @@ public class StatBindConfigForm implements java.io.Serializable {
 
     public void setBindUser(Boolean bindUser) {
         this.bindUser = bindUser;
+    }
+
+    public Boolean getTree() {
+        return tree;
+    }
+
+    public void setTree(Boolean tree) {
+        this.tree = tree;
     }
 
     public Integer getOrderIndex() {
