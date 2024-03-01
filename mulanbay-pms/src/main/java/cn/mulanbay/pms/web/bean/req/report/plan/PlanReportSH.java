@@ -8,20 +8,17 @@ import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class PlanReportSH extends PageSearch implements BindUser {
 
-    @NotNull(message = "开始时间不能为空")
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "bussDay", op = Parameter.Operator.GTE)
     private Date startDate;
 
-    @NotNull(message = "结束时间不能为空")
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "bussDay", op = Parameter.Operator.LTE)
     private Date endDate;
 

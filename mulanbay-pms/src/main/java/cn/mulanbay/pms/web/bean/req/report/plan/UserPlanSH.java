@@ -9,15 +9,16 @@ import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class UserPlanSH extends PageSearch implements BindUser {
 
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     private Date startDate;
 
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     private Date endDate;
 
     @Query(fieldName = "planId", op = Parameter.Operator.EQ)
