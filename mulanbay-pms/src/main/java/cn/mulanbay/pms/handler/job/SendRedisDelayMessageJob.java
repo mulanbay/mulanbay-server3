@@ -2,9 +2,11 @@ package cn.mulanbay.pms.handler.job;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.MessageSendHandler;
 import cn.mulanbay.pms.handler.RedisDelayQueueHandler;
 import cn.mulanbay.pms.persistent.domain.Message;
+import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
@@ -32,11 +34,14 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
 
     MessageSendHandler messageSendHandler;
 
+    BaseService baseService;
+
     @Override
     public TaskResult doTask() {
         TaskResult tr = new TaskResult();
         redisDelayQueueHandler = BeanFactoryUtil.getBean(RedisDelayQueueHandler.class);
         messageSendHandler = BeanFactoryUtil.getBean(MessageSendHandler.class);
+        baseService = BeanFactoryUtil.getBean(BaseService.class);
         Set<Message> set = redisDelayQueueHandler.getNeedSendMessage(new Date());
         if (StringUtil.isEmpty(set)) {
             tr.setResult(JobResult.SKIP);
@@ -59,6 +64,15 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
 
     private boolean sendMessage(Message message) {
         try {
+            long expectTime = message.getExpectSendTime().getTime();
+            if((System.currentTimeMillis()-expectTime)>para.getExpires()){
+                logger.debug("消息已经过期");
+                redisDelayQueueHandler.removeMessage(message);
+                message.setSendStatus(MessageSendStatus.SKIP);
+                message.setLastSendTime(new Date());
+                message.setRemark("消息已经过期,无法发送消息");
+                baseService.saveOrUpdateObject(message);
+            }
             Message mm = new Message();
             //需要拷贝一个新的，因为sendMessage会修改message内容，导致redisDelayQueueHandler无法删除
             BeanCopy.copy(message, mm);

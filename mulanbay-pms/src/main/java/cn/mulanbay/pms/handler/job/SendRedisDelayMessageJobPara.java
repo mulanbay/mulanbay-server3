@@ -12,6 +12,9 @@ public class SendRedisDelayMessageJobPara extends AbstractTriggerPara {
     @JobParameter(name = "发送失败后延迟秒数", dataType = Integer.class, desc = "秒", editType = EditType.NUMBER)
     private int delaySeconds = 60;
 
+    @JobParameter(name = "失效失效", dataType = Integer.class, desc = "秒", editType = EditType.NUMBER)
+    private int expires = 3*3600*24;
+
     public int getMaxFails() {
         return maxFails;
     }
@@ -26,5 +29,13 @@ public class SendRedisDelayMessageJobPara extends AbstractTriggerPara {
 
     public void setDelaySeconds(int delaySeconds) {
         this.delaySeconds = delaySeconds;
+    }
+
+    public int getExpires() {
+        return expires;
+    }
+
+    public void setExpires(int expires) {
+        this.expires = expires;
     }
 }
