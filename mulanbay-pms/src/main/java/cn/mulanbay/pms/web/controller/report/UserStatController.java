@@ -3,7 +3,6 @@ package cn.mulanbay.pms.web.controller.report;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -16,8 +15,8 @@ import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
 import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
+import cn.mulanbay.pms.web.bean.req.report.ReportUserTreeSH;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;
@@ -64,12 +63,10 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree", method = RequestMethod.GET)
-    public ResultBean tree(ReportTreeSH sf) {
+    public ResultBean tree(UserStatSH sf) {
         try {
-            UserStatSH uns = new UserStatSH();
-            uns.setBussType(sf.getBussType());
-            uns.setPage(NO_PAGE);
-            PageRequest pr = uns.buildQuery();
+            sf.setPage(NO_PAGE);
+            PageRequest pr = sf.buildQuery();
             pr.setBeanClass(beanClass);
             Sort s = new Sort("template.bussType", Sort.ASC);
             pr.addSort(s);

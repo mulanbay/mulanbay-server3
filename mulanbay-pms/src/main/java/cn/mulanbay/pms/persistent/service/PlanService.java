@@ -9,7 +9,8 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.report.*;
 import cn.mulanbay.pms.persistent.enums.*;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportAvgStatSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportDataCleanForm;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportPlanCommendForm;
@@ -197,7 +198,7 @@ public class PlanService extends BaseReportService {
      */
     public PlanReport statPlanReport(UserPlan userPlan){
         PlanType planType = userPlan.getPlanType();
-        String bussKey = createBussKey(planType,new Date());
+        String bussKey = BussUtil.getBussKey(planType.getPeriodType(),new Date());
         PlanValueDTO upc = this.getPlanValue(PlanValueCompareType.LATEST,bussKey,userPlan.getPlanId());
         return this.statPlanReport(userPlan,bussKey,upc);
     }
@@ -222,8 +223,8 @@ public class PlanService extends BaseReportService {
      * @return
      */
     public PlanReport statPlanReport(UserPlan userPlan, String bussKey, PlanValueDTO upc){
-        Date[] ds = this.getDateRange(userPlan.getPlanType(),bussKey);
-        return this.statPlanReport(userPlan,bussKey,ds[0],ds[1],upc);
+        PeriodDateBean pdb = BussUtil.calPeriod(bussKey,userPlan.getPlanType().getPeriodType());
+        return this.statPlanReport(userPlan,bussKey,pdb.getStartDate(),pdb.getEndDate(),upc);
     }
 
     /**
@@ -254,7 +255,7 @@ public class PlanService extends BaseReportService {
                 PlanReport pr = new PlanReport();
                 pr.setUserId(userPlan.getUserId());
                 pr.setBussKey(bussKey);
-                pr.setBussDay(FundUtil.getBussDay(bussKey));
+                pr.setBussDay(BussUtil.getBussDay(userPlan.getPlanType().getPeriodType(),bussKey));
                 pr.setCreatedTime(new Date());
                 pr.setReportName(userPlan.getTitle() + "(" + bussKey + ")");
                 pr.setPlan(userPlan);
@@ -263,6 +264,9 @@ public class PlanService extends BaseReportService {
                     pr.setPlanCountValue(upc.getPlanCountValue());
                     pr.setPlanValue(upc.getPlanValue());
                     pr.setCompareBussKey(upc.getCompareBussKey());
+                }else{
+                    pr.setPlanCountValue(0L);
+                    pr.setPlanValue(0L);
                 }
                 if (oo.length > 1) {
                     if (oo[1] == null) {
@@ -323,16 +327,19 @@ public class PlanService extends BaseReportService {
         PlanReport pr = new PlanReport();
         pr.setUserId(userPlan.getUserId());
         pr.setBussKey(bussKey);
-        pr.setBussDay(FundUtil.getBussDay(bussKey));
+        pr.setBussDay(BussUtil.getBussDay(userPlan.getPlanType().getPeriodType(),bussKey));
         pr.setReportName(userPlan.getTitle() + "(" + bussKey + ")");
         pr.setPlan(userPlan);
         pr.setReportCountValue(0L);
+        pr.setReportValue(0L);
         if (upc != null) {
             pr.setPlanCountValue(upc.getPlanCountValue());
             pr.setPlanValue(upc.getPlanValue());
             pr.setCompareBussKey(upc.getCompareBussKey());
+        }else{
+            pr.setPlanCountValue(0L);
+            pr.setPlanValue(0L);
         }
-        pr.setReportValue(0L);
         //设置统计结果
         CompareType compareType = userPlan.getCompareType();
         if (compareType == CompareType.MORE) {
@@ -374,65 +381,6 @@ public class PlanService extends BaseReportService {
     }
 
     /**
-     * 获取时间区间（endTime 包含午夜时间59：59：59）
-     * @param planType
-     * @param bussKey
-     * @return
-     */
-    private Date[] getDateRange(PlanType planType, String bussKey){
-        Date start =null;
-        Date end =null;
-        switch (planType){
-            case YEAR -> {
-                start = FundUtil.getBussDay(bussKey);
-                end = DateUtil.getYearLast(start);
-            }
-            case MONTH -> {
-                start = FundUtil.getBussDay(bussKey);
-                end = DateUtil.getMonthLast(start);
-            }
-            case WEEK -> {
-
-            }
-            case SEASON -> {
-
-            }
-            case DAY -> {
-                start = DateUtil.getDate(bussKey,"yyyyMMdd");
-                end = start;
-            }
-        }
-        //添加午夜时分秒
-        end = DateUtil.tillMiddleNight(end);
-        return new Date[]{start,end};
-    }
-
-    private String createBussKey(PlanType planType ,Date date){
-        String bussKey = null;
-        switch (planType){
-            case YEAR -> {
-                bussKey = DateUtil.getFormatDate(date,"yyyy");
-            }
-            case MONTH -> {
-                bussKey = DateUtil.getFormatDate(new Date(),"yyyyMM");
-            }
-            case WEEK -> {
-                bussKey = DateUtil.getFormatDate(date,"yyyy");
-                bussKey+=("-W"+DateUtil.getWeek(date));
-            }
-            case SEASON -> {
-                bussKey = DateUtil.getFormatDate(date,"yyyy");
-                int month = DateUtil.getMonth(date);
-                bussKey+=("-S"+((month+2)/3));
-            }
-            case DAY -> {
-                bussKey = DateUtil.getFormatDate(date,"yyyyMMdd");
-            }
-        }
-        return bussKey;
-    }
-
-    /**
      * 计划的配置值
      *
      * @param type
@@ -471,15 +419,10 @@ public class PlanService extends BaseReportService {
      * 获取结果的分类统计
      *
      * @param sf
-     * @param type:0针对count 1针对value
      * @return
      */
-    public List<PlanReportResultGroupStat> getPlanReportResultGroupStat(PlanReportResultGroupStatSH sf, int type) {
+    public List<PlanReportResultGroupStat> getPlanReportResultGroupStat(PlanReportResultGroupStatSH sf) {
         try {
-            String groupField = "count_value_result";
-            if (type == 1) {
-                groupField = "value_result";
-            }
             PageRequest pr = sf.buildQuery();
             String statSql = """
                     select count(0) as totalCount,{group_field} as resultType
@@ -488,7 +431,7 @@ public class PlanService extends BaseReportService {
                     group by {group_field}
                     """;
             statSql = statSql.replace("{query_para}",pr.getParameterString())
-                             .replace("{group_field}",groupField);
+                             .replace("{group_field}",sf.getGroupField());
 
             List<PlanReportResultGroupStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, PlanReportResultGroupStat.class, pr.getParameterValue());
             return list;
@@ -508,7 +451,9 @@ public class PlanService extends BaseReportService {
         try {
             PageRequest pr = sf.buildQuery();
             String statSql = """
-                    select plan_id as planId,AVG(report_count_value) as avgCountValue,AVG(report_value) as avgValue
+                    select plan_id as planId,AVG(report_count_value) as avgCountValue,AVG(report_value) as avgValue,
+                    MIN(report_count_value) as minCountValue,MIN(report_value) as minValue,
+                    MAX(report_count_value) as maxCountValue,MAX(report_value) as 'maxValue'
                     from plan_report
                     {query_para}
                     group by plan_id
@@ -545,7 +490,7 @@ public class PlanService extends BaseReportService {
      */
     public List<PlanReportTimeline> getTimelineList(Date startDate, Date endDate, Long planId) {
         try {
-            String hql = "from PlanReportTimeline where bussStatDate>=?1 and bussStatDate<=?2 and plan.planId=?3 order by bussStatDate";
+            String hql = "from PlanReportTimeline where bussDay>=?1 and bussDay<=?2 and plan.planId=?3 order by bussDay";
             List<PlanReportTimeline> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,PlanReportTimeline.class, startDate, endDate, planId);
             return list;
         } catch (BaseException e) {
@@ -574,10 +519,10 @@ public class PlanService extends BaseReportService {
     /**
      * 重新保存计划报告时间线
      */
-    public void reSavePlanReportTimeline(List<PlanReportTimeline> datas, Integer bussDay, Long userId, Long planId) {
+    public void reSavePlanReportTimeline(List<PlanReportTimeline> datas, String bussKey, Long userId, Long planId) {
         try {
-            String hql = "delete from PlanReportTimeline where bussDay=?1 and userId=?2 and plan.planId=?3";
-            this.updateEntities(hql, bussDay, userId, planId);
+            String hql = "delete from PlanReportTimeline where bussKey=?1 and userId=?2 and plan.planId=?3";
+            this.updateEntities(hql, bussKey, userId, planId);
             this.saveEntities(datas.toArray());
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

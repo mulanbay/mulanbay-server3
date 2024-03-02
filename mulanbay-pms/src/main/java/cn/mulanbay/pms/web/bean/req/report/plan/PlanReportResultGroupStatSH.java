@@ -9,6 +9,8 @@ import cn.mulanbay.persistent.query.QueryBuilder;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -16,17 +18,18 @@ import java.util.Date;
 public class PlanReportResultGroupStatSH extends QueryBuilder implements DateStatSH, BindUser, FullEndDateTime {
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "buss_stat_date", op = Parameter.Operator.GTE)
+    @Query(fieldName = "buss_day", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "buss_stat_date", op = Parameter.Operator.LTE)
+    @Query(fieldName = "buss_day", op = Parameter.Operator.LTE)
     private Date endDate;
 
+    @NotNull(message = "用户计划不能为空")
     @Query(fieldName = "plan_id", op = Parameter.Operator.EQ)
     private Long planId;
 
-    @Query(fieldName = "name", op = Parameter.Operator.LIKE)
+    @Query(fieldName = "title", op = Parameter.Operator.LIKE)
     private String name;
 
     @Query(fieldName = "user_id", op = Parameter.Operator.EQ)
@@ -35,9 +38,8 @@ public class PlanReportResultGroupStatSH extends QueryBuilder implements DateSta
     @Query(fieldName = "report_count_value,report_value", crossType = CrossType.OR, op = Parameter.Operator.GT)
     private Long minValue;
 
-    private String sortField;
-
-    private String sortType;
+    @NotEmpty(message = "分组字段不能为空")
+    private String groupField;
 
     @Override
     public Date getStartDate() {
@@ -102,19 +104,11 @@ public class PlanReportResultGroupStatSH extends QueryBuilder implements DateSta
         this.minValue = minValue;
     }
 
-    public String getSortField() {
-        return sortField;
+    public String getGroupField() {
+        return groupField;
     }
 
-    public void setSortField(String sortField) {
-        this.sortField = sortField;
-    }
-
-    public String getSortType() {
-        return sortType;
-    }
-
-    public void setSortType(String sortType) {
-        this.sortType = sortType;
+    public void setGroupField(String groupField) {
+        this.groupField = groupField;
     }
 }

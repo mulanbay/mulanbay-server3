@@ -37,7 +37,7 @@ public enum PlanStatResult {
         this.name = name;
     }
 
-    public static PlanStatResult getPlanStatResultType(int ordinal) {
+    public static PlanStatResult getType(int ordinal) {
         for (PlanStatResult ds : PlanStatResult.values()) {
             if (ds.ordinal() == ordinal) {
                 return ds;

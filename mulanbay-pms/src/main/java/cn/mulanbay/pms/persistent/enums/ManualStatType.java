@@ -8,7 +8,8 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum ManualStatType {
 
-    RE_STAT(0, "重新统计"), STAT_MISS(1, "统计遗漏");
+    RE_STAT(0, "重新统计"),
+    STAT_MISS(1, "统计遗漏");
 
     private int value;
 

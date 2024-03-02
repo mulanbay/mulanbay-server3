@@ -17,9 +17,14 @@ public class PeriodDateBean {
     private int totalDays;
 
     /**
-     * 时间格式
+     * 运营日
      */
-    private String dateFormat;
+    private Date bussDay;
+
+    /**
+     * 业务key
+     */
+    private String bussKey;
 
     /**
      * 开始时间，精确到天
@@ -47,12 +52,20 @@ public class PeriodDateBean {
         this.totalDays = totalDays;
     }
 
-    public String getDateFormat() {
-        return dateFormat;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
+    }
+
+    public String getBussKey() {
+        return bussKey;
+    }
+
+    public void setBussKey(String bussKey) {
+        this.bussKey = bussKey;
     }
 
     public Date getStartDate() {

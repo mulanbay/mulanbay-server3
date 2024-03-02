@@ -17,7 +17,8 @@ import cn.mulanbay.pms.persistent.enums.BudgetType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -299,8 +300,7 @@ public class BudgetService extends BaseHibernateDao {
             }
             this.saveBudgetLog(budgetLog, isRedo);
             PeriodType statType = budgetLog.getStatPeriod();
-            Date statDate = FundUtil.getBussDay(budgetLog.getBussKey());
-            Date[] ds = FundUtil.getDateRange(statType, statDate, true);
+            PeriodDateBean pdb = BussUtil.calPeriod(budgetLog.getBussDay(),statType);
             //保存预算快照
             List<BudgetSnapshot> ss = new ArrayList<>();
             for (Budget b : ccList) {
@@ -314,10 +314,10 @@ public class BudgetService extends BaseHibernateDao {
                 snapshot.setStatPeriod(budgetLog.getStatPeriod());
                 snapshot.setModifyTime(null);
                 //计算
-                int factor = FundUtil.getFactor(statType,statDate,b);
+                int factor = BussUtil.getFactor(statType,pdb.getBussDay(),b);
                 snapshot.setFactor(factor);
                 if(b.getGoodsTypeId()!=null||StringUtil.isNotEmpty(b.getTags())){
-                    ConsumeBudgetStat cbs = consumeService.statConsumeAmount(ds[0],ds[1],b.getUserId(),b.getGoodsTypeId(),b.getTags(),b.getIcg());
+                    ConsumeBudgetStat cbs = consumeService.statConsumeAmount(pdb.getStartDate(),pdb.getEndDate(),b.getUserId(),b.getGoodsTypeId(),b.getTags(),b.getIcg());
                     snapshot.setAcAmount(cbs.getTotalPrice());
                     snapshot.setLastPaidTime(cbs.getMaxConsumeDate());
                 }

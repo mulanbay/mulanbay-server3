@@ -19,6 +19,7 @@ import cn.mulanbay.pms.persistent.service.AccountFlowService;
 import cn.mulanbay.pms.persistent.service.AccountService;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.fund.account.*;
 import cn.mulanbay.pms.web.bean.req.fund.budget.BudgetSH;
@@ -280,7 +281,7 @@ public class AccountController extends BaseController {
             }else if(bean.getPeriod()==PeriodType.YEARLY){
                 date = DateUtil.getDateYear(-1,bussDay);
             }
-            bussKey = budgetHandler.createBussKey(bean.getPeriod(), date);
+            bussKey = BussUtil.getBussKey(bean.getPeriod(), date);
         }
         accountService.createSnapshot(bean.getSnapshotName(), bussKey,bean.getPeriod(), bean.getRemark(), bean.getUserId());
         //更新预算日志
@@ -302,20 +303,16 @@ public class AccountController extends BaseController {
         if(afterAmount==null){
             return false;
         }
+        PeriodType periodType = bl.getStatPeriod();
         //往前
-        Date date =null;
+        Date date = BussUtil.getBussDay(periodType,bussKey);
         String bussKey2=null;
-        if(bussKey.length()==4){
-            //年
-            date = DateUtil.getDate(bussKey,BudgetHandler.YEARLY_DATE_FORMAT);
+        if(periodType==PeriodType.YEARLY){
             date = DateUtil.getDateYear(-1,date);
-            bussKey2 = DateUtil.getFormatDate(date, BudgetHandler.YEARLY_DATE_FORMAT);
-        }else if(bussKey.length()==6){
-            //年
-            date = DateUtil.getDate(bussKey,BudgetHandler.MONTHLY_DATE_FORMAT);
+        }else{
             date = DateUtil.getDateMonth(-1,date);
-            bussKey2 = DateUtil.getFormatDate(date, BudgetHandler.MONTHLY_DATE_FORMAT);
         }
+        bussKey2 = BussUtil.getBussKey(periodType,date);
         BigDecimal beforeAmount = accountFlowService.statAccountAmount(bussKey2,userId);
         if(beforeAmount==null){
             return false;

@@ -942,3 +942,8 @@ DROP COLUMN `plan_type`;
 
 ALTER TABLE `stat_bind_config`
     ADD COLUMN `tree` TINYINT NOT NULL DEFAULT 0 AFTER `bind_user`;
+
+#删除无效的历史
+delete FROM plan_report where plan_id not in (select plan_id from user_plan) and report_id >0;
+delete FROM plan_report_timeline where plan_id not in (select plan_id from user_plan) and timeline_id >0;
+

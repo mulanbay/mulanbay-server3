@@ -7,7 +7,6 @@ import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.PlanTemplate;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.persistent.service.StatBindConfigService;

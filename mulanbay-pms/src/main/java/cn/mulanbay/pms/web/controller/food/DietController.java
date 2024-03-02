@@ -19,7 +19,7 @@ import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.DietService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.ChartUtil;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -394,7 +394,7 @@ public class DietController extends BaseController {
             int year = DateUtil.getYear(startDate);
             bussDay = DateUtil.getDate(year + "-" + indexValue + "-01", DateUtil.FormatDay1);
         }
-        PeriodDateBean pdb = FundUtil.calPeriod(bussDay,period);
+        PeriodDateBean pdb = BussUtil.calPeriod(bussDay,period);
         double price = dietHandler.predictPrice(userId,indexValue,pdb.getStartDate(),pdb.getEndDate(),period);
         return price;
     }

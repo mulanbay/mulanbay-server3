@@ -16,6 +16,7 @@ import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.fund.budgetLog.*;
 import cn.mulanbay.pms.web.bean.res.chart.ChartData;
@@ -89,7 +90,7 @@ public class BudgetLogController extends BaseController {
         Budget budget = baseService.getObject(Budget.class, form.getBudgetId());
         budgetLog.setBudget(budget);
         //计算业务key
-        String bussKey = budgetHandler.createBussKey(budget.getPeriod(), budgetLog.getBussDay());
+        String bussKey = BussUtil.getBussKey(budget.getPeriod(), budgetLog.getBussDay());
         boolean isBussKeyExit = budgetService.isBudgetLogExit(bussKey, form.getUserId(), form.getLogId(), budget.getBudgetId());
         if (isBussKeyExit) {
             return callbackErrorCode(PmsCode.BUDGET_LOG_EXIT);
@@ -125,11 +126,11 @@ public class BudgetLogController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid BudgetLogForm form) {
         BudgetLog budgetLog = baseService.getObject(beanClass, form.getLogId());
-        BeanCopy.copy(form, budgetLog, true);
+        BeanCopy.copy(form, budgetLog);
         Budget budget = baseService.getObject(Budget.class, form.getBudgetId());
         budgetLog.setBudget(budget);
         //计算业务key
-        String bussKey = budgetHandler.createBussKey(budget.getPeriod(), budgetLog.getBussDay());
+        String bussKey = BussUtil.getBussKey(budget.getPeriod(), budgetLog.getBussDay());
         boolean isBussKeyExit = budgetService.isBudgetLogExit(bussKey, form.getUserId(), form.getLogId(), budget.getBudgetId());
         if (isBussKeyExit) {
             return callbackErrorCode(PmsCode.BUDGET_LOG_EXIT);

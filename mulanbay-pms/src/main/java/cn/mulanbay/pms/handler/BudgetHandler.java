@@ -21,7 +21,8 @@ import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.IncomeService;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,6 @@ public class BudgetHandler extends BaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(BudgetHandler.class);
 
-    //年的时间格式化
-    public static final String YEARLY_DATE_FORMAT = "yyyy";
-
-    //月的时间格式化
-    public static final String MONTHLY_DATE_FORMAT = "yyyyMM";
-
     @Autowired
     ConsumeService consumeService;
 
@@ -66,22 +61,6 @@ public class BudgetHandler extends BaseHandler {
     @Autowired
     BudgetConsumeYEvaluateProcessor budgetConsumeYEvaluateProcessor;
 
-    public String createBussKey(PeriodType period, Date date) {
-        String dateFormat = DateUtil.Format24Datetime2;
-        if (period == PeriodType.YEARLY) {
-            dateFormat = "yyyy";
-        } else if (period == PeriodType.MONTHLY) {
-            dateFormat = "yyyyMM";
-        } else if (period == PeriodType.DAILY) {
-            dateFormat = "yyyyMMdd";
-        } else if (period == PeriodType.WEEKLY) {
-            dateFormat = "yyyy";
-        } else if (period == PeriodType.QUARTERLY) {
-            dateFormat = "yyyyMM";
-        }
-        return DateUtil.getFormatDate(date, dateFormat);
-    }
-
     /**
      * 计算预算
      *
@@ -94,8 +73,8 @@ public class BudgetHandler extends BaseHandler {
             if (b.getStatus() == CommonStatus.DISABLE) {
                 continue;
             }
-            int monthFactor = FundUtil.getFactor(PeriodType.MONTHLY,now,b);
-            int yearFactor = FundUtil.getFactor(PeriodType.YEARLY,now,b);
+            int monthFactor = BussUtil.getFactor(PeriodType.MONTHLY,now,b);
+            int yearFactor = BussUtil.getFactor(PeriodType.YEARLY,now,b);
             if(monthFactor>0){
                 bab.addMonthBudget(b.getAmount().multiply(new BigDecimal(monthFactor)));
                 bab.addMonthBudget(b);
@@ -167,9 +146,9 @@ public class BudgetHandler extends BaseHandler {
      */
     public ConsumeBudgetStat getActualAmount(Budget budget, Date bussDay) {
         ConsumeBudgetStat v = null;
-        Date[] ds = FundUtil.getDateRange(budget.getPeriod(), bussDay, true);
+        PeriodDateBean pdb = BussUtil.calPeriod(bussDay,budget.getPeriod());
         if (budget.getGoodsTypeId() != null) {
-            v = consumeService.statConsumeAmount(ds[0], ds[1], budget.getUserId(), budget.getGoodsTypeId(), budget.getTags(),budget.getIcg());
+            v = consumeService.statConsumeAmount(pdb.getStartDate(), pdb.getEndDate(), budget.getUserId(), budget.getGoodsTypeId(), budget.getTags(),budget.getIcg());
         }
         return v;
     }
@@ -230,23 +209,6 @@ public class BudgetHandler extends BaseHandler {
         }
         return null;
     }
-
-    /**
-     * 获取剩余时间
-     *
-     * @param bg
-     * @param now
-     * @return
-     */
-    public Integer getLeftDays(Budget bg, Date now) {
-        Date nextPayTime = this.getNextPayTime(bg, now);
-        if (nextPayTime == null) {
-            return null;
-        } else {
-            return DateUtil.getIntervalDays(now, nextPayTime);
-        }
-    }
-
 
     /**
      * 获取消费记录
@@ -339,13 +301,12 @@ public class BudgetHandler extends BaseHandler {
             budgetAmount = bab.getYearBudget();
             ccList = bab.getYearBudgetList();
         }
-        Date[] ds = FundUtil.getDateRange(period, bussDay, useLastDay);
-
-        BudgetLog bl = this.statBudget(userId, budgetAmount, ds[0], ds[1], bussKey, isRedo, period);
+        PeriodDateBean pdb = BussUtil.calPeriod(bussDay,period);
+        BudgetLog bl = this.statBudget(userId, budgetAmount, pdb.getStartDate(),pdb.getEndDate(), bussKey, isRedo, period);
         //自动计算
         bl.setSource(BudgetLogSource.AUTO);
         //计算收入
-        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, ds[0], ds[1]);
+        IncomeSummaryStat iss = incomeService.incomeSummaryStat(userId, pdb.getStartDate(),pdb.getEndDate());
         BigDecimal totalAmount = iss.getTotalAmount();
         bl.setIncomeAmount(totalAmount == null ? new BigDecimal(0) : iss.getTotalAmount());
         budgetService.saveStatBudgetLog(ccList, bl, isRedo);

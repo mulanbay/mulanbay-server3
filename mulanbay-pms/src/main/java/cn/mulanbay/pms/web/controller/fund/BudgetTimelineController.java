@@ -12,7 +12,7 @@ import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.fund.budgetTimeline.BudgetTimelineReStatForm;
 import cn.mulanbay.pms.web.bean.req.fund.budgetTimeline.BudgetTimelineSH;
@@ -66,12 +66,12 @@ public class BudgetTimelineController extends BaseController {
         Date bussDay = sf.getBussDay();
         Long userId = sf.getUserId();
         Boolean needOutBurst = sf.getNeedOutBurst();
-        String bussKey = budgetHandler.createBussKey(sf.getStatPeriod(), bussDay);
+        String bussKey = BussUtil.getBussKey(sf.getStatPeriod(), bussDay);
         List<BudgetTimeline> list = budgetService.selectBudgetTimelineList(bussKey, userId);
-        PeriodDateBean pdb = FundUtil.calPeriod(bussDay,sf.getStatPeriod());
+        PeriodDateBean pdb = BussUtil.calPeriod(bussDay,sf.getStatPeriod());
         int month = DateUtil.getMonth(bussDay);
         ChartData chartData = new ChartData();
-        chartData.setTitle("[" + DateUtil.getFormatDate(bussDay, pdb.getDateFormat()) + "]预算与消费统计");
+        chartData.setTitle("[" + bussKey + "]预算与消费统计");
         List<String> legends = new ArrayList<>();
         if (sf.getStatType() == BudgetTimelineSH.StatType.RATE) {
             legends.add("消费/预算比例");
@@ -191,7 +191,7 @@ public class BudgetTimelineController extends BaseController {
             lastDay = max;
         }
         List<BudgetTimeline> datas = new ArrayList<>();
-        String bussKey = budgetHandler.createBussKey(re.getStatPeriod(), re.getBussDay());
+        String bussKey = BussUtil.getBussKey(re.getStatPeriod(), re.getBussDay());
         Date cc = firstDay;
         //总天数
         int tds;

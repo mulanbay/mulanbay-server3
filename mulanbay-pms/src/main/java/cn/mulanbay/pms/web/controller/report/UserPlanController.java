@@ -18,10 +18,10 @@ import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
+import cn.mulanbay.pms.web.bean.req.report.ReportUserTreeSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanForm;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanSH;
-import cn.mulanbay.pms.web.bean.req.report.plan.UserReportSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.report.UserPlanVo;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -66,12 +66,10 @@ public class UserPlanController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(ReportTreeSH sf) {
+    public ResultBean tree(UserPlanSH sf) {
         try {
-            UserPlanSH upsh = new UserPlanSH();
-            upsh.setBussType(sf.getBussType());
-            upsh.setPage(NO_PAGE);
-            PageRequest pr = upsh.buildQuery();
+            sf.setPage(NO_PAGE);
+            PageRequest pr = sf.buildQuery();
             pr.setBeanClass(beanClass);
             Sort s = new Sort("planType", Sort.ASC);
             pr.addSort(s);

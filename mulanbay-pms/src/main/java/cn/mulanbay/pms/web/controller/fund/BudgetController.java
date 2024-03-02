@@ -225,7 +225,6 @@ public class BudgetController extends BaseController {
      */
     @RequestMapping(value = "/infoList", method = RequestMethod.GET)
     public ResultBean infoList(@Valid BudgetInfoListSH sf) {
-        String bussKey = budgetHandler.createBussKey(sf.getPeriod(), new Date());
         List<Budget> list = budgetService.getActiveUserBudget(sf.getUserId(), null);
         BudgetAmountBean bab = budgetHandler.calcBudgetAmount(list, new Date());
         List<Budget> newList = null;

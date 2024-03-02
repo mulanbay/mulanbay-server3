@@ -8,6 +8,7 @@ import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -15,24 +16,19 @@ import java.util.Date;
 public class PlanReportAvgStatSH extends PageSearch implements BindUser, FullEndDateTime {
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "buss_stat_date", op = Parameter.Operator.GTE)
+    @Query(fieldName = "buss_day", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "buss_stat_date", op = Parameter.Operator.LTE)
+    @Query(fieldName = "buss_day", op = Parameter.Operator.LTE)
     private Date endDate;
 
+    @NotNull(message = "用户计划不能为空")
     @Query(fieldName = "plan_id", op = Parameter.Operator.EQ)
     private Long planId;
 
-    @Query(fieldName = "report_name", op = Parameter.Operator.LIKE)
-    private String name;
-
     @Query(fieldName = "user_id", op = Parameter.Operator.EQ)
     public Long userId;
-
-    @Query(fieldName = "report_count_value,report_value", crossType = CrossType.OR, op = Parameter.Operator.GT)
-    private Long minValue;
 
     public Date getStartDate() {
         return startDate;
@@ -60,14 +56,6 @@ public class PlanReportAvgStatSH extends PageSearch implements BindUser, FullEnd
         this.planId = planId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public Long getUserId() {
         return userId;
@@ -77,13 +65,4 @@ public class PlanReportAvgStatSH extends PageSearch implements BindUser, FullEnd
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
-    public Long getMinValue() {
-        return minValue;
-    }
-
-    public void setMinValue(Long minValue) {
-        this.minValue = minValue;
-    }
-
 }

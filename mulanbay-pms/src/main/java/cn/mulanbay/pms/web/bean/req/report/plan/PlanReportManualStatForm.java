@@ -6,16 +6,15 @@ import cn.mulanbay.pms.persistent.enums.ManualStatType;
 import cn.mulanbay.pms.persistent.enums.PlanValueCompareType;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
 public class PlanReportManualStatForm implements BindUser {
 
+    @NotNull(message = "日期不能为空")
     @JsonFormat(pattern = Constant.DATE_FORMAT)
-    private Date startDate;
-
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
-    private Date endDate;
+    private Date bussDay;
 
     private Long planId;
 
@@ -27,20 +26,12 @@ public class PlanReportManualStatForm implements BindUser {
 
     private PlanValueCompareType reStatCompareType;
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getBussDay() {
+        return bussDay;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setBussDay(Date bussDay) {
+        this.bussDay = bussDay;
     }
 
     public Long getPlanId() {

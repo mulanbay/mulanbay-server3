@@ -14,7 +14,8 @@ import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.FundUtil;
+import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.consume.consume.ConsumeSH;
 import cn.mulanbay.pms.web.bean.req.fund.budgetSnapshot.BudgetSnapshotChildrenSH;
 import cn.mulanbay.pms.web.bean.req.fund.budgetSnapshot.BudgetSnapshotConsumeSH;
@@ -162,7 +163,7 @@ public class BudgetSnapShotController extends BaseController {
             BigDecimal budgetAmount = new BigDecimal(0);
             BigDecimal paidAmount = new BigDecimal(0);
             for(BudgetSnapshot ss : snapshotList){
-                Date bussDay = FundUtil.getBussDay(ss.getBussKey());
+                Date bussDay = BussUtil.getBussDay(parentPeriod,ss.getBussKey());
                 BudgetDetailVo child = this.getDetail(ss,bussDay,ss.getBussKey());
                 BigDecimal b = child.getCpPaidAmount()==null ? new BigDecimal(0):child.getCpPaidAmount();
                 budgetAmount=budgetAmount.add(child.getAmount());
@@ -301,9 +302,6 @@ public class BudgetSnapShotController extends BaseController {
         serieData.getData().add(trDetail);
         other = other.subtract(budgetLog.getTrAmount());
 
-        //饮食成本
-        Date[] ds = FundUtil.getDateRange(budgetLog.getStatPeriod(), budgetLog.getBussDay(), true);
-        //BigDecimal dietPrice = dietService.getTotalPrice(sf.getUserId(), ds[0], ds[1]);
         //todo
         BigDecimal dietPrice = new BigDecimal(0d);
         chartPieData.getXdata().add("饮食花费");
@@ -335,13 +333,13 @@ public class BudgetSnapShotController extends BaseController {
     @RequestMapping(value = "/consume", method = RequestMethod.GET)
     public ResultBean consume(BudgetSnapshotConsumeSH sf) {
         BudgetSnapshot snapshot = baseService.getObject(beanClass,sf.getSnapshotId());
-        Date[] ds = this.getDateRange(snapshot);
+        PeriodDateBean pdb = this.getDateRange(snapshot);
         ConsumeSH brs = new ConsumeSH();
         brs.setUserId(sf.getUserId());
         brs.setPage(sf.getPage());
         brs.setPageSize(sf.getPageSize());
-        brs.setStartDate(ds[0]);
-        brs.setEndDate(ds[1]);
+        brs.setStartDate(pdb.getStartDate());
+        brs.setEndDate(pdb.getEndDate());
         brs.setGoodsTypeId(snapshot.getGoodsTypeId());
         brs.setTags(snapshot.getTags());
         PageRequest pr = brs.buildQuery();
@@ -352,15 +350,15 @@ public class BudgetSnapShotController extends BaseController {
         return callbackDataGrid(qr);
     }
 
-    private Date[] getDateRange(BudgetSnapshot snapshot ){
-        Date bussDay = FundUtil.getBussDay(snapshot.getBussKey());
+    private PeriodDateBean getDateRange(BudgetSnapshot snapshot ){
         BudgetLog bl = baseService.getObject(BudgetLog.class,snapshot.getBudgetLogId());
+        Date bussDay = BussUtil.getBussDay(bl.getStatPeriod(),snapshot.getBussKey());
         /**
          * 周期需要使用父类的周期
          * 假如snapshot是月度类型预算，但是该记录是在年度预算统计里面，需要查询的是整个年度的数据
          */
-        Date[] ds = FundUtil.getDateRange(bl.getStatPeriod(), bussDay, true);
-        return ds;
+        PeriodDateBean pdb = BussUtil.calPeriod(bussDay,bl.getStatPeriod());
+        return pdb;
     }
 
     /**

@@ -8,19 +8,27 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum PlanType {
 
-    DAY(0, "天"),
-    WEEK(1, "周"),
-    MONTH(2, "月"),
-    SEASON(3, "季度"),
-    YEAR(4, "年");
+    DAY(0, "天",PeriodType.DAILY),
+    WEEK(1, "周",PeriodType.WEEKLY),
+    MONTH(2, "月",PeriodType.MONTHLY),
+    QUARTER(3, "季度",PeriodType.QUARTERLY),
+    YEAR(4, "年",PeriodType.YEARLY);
 
     private int value;
 
     private String name;
 
+    private PeriodType periodType;
+
     PlanType(int value, String name) {
         this.value = value;
         this.name = name;
+    }
+
+    PlanType(int value, String name, PeriodType periodType) {
+        this.value = value;
+        this.name = name;
+        this.periodType = periodType;
     }
 
     public int getValue() {
@@ -37,5 +45,13 @@ public enum PlanType {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public PeriodType getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(PeriodType periodType) {
+        this.periodType = periodType;
     }
 }
