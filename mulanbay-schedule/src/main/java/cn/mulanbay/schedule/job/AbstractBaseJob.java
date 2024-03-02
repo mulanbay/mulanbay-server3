@@ -239,7 +239,7 @@ public abstract class AbstractBaseJob implements Job {
 						taskLog.setIpAddress(getIpAddress());
 						taskLog.setLogComment(appendComment(taskLog.getLogComment(),""));
 						taskLog.setDeployId(quartzSource.getDeployId());
-						String scheduleIdentityId = this.generateScheduleIdentityId();
+						String scheduleIdentityId = this.generateScheduleId();
 						taskLog.setScheduleIdentityId(scheduleIdentityId);
 						processor.saveTaskLog(taskLog);
 					}
@@ -310,7 +310,7 @@ public abstract class AbstractBaseJob implements Job {
 						taskLog.setCostTime((taskLog.getEndTime().getTime() - taskLog
 								.getStartTime().getTime()));
 						taskLog.setLogComment(appendComment(taskLog.getLogComment(),""));
-						String scheduleIdentityId = this.generateScheduleIdentityId();
+						String scheduleIdentityId = this.generateScheduleId();
 						taskLog.setScheduleIdentityId(scheduleIdentityId);
 						processor.saveTaskLog(taskLog);
 					} else {
@@ -360,12 +360,45 @@ public abstract class AbstractBaseJob implements Job {
 			return false;
 		}
 	}
+
 	/**
 	 * 生成唯一的调度编号
 	 * @return
 	 */
-	private String generateScheduleIdentityId(){
-		String dateTimeString = DateUtil.getFormatDate(scheduledFireTime,DateUtil.Format24Datetime2);
+	private String generateScheduleId(){
+		TriggerType triggerType = taskTrigger.getTriggerType();
+		String dateFormat = null;
+		Date date = null;
+		switch (triggerType){
+			case NOW,SECOND,CRON-> {
+				dateFormat="yyyyMMddHHmmss";
+				date = scheduledFireTime;
+			}
+			case MINUTE-> {
+				dateFormat="yyyyMMddHHmm";
+				date = scheduledFireTime;
+			}
+			case HOUR-> {
+				dateFormat="yyyyMMddHH";
+				date = scheduledFireTime;
+			}
+			case DAY,WEEK-> {
+				dateFormat="yyyyMMdd";
+				date = this.getBussDay();
+			}
+			case MONTH,SEASON-> {
+				dateFormat="yyyyMM";
+				date = this.getBussDay();
+			}
+			case YEAR-> {
+				dateFormat="yyyy";
+				date = this.getBussDay();
+			}
+		}
+		if(date==null){
+			date = new Date();
+		}
+		String dateTimeString = DateUtil.getFormatDate(date,dateFormat);
 		return taskTrigger.getTriggerId()+"_"+dateTimeString;
 	}
 
@@ -383,9 +416,9 @@ public abstract class AbstractBaseJob implements Job {
 			logger.debug("没有调度锁配置，无法进行锁");
 			return LockStatus.SUCCESS;
 		}else{
-			String identityKey = getIdentityKey();
-			LockStatus lockStatus= scheduleLocker.lock(identityKey,taskTrigger.getTimeout());
-			logger.debug("调度锁key="+identityKey+",上锁结果:"+lockStatus);
+			String lockKey = getLockKey();
+			LockStatus lockStatus= scheduleLocker.lock(lockKey,taskTrigger.getTimeout());
+			logger.debug("调度锁key="+lockKey+",上锁结果:"+lockStatus);
 			return lockStatus;
 		}
 
@@ -417,19 +450,19 @@ public abstract class AbstractBaseJob implements Job {
 		if(scheduleLocker==null){
 			return LockStatus.SUCCESS;
 		}else{
-			String identityKey = getIdentityKey();
-			LockStatus lockStatus =  scheduleLocker.unlock(getIdentityKey());
-			logger.debug("调度锁key="+identityKey+",解锁结果:"+lockStatus);
+			String lockKey = getLockKey();
+			LockStatus lockStatus =  scheduleLocker.unlock(lockKey);
+			logger.debug("调度锁key="+lockKey+",解锁结果:"+lockStatus);
 			return lockStatus;
 		}
 
 	}
 
 	/**
-	 * 每次调度任务执行的唯一编号
+	 * 每次调度任务执行的锁编号
 	 * @return
 	 */
-	private String getIdentityKey(){
+	private String getLockKey(){
 		String prefix= (isRedo ? "redo":"new");
 		return "schedule:"+prefix+":"+taskTrigger.getGroupName()+":"+taskTrigger.getTriggerId();
 	}
@@ -473,7 +506,7 @@ public abstract class AbstractBaseJob implements Job {
 	private boolean checkScheduleExecUnique(){
 		if(taskTrigger.getCheckUnique()){
 			if(taskTrigger.getUniqueType()== TaskUniqueType.IDENTITY){
-				String scheduleIdentityId = this.generateScheduleIdentityId();
+				String scheduleIdentityId = this.generateScheduleId();
 				boolean isExit = this.getPersistentProcessor().isTaskLogExit(scheduleIdentityId);
 				if(isExit){
 					return false;

@@ -17,7 +17,8 @@ public enum UserCalendarSource {
     BUDGET(4, "预算", Budget.class),
     TREAT_OPERATION(5, "手术", TreatOperation.class),
     TREAT_DRUG(6, "用药",TreatDrug.class),
-    CONSUME(7, "消费",Consume.class);
+    CONSUME(7, "消费",Consume.class),
+    BUDGET_LOG(8, "预算日志", BudgetLog.class);
 
     private int value;
 

@@ -947,3 +947,8 @@ ALTER TABLE `stat_bind_config`
 delete FROM plan_report where plan_id not in (select plan_id from user_plan) and report_id >0;
 delete FROM plan_report_timeline where plan_id not in (select plan_id from user_plan) and timeline_id >0;
 
+#更新用户日历的source
+update user_calendar set source_type=8,source_id =REPLACE(source_id,'BL_','') where source_type=4 and source_id like 'BL_%' and calendar_id>0;
+update user_calendar set source_type=4,source_id =REPLACE(source_id,'B_','') where source_type=4 and source_id like 'B_%' and calendar_id>0;
+ALTER TABLE `user_calendar`
+    CHANGE COLUMN `source_id` `source_id` BIGINT(20) NULL DEFAULT NULL ;

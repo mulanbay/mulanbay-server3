@@ -88,6 +88,22 @@ public class BudgetHandler extends BaseHandler {
     }
 
     /**
+     * 获取剩余时间
+     *
+     * @param bg
+     * @param now
+     * @return
+     */
+    public Integer getLeftDays(Budget bg, Date now) {
+        Date nextPayTime = this.getNextPayTime(bg, now);
+        if (nextPayTime == null) {
+            return null;
+        } else {
+            return DateUtil.getIntervalDays(now, nextPayTime);
+        }
+    }
+
+    /**
      * 预测月度消费比例
      * @param userId
      * @param month

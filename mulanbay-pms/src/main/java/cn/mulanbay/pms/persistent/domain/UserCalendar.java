@@ -62,7 +62,7 @@ public class UserCalendar implements java.io.Serializable {
     private UserCalendarSource sourceType;
 
     @Column(name = "source_id")
-    private String sourceId;
+    private Long sourceId;
 
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "finish_time")
@@ -193,11 +193,11 @@ public class UserCalendar implements java.io.Serializable {
         this.sourceType = sourceType;
     }
 
-    public String getSourceId() {
+    public Long getSourceId() {
         return sourceId;
     }
 
-    public void setSourceId(String sourceId) {
+    public void setSourceId(Long sourceId) {
         this.sourceId = sourceId;
     }
 

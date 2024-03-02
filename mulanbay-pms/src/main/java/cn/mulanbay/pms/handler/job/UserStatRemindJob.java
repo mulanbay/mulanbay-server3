@@ -260,7 +260,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 uc.setExpireTime(DateUtil.getDate(remind.getTriggerInterval() * rate));
                 uc.setBussIdentityKey(bussIdentityKey);
                 uc.setSourceType(UserCalendarSource.STAT);
-                uc.setSourceId(us.getStatId().toString());
+                uc.setSourceId(us.getStatId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);
             }

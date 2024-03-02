@@ -117,6 +117,9 @@ public class NumberUtil {
 	 * @return
 	 */
 	public static double getValue(BigDecimal value,int scale){
+		if(value==null){
+			return 0;
+		}
 		double v  =  value.setScale(scale,BigDecimal.ROUND_HALF_UP).doubleValue();
 		return v;
 	}
