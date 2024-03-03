@@ -952,3 +952,7 @@ update user_calendar set source_type=8,source_id =REPLACE(source_id,'BL_','') wh
 update user_calendar set source_type=4,source_id =REPLACE(source_id,'B_','') where source_type=4 and source_id like 'B_%' and calendar_id>0;
 ALTER TABLE `user_calendar`
     CHANGE COLUMN `source_id` `source_id` BIGINT(20) NULL DEFAULT NULL ;
+
+delete from dream where plan_id not in (select plan_id from user_plan) and dream_id >0;
+ALTER TABLE `dream`
+    ADD COLUMN `rewards` INT NULL DEFAULT 0 AFTER `remind`;

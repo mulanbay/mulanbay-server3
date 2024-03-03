@@ -153,7 +153,7 @@ public class ScheduleHandler extends BaseHandler {
     private void updateTaskServerStart(){
         try {
             SchedulePersistentProcessor persistentProcessor = quartzSource.getSchedulePersistentProcessor();
-            TaskServer taskServer = persistentProcessor.selectTaskServer(quartzSource.getDeployId());
+            TaskServer taskServer = persistentProcessor.getTaskServer(quartzSource.getDeployId());
             if(taskServer==null){
                 taskServer = new TaskServer();
             }
@@ -178,7 +178,7 @@ public class ScheduleHandler extends BaseHandler {
     private void updateTaskServerShutdown(){
         try {
             SchedulePersistentProcessor persistentProcessor = quartzSource.getSchedulePersistentProcessor();
-            TaskServer taskServer = persistentProcessor.selectTaskServer(quartzSource.getDeployId());
+            TaskServer taskServer = persistentProcessor.getTaskServer(quartzSource.getDeployId());
             taskServer.setCejc(0);
             taskServer.setSjc(0);
             taskServer.setDistriable(quartzSource.getDistriable());
@@ -243,7 +243,7 @@ public class ScheduleHandler extends BaseHandler {
         if(!this.isEnableSchedule()){
             throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
-        TaskLog taskLog=quartzSource.getSchedulePersistentProcessor().selectTaskLog(logId);
+        TaskLog taskLog=quartzSource.getSchedulePersistentProcessor().getTaskLog(logId);
         if(taskLog.getTaskTrigger().getRedoType()== RedoType.CANNOT){
             throw new ApplicationException(ScheduleCode.TRIGGER_CANNOT_REDO);
         }
@@ -261,7 +261,7 @@ public class ScheduleHandler extends BaseHandler {
         if(!this.isEnableSchedule()){
             throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
-        TaskTrigger taskTrigger = quartzSource.getSchedulePersistentProcessor().selectTaskTrigger(triggerId);
+        TaskTrigger taskTrigger = quartzSource.getSchedulePersistentProcessor().getTaskTrigger(triggerId);
         if(taskTrigger.getCheckUnique()){
             boolean b =quartzSource.getSchedulePersistentProcessor().isTaskLogExit(triggerId,bussDay);
             if(b){
@@ -476,7 +476,7 @@ public class ScheduleHandler extends BaseHandler {
      * @param taskTriggerId
      */
     public boolean refreshTask(Long taskTriggerId) {
-        TaskTrigger tt = quartzSource.getSchedulePersistentProcessor().selectTaskTrigger(taskTriggerId);
+        TaskTrigger tt = quartzSource.getSchedulePersistentProcessor().getTaskTrigger(taskTriggerId);
         return this.refreshTask(tt);
     }
 

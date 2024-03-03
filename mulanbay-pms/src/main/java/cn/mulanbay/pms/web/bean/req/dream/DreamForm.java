@@ -66,6 +66,8 @@ public class DreamForm implements BindUser {
     @NotNull(message = "是否提醒不能为空")
     private Boolean remind;
 
+    private Integer rewards;
+
     private String remark;
 
     public Long getDreamId() {
@@ -188,6 +190,14 @@ public class DreamForm implements BindUser {
 
     public void setRemind(Boolean remind) {
         this.remind = remind;
+    }
+
+    public Integer getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(Integer rewards) {
+        this.rewards = rewards;
     }
 
     public String getRemark() {

@@ -2,6 +2,7 @@ package cn.mulanbay.pms.handler.job;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemStatusHandler;
@@ -38,7 +39,8 @@ public class SystemStatusJob extends AbstractBaseJob {
         String msg = null;
         if(ns){
             if(status!=code){
-                res = systemStatusHandler.lock(code,para.getMessage(),null);
+                String cc = "系统定时关闭时间:"+para.getStopPeriod()+","+para.getMessage();
+                res = systemStatusHandler.lock(code,cc,null);
                 msg = "关闭系统，code = "+code+",执行结果:"+res;
             }
         }else{
@@ -75,8 +77,11 @@ public class SystemStatusJob extends AbstractBaseJob {
      * @return
      */
     private boolean needStop(){
-        boolean inPeriod = this.checkTimeExec(new Date(),para.getStartPeriod());
-        return !inPeriod;
+        String sp = para.getStopPeriod();
+        if(StringUtil.isEmpty(sp)){
+            return false;
+        }
+        return this.checkTimeExec(new Date(),para.getStopPeriod());
     }
 
     @Override

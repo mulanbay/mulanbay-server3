@@ -23,9 +23,6 @@ public class TaskLogSH extends PageSearch implements FullEndDateTime {
     @Query(fieldName = "startTime", op = Parameter.Operator.LTE)
     private Date endDate;
 
-    @Query(fieldName = "taskTrigger.userId", op = Parameter.Operator.EQ)
-    public Long userId;
-
     @Query(fieldName = "executeResult", op = Parameter.Operator.EQ)
     private JobResult executeResult;
 
@@ -45,14 +42,6 @@ public class TaskLogSH extends PageSearch implements FullEndDateTime {
     @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public Long getTriggerId() {

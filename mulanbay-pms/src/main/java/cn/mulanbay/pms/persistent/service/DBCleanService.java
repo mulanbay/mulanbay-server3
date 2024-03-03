@@ -56,7 +56,7 @@ public class DBCleanService extends BaseHibernateDao {
      */
     public List<DBClean> getActiveList() {
         try {
-            String hql = "from DatabaseClean where status=?1 order by orderIndex";
+            String hql = "from DBClean where status=?1 order by orderIndex";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,DBClean.class, CommonStatus.ENABLE);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

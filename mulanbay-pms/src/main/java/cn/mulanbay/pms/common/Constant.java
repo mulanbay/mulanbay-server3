@@ -18,6 +18,11 @@ public class Constant {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
 
     /**
+     * 管理员
+     */
+    public static long ADMIN_USER_ID=0L;
+
+    /**
      * 根节点号
      */
     public static long ROOT_ID=0L;

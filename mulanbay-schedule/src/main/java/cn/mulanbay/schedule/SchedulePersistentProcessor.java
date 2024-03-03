@@ -33,14 +33,21 @@ public interface SchedulePersistentProcessor {
      * @param logId
      * @return
      */
-    TaskLog selectTaskLog(Long logId);
+    TaskLog getTaskLog(Long logId);
 
     /**
      * 查询调度
      * @param triggerId
      * @return
      */
-    TaskTrigger selectTaskTrigger(Long triggerId);
+    TaskTrigger getTaskTrigger(Long triggerId);
+
+    /**
+     * 查询调度
+     * @param taskClass
+     * @return
+     */
+    public TaskTrigger getTaskTrigger(String taskClass);
 
     /**
      * 更新调度日志
@@ -105,5 +112,5 @@ public interface SchedulePersistentProcessor {
      * @param deployId
      * @return
      */
-    TaskServer selectTaskServer(String deployId);
+    TaskServer getTaskServer(String deployId);
 }

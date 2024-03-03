@@ -473,10 +473,10 @@ public class PlanService extends BaseReportService {
      * @param planId
      * @return
      */
-    public PlanReportTimeline getPlanReportTimeline(Long planId, Date bussStatDate) {
+    public PlanReportTimeline getPlanReportTimeline(Long planId, Date bussDay) {
         try {
-            String hql = "from PlanReportTimeline where plan.planId=?1 and bussStatDate=?2 ";
-            return this.getEntity(hql,PlanReportTimeline.class, planId, bussStatDate);
+            String hql = "from PlanReportTimeline where plan.planId=?1 and bussDay=?2 ";
+            return this.getEntity(hql,PlanReportTimeline.class, planId, bussDay);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取用户计划异常", e);
@@ -614,9 +614,14 @@ public class PlanService extends BaseReportService {
             //删除计划报告
             String sql2 = "delete from plan_report where plan_id=?1";
             this.execSqlUpdate(sql2, planId);
-            //删除计划
-            String sql3 = "delete from user_plan where plan_id=?1";
+
+            //删除梦想绑定
+            String sql3 = "delete from dream where plan_id=?1 ";
             this.execSqlUpdate(sql3, planId);
+
+            //删除计划
+            String sql4 = "delete from user_plan where plan_id=?1";
+            this.execSqlUpdate(sql4, planId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除用户计划异常", e);
@@ -646,7 +651,7 @@ public class PlanService extends BaseReportService {
      */
     public List<UserPlan> getNeedRemindUserPlan(PlanType planType) {
         try {
-            String hql = "from UserPlan where template.planType=?1 and status=?2 and remind=?3 ";
+            String hql = "from UserPlan where planType=?1 and status=?2 and remind=?3 ";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,UserPlan.class, planType, CommonStatus.ENABLE, true);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

@@ -13,8 +13,9 @@ public class SystemStatusJobPara extends AbstractTriggerPara {
     @JobParameter(name = "提示消息", dataType = String.class, desc = "", editType = EditType.TEXT)
     private String message;
 
-    @JobParameter(name = "开启时间", dataType = String.class, desc = "格式:01:00-02:00,多个以逗号分隔", editType = EditType.TEXT)
-    private String startPeriod;
+    @JobParameter(name = "停止时间", dataType = String.class, desc = "格式:01:00-02:00,多个以逗号分隔", editType = EditType.TEXT)
+    private String stopPeriod;
+
     public int getCode() {
         return code;
     }
@@ -31,11 +32,11 @@ public class SystemStatusJobPara extends AbstractTriggerPara {
         this.message = message;
     }
 
-    public String getStartPeriod() {
-        return startPeriod;
+    public String getStopPeriod() {
+        return stopPeriod;
     }
 
-    public void setStartPeriod(String startPeriod) {
-        this.startPeriod = startPeriod;
+    public void setStopPeriod(String stopPeriod) {
+        this.stopPeriod = stopPeriod;
     }
 }

@@ -184,7 +184,7 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid TaskTriggerForm formRequest) {
         TaskTrigger bean = new TaskTrigger();
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         bean.setFailCount(0L);
         bean.setTotalCount(0L);
         bean.setCreatedTime(new Date());
@@ -215,7 +215,7 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid TaskTriggerForm formRequest) {
         TaskTrigger bean = baseService.getObject(beanClass, formRequest.getTriggerId());
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         String triggerParas = StringCoderUtil.decodeJson(formRequest.getTriggerParas());
         String execTimePeriods = StringCoderUtil.decodeJson(formRequest.getExecTimePeriods());
         bean.setTriggerParas(triggerParas);
@@ -322,7 +322,7 @@ public class TaskTriggerController extends BaseController {
         boolean b;
         if (rsr.getTriggerId() != null) {
             //单个
-            TaskTrigger tt = pmsScheduleService.selectTaskTrigger(rsr.getTriggerId());
+            TaskTrigger tt = pmsScheduleService.getTaskTrigger(rsr.getTriggerId());
             boolean cr = pmsScheduleHandler.checkCanRun(tt);
             if (!cr) {
                 return callbackErrorCode(ScheduleCode.TRIGGER_CANNOT_RUN_HERE);
@@ -361,7 +361,7 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/reset", method = RequestMethod.POST)
     public ResultBean reset(@RequestBody @Valid TriggerResetForm trf) {
         //单个
-        TaskTrigger tt = pmsScheduleService.selectTaskTrigger(trf.getTriggerId());
+        TaskTrigger tt = pmsScheduleService.getTaskTrigger(trf.getTriggerId());
         boolean cr = pmsScheduleHandler.checkCanRun(tt);
         if (!cr) {
             return callbackErrorCode(ScheduleCode.TRIGGER_CANNOT_RUN_HERE);
@@ -383,7 +383,7 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/scheduleDetail", method = RequestMethod.GET)
     public ResultBean scheduleDetail(@RequestParam(name = "triggerId") Long triggerId) {
         Map<String, Object> res = new HashMap<>();
-        TaskTrigger dbInfo = pmsScheduleService.selectTaskTrigger(triggerId);
+        TaskTrigger dbInfo = pmsScheduleService.getTaskTrigger(triggerId);
         res.put("dbInfo", dbInfo);
         TaskTrigger scheduleInfo = pmsScheduleHandler.getScheduledTaskTrigger(dbInfo.getTriggerId(), dbInfo.getGroupName());
         res.put("scheduleInfo", scheduleInfo);

@@ -92,6 +92,9 @@ public class Dream implements java.io.Serializable {
     @Column(name = "remind")
     private Boolean remind;
 
+    @Column(name = "rewards")
+    private Integer rewards;
+
     @Column(name = "remark")
     private String remark;
 
@@ -233,6 +236,14 @@ public class Dream implements java.io.Serializable {
 
     public void setRemind(Boolean remind) {
         this.remind = remind;
+    }
+
+    public Integer getRewards() {
+        return rewards;
+    }
+
+    public void setRewards(Integer rewards) {
+        this.rewards = rewards;
     }
 
     public String getRemark() {

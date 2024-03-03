@@ -306,7 +306,7 @@ public class DietService extends BaseHibernateDao {
      */
     public List<Long> getUserIdList(Date startDate, Date endDate) {
         try {
-            String hql = "select distinct userId from Diet where occurTime>=?0 and occurTime<=?1 ";
+            String hql = "select distinct userId from Diet where occurTime>=?1 and occurTime<=?2 ";
             return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Long.class, startDate, endDate);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

@@ -32,7 +32,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     @Override
     public void updateTaskTriggerForNewJob(TaskTrigger taskTrigger) {
         try {
-            TaskTrigger dbBean = this.selectTaskTrigger(taskTrigger.getTriggerId());
+            TaskTrigger dbBean = this.getTaskTrigger(taskTrigger.getTriggerId());
             dbBean.setTotalCount(taskTrigger.getTotalCount());
             dbBean.setFailCount(taskTrigger.getFailCount());
             dbBean.setLastExecuteResult(taskTrigger.getLastExecuteResult());
@@ -63,7 +63,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
      * @return
      */
     @Override
-    public TaskLog selectTaskLog(Long logId) {
+    public TaskLog getTaskLog(Long logId) {
         try {
             return this.getEntityById(TaskLog.class,logId);
         } catch (BaseException e) {
@@ -77,9 +77,24 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
      * @return
      */
     @Override
-    public TaskTrigger selectTaskTrigger(Long triggerId) {
+    public TaskTrigger getTaskTrigger(Long triggerId) {
         try {
-            return (TaskTrigger) this.getEntityById(TaskTrigger.class,triggerId);
+            return this.getEntityById(TaskTrigger.class,triggerId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取调度器失败！",e);
+        }
+    }
+
+    /**
+     * 获取调度器
+     * @param taskClass
+     * @return
+     */
+    @Override
+    public TaskTrigger getTaskTrigger(String taskClass) {
+        try {
+            String hql = "from TaskTrigger where taskClass=?1 ";
+            return this.getEntity(hql,TaskTrigger.class,taskClass);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取调度器失败！",e);
         }
@@ -216,7 +231,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
     }
 
     @Override
-    public TaskServer selectTaskServer(String deployId) {
+    public TaskServer getTaskServer(String deployId) {
         try {
             String hql="from TaskServer where deployId=?1 ";
             return this.getEntity(hql,TaskServer.class,deployId);

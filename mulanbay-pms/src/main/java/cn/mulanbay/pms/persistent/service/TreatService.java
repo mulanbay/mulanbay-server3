@@ -419,8 +419,8 @@ public class TreatService extends BaseHibernateDao {
     public List<TreatDrug> getNeedRemindDrug(Date date) {
         try {
 
-            String hql = "from TreatDrug where remind=1 and beginDate<=?1 and endDate>=?2 ";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TreatDrug.class, date, date);
+            String hql = "from TreatDrug where remind=?1 and beginDate<=?2 and endDate>=?3 ";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TreatDrug.class,true, date, date);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取需要提醒的药品异常", e);

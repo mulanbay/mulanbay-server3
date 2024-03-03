@@ -18,6 +18,7 @@ import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -224,15 +225,8 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
     private void addToUserCalendar(UserStatRemind remind, Long messageId) {
         try {
             UserStat us = remind.getStat();
-            String bussKey = us.getTemplate().getBussKey();
-            if (StringUtil.isEmpty(bussKey)) {
-                logger.warn(us.getTemplate().getTitle() + "没有配置bussKey");
-                return;
-            }
-            String bussIdentityKey = bussKey;
-            if (!StringUtil.isEmpty(us.getBindValues())) {
-                bussIdentityKey += "_" + us.getBindValues();
-            }
+            StatTemplate template = us.getTemplate();
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussType(),template.getTemplateId(),us.getBindValues());
             UserCalendar uc = userCalendarService.getUserCalendar(us.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

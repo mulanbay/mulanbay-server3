@@ -26,12 +26,6 @@ import java.util.List;
 @Service
 @Transactional
 public class PmsScheduleService extends HibernatePersistentProcessor {
-
-    @Override
-    public List<TaskTrigger> getActiveTaskTrigger(String deployId, boolean supportDistri) {
-        return super.getActiveTaskTrigger(deployId, supportDistri);
-    }
-
     @Override
     public void updateTaskTriggerForNewJob(TaskTrigger taskTrigger) {
         super.updateTaskTriggerForNewJob(taskTrigger);
@@ -43,13 +37,18 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
     }
 
     @Override
-    public TaskLog selectTaskLog(Long logId) {
-        return super.selectTaskLog(logId);
+    public TaskLog getTaskLog(Long logId) {
+        return super.getTaskLog(logId);
     }
 
     @Override
-    public TaskTrigger selectTaskTrigger(Long triggerId) {
-        return super.selectTaskTrigger(triggerId);
+    public TaskTrigger getTaskTrigger(Long triggerId) {
+        return super.getTaskTrigger(triggerId);
+    }
+
+    @Override
+    public TaskTrigger getTaskTrigger(String taskClass) {
+        return super.getTaskTrigger(taskClass);
     }
 
     @Override
@@ -68,8 +67,13 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
     }
 
     @Override
-    public boolean isTaskLogExit(Long taskTriggerId, Date bussDate) {
-        return super.isTaskLogExit(taskTriggerId, bussDate);
+    public List<TaskTrigger> getActiveTaskTrigger(String deployId, boolean distriable) {
+        return super.getActiveTaskTrigger(deployId, distriable);
+    }
+
+    @Override
+    public boolean isTaskLogExit(Long triggerId, Date bussDate) {
+        return super.isTaskLogExit(triggerId, bussDate);
     }
 
     @Override
@@ -78,19 +82,29 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
     }
 
     @Override
-    public List<TaskLog> getAutoRedoTaskLogs(String deployId, boolean supportDistri, Date startDate, Date endDate) {
-        return super.getAutoRedoTaskLogs(deployId, supportDistri, startDate, endDate);
+    public List<TaskLog> getAutoRedoTaskLogs(String deployId, boolean distriable, Date startDate, Date endDate) {
+        return super.getAutoRedoTaskLogs(deployId, distriable, startDate, endDate);
+    }
+
+    @Override
+    public void updateTaskServer(TaskServer taskServer) {
+        super.updateTaskServer(taskServer);
+    }
+
+    @Override
+    public TaskServer getTaskServer(String deployId) {
+        return super.getTaskServer(deployId);
     }
 
     /**
      * 更新调度参数
      *
-     * @param id
+     * @param triggerId
      * @param triggerParas
      */
-    public void updateTaskTriggerPara(Long id, String triggerParas) {
+    public void updateTaskTriggerPara(Long triggerId, String triggerParas) {
         try {
-            TaskTrigger tt = this.selectTaskTrigger(id);
+            TaskTrigger tt = this.getTaskTrigger(triggerId);
             tt.setTriggerParas(triggerParas);
             tt.setModifyTime(new Date());
             this.updateEntity(tt);
@@ -135,22 +149,6 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取分类列表异常", e);
         }
-    }
-
-    /**
-     * 采用override是解决hibernate的事务问题
-     * 异常：Could not obtain transaction-synchronized Session for current thread
-     *
-     * @param taskServer
-     */
-    @Override
-    public void updateTaskServer(TaskServer taskServer) {
-        super.updateTaskServer(taskServer);
-    }
-
-    @Override
-    public TaskServer selectTaskServer(String deployId) {
-        return super.selectTaskServer(deployId);
     }
 
     /**

@@ -63,7 +63,7 @@ public class QuartzMonitorThread extends EnhanceThread {
 		try {
 			QuartzSource quartzSource = scheduleHandler.getQuartzSource();
 			SchedulePersistentProcessor persistentProcessor = quartzSource.getSchedulePersistentProcessor();
-			TaskServer taskServer = persistentProcessor.selectTaskServer(quartzSource.getDeployId());
+			TaskServer taskServer = persistentProcessor.getTaskServer(quartzSource.getDeployId());
 			if(taskServer==null){
 				taskServer = new TaskServer();
 				taskServer.setStartTime(new Date());
