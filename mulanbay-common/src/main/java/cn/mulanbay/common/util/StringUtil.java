@@ -75,7 +75,7 @@ public class StringUtil {
     }
 
     public static String genUUID(){
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-","");
     }
 
 }

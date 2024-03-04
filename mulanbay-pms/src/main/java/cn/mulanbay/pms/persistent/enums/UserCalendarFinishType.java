@@ -8,7 +8,9 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum UserCalendarFinishType {
 
-    AUTO(0, "自动"), MANUAL(1, "手动"), EXPIRED(2, "过期");
+    AUTO(0, "自动"),
+    MANUAL(1, "手动"),
+    EXPIRED(2, "过期");
 
     private int value;
 

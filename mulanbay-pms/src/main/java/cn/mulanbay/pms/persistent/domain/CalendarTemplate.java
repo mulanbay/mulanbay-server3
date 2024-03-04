@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.SqlType;
 
@@ -43,17 +44,34 @@ public class CalendarTemplate implements java.io.Serializable {
     @Column(name = "sql_content")
     private String sqlContent;
 
+    //业务类型
+    @Column(name = "buss_type")
+    private BussType bussType;
+
     @Column(name = "status")
     private CommonStatus status;
 
     @Column(name = "order_index")
     private Short orderIndex;
 
-    @Column(name = "user_field")
-    private String userField;
-
     @Column(name = "level")
     private Integer level;
+
+    /**
+     * 业务key，该key目前作为日历自动更新的匹配类型
+     * 业务逻辑：UserPlan、UserStat、UserCalendar都可以使用这个bussKey来匹配某个日历是否为同一种类型
+     * 比如：UserPlan定义了用户消费限制计划，UserStat定义消费限制统计，都生成到UserCalendar中
+     *      在定时任务中检查时，任意的一个业务查询到已经完成，就可以更新这个日历为已经完成
+     */
+    @Column(name = "buss_key")
+    private String bussKey;
+
+    /**
+     * 跳转连接
+     */
+    @Column(name = "url")
+    private String url;
+
     @Column(name = "remark")
     private String remark;
 
@@ -109,6 +127,14 @@ public class CalendarTemplate implements java.io.Serializable {
         this.sqlContent = sqlContent;
     }
 
+    public BussType getBussType() {
+        return bussType;
+    }
+
+    public void setBussType(BussType bussType) {
+        this.bussType = bussType;
+    }
+
     public CommonStatus getStatus() {
         return status;
     }
@@ -125,20 +151,28 @@ public class CalendarTemplate implements java.io.Serializable {
         this.orderIndex = orderIndex;
     }
 
-    public String getUserField() {
-        return userField;
-    }
-
-    public void setUserField(String userField) {
-        this.userField = userField;
-    }
-
     public Integer getLevel() {
         return level;
     }
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public String getBussKey() {
+        return bussKey;
+    }
+
+    public void setBussKey(String bussKey) {
+        this.bussKey = bussKey;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getRemark() {
@@ -163,6 +197,16 @@ public class CalendarTemplate implements java.io.Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @Transient
+    public String getSqlTypeName() {
+        return sqlType==null? null:sqlType.getName();
+    }
+
+    @Transient
+    public String getBussTypeName() {
+        return bussType==null ? null:bussType.getName();
     }
 
     @Override

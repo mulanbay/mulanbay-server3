@@ -264,6 +264,21 @@ public class AuthService extends BaseHibernateDao {
     }
 
     /**
+     * 功能点的菜单列表
+     * @return
+     */
+    public List<SysFunc> selectFunctionMenuList() {
+        try {
+            String hql= "from SysFunc where router =true order by parent,orderIndex ";
+            List<SysFunc> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,SysFunc.class);
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取角色功能点的菜单列表", e);
+        }
+    }
+
+    /**
      * 获取角色功能点的按钮列表
      *
      * @param roleId

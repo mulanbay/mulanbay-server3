@@ -244,12 +244,11 @@ public class BussUtil {
     /**
      * 用户日历唯一业务key
      *
-     * @param bussType 业务类型
-     * @param bussId 业务主键（一般是模版的编号）
+     * @param bussKey 业务类型
      * @param bussValue 业务值（比如用户计划的绑定值）
      * @return
      */
-    public static String getCalendarBussIdentityKey(BussType bussType,Long bussId,String bussValue){
-        return bussType.name()+"_"+bussId+"_"+bussValue;
+    public static String getCalendarBussIdentityKey(String bussKey,String bussValue){
+        return bussKey+"_"+bussValue;
     }
 }

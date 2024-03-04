@@ -956,3 +956,25 @@ ALTER TABLE `user_calendar`
 delete from dream where plan_id not in (select plan_id from user_plan) and dream_id >0;
 ALTER TABLE `dream`
     ADD COLUMN `rewards` INT NULL DEFAULT 0 AFTER `remind`;
+
+ALTER TABLE `calendar_template`
+DROP COLUMN `user_field`;
+
+ALTER TABLE `calendar_template`
+    ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `sql_content`;
+
+ALTER TABLE `calendar_template`
+    ADD COLUMN `buss_key` VARCHAR(32) NULL AFTER `level`;
+
+ALTER TABLE `user_calendar`
+    ADD COLUMN `finish_source` SMALLINT(5) NULL AFTER `message_id`,
+ADD COLUMN `finish_message_id` BIGINT(20) NULL AFTER `finish_source_id`;
+
+ALTER TABLE `db_clean`
+    CHANGE COLUMN `extra_condition` `extra_condition` VARCHAR(200) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL ;
+
+ALTER TABLE `calendar_template`
+    ADD COLUMN `url` VARCHAR(100) NULL AFTER `buss_key`;
+
+#删除无效的历史用户日历
+delete from user_calendar where source_type!=0 and calendar_id>0;

@@ -4,12 +4,14 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
-import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.CalendarTemplate;
+import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.dto.report.StatSQLDTO;
 import cn.mulanbay.pms.persistent.enums.*;
-import cn.mulanbay.pms.persistent.util.MysqlUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +27,63 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class UserCalendarService extends BaseHibernateDao {
+public class UserCalendarService extends BaseReportService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserCalendarService.class);
+
+    /**
+     * 保存日历配置模板
+     *
+     * @param bean
+     * @param configList
+     */
+    public void saveCalendarTemplate(CalendarTemplate bean, List<StatBindConfig> configList) {
+        try {
+            this.saveEntity(bean);
+            if (StringUtil.isNotEmpty(configList)) {
+                for (StatBindConfig c : configList) {
+                    c.setFid(bean.getTemplateId());
+                    c.setType(StatBussType.PLAN);
+                }
+                this.saveEntities(configList.toArray());
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
+                    "保存日历配置模板异常", e);
+        }
+    }
+
+    /**
+     * 删除日历配置模板
+     *
+     * @param templateId
+     * @return
+     */
+    public void deleteCalendarTemplate(Long templateId) {
+        try {
+            //删除配置绑定
+            String sql = "delete from stat_bind_config where type=?1 and fid=?2";
+            this.execSqlUpdate(sql, StatBussType.CALENDAR,templateId);
+
+            //删除用户计划
+            String sql2 = "delete from user_calendar where template_id=?1 ";
+            this.execSqlUpdate(sql2, templateId);
+
+            //删除模版
+            String sql4 = "delete from calendar_template where template_id=?1 ";
+            this.execSqlUpdate(sql4, templateId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除日历配置模板异常", e);
+        }
+    }
 
     /**
      * 获取用户日历
      *
      * @param userId
      * @param bussIdentityKey
-     * @param expireTime
+     * @param expireTime 失效时间
      * @return
      */
     public UserCalendar getUserCalendar(Long userId, String bussIdentityKey, Date expireTime) {
@@ -183,10 +234,20 @@ public class UserCalendarService extends BaseHibernateDao {
      * @param finishTime
      * @param finishType
      */
-    public void updateUserCalendarForFinish(Long userId, String bussIdentityKey, Date finishTime, UserCalendarFinishType finishType, Long finishSourceId) {
+    public void updateUserCalendarForFinish(Long userId, String bussIdentityKey, Date finishTime, UserCalendarFinishType finishType, Long finishSourceId,UserCalendarSource finishSource,Long finishMessageId) {
         try {
-            String hql = "update UserCalendar set finishTime=?1,finishType=?2,modifyTime=?3,finishSourceId=?4 where bussIdentityKey=?5 and userId=?6 ";
-            this.updateEntities(hql, finishTime, finishType, new Date(), finishSourceId, bussIdentityKey, userId);
+            //失效时间需要大于完成时间
+            UserCalendar calendar = this.getUserCalendar(userId,bussIdentityKey,finishTime);
+            if(calendar==null){
+                logger.warn("未找到失效时间大于{},bussIdentityKey={}的日历",finishTime,bussIdentityKey);
+                return;
+            }
+            calendar.setFinishTime(finishTime);
+            calendar.setFinishType(finishType);
+            calendar.setFinishSourceId(finishSourceId);
+            calendar.setFinishSource(finishSource);
+            calendar.setFinishMessageId(finishMessageId);
+            this.updateEntity(calendar);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR, "更新用户日历为已经完成异常", e);
 
@@ -225,21 +286,41 @@ public class UserCalendarService extends BaseHibernateDao {
     }
 
     /**
-     * 获取用户日历的执行流水日志
+     * 获取用户日历的执行流水日志,不分页
      *
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @param templateId
+     * @param bindValues
      * @return
      */
-    public List<CalendarLogDTO> getCalendarLogResultList(Long userId, Date startDate, Date endDate, Long templateId, String bindValues) {
+    public List<CalendarLogDTO> getCalendarLogResultList(Long userId, Date startDate, Date endDate, Long templateId, String bindValues){
+        return this.getCalendarLogResultList(userId,startDate,endDate,templateId,bindValues,NO_PAGE,NO_PAGE_SIZE);
+    }
+
+    /**
+     * 获取用户日历的执行流水日志,分页
+     *
+     * @param userId
+     * @param startDate
+     * @param endDate
+     * @param templateId
+     * @param bindValues
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public List<CalendarLogDTO> getCalendarLogResultList(Long userId, Date startDate, Date endDate, Long templateId, String bindValues,int page,int pageSize) {
         try {
-            CalendarTemplate ucc = this.getEntityById(CalendarTemplate.class, templateId);
-            String sqlContent = ucc.getSqlContent();
-            sqlContent = MysqlUtil.replaceBindValues(sqlContent, bindValues);
+            CalendarTemplate template = this.getEntityById(CalendarTemplate.class, templateId);
+            StatSQLDTO sqlDTO = this.assembleSQL(template,userId,bindValues,startDate,endDate);
+            String sqlContent = sqlDTO.getSqlContent();
             List<Object[]> rr = null;
-            Object[] args = new Object[]{userId, startDate, endDate};
-            if (ucc.getSqlType() == SqlType.HQL) {
-                rr = this.getEntityListHI(sqlContent,NO_PAGE,NO_PAGE_SIZE,Object[].class, args);
+            if (template.getSqlType() == SqlType.HQL) {
+                rr = this.getEntityListHI(sqlContent,page,pageSize,Object[].class, sqlDTO.getArgArray());
             } else {
-                rr = this.getEntityListSI(sqlContent,NO_PAGE,NO_PAGE_SIZE,Object[].class, args);
+                rr = this.getEntityListSI(sqlContent,page,pageSize,Object[].class, sqlDTO.getArgArray());
             }
             List<CalendarLogDTO> res = new ArrayList<>();
             for (Object[] oo : rr) {
@@ -261,4 +342,29 @@ public class UserCalendarService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 计算封装SQL
+     * @param template
+     * @param userId
+     * @param bindValues
+     * @return
+     */
+    protected StatSQLDTO assembleSQL(CalendarTemplate template,Long userId,String bindValues, Date startTime,Date endTime) {
+        StatSQLDTO dto = new StatSQLDTO();
+        dto.setSqlContent(template.getSqlContent());
+        if(StringUtil.isNotEmpty(bindValues)){
+            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.CALENDAR);
+            String[] bs = bindValues.split(",");
+            int n = bs.length;
+            for(int i=0;i<n;i++){
+                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
+            }
+        }
+        //肯定绑定userId
+        dto.addArg(userId);
+        //最后绑定时间
+        dto.addArg(startTime);
+        dto.addArg(endTime);
+        return dto;
+    }
 }

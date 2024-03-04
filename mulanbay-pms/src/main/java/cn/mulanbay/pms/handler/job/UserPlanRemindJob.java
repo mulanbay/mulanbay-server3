@@ -22,6 +22,7 @@ import cn.mulanbay.schedule.enums.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -156,19 +157,10 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
     }
 
     private String formatContent(PlanReport planReport,String finishDesc){
-        String content = """
-                {finishDesc} \n
-                计划的次数已经完成[{reportCountValue}]次,期望[planCountValue}]次 \n
-                计划值已经完成[{reportValue}]{unit},期望[planValue}]{unit} \n
-                统计时间:{stat_day}
-                """;
-        content.replace("{finishDesc}",finishDesc)
-                .replace("{reportCountValue}",planReport.getReportCountValue().toString())
-                .replace("{planCountValue}",planReport.getPlanCountValue().toString())
-                .replace("{reportValue}",planReport.getReportValue().toString())
-                .replace("{planValue}",planReport.getPlanValue().toString())
-                .replace("{stat_day}",planReport.getBussKey())
-                .replace("{unit}",planReport.getPlan().getUnit());
+        String content = finishDesc+"\n"
+                +"计划的次数已经完成["+planReport.getReportCountValue()+"次,期望"+planReport.getPlanCountValue()+"次 \n"
+                +"计划值已经完成["+planReport.getReportValue()+"]"+planReport.getPlan().getUnit()+",期望["+planReport.getPlanValue()+"}]"+planReport.getPlan().getUnit()+" \n"
+                +"统计时间:"+planReport.getBussKey();
         return content;
     }
 
@@ -231,16 +223,9 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
             rewardPointsHandler.rewardPoints(userPlan.getUserId(), rewards, userPlan.getPlanId(), RewardSource.PLAN, remark, messageId);
             if (isComplete) {
                 //删除日历
-                String bussKey = userPlan.getTemplate().getBussKey();
-                if (StringUtil.isEmpty(bussKey)) {
-                    logger.warn(userPlan.getTemplate().getTitle() + "没有配置bussKey");
-                    return;
-                }
-                String bussIdentityKey = bussKey;
-                if (!StringUtil.isEmpty(userPlan.getBindValues())) {
-                    bussIdentityKey += "_" + userPlan.getBindValues();
-                    userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO, messageId);
-                }
+                PlanTemplate template = userPlan.getTemplate();
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),userPlan.getBindValues());
+                userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,userPlan.getPlanId(),UserCalendarSource.PLAN, messageId);
             } else {
                 //添加到用户日历
                 addToUserCalendar(userPlan, messageId);
@@ -258,7 +243,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
     private void addToUserCalendar(UserPlan userPlan, Long messageId) {
         try {
             PlanTemplate template = userPlan.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussType(),template.getTemplateId(),userPlan.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),userPlan.getBindValues());
             UserCalendar uc = userCalendarService.getUserCalendar(userPlan.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

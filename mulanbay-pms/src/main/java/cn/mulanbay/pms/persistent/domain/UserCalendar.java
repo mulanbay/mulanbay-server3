@@ -45,7 +45,7 @@ public class UserCalendar implements java.io.Serializable {
     @Column(name = "delays")
     private Integer delays;
 
-    @JsonFormat(pattern = Constant.DATE_FORMAT)
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "buss_day")
     private Date bussDay;
 
@@ -71,12 +71,22 @@ public class UserCalendar implements java.io.Serializable {
     @Column(name = "finish_type")
     private UserCalendarFinishType finishType;
 
+    /**
+     * 自动生成时的来源消息ID
+     */
     @Column(name = "message_id")
     private Long messageId;
+
+    @Column(name = "finish_source")
+    private UserCalendarSource finishSource;
 
     //完成的源ID
     @Column(name = "finish_source_id")
     private Long finishSourceId;
+
+    @Column(name = "finish_message_id")
+    private Long finishMessageId;
+
 
     //是否为全天任务
     @Column(name = "all_day")
@@ -98,7 +108,11 @@ public class UserCalendar implements java.io.Serializable {
     @Column(name = "period_values")
     private String periodValues;
 
-    //以模板新增的，可以查询是否完成的判断
+    /**
+     * 以模板新增的，可以查询是否完成的判断
+     * 这里不需要多对一设置
+     * 判断是否完成以bussIdentityKey来判断
+     */
     @Column(name = "template_id")
     private Long templateId;
 
@@ -225,12 +239,28 @@ public class UserCalendar implements java.io.Serializable {
         this.messageId = messageId;
     }
 
+    public UserCalendarSource getFinishSource() {
+        return finishSource;
+    }
+
+    public void setFinishSource(UserCalendarSource finishSource) {
+        this.finishSource = finishSource;
+    }
+
     public Long getFinishSourceId() {
         return finishSourceId;
     }
 
     public void setFinishSourceId(Long finishSourceId) {
         this.finishSourceId = finishSourceId;
+    }
+
+    public Long getFinishMessageId() {
+        return finishMessageId;
+    }
+
+    public void setFinishMessageId(Long finishMessageId) {
+        this.finishMessageId = finishMessageId;
     }
 
     public Boolean getAllDay() {

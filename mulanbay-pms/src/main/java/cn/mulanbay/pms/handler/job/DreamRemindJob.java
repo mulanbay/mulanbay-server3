@@ -130,7 +130,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
      */
     private void addToUserCalendar(Dream dream, Long messageId) {
         try {
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussType.DREAM,dream.getDreamId(),dream.getDreamId().toString());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussType.DREAM.name(),dream.getDreamId().toString());
             UserCalendar uc = userCalendarService.getUserCalendar(dream.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

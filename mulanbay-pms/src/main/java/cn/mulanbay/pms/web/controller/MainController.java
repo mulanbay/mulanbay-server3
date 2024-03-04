@@ -3,6 +3,7 @@ package cn.mulanbay.pms.web.controller;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
@@ -46,6 +47,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
 
 /**
  * 主功能
@@ -215,7 +218,19 @@ public class MainController extends BaseController {
         LoginUser loginUser = tokenHandler.getLoginUser(request);
         Long roleId = loginUser.getRoleId();
         List<SysFunc> sfList = authService.selectRoleFunctionMenuList(roleId, null);
-        List<SysFunc> funcTree = this.getFunctionTree(sfList, 0L);
+        List<SysFunc> funcTree = this.getFunctionTree(sfList, ROOT_ID);
+        return callback(buildMenus(funcTree));
+    }
+
+    /**
+     * 完整的路由表，给一些模版使用，跳转连接
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getFullRouters", method = RequestMethod.GET)
+    public ResultBean getFullRouters() {
+        List<SysFunc> sfList = authService.selectFunctionMenuList();
+        List<SysFunc> funcTree = this.getFunctionTree(sfList, ROOT_ID);
         return callback(buildMenus(funcTree));
     }
 

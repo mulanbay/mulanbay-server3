@@ -62,6 +62,12 @@ public class PlanTemplate implements java.io.Serializable {
     @Column(name = "rewards")
     private Integer rewards;
 
+    /**
+     * 业务key，该key目前作为日历自动更新的匹配类型
+     * 业务逻辑：UserPlan、UserStat、UserCalendar都可以使用这个bussKey来匹配某个日历是否为同一种类型
+     * 比如：UserPlan定义了用户消费限制计划，UserStat定义消费限制统计，都生成到UserCalendar中
+     *      在定时任务中检查时，任意的一个业务查询到已经完成，就可以更新这个日历为已经完成
+     */
     @Column(name = "buss_key")
     private String bussKey;
 

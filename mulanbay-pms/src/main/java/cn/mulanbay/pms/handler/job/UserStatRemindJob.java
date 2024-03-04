@@ -196,21 +196,14 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             int rewards = us.getTemplate().getRewards() * radio;
             String remark = "用户提醒配置[" + us.getTitle() + "]达到要求奖励";
             if (!isComplete) {
-                rewards = 0 - rewards;
+                rewards = -rewards;
                 remark = "用户提醒配置[" + us.getTitle() + "]触发警报惩罚";
             }
             rewardPointsHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), RewardSource.NOTIFY, remark, messageId);
             if (isComplete) {
-                String bussKey = us.getTemplate().getBussKey();
-                if (StringUtil.isEmpty(bussKey)) {
-                    logger.warn(us.getTemplate().getTitle() + "没有配置bussKey");
-                    return;
-                }
-                String bussIdentityKey = bussKey;
-                if (!StringUtil.isEmpty(us.getBindValues())) {
-                    bussIdentityKey += "_" + us.getBindValues();
-                }
-                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO, messageId);
+                StatTemplate template = us.getTemplate();
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
+                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(),UserCalendarSource.STAT, messageId);
             }
         } catch (Exception e) {
             logger.error("计划[" + us.getTitle() + "]积分奖励异常", e);
@@ -226,7 +219,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         try {
             UserStat us = remind.getStat();
             StatTemplate template = us.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussType(),template.getTemplateId(),us.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
             UserCalendar uc = userCalendarService.getUserCalendar(us.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

@@ -96,6 +96,14 @@ public class RouterVo {
     }
 
     /**
+     * 连接地址选择树使用
+     * @return
+     */
+    public String getTitle(){
+        return meta==null ? null:meta.getTitle();
+    }
+
+    /**
      * 添加
      *
      * @param rb
