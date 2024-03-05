@@ -1,12 +1,17 @@
 package cn.mulanbay.schedule;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * 调度详情
  *
  * @author fenghong
  * @create 2018-01-20 21:44
  */
-public class ScheduleInfo {
+public class ScheduleInfo implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String deployId;
 	
@@ -21,6 +26,12 @@ public class ScheduleInfo {
 	private int scheduleJobsCount;
 	
 	private int currentlyExecutingJobsCount;
+
+	private int threadPoolActiveCount;
+
+	private long threadPoolCompletedTaskCount;
+
+	private Date date;
 
 	public String getDeployId() {
 		return deployId;
@@ -77,6 +88,28 @@ public class ScheduleInfo {
 	public void setCurrentlyExecutingJobsCount(int currentlyExecutingJobsCount) {
 		this.currentlyExecutingJobsCount = currentlyExecutingJobsCount;
 	}
-	
-	
+
+	public int getThreadPoolActiveCount() {
+		return threadPoolActiveCount;
+	}
+
+	public void setThreadPoolActiveCount(int threadPoolActiveCount) {
+		this.threadPoolActiveCount = threadPoolActiveCount;
+	}
+
+	public long getThreadPoolCompletedTaskCount() {
+		return threadPoolCompletedTaskCount;
+	}
+
+	public void setThreadPoolCompletedTaskCount(long threadPoolCompletedTaskCount) {
+		this.threadPoolCompletedTaskCount = threadPoolCompletedTaskCount;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 }

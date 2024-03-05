@@ -30,6 +30,9 @@ public class BudgetCheckJobPara extends AbstractTriggerPara {
     @JobParameter(name = "检查的时间比例", dataType = Integer.class, desc = "如50表示，该月或该年过去50%才开始执行", editType = EditType.NUMBER)
     private int checkFromRate = 70;
 
+    @JobParameter(name = "消费预测", dataType = Boolean.class, desc = "是否预测", editType = EditType.NUMBER)
+    private boolean predict = true;
+
     public PeriodType getPeriod() {
         return period;
     }
@@ -68,5 +71,13 @@ public class BudgetCheckJobPara extends AbstractTriggerPara {
 
     public void setCheckFromRate(int checkFromRate) {
         this.checkFromRate = checkFromRate;
+    }
+
+    public boolean isPredict() {
+        return predict;
+    }
+
+    public void setPredict(boolean predict) {
+        this.predict = predict;
     }
 }

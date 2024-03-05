@@ -32,6 +32,12 @@ public class SystemStatusHandler extends BaseHandler {
     private int randoms;
 
     /**
+     * 解锁的代码=加锁码
+     * 避免重复加锁
+     */
+    private int unlockStatus;
+
+    /**
      * 系统当前状态
      */
     private int status = ErrorCode.SUCCESS;
@@ -56,31 +62,39 @@ public class SystemStatusHandler extends BaseHandler {
     /**
      * 设置状态
      *
-     * @param afterCode
+     * @param afterStatus
      * @param msg
      * @return
      */
-    public synchronized boolean lock(int afterCode, String msg, Date expireTime) {
-        if (afterCode > status) {
-            status = afterCode;
-            message = (msg ==null? "系统锁定":msg);
-            this.createUnlockCode();
-            //增加定定时恢复
-            if (expireTime != null) {
-                message += ",重新开启时间:"+DateUtil.getFormatDate(expireTime,DateUtil.Format24Datetime);
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        BeanFactoryUtil.getBean(SystemStatusHandler.class).revert(afterCode);
-                    }
-                }, expireTime);
+    public boolean lock(int afterStatus, String msg, Date expireTime) {
+        if (afterStatus > status) {
+            if(unlockStatus>afterStatus){
+                //无法上锁，上次的解锁码比此次大
+                return false;
             }
-            logger.warn("设置系统状态,code={}", afterCode);
+            this.lockSystem(afterStatus,msg,expireTime);
             return true;
         } else {
             return false;
         }
+    }
+
+    private synchronized void lockSystem(int afterStatus, String msg, Date expireTime){
+        status = afterStatus;
+        message = (msg ==null? "系统锁定":msg);
+        this.createUnlockCode();
+        //增加定定时恢复
+        if (expireTime != null) {
+            message += ",重新开启时间:"+DateUtil.getFormatDate(expireTime,DateUtil.Format24Datetime);
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    BeanFactoryUtil.getBean(SystemStatusHandler.class).revert(afterStatus);
+                }
+            }, expireTime);
+        }
+        logger.warn("设置系统状态,code={}", afterStatus);
     }
 
     private void createUnlockCode(){
@@ -107,9 +121,11 @@ public class SystemStatusHandler extends BaseHandler {
      * @param uc
      * @return
      */
-    public synchronized boolean unlock(String uc) {
+    public synchronized boolean unlock(String uc,int beforeStatus) {
         if (uc.equals(unlockCode)) {
             this.revert();
+            //需要设置解锁状态码，否则可能其他模块会再次上锁
+            this.unlockStatus = beforeStatus;
             logger.warn("系统解锁成功");
             return true;
         } else {
@@ -122,22 +138,23 @@ public class SystemStatusHandler extends BaseHandler {
     /**
      * 恢复
      *
-     * @param beforeCode 原来的设置代码，等级高的可以对低的恢复
+     * @param beforeStatus 原来的设置代码，等级高的可以对低的恢复
      * @return
      */
-    public synchronized boolean revert(int beforeCode) {
-        if (beforeCode >= status) {
+    public boolean revert(int beforeStatus) {
+        if (beforeStatus >= status) {
             this.revert();
-            logger.warn("恢复系统状态,beforeCode={}", beforeCode);
+            logger.warn("恢复系统状态,beforeCode={}", beforeStatus);
             return true;
         } else {
-            logger.warn("恢复系统状态失败,级别不够,beforeCode={},status={}", beforeCode,status);
+            logger.warn("恢复系统状态失败,级别不够,beforeCode={},status={}", beforeStatus,status);
             return false;
         }
     }
 
-    private void revert(){
+    private synchronized void revert(){
         status = ErrorCode.SUCCESS;
+        unlockStatus = ErrorCode.SUCCESS;
         message = null;
         unlockCode = null;
     }

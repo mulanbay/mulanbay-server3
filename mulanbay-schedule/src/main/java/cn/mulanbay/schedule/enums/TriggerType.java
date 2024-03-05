@@ -35,4 +35,13 @@ public enum TriggerType {
 	public String getName() {
 		return name;
 	}
+
+	public static TriggerType getType(int ordinal) {
+		for (TriggerType bt : TriggerType.values()) {
+			if (bt.ordinal() == ordinal) {
+				return bt;
+			}
+		}
+		return null;
+	}
 }

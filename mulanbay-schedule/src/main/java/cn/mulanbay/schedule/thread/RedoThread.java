@@ -7,6 +7,8 @@ import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 /**
  * 调度重做
  */
@@ -58,6 +60,8 @@ public class RedoThread extends EnhanceThread {
 			job.setUpdateTrigger(isUpdateTrigger);
 			job.setRedo(true);
 			job.setExtraPara(extraPara);
+			//如果是时分秒周期类型，bussDate有时分秒数据，只是数据库里面保存的时候舍弃了时分秒
+			job.setScheduledFireTime(log.getBussDate());
 			job.execute(null);
 		} catch (Exception e) {
 			logger.error("重做[" + threadName + "]异常", e);

@@ -102,6 +102,10 @@ public abstract class AbstractBaseJob implements Job {
 		this.extraPara = extraPara;
 	}
 
+	public void setScheduledFireTime(Date scheduledFireTime) {
+		this.scheduledFireTime = scheduledFireTime;
+	}
+
 	public void setQuartzSource(QuartzSource quartzSource) {
 		this.quartzSource = quartzSource;
 	}
@@ -460,11 +464,17 @@ public abstract class AbstractBaseJob implements Job {
 
 	/**
 	 * 每次调度任务执行的锁编号
+	 * 新任务：每一个进程里面只允许一个
+	 * 重做任务：可以并发运行
 	 * @return
 	 */
 	private String getLockKey(){
 		String prefix= (isRedo ? "redo":"new");
-		return "schedule:"+prefix+":"+taskTrigger.getGroupName()+":"+taskTrigger.getTriggerId();
+		String key = "schedule:"+prefix+":"+taskTrigger.getGroupName()+":"+taskTrigger.getTriggerId();
+		if(isRedo){
+			key +=":"+this.generateScheduleId();
+		}
+		return key;
 	}
 
 	/**

@@ -79,7 +79,7 @@ public class StatTemplateController extends BaseController {
         List<TreeBean> result = new ArrayList<>();
         BussType current = gtList.get(0).getBussType();
         TreeBean typeTreeBean = new TreeBean();
-        typeTreeBean.setId("P_" + current.name());
+        typeTreeBean.setId(current.name());
         typeTreeBean.setText(current.getName());
         int n = gtList.size();
         for (int i = 0; i < n; i++) {
@@ -94,7 +94,7 @@ public class StatTemplateController extends BaseController {
                 current = m;
                 result.add(typeTreeBean);
                 typeTreeBean = new TreeBean();
-                typeTreeBean.setId("P_" + current.name());
+                typeTreeBean.setId(current.name());
                 typeTreeBean.setText(current.getName());
                 typeTreeBean.addChild(tb);
             }

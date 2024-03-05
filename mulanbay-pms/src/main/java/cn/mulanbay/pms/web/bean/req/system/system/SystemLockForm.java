@@ -10,7 +10,7 @@ import java.util.Date;
 public class SystemLockForm {
 
     @NotNull(message = "状态码不能为空")
-    private Integer code;
+    private Integer status;
 
     @NotEmpty(message = "消息不能为空")
     private String message;
@@ -18,12 +18,12 @@ public class SystemLockForm {
     @DateTimeFormat(pattern = Constant.DATE_TIME_FORMAT)
     private Date expireTime;
 
-    public Integer getCode() {
-        return code;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getMessage() {

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 /**
- * 命令配置
+ * 系统
  *
  * @author fenghong
  * @create 2017-07-10 21:44
@@ -51,12 +51,12 @@ public class SystemController extends BaseController {
      */
     @RequestMapping(value = "/lock", method = RequestMethod.POST)
     public ResultBean lock(@RequestBody @Valid SystemLockForm hc) {
-        Boolean b = systemStatusHandler.lock(hc.getCode(),hc.getMessage(),hc.getExpireTime());
+        Boolean b = systemStatusHandler.lock(hc.getStatus(),hc.getMessage(),hc.getExpireTime());
         return callback(b);
     }
 
     /**
-     * 锁定
+     * 解锁
      * @param hc
      * @return
      */
@@ -68,7 +68,8 @@ public class SystemController extends BaseController {
         if (StringUtil.isEmpty(serverCode) || !serverCode.equals(hc.getCode())) {
             return callbackErrorCode(PmsCode.USER_VERIFY_CODE_ERROR);
         }
-        Boolean b = systemStatusHandler.unlock(hc.getUnlockCode());
+        //人工解锁，状态码最大
+        Boolean b = systemStatusHandler.unlock(hc.getUnlockCode(),hc.getStatus());
         return callback(b);
     }
 
@@ -85,6 +86,8 @@ public class SystemController extends BaseController {
             SystemStatusJobPara jobPara = (SystemStatusJobPara) JsonUtil.jsonToBean(trigger.getTriggerParas(),SystemStatusJobPara.class);
             String stopPeriod = jobPara.getStopPeriod();
             vo.setStopPeriod(stopPeriod);
+            vo.setStopStatus(jobPara.getStopStatus());
+            vo.setMessage(jobPara.getMessage());
         }
         return callback(vo);
     }
@@ -103,6 +106,8 @@ public class SystemController extends BaseController {
                 jobPara = new SystemStatusJobPara();
             }
             jobPara.setStopPeriod(hc.getStopPeriod());
+            jobPara.setStopStatus(hc.getStopStatus());
+            jobPara.setMessage(hc.getMessage());
             trigger.setTriggerParas(JsonUtil.beanToJson(jobPara));
             trigger.setTriggerStatus(hc.getTriggerStatus());
             trigger.setModifyTime(new Date());

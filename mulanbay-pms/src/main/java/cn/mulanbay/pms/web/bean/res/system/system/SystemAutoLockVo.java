@@ -12,6 +12,11 @@ public class SystemAutoLockVo {
 
     private String stopPeriod;
 
+    private int stopStatus;
+
+    private String message;
+
+
     public TaskTrigger getTrigger() {
         return trigger;
     }
@@ -26,5 +31,21 @@ public class SystemAutoLockVo {
 
     public void setStopPeriod(String stopPeriod) {
         this.stopPeriod = stopPeriod;
+    }
+
+    public int getStopStatus() {
+        return stopStatus;
+    }
+
+    public void setStopStatus(int stopStatus) {
+        this.stopStatus = stopStatus;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

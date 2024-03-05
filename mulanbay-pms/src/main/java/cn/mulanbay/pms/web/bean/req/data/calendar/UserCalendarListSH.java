@@ -2,10 +2,11 @@ package cn.mulanbay.pms.web.bean.req.data.calendar;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
-import cn.mulanbay.persistent.query.QueryBuilder;
+import cn.mulanbay.persistent.query.*;
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,14 +16,33 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "开始日期不能为空")
+    @Query(fieldName = "expireTime", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @NotNull(message = "结束日期不能为空")
+    @Query(fieldName = "bussDay", op = Parameter.Operator.LTE)
     private Date endDate;
 
+    @Query(fieldName = "title,content", op = Parameter.Operator.LIKE,crossType = CrossType.OR)
     private String name;
 
+    @Query(fieldName = "finishType", op = Parameter.Operator.EQ)
+    private UserCalendarFinishType finishType;
+
+    @Query(fieldName = "sourceType", op = Parameter.Operator.EQ)
+    private UserCalendarSource sourceType;
+
+    /**
+     * 是否没有完成的
+     */
+    @Query(fieldName = "finishType", op = Parameter.Operator.NULL_NOTNULL)
+    private NullType notFinish;
+
+    @Query(fieldName = "period", op = Parameter.Operator.EQ)
+    private PeriodType period;
+
+    @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     public Long userId;
 
     /**
@@ -55,8 +75,6 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
      */
     private Boolean needBandLog = false;
 
-    private UserCalendarSource sourceType;
-
     public Date getStartDate() {
         return startDate;
     }
@@ -81,6 +99,38 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UserCalendarFinishType getFinishType() {
+        return finishType;
+    }
+
+    public void setFinishType(UserCalendarFinishType finishType) {
+        this.finishType = finishType;
+    }
+
+    public UserCalendarSource getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(UserCalendarSource sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public NullType getNotFinish() {
+        return notFinish;
+    }
+
+    public void setNotFinish(NullType notFinish) {
+        this.notFinish = notFinish;
+    }
+
+    public PeriodType getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(PeriodType period) {
+        this.period = period;
     }
 
     @Override
@@ -139,13 +189,5 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
 
     public void setNeedBandLog(Boolean needBandLog) {
         this.needBandLog = needBandLog;
-    }
-
-    public UserCalendarSource getSourceType() {
-        return sourceType;
-    }
-
-    public void setSourceType(UserCalendarSource sourceType) {
-        this.sourceType = sourceType;
     }
 }

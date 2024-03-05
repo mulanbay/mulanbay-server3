@@ -4,11 +4,16 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.query.PageRequest;
+import cn.mulanbay.pms.persistent.dto.schedule.CheckLogDTO;
+import cn.mulanbay.pms.persistent.dto.schedule.TaskTriggerStat;
+import cn.mulanbay.pms.persistent.enums.TriggerGroupField;
+import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.TaskTriggerCategorySH;
+import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.TaskTriggerStatSH;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
-import cn.mulanbay.schedule.enums.TriggerStatus;
+import cn.mulanbay.schedule.enums.*;
 import cn.mulanbay.schedule.impl.HibernatePersistentProcessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -173,13 +178,82 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
      *
      * @return
      */
-    public List<TaskLog> getCheckLogList(Date minDate) {
+    public List<CheckLogDTO> getCheckLogList(Date startDate, Date endDate) {
         try {
-            String hql ="from TaskLog where bussDate<=?1 order by taskTrigger.triggerId,bussDate ";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskLog.class,minDate);
+            String sql = """
+                    select tl.log_id as logId,tl.task_trigger_id as triggerId,tl.buss_date as bussDate,tt.trigger_type as triggerType
+                    from task_log tl,task_trigger tt
+                    where tl.task_trigger_id = tt.trigger_id
+                    and buss_date>=?1 and buss_date<=?2
+                    and tt.undo_check=1
+                    """;
+            return this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,CheckLogDTO.class,startDate,endDate);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取需要检查的日志列表异常", e);
         }
     }
+
+    /**
+     * 获取需要检查的触发器编号列表
+     *
+     * @return
+     */
+    public List<Long> getCheckTriggerIdList() {
+        try {
+            String sql = """
+                    select trigger_id from task_trigger where undo_check =1
+                    """;
+            return this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Long.class);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取需要检查的触发器编号列表异常", e);
+        }
+    }
+
+    /**
+     * 统计触发器
+     *
+     * @return
+     */
+    public List<TaskTriggerStat> getTaskTriggerStat(TaskTriggerStatSH sf) {
+        try {
+            String sql = """
+                    select {group_field} as id,count(0) as totalCount from task_trigger group by {group_field}
+                    """;
+            TriggerGroupField groupField = sf.getGroupField();
+            sql = sql.replace("{group_field}", groupField.getField());
+            List<TaskTriggerStat> list = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,TaskTriggerStat.class);
+            for(TaskTriggerStat stat : list){
+                String id = stat.getId().toString();
+                switch (groupField){
+                    case DEPLOY_ID,GROUP_NAME -> stat.setName(id);
+                    case LOGGABLE,DISTRIABLE,NOTIFIABLE -> {
+                        stat.setName(id.equals("1")? "是":"否");
+                    }
+                    case REDO_TYPE -> {
+                        RedoType type = RedoType.getType(Integer.parseInt(id));
+                        stat.setName(type.getName());
+                    }
+                    case TRIGGER_TYPE -> {
+                        TriggerType type = TriggerType.getType(Integer.parseInt(id));
+                        stat.setName(type.getName());
+                    }
+                    case UNIQUE_TYPE -> {
+                        TaskUniqueType type = TaskUniqueType.getType(Integer.parseInt(id));
+                        stat.setName(type.getName());
+                    }
+                    case LAST_EXECUTE_RESULT->{
+                        JobResult type = JobResult.getType(Integer.parseInt(id));
+                        stat.setName(type==null ? "无": type.getName());
+                    }
+                }
+            }
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "统计触发器异常", e);
+        }
+    }
+
 }

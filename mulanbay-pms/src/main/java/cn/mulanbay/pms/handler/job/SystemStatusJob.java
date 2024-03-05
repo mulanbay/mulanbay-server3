@@ -32,20 +32,20 @@ public class SystemStatusJob extends AbstractBaseJob {
     public TaskResult doTask() {
         TaskResult tr = new TaskResult();
         SystemStatusHandler systemStatusHandler = BeanFactoryUtil.getBean(SystemStatusHandler.class);
-        int code = para.getCode();
+        int stopStatus = para.getStopStatus();
         int status = systemStatusHandler.getStatus();
         boolean ns = this.needStop();
         Boolean res = null;
         String msg = null;
         if(ns){
-            if(status!=code){
+            if(status!=stopStatus){
                 String cc = "系统定时关闭时间:"+para.getStopPeriod()+","+para.getMessage();
-                res = systemStatusHandler.lock(code,cc,null);
-                msg = "关闭系统，code = "+code+",执行结果:"+res;
+                res = systemStatusHandler.lock(stopStatus,cc,null);
+                msg = "关闭系统，stopStatus = "+stopStatus+",执行结果:"+res;
             }
         }else{
             if(status!= ErrorCode.SUCCESS){
-                res = systemStatusHandler.revert(para.getCode());
+                res = systemStatusHandler.revert(para.getStopStatus());
             }
         }
         if(res!=null){

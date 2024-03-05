@@ -92,7 +92,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             //判断是否超期,如果是新的
             if (!b) {
                 BudgetLog bl = budgetHandler.statAndSaveBudgetLog(usList, userId, bussDay, bussKey, isRedo, para.getPeriod(), false);
-                handleConsumeCheck(bl);
+                handleConsumeCheck(bl,bussDay);
             } else {
                 logger.debug("用户[" + userId + "]的bussKey=" + bussKey + "已经存在，无需再统计");
             }
@@ -101,7 +101,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
         }
     }
 
-    private void handleConsumeCheck(BudgetLog bl) {
+    private void handleConsumeCheck(BudgetLog bl, Date bussDay) {
         try {
             //算积分及加入用户任务
             String title = "[" + bl.getStatPeriod().getName() + "]预算统计：" + bl.getBussKey();
@@ -133,7 +133,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             RewardPointsHandler rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
             rewardPointsHandler.rewardPoints(bl.getUserId(), rewards, bl.getLogId(), RewardSource.BUDGET_LOG, null, messageId);
             if (code == PmsCode.BUDGET_CHECK_OVER) {
-                this.addToUserCalendar(bl, messageId, cc);
+                this.addToUserCalendar(bl, messageId, cc,bussDay);
             }
         } catch (Exception e) {
             logger.error("处理预算统计消息提醒异常");
@@ -146,10 +146,10 @@ public class BudgetExecStatJob extends AbstractBaseJob {
      *
      * @param bl
      */
-    private void addToUserCalendar(BudgetLog bl, Long messageId, String content) {
+    private void addToUserCalendar(BudgetLog bl, Long messageId, String content, Date bussDay) {
         try {
             UserCalendarService userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
-            String bussIdentityKey = bl.getBussKey();
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(bl.getBussKey(),null);
             UserCalendar uc = userCalendarService.getUserCalendar(bl.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);
@@ -159,8 +159,8 @@ public class BudgetExecStatJob extends AbstractBaseJob {
                 uc.setTitle("注意花费");
                 uc.setContent(content);
                 uc.setDelays(0);
-                uc.setBussDay(DateUtil.getDate(0));
-                uc.setExpireTime(DateUtil.getMonthLast(new Date()));
+                uc.setBussDay(bussDay);
+                uc.setExpireTime(DateUtil.getMonthLast(bussDay));
                 uc.setBussIdentityKey(bussIdentityKey);
                 uc.setSourceType(UserCalendarSource.BUDGET_LOG);
                 uc.setSourceId(bl.getLogId());

@@ -136,39 +136,6 @@ public class UserCalendarService extends BaseReportService {
     }
 
     /**
-     * @param userId
-     * @param needFinished 是否需要已经完成的
-     * @param needPeriod   是否需要周期性的
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    public List<UserCalendar> getCurrentUserCalendarList(Long userId, String name, UserCalendarSource sourceType, Boolean needFinished, Boolean needPeriod, Date startDate, Date endDate) {
-        try {
-            StringBuffer sb = new StringBuffer();
-            sb.append("from UserCalendar where userId=?1 ");
-            sb.append("and bussDay<=?2 and expireTime>=?3 ");
-            if (false == needFinished) {
-                sb.append("and finishType is null ");
-            }
-            if (false == needPeriod) {
-                sb.append("and period=0 ");
-            }
-            if (sourceType != null) {
-                sb.append("and sourceType=" + sourceType.ordinal());
-            }
-            if (StringUtil.isNotEmpty(name)) {
-                sb.append("and (title like '%" + name + "%' or content like '%" + name + "%')");
-            }
-            return this.getEntityListHI(sb.toString(),NO_PAGE,NO_PAGE_SIZE,UserCalendar.class, userId, endDate, startDate);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR, "获取用户目前需要的日历异常", e);
-
-        }
-    }
-
-
-    /**
      * 获取用户目前需要的日历数
      *
      * @return

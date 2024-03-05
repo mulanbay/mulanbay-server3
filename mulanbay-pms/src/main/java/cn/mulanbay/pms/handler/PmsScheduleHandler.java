@@ -1,5 +1,7 @@
 package cn.mulanbay.pms.handler;
 
+import cn.mulanbay.common.queue.LimitQueue;
+import cn.mulanbay.schedule.ScheduleInfo;
 import cn.mulanbay.schedule.handler.ScheduleHandler;
 import org.springframework.stereotype.Component;
 
@@ -12,4 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class PmsScheduleHandler extends ScheduleHandler {
 
+    private LimitQueue<ScheduleInfo> monitorQueue;
+
+    public LimitQueue<ScheduleInfo> getMonitorQueue() {
+        return monitorQueue;
+    }
+
+    public void setMonitorQueue(LimitQueue<ScheduleInfo> monitorQueue) {
+        this.monitorQueue = monitorQueue;
+    }
 }

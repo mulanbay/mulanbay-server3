@@ -1,8 +1,12 @@
 package cn.mulanbay.pms.web.bean.req.system.system;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class SystemUnlockForm {
+
+    @NotNull(message = "解锁状态码不能为空")
+    private int status;
 
     @NotEmpty(message = "解锁码不能为空")
     private String unlockCode;
@@ -18,6 +22,14 @@ public class SystemUnlockForm {
      */
     @NotEmpty(message = "图形验证码不能为空")
     private String code;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public String getUnlockCode() {
         return unlockCode;

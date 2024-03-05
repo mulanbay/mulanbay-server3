@@ -61,7 +61,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
             if (bs.getTotalPrice() == null) {
                 //step 3:发送提醒信息
                 String bussKey = BussUtil.getBussKey(bd.getPeriod(), bussDay);
-                handleNotifyBudget(bd, bussKey);
+                handleNotifyBudget(bd, bussKey,bussDay);
             }
         }
         tr.setResult(JobResult.SUCCESS);
@@ -69,10 +69,10 @@ public class BudgetRemindJob extends AbstractBaseJob {
         return tr;
     }
 
-    private void handleNotifyBudget(Budget bd, String bussKey) {
+    private void handleNotifyBudget(Budget bd, String bussKey,Date bussDay) {
         try {
             BudgetHandler budgetHandler = BeanFactoryUtil.getBean(BudgetHandler.class);
-            Integer n = budgetHandler.getLeftDays(bd, new Date());
+            Integer n = budgetHandler.getLeftDays(bd, bussDay);
             if (n != null && n > para.getMinDays()) {
                 logger.debug("预算[" + bd.getBudgetName() + "]还未到提醒时间。");
                 return;
@@ -92,7 +92,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
             RewardPointsHandler rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
             //TODO 目前预算与预算日志无法区分，要么RewardSource区分不同的
             rewardPointsHandler.rewardPoints(bd.getUserId(), para.getScore(), bd.getBudgetId(), RewardSource.BUDGET, null, messageId);
-            this.addToUserCalendar(bd, bussKey, messageId, cc);
+            this.addToUserCalendar(bd, bussKey,bussDay, messageId, cc);
         } catch (Exception e) {
             logger.error("处理预算统计消息提醒异常");
         }
@@ -104,10 +104,10 @@ public class BudgetRemindJob extends AbstractBaseJob {
      *
      * @param bd
      */
-    private void addToUserCalendar(Budget bd, String bussKey, Long messageId, String content) {
+    private void addToUserCalendar(Budget bd, String bussKey,Date bussDay, Long messageId, String content) {
         try {
             UserCalendarService userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
-            String bussIdentityKey = bussKey;
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(bussKey,null);
             UserCalendar uc = userCalendarService.getUserCalendar(bd.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);
@@ -117,8 +117,8 @@ public class BudgetRemindJob extends AbstractBaseJob {
                 uc.setTitle("及时完成预算");
                 uc.setContent(content);
                 uc.setDelays(0);
-                uc.setBussDay(DateUtil.getDate(0));
-                uc.setExpireTime(DateUtil.getMonthLast(new Date()));
+                uc.setBussDay(bussDay);
+                uc.setExpireTime(DateUtil.getMonthLast(bussDay));
                 uc.setBussIdentityKey(bussIdentityKey);
                 uc.setSourceType(UserCalendarSource.BUDGET);
                 uc.setSourceId(bd.getBudgetId());

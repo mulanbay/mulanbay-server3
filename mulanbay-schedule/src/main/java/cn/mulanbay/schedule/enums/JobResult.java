@@ -28,4 +28,13 @@ public enum JobResult {
     public String getName() {
         return name;
     }
+
+    public static JobResult getType(int ordinal) {
+        for (JobResult bt : JobResult.values()) {
+            if (bt.ordinal() == ordinal) {
+                return bt;
+            }
+        }
+        return null;
+    }
 }

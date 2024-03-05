@@ -29,4 +29,13 @@ public enum RedoType {
     public String getName() {
         return name;
     }
+
+    public static RedoType getType(int ordinal) {
+        for (RedoType bt : RedoType.values()) {
+            if (bt.ordinal() == ordinal) {
+                return bt;
+            }
+        }
+        return null;
+    }
 }

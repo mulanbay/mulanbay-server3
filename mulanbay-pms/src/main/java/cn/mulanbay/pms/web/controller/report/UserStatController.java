@@ -74,7 +74,7 @@ public class UserStatController extends BaseController {
             List<TreeBean> result = new ArrayList<>();
             BussType current = unList.get(0).getTemplate().getBussType();
             TreeBean typeTreeBean = new TreeBean();
-            typeTreeBean.setId("P_" + current.name());
+            typeTreeBean.setId(current.name());
             typeTreeBean.setText(current.getName());
             int n = unList.size();
             for (int i = 0; i < n; i++) {
@@ -89,7 +89,7 @@ public class UserStatController extends BaseController {
                     current = m;
                     result.add(typeTreeBean);
                     typeTreeBean = new TreeBean();
-                    typeTreeBean.setId("P_" + current.name());
+                    typeTreeBean.setId(current.name());
                     typeTreeBean.setText(current.getName());
                     typeTreeBean.addChild(tb);
                 }

@@ -51,7 +51,7 @@ public class ScheduleHandler extends BaseHandler {
     /**
      * 线程池(重做使用)
      */
-    private static ExecutorService scheduledThreadPool;
+    private static ThreadPoolExecutor scheduledThreadPool;
 
     /**
      * 系统是否已经开启调度功能，由配置文件决定，无法手动重新开启
@@ -284,7 +284,8 @@ public class ScheduleHandler extends BaseHandler {
      * @param extraPara 额外参数
      */
     private void startRedoJob(TaskLog taskLog,boolean isSync,Object extraPara){
-        RedoThread redoThread = new RedoThread(taskLog,true);
+        //如果更新TaskTrigger会有问题，因为最新的TaskTrigger数据在正常调度里面，这样会导致正常的调度更新TaskTrigger时异常
+        RedoThread redoThread = new RedoThread(taskLog,false);
         redoThread.setExtraPara(extraPara);
         redoThread.setQuartzSource(quartzSource);
         if(!isSync){
@@ -436,6 +437,8 @@ public class ScheduleHandler extends BaseHandler {
             si.setScheduleJobsCount(quartzServer.getScheduleJobsCount());
             si.setCurrentlyExecutingJobsCount(quartzServer
                     .getCurrentlyExecutingJobsCount());
+            si.setThreadPoolActiveCount(scheduledThreadPool.getActiveCount());
+            si.setThreadPoolCompletedTaskCount(scheduledThreadPool.getCompletedTaskCount());
         }
         si.setDistriable(distriable);
         return si;
@@ -512,6 +515,10 @@ public class ScheduleHandler extends BaseHandler {
         }
         hi.addDetail("ScheduleJobsCount",String.valueOf(getScheduleJobsCount()));
         hi.addDetail("CurrentlyExecutingJobsCount",String.valueOf(getCurrentlyExecutingJobsCount()));
+        if(enableSchedule){
+            hi.addDetail("ThreadPoolActiveCount", String.valueOf(scheduledThreadPool.getActiveCount()));
+            hi.addDetail("ThreadPoolCompletedTaskCount", String.valueOf(scheduledThreadPool.getCompletedTaskCount()));
+        }
         return hi;
     }
 }

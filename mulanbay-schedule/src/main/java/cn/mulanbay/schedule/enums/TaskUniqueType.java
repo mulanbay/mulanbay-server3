@@ -27,4 +27,13 @@ public enum TaskUniqueType{
     public String getName() {
         return name;
     }
+
+    public static TaskUniqueType getType(int ordinal) {
+        for (TaskUniqueType bt : TaskUniqueType.values()) {
+            if (bt.ordinal() == ordinal) {
+                return bt;
+            }
+        }
+        return null;
+    }
 }

@@ -150,7 +150,7 @@ public class BudgetCheckJob extends AbstractBaseJob {
             String bussKey = pdb.getBussKey();
             timeline.setBussKey(bussKey);
             timeline.setTimelineId(null);
-            budgetService.saveBudgetTimeline(timeline, this.isRedo());
+            budgetService.saveBudgetTimeline(timeline, redo);
 
             if (!notifyMessge) {
                 return;
@@ -165,11 +165,13 @@ public class BudgetCheckJob extends AbstractBaseJob {
             } else {
                 title += "月度消费已超预算";
             }
-            //预测
-            int month = DateUtil.getMonth(bussDay);
-            Double monthRate = budgetHandler.predictMonthRate(userId,month,null,tds,false);
-            BigDecimal predictAmount = monthRate==null ? null : budgetAmount.multiply(new BigDecimal(monthRate));
-            content += "预计本月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
+            if(para.isPredict()){
+                //预测
+                int month = DateUtil.getMonth(bussDay);
+                Double monthRate = budgetHandler.predictMonthRate(userId,month,null,tds,false);
+                BigDecimal predictAmount = monthRate==null ? null : budgetAmount.multiply(new BigDecimal(monthRate));
+                content += "预计本月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
+            }
             notifyHandler.addNotifyMessage(PmsCode.BUDGET_CHECK, title, content,
                     bl.getUserId(), null);
         } catch (Exception e) {
@@ -217,13 +219,14 @@ public class BudgetCheckJob extends AbstractBaseJob {
             } else {
                 title += "年度消费已超预算";
             }
-            //预测
-            Double yearRate = budgetHandler.predictYearRate(userId,null,tds,false);
-            BigDecimal predictAmount = yearRate==null ? null : budgetAmount.multiply(new BigDecimal(yearRate));
-            content += "预计年月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
+            if(para.isPredict()){
+                //预测
+                Double yearRate = budgetHandler.predictYearRate(userId,null,tds,false);
+                BigDecimal predictAmount = yearRate==null ? null : budgetAmount.multiply(new BigDecimal(yearRate));
+                content += "预计年月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
+            }
             notifyHandler.addNotifyMessage(PmsCode.BUDGET_CHECK, title, content,
                     bl.getUserId(), null);
-
         } catch (Exception e) {
             logger.error("处理bussDay=" + bussDay + "的预算异常", e);
         }

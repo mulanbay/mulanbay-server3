@@ -4,6 +4,9 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.query.NullType;
+import cn.mulanbay.persistent.query.PageRequest;
+import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarBean;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarIdBean;
 import cn.mulanbay.pms.persistent.domain.*;
@@ -22,9 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static cn.mulanbay.pms.common.Constant.SCALE;
 
@@ -51,6 +52,9 @@ public class UserCalendarHandler extends BaseHandler {
 
     @Autowired
     ConsumeService consumeService;
+
+    @Autowired
+    BaseService baseService;
 
     public UserCalendarHandler() {
         super("用户日历处理");
@@ -86,73 +90,77 @@ public class UserCalendarHandler extends BaseHandler {
      * @param sf
      * @return
      */
-    public List<UserCalendarBean> getUserCalendarList(UserCalendarListSH sf) {
-        List<UserCalendar> culist = userCalendarService.getCurrentUserCalendarList(sf.getUserId(), sf.getName(), sf.getSourceType(), sf.getNeedFinished(), sf.getNeedPeriod(), sf.getStartDate(), sf.getEndDate());
+    public List<UserCalendarBean> getUserCalendarList(UserCalendarListSH sf) {//不需要完成的，则完成类型非空
+        if(!sf.getNeedFinished()){
+            sf.setNotFinish(NullType.NOT_NULL);
+        }
+        if(!sf.getNeedPeriod()){
+            sf.setPeriod(PeriodType.ONCE);
+        }
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(UserCalendar.class);
+        List<UserCalendarBean> culist = baseService.getBeanList(pr);
         List<UserCalendarBean> res = new ArrayList<>();
-        for (UserCalendar b : culist) {
-            PeriodType period = b.getPeriod();
+        for (UserCalendar uc : culist) {
+            PeriodType period = uc.getPeriod();
+            Long templateId = uc.getTemplateId();
+            Map<String,CalendarLogDTO> flowMap = new HashMap<>();
+            if (templateId != null && sf.getNeedBandLog()) {
+                //流水日志
+                List<CalendarLogDTO> flowLogs = userCalendarService.getCalendarLogResultList(sf.getUserId(), sf.getStartDate(), sf.getEndDate(), templateId, uc.getBindValues());
+                for(CalendarLogDTO dto : flowLogs){
+                    flowMap.put(DateUtil.getFormatDate(dto.getDate(),DateUtil.FormatDay1),dto);
+                }
+            }
             if (period == PeriodType.ONCE) {
+                //单次的不需要循环
                 UserCalendarBean copy = new UserCalendarBean();
-                //ID类型不一样，不能copy
-                BeanCopy.copy(b, copy);
-                copy.setId(this.generateNewId(UserCalendarSource.MANUAL,b.getCalendarId()));
-                copy.setExpireTime(b.getBussDay());
+                BeanCopy.copy(uc, copy);
+                copy.setId(uc.getBussIdentityKey());
+                copy.setExpireTime(uc.getBussDay());
                 res.add(copy);
-            } else {
-                Long templateId = b.getTemplateId();
-                List<CalendarLogDTO> flowLogs = null;
-                if (templateId != null && true == sf.getNeedBandLog()) {
-                    //流水日志
-                    flowLogs = userCalendarService.getCalendarLogResultList(sf.getUserId(), sf.getStartDate(), sf.getEndDate(), templateId, b.getBindValues());
+                this.setCalendarFinishLog(copy,flowMap);
+                continue;
+            }
+            Date dd = sf.getStartDate();
+            while (dd.before(sf.getEndDate())) {
+                boolean need = this.checkNeedAdd(uc,dd,period);
+                if (need) {
+                    UserCalendarBean copy = new UserCalendarBean();
+                    BeanCopy.copy(uc, copy);
+                    copy.setId(this.generateNewId(UserCalendarSource.MANUAL,uc.getCalendarId()));
+                    //当前时间加上配置的时分秒时间
+                    String bd = DateUtil.getFormatDate(dd, DateUtil.FormatDay1);
+                    bd += " " + DateUtil.getFormatDate(uc.getBussDay(), "HH:mm:ss");
+                    Date calDate = DateUtil.getDate(bd, DateUtil.Format24Datetime);
+                    copy.setBussDay(calDate);
+                    copy.setExpireTime(calDate);
+                    copy.setReadOnly(true);
+                    //从日历配置模板中加载日历完成情况
+                    this.setCalendarFinishLog(copy,flowMap);
+                    res.add(copy);
                 }
-                Date dd = sf.getStartDate();
-                while (dd.before(sf.getEndDate())) {
-                    boolean need = false;
-                    if (period == PeriodType.DAILY) {
-                        need = true;
-                    } else if (period == PeriodType.WEEKLY) {
-                        String[] pvs = b.getPeriodValues().split(",");
-                        int v = DateUtil.getDayIndexInWeek(dd);
-                        if (isInPeriodValues(pvs, v)) {
-                            need = true;
-                        }
-                    } else if (period == PeriodType.MONTHLY) {
-                        String[] pvs = b.getPeriodValues().split(",");
-                        int v = DateUtil.getDayOfMonth(dd);
-                        if (isInPeriodValues(pvs, v)) {
-                            need = true;
-                        }
-                    } else if (period == PeriodType.YEARLY) {
-                        String md = DateUtil.getFormatDate(dd, "MM-dd");
-                        String cd = DateUtil.getFormatDate(b.getBussDay(), "MM-dd");
-                        if (md.equals(cd)) {
-                            need = true;
-                        }
-                    }
-                    if (need) {
-                        UserCalendarBean copy = new UserCalendarBean();
-                        BeanCopy.copy(b, copy);
-                        copy.setId(this.generateNewId(UserCalendarSource.MANUAL,b.getCalendarId()));
-                        //当前时间加上配置的时分秒时间
-                        String bd = DateUtil.getFormatDate(dd, DateUtil.FormatDay1);
-                        bd += " " + DateUtil.getFormatDate(b.getBussDay(), "HH:mm:ss");
-                        Date calDate = DateUtil.getDate(bd, DateUtil.Format24Datetime);
-                        copy.setBussDay(calDate);
-                        copy.setExpireTime(calDate);
-                        copy.setReadOnly(true);
-                        //从日历配置模板中加载日历完成情况
-                        setCalendarFinishLog(copy, flowLogs);
-                        res.add(copy);
-                    } else {
-                        //时间线对不上的
-                        UserCalendarBean copy = getCalendarLogNotMatch(b, dd, flowLogs);
-                        if (copy != null) {
-                            res.add(copy);
-                        }
-                    }
-                    //加1天
-                    dd = DateUtil.getDate(1, dd);
+                //加1天
+                dd = DateUtil.getDate(1, dd);
+            }
+            //时间线对不上的
+            for(CalendarLogDTO dto : flowMap.values()){
+                UserCalendarBean copy = new UserCalendarBean();
+                BeanCopy.copy(uc, copy);
+                copy.setId(this.generateNewId(uc.getSourceType(),uc.getCalendarId()));
+                copy.setBussDay(dto.getDate());
+                copy.setExpireTime(dto.getDate());
+                copy.setReadOnly(true);
+                copy.setFinishType(UserCalendarFinishType.MANUAL);
+                copy.setFinishTime(dto.getDate());
+                copy.setMatch(false);
+                copy.setValue(dto.getValue());
+                copy.setUnit(dto.getUnit());
+                //有些日历的实际内容是具体操作的详情
+                if (StringUtil.isNotEmpty(dto.getName())) {
+                    copy.setContent(dto.getName());
                 }
+                res.add(copy);
             }
         }
         // 用药日历
@@ -169,68 +177,61 @@ public class UserCalendarHandler extends BaseHandler {
     }
 
     /**
-     * 对于时间对不上的，比如跑步设置为周三，但是实际在周四跑的
-     *
+     * 判断是否需要该日历
      * @param uc
-     * @param date
-     * @param flowLogs
+     * @param compareDate
+     * @param period
      * @return
      */
-    private UserCalendarBean getCalendarLogNotMatch(UserCalendar uc, Date date, List<CalendarLogDTO> flowLogs) {
-        if (StringUtil.isEmpty(flowLogs)) {
-            return null;
-        } else {
-            for (CalendarLogDTO cls : flowLogs) {
-                boolean b = DateUtil.isTheSameDay(date, cls.getDate());
-                if (b) {
-                    UserCalendarBean copy = new UserCalendarBean();
-                    BeanCopy.copy(b, copy);
-                    copy.setId(this.generateNewId(uc.getSourceType(),uc.getCalendarId()));
-                    copy.setBussDay(cls.getDate());
-                    copy.setExpireTime(cls.getDate());
-                    copy.setReadOnly(true);
-                    copy.setFinishType(UserCalendarFinishType.MANUAL);
-                    copy.setFinishTime(cls.getDate());
-                    copy.setMatch(false);
-                    copy.setValue(cls.getValue());
-                    copy.setUnit(cls.getUnit());
-                    //有些日历的实际内容是具体操作的详情
-                    if (StringUtil.isNotEmpty(cls.getName())) {
-                        copy.setContent(cls.getName());
-                    }
-                    return copy;
-                }
+    private boolean checkNeedAdd(UserCalendar uc,Date compareDate,PeriodType period){
+        //是否需要该日历
+        boolean need = false;
+        if (period == PeriodType.DAILY) {
+            need = true;
+        } else if (period == PeriodType.WEEKLY) {
+            String[] pvs = uc.getPeriodValues().split(",");
+            int v = DateUtil.getDayIndexInWeek(compareDate);
+            if (isInPeriodValues(pvs, v)) {
+                need = true;
+            }
+        } else if (period == PeriodType.MONTHLY) {
+            String[] pvs = uc.getPeriodValues().split(",");
+            int v = DateUtil.getDayOfMonth(compareDate);
+            if (isInPeriodValues(pvs, v)) {
+                need = true;
+            }
+        } else if (period == PeriodType.YEARLY) {
+            String md = DateUtil.getFormatDate(compareDate, "MM-dd");
+            String cd = DateUtil.getFormatDate(uc.getBussDay(), "MM-dd");
+            if (md.equals(cd)) {
+                need = true;
             }
         }
-        return null;
+        return need;
     }
 
     /**
      * 设置日历完成日志
-     * todo 对于时间对不上的，比如跑步设置为周三，但是实际在周四跑的
      *
      * @param copy
-     * @param flowLogs
+     * @param flowMap
      */
-    private void setCalendarFinishLog(UserCalendarBean copy, List<CalendarLogDTO> flowLogs) {
-        if (StringUtil.isEmpty(flowLogs)) {
+    private void setCalendarFinishLog(UserCalendarBean copy, Map<String,CalendarLogDTO> flowMap) {
+        String key = DateUtil.getFormatDate(copy.getBussDay(),DateUtil.FormatDay1);
+        CalendarLogDTO dto = flowMap.get(key);
+        if(dto==null){
             return;
-        } else {
-            for (CalendarLogDTO cls : flowLogs) {
-                boolean b = DateUtil.isTheSameDay(copy.getBussDay(), cls.getDate());
-                if (b) {
-                    copy.setFinishType(UserCalendarFinishType.MANUAL);
-                    copy.setFinishTime(cls.getDate());
-                    copy.setValue(cls.getValue());
-                    copy.setUnit(cls.getUnit());
-                    copy.setMatch(true);
-                    if (StringUtil.isNotEmpty(cls.getName())) {
-                        copy.setContent(cls.getName());
-                    }
-                    return;
-                }
-            }
         }
+        copy.setFinishType(UserCalendarFinishType.MANUAL);
+        copy.setFinishTime(dto.getDate());
+        copy.setValue(dto.getValue());
+        copy.setUnit(dto.getUnit());
+        copy.setMatch(true);
+        if (StringUtil.isNotEmpty(dto.getName())) {
+            copy.setContent(dto.getName());
+        }
+        //移除该key
+        flowMap.remove(key);
     }
 
     /**
@@ -243,7 +244,7 @@ public class UserCalendarHandler extends BaseHandler {
         List<UserCalendarBean> res = new ArrayList<>();
         List<TreatDrug> drugList = treatService.getDrugForCalendar(sf.getUserId(), sf.getName(), sf.getStartDate(), sf.getEndDate());
         for (TreatDrug b : drugList) {
-            res.add(generateUserCalendar(b));
+            res.add(generateTreatDrugUserCalendar(b));
         }
         return res;
     }
@@ -258,7 +259,7 @@ public class UserCalendarHandler extends BaseHandler {
         List<UserCalendarBean> res = new ArrayList<>();
         List<Consume> brList = consumeService.getExpectInvalidList(sf.getStartDate(),sf.getEndDate(),sf.getUserId());
         for(Consume br : brList){
-            UserCalendarBean vo = this.generateUserCalendar(br);
+            UserCalendarBean vo = this.generateConsumeUserCalendar(br);
             res.add(vo);
         }
         return res;
@@ -281,16 +282,16 @@ public class UserCalendarHandler extends BaseHandler {
             Date ept = b.getExpectPaidTime();
             if (b.getPeriod() == PeriodType.ONCE) {
                 if (ept.after(sf.getStartDate()) && ept.before(sf.getEndDate())) {
-                    res.add(generateUserCalendar(b, bcDate));
+                    res.add(generateBudgetUserCalendar(b, bcDate));
                 }
             } else if (b.getPeriod() == PeriodType.MONTHLY) {
-                res.add(generateUserCalendar(b, bcDate));
+                res.add(generateBudgetUserCalendar(b, bcDate));
             } else if (b.getPeriod() == PeriodType.YEARLY) {
                 //月度预算
                 String m1 = DateUtil.getFormatDate(bcDate, "MM");
                 String m2 = DateUtil.getFormatDate(ept, "MM");
                 if (m1.equals(m2)) {
-                    res.add(generateUserCalendar(b, bcDate));
+                    res.add(generateBudgetUserCalendar(b, bcDate));
                 }
             }
         }
@@ -311,11 +312,11 @@ public class UserCalendarHandler extends BaseHandler {
      * @param br
      * @return
      */
-    private UserCalendarBean generateUserCalendar(Consume br) {
+    private UserCalendarBean generateConsumeUserCalendar(Consume br) {
         UserCalendarBean uc = new UserCalendarBean();
         uc.setId(this.generateNewId(UserCalendarSource.CONSUME,br.getConsumeId()));
         uc.setReadOnly(true);
-        uc.setAllDay(true);
+        uc.setAllDay(false);
         uc.setTitle("商品过期");
         uc.setDelays(0);
         uc.setSourceType(UserCalendarSource.CONSUME);
@@ -331,7 +332,7 @@ public class UserCalendarHandler extends BaseHandler {
      * @param b
      * @return
      */
-    private UserCalendarBean generateUserCalendar(TreatDrug b) {
+    private UserCalendarBean generateTreatDrugUserCalendar(TreatDrug b) {
         UserCalendarBean uc = new UserCalendarBean();
         uc.setId(this.generateNewId(UserCalendarSource.TREAT_DRUG,b.getDrugId()));
         uc.setReadOnly(true);
@@ -352,11 +353,15 @@ public class UserCalendarHandler extends BaseHandler {
      * @param date
      * @return
      */
-    private UserCalendarBean generateUserCalendar(Budget b, Date date) {
+    private UserCalendarBean generateBudgetUserCalendar(Budget b, Date date) {
         UserCalendarBean uc = new UserCalendarBean();
         uc.setId(this.generateNewId(UserCalendarSource.BUDGET,b.getBudgetId()));
         uc.setReadOnly(true);
-        uc.setAllDay(true);
+        if(b.getPeriod()==PeriodType.ONCE){
+            uc.setAllDay(false);
+        }else{
+            uc.setAllDay(true);
+        }
         uc.setTitle(b.getBudgetName());
         uc.setPeriod(b.getPeriod());
         String content = b.getBudgetName() + "预算金额:" + NumberUtil.getValue(b.getAmount(),SCALE) + "元。";

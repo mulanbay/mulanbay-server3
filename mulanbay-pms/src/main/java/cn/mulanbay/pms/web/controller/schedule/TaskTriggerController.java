@@ -2,6 +2,8 @@ package cn.mulanbay.pms.web.controller.schedule;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.queue.LimitQueue;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
@@ -11,12 +13,14 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.StringCoderUtil;
 import cn.mulanbay.pms.handler.PmsScheduleHandler;
+import cn.mulanbay.pms.persistent.dto.schedule.TaskTriggerStat;
 import cn.mulanbay.pms.persistent.service.PmsScheduleService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.schedule.taskTrigger.TaskTriggerVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.schedule.ScheduleCode;
@@ -78,7 +82,7 @@ public class TaskTriggerController extends BaseController {
             List<TreeBean> result = new ArrayList<>();
             String current = gtList.get(0).getGroupName();
             TreeBean typeTreeBean = new TreeBean();
-            typeTreeBean.setId("P_" + current);
+            typeTreeBean.setId(current);
             typeTreeBean.setText(current);
             int n = gtList.size();
             for (int i = 0; i < n; i++) {
@@ -93,7 +97,7 @@ public class TaskTriggerController extends BaseController {
                     current = pc.getGroupName();
                     result.add(typeTreeBean);
                     typeTreeBean = new TreeBean();
-                    typeTreeBean.setId("P_" + current);
+                    typeTreeBean.setId(current);
                     typeTreeBean.setText(current);
                     typeTreeBean.addChild(tb);
                 }
@@ -404,5 +408,65 @@ public class TaskTriggerController extends BaseController {
         List<TaskTrigger> list = pmsScheduleService.getRecentSchedules();
         return callback(list);
     }
+
+    /**
+     * 统计分析
+     *
+     * @return
+     */
+    @RequestMapping(value = "/stat")
+    public ResultBean stat(TaskTriggerStatSH sf){
+        List<TaskTriggerStat> list = pmsScheduleService.getTaskTriggerStat(sf);
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("调度任务分析");
+        chartPieData.setUnit("个");
+        ChartPieSerieData seriesData = new ChartPieSerieData();
+        seriesData.setName("类别");
+        for (TaskTriggerStat bean : list) {
+            chartPieData.getXdata().add(bean.getName());
+            ChartPieSerieDetailData dataDetail = new ChartPieSerieDetailData();
+            dataDetail.setName(bean.getName());
+            dataDetail.setValue(bean.getTotalCount());
+            seriesData.getData().add(dataDetail);
+        }
+        chartPieData.getDetailData().add(seriesData);
+        return callback(chartPieData);
+    }
+
+    /**
+     * 统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/scheduleStat", method = RequestMethod.GET)
+    public ResultBean scheduleStat() {
+        LimitQueue<ScheduleInfo> queue = pmsScheduleHandler.getMonitorQueue();
+        if (queue == null) {
+            queue = new LimitQueue<>(0);
+        }
+        ChartData chartData = new ChartData();
+        chartData.setTitle("调度监控");
+        chartData.setLegendData(new String[]{"调度任务数", "正在运行调度任务数","线程池活跃数","线程池已执行任务数"});
+        chartData.setUnit("个");
+        ChartYData yData1 = new ChartYData("调度任务数","个");
+        ChartYData yData2 = new ChartYData("正在运行调度任务数","个");
+        ChartYData yData3 = new ChartYData("线程池活跃数","个");
+        ChartYData yData4 = new ChartYData("线程池已执行任务数","个");
+        int n = queue.size();
+        for (int i = 0; i < n; i++) {
+            ScheduleInfo si = queue.get(i);
+            chartData.getXdata().add(DateUtil.getFormatDate(si.getDate(), "HH:mm"));
+            yData1.getData().add(si.getScheduleJobsCount());
+            yData2.getData().add(si.getCurrentlyExecutingJobsCount());
+            yData3.getData().add(si.getThreadPoolActiveCount());
+            yData4.getData().add(si.getThreadPoolCompletedTaskCount());
+        }
+        chartData.getYdata().add(yData1);
+        chartData.getYdata().add(yData2);
+        chartData.getYdata().add(yData3);
+        chartData.getYdata().add(yData4);
+        return callback(chartData);
+    }
+
 
 }
