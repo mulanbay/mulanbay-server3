@@ -2,11 +2,9 @@ package cn.mulanbay.pms.web.bean.req.report.plan;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
-import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.web.bean.request.PageSearch;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;

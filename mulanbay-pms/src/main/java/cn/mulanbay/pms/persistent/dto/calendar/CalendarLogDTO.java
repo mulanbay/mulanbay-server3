@@ -7,6 +7,11 @@ public class CalendarLogDTO implements Serializable {
 
     private static final long serialVersionUID = 2561383920772533581L;
 
+    /**
+     * 原始ID
+     */
+    private Long sourceId;
+
     private Date date;
 
     private String value;
@@ -14,6 +19,16 @@ public class CalendarLogDTO implements Serializable {
     private String unit;
 
     private String name;
+
+    private int days;
+
+    public Long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
 
     public Date getDate() {
         return date;
@@ -45,5 +60,13 @@ public class CalendarLogDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public void setDays(int days) {
+        this.days = days;
     }
 }

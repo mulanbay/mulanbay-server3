@@ -1001,3 +1001,25 @@ ALTER TABLE `chart_template`
     ADD COLUMN `url` VARCHAR(100) NULL AFTER `api`;
 ALTER TABLE `stat_bind_config`
     ADD COLUMN `default_value` VARCHAR(32) NULL AFTER `form_field`;
+
+ALTER TABLE `user_behavior_config`  RENAME TO  `behavior_template` ;
+ALTER TABLE `behavior_template`
+DROP COLUMN `keywords_search_sql`,
+DROP COLUMN `keywords`,
+DROP COLUMN `user_field`,
+DROP COLUMN `date_field`,
+DROP COLUMN `behavior_type`,
+ADD COLUMN `extra_sql` VARCHAR(100) NULL AFTER `sql_content`,
+ADD COLUMN `day_stat` TINYINT NOT NULL DEFAULT 1 AFTER `month_stat`,
+ADD COLUMN `hour_stat` TINYINT NOT NULL DEFAULT 1 AFTER `day_stat`,
+ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `order_index`,
+ADD COLUMN `buss_key` VARCHAR(45) NULL AFTER `level`,
+ADD COLUMN `url` VARCHAR(32) NULL AFTER `buss_key`,
+CHANGE COLUMN `unit` `unit` VARCHAR(45) CHARACTER SET 'utf8mb4' NULL DEFAULT NULL AFTER `hour_stat`,
+CHANGE COLUMN `order_index` `order_index` SMALLINT NOT NULL AFTER `unit`,
+CHANGE COLUMN `id` `template_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `behavior_template`
+    ADD COLUMN `all_day` TINYINT NOT NULL DEFAULT 0 AFTER `hour_stat`;

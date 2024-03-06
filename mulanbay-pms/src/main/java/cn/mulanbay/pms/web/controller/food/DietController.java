@@ -18,8 +18,8 @@ import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.DietService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -182,7 +182,7 @@ public class DietController extends BaseController {
         Date startTime = DateUtil.getMonthFirst(date);
         Date endDate = DateUtil.getMonthLast(date);
         Date endTime = DateUtil.tillMiddleNight(endDate);
-        ChartCalendarPieData pieData = new ChartCalendarPieData(UserBehaviorType.LIFE);
+        ChartCalendarPieData pieData = new ChartCalendarPieData(BussType.EXERCISE);
         String monthString = DateUtil.getFormatDate(startTime, "yyyyMM");
         pieData.setTitle(monthString + "饮食习惯分析");
         pieData.setUnit("次");

@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.dto.body;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class BodyAbnormalStat {

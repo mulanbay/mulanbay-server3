@@ -1,6 +1,6 @@
 package cn.mulanbay.pms.handler.bean.calendar;
 
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
+import cn.mulanbay.pms.persistent.enums.BussType;
 
 /**
  * @author fenghong
@@ -10,15 +10,15 @@ import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
  */
 public class UserCalendarIdBean {
 
-    private UserCalendarSource source;
+    private BussType source;
 
     private Long id;
 
-    public UserCalendarSource getSource() {
+    public BussType getSource() {
         return source;
     }
 
-    public void setSource(UserCalendarSource source) {
+    public void setSource(BussType source) {
         this.source = source;
     }
 

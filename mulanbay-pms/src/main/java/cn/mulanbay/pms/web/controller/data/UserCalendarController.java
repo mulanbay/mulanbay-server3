@@ -218,16 +218,6 @@ public class UserCalendarController extends BaseController {
         return callback(bean);
     }
 
-    /**
-     * 以日历的来源查找
-     *
-     * @return
-     */
-    @RequestMapping(value = "/getBySource", method = RequestMethod.GET)
-    public ResultBean getBySource(@Valid UserCalendarSourceSH getRequest) {
-        UserCalendar bean = userCalendarService.getUserCalendar(getRequest.getUserId(),getRequest.getSourceType(),getRequest.getSourceId());
-        return callback(bean);
-    }
 
     /**
      * 查找源

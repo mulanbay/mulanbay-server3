@@ -2,12 +2,6 @@ package cn.mulanbay.pms.persistent.enums;
 
 import cn.mulanbay.pms.persistent.domain.*;
 
-/**
- * 日历来源
- *
- * @author fenghong
- * @create 2017-07-10 21:44
- */
 public enum UserCalendarSource {
 
     MANUAL(0, "手动", UserCalendar.class),

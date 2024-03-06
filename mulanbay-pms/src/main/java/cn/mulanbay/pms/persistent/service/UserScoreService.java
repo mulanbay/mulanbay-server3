@@ -5,7 +5,6 @@ import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.ScoreConfig;
-import cn.mulanbay.pms.persistent.domain.ScoreGroup;
 import cn.mulanbay.pms.persistent.domain.UserScore;
 import cn.mulanbay.pms.persistent.domain.UserScoreDetail;
 import cn.mulanbay.pms.persistent.dto.score.UserScorePointsCompareDTO;

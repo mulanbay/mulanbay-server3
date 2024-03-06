@@ -203,7 +203,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             if (isComplete) {
                 StatTemplate template = us.getTemplate();
                 String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
-                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(),UserCalendarSource.STAT, messageId);
+                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), UserCalendarSource.STAT, messageId);
             }
         } catch (Exception e) {
             logger.error("计划[" + us.getTitle() + "]积分奖励异常", e);

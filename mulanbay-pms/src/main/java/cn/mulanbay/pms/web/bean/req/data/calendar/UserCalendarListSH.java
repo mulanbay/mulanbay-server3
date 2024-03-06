@@ -4,9 +4,9 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.*;
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -31,7 +31,7 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
     private UserCalendarFinishType finishType;
 
     @Query(fieldName = "sourceType", op = Parameter.Operator.EQ)
-    private UserCalendarSource sourceType;
+    private BussType sourceType;
 
     /**
      * 是否没有完成的
@@ -109,11 +109,11 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
         this.finishType = finishType;
     }
 
-    public UserCalendarSource getSourceType() {
+    public BussType getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(UserCalendarSource sourceType) {
+    public void setSourceType(BussType sourceType) {
         this.sourceType = sourceType;
     }
 

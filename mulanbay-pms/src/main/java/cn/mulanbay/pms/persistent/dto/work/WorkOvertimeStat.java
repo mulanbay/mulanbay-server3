@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.dto.work;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class WorkOvertimeStat {
 

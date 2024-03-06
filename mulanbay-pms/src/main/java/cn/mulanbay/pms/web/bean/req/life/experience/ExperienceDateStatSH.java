@@ -6,12 +6,10 @@ import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.persistent.query.QueryBuilder;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.enums.ExperienceType;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
 public class ExperienceDateStatSH extends QueryBuilder implements DateStatSH, BindUser {
 

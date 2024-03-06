@@ -3,7 +3,6 @@ package cn.mulanbay.pms.persistent.dto.body;
 import cn.mulanbay.pms.persistent.dto.common.DateStat;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class BodyInfoDateStat implements DateStat {
 

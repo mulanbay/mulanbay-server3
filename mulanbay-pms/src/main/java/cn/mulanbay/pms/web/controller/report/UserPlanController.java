@@ -17,8 +17,6 @@ import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
-import cn.mulanbay.pms.web.bean.req.report.ReportUserTreeSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanForm;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanSH;

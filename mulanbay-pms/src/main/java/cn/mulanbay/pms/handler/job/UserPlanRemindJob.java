@@ -22,7 +22,6 @@ import cn.mulanbay.schedule.enums.JobResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 

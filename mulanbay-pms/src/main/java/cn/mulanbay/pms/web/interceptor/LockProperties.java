@@ -1,11 +1,11 @@
 package cn.mulanbay.pms.web.interceptor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import cn.mulanbay.common.util.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 白名单

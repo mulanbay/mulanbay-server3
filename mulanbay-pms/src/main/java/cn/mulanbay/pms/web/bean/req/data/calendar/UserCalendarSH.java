@@ -5,9 +5,9 @@ import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.web.bean.request.PageSearch;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -30,7 +30,7 @@ public class UserCalendarSH extends PageSearch implements BindUser, FullEndDateT
     private String bussIdentityKey;
 
     @Query(fieldName = "sourceType", op = Parameter.Operator.EQ)
-    private UserCalendarSource sourceType;
+    private BussType sourceType;
 
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     public Long userId;
@@ -75,11 +75,11 @@ public class UserCalendarSH extends PageSearch implements BindUser, FullEndDateT
         this.bussIdentityKey = bussIdentityKey;
     }
 
-    public UserCalendarSource getSourceType() {
+    public BussType getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(UserCalendarSource sourceType) {
+    public void setSourceType(BussType sourceType) {
         this.sourceType = sourceType;
     }
 

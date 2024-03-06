@@ -104,7 +104,7 @@ public class UserCalendarService extends BaseReportService {
      * @param sourceId
      * @return
      */
-    public UserCalendar getUserCalendar(Long userId, UserCalendarSource sourceType,Long sourceId) {
+    public UserCalendar getUserCalendar(Long userId, BussType sourceType,Long sourceId) {
         try {
             String hql = "from UserCalendar where userId =?1 and sourceType=?2 and sourceId=?3 ";
             return this.getEntity(hql,UserCalendar.class, userId, sourceType, sourceId);

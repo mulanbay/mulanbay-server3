@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.life.consume;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

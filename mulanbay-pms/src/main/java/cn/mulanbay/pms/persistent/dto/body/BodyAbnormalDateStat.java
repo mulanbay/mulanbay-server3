@@ -4,7 +4,6 @@ import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.dto.common.DateStat;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class BodyAbnormalDateStat implements DateStat, CalendarDateStat {
 

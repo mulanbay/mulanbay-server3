@@ -7,7 +7,6 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.dto.schedule.CheckLogDTO;
 import cn.mulanbay.pms.persistent.dto.schedule.TaskTriggerStat;
 import cn.mulanbay.pms.persistent.enums.TriggerGroupField;
-import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.TaskTriggerCategorySH;
 import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.TaskTriggerStatSH;
 import cn.mulanbay.schedule.domain.TaskLog;

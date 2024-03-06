@@ -1,8 +1,9 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.*;
-
+import cn.mulanbay.pms.persistent.enums.BussType;
+import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.enums.SqlType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

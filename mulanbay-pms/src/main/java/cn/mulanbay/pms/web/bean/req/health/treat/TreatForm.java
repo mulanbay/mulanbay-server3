@@ -3,7 +3,6 @@ package cn.mulanbay.pms.web.bean.req.health.treat;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.persistent.enums.TreatStage;
 import cn.mulanbay.pms.persistent.enums.TreatType;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

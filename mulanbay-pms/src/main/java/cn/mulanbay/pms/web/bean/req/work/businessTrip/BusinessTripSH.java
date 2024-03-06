@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.work.businessTrip;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
-import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;

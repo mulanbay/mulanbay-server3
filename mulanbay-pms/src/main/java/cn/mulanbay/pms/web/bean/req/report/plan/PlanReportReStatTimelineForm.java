@@ -1,13 +1,8 @@
 package cn.mulanbay.pms.web.bean.req.report.plan;
 
 import cn.mulanbay.common.aop.BindUser;
-import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 public class PlanReportReStatTimelineForm implements BindUser {
 

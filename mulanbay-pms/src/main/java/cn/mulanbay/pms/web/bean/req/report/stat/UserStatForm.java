@@ -3,7 +3,6 @@ package cn.mulanbay.pms.web.bean.req.report.stat;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.BindUserLevel;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-
 import cn.mulanbay.pms.persistent.enums.CompareType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

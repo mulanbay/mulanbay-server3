@@ -17,7 +17,6 @@ import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalCateSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalDateStatSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyAbnormalStatSH;
 import cn.mulanbay.pms.web.bean.req.health.body.BodyInfoDateStatSH;
-import cn.mulanbay.pms.web.bean.req.health.drug.TreatDrugGroupSH;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

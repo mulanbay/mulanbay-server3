@@ -3,12 +3,10 @@ package cn.mulanbay.pms.web.bean.req.data.calendar;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class UserCalendarForm implements BindUser {

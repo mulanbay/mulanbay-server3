@@ -3,9 +3,9 @@ package cn.mulanbay.pms.web.bean.req.work.company;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class CompanyForm implements BindUser {

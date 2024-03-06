@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.health.drugDetail;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;

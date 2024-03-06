@@ -1,7 +1,5 @@
 package cn.mulanbay.pms.persistent.dto.read;
 
-import java.math.BigInteger;
-
 public class BookOverallStat {
 
     private Number indexValue;

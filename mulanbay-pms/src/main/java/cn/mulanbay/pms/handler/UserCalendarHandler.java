@@ -11,6 +11,7 @@ import cn.mulanbay.pms.handler.bean.calendar.UserCalendarBean;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarIdBean;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
@@ -66,7 +67,7 @@ public class UserCalendarHandler extends BaseHandler {
      * @param id
      * @return
      */
-    private String generateNewId(UserCalendarSource source,Long id){
+    private String generateNewId(UserCalendarSource source, Long id){
         return source.name()+"--"+id;
     }
 
@@ -79,7 +80,7 @@ public class UserCalendarHandler extends BaseHandler {
         String[] ss = id.split("--");
         UserCalendarIdBean bean = new UserCalendarIdBean();
         bean.setId(Long.valueOf(ss[1]));
-        UserCalendarSource source = UserCalendarSource.valueOf(ss[0]);
+        BussType source = BussType.valueOf(ss[0]);
         bean.setSource(source);
         return bean;
     }

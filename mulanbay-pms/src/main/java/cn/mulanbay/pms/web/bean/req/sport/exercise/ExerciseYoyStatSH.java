@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.sport.exercise;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
-
 import jakarta.validation.constraints.NotNull;
 
 public class ExerciseYoyStatSH extends BaseYoyStatSH implements BindUser {

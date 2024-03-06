@@ -3,9 +3,8 @@ package cn.mulanbay.pms.persistent.domain;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.BookLanguage;
 import cn.mulanbay.pms.persistent.enums.BookSource;
-import cn.mulanbay.pms.persistent.enums.BookType;
 import cn.mulanbay.pms.persistent.enums.BookStatus;
-
+import cn.mulanbay.pms.persistent.enums.BookType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

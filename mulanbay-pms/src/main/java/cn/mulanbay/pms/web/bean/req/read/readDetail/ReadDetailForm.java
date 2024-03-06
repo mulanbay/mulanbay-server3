@@ -1,8 +1,8 @@
 package cn.mulanbay.pms.web.bean.req.read.readDetail;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class ReadDetailForm implements BindUser {

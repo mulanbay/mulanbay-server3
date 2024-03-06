@@ -7,9 +7,9 @@ import cn.mulanbay.pms.persistent.enums.BookSource;
 import cn.mulanbay.pms.persistent.enums.BookStatus;
 import cn.mulanbay.pms.persistent.enums.BookType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class BookForm implements BindUser {

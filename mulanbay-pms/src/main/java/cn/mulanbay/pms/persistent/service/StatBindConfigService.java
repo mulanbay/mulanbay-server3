@@ -10,13 +10,10 @@ import cn.mulanbay.pms.persistent.domain.DictItem;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDTO;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDetail;
-import cn.mulanbay.pms.persistent.enums.EnumIdType;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.enums.StatValueSource;
-import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
-import cn.mulanbay.pms.web.bean.res.consume.goodsType.GoodsTypeVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

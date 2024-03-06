@@ -1,9 +1,9 @@
 package cn.mulanbay.pms.web.bean.req.commonData;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class CommonDataForm implements BindUser {

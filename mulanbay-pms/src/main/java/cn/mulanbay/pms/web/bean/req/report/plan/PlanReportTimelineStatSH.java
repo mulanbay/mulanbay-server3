@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.report.plan;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

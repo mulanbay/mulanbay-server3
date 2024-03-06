@@ -10,8 +10,8 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.TreatDrug;
 import cn.mulanbay.pms.persistent.domain.TreatDrugDetail;
 import cn.mulanbay.pms.persistent.dto.health.TreatDrugDetailStat;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.enums.UserBehaviorType;
 import cn.mulanbay.pms.persistent.service.TreatService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.ChartUtil;
@@ -214,7 +214,7 @@ public class TreatDrugDetailController extends BaseController {
     }
 
     private ChartCalendarPieData createMonthCalendarData(List<TreatDrugDetail> list, int year, String month, TreatDrug treatDrug) {
-        ChartCalendarPieData pieData = new ChartCalendarPieData(UserBehaviorType.HEALTH);
+        ChartCalendarPieData pieData = new ChartCalendarPieData(BussType.TREAT);
         pieData.setTitle(year + "-" + month + "用药分析");
         pieData.setStartDate(DateUtil.getDate(year + "-" + month + "-01", DateUtil.FormatDay1));
 

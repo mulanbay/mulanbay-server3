@@ -2,9 +2,7 @@ package cn.mulanbay.pms.web.bean.req.data.calendar;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.PeriodType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;

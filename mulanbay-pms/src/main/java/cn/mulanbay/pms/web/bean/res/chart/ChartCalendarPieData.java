@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.web.bean.res.chart;
 
 import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.pms.persistent.enums.UserBehaviorType;
+import cn.mulanbay.pms.persistent.enums.BussType;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class ChartCalendarPieData extends BaseChartData {
 
-    private UserBehaviorType behaviorType;
+    private BussType bussType;
 
     private Date startDate;
 
@@ -39,8 +39,8 @@ public class ChartCalendarPieData extends BaseChartData {
         this.unit = unit;
     }
 
-    public ChartCalendarPieData(UserBehaviorType behaviorType) {
-        this.behaviorType = behaviorType;
+    public ChartCalendarPieData(BussType bussType) {
+        this.bussType = bussType;
     }
 
     /**
@@ -102,7 +102,7 @@ public class ChartCalendarPieData extends BaseChartData {
             if (dd.getName().equals(name)) {
                 if (appendValue) {
                     //往上叠加
-                    if (behaviorType == null) {
+                    if (bussType == null) {
                         //不同类型的值比较没有意义，因此全部设置为1
                         dd.setValue(dd.getValue() + 1L);
                     } else {
@@ -118,7 +118,7 @@ public class ChartCalendarPieData extends BaseChartData {
         if (pdd == null) {
             pdd = new ChartCalendarPieDetailData();
             pdd.setName(name);
-            if (behaviorType == null) {
+            if (bussType == null) {
                 //不同类型的值比较没有意义，因此全部设置为1
                 pdd.setValue(1L);
             } else {

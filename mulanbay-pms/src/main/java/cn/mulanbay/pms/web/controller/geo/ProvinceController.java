@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.controller.geo;
 
-import cn.mulanbay.pms.persistent.domain.Country;
 import cn.mulanbay.pms.persistent.domain.Province;
 import cn.mulanbay.pms.persistent.service.GeoService;
 import cn.mulanbay.pms.web.bean.res.TreeBean;

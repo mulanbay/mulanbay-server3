@@ -6,6 +6,7 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,24 @@ public class DataHandler extends BaseHandler {
             case BUDGET -> this.setBudgetData(bean, (Budget) o);
             case TREAT_OPERATION -> this.setTreatOperationData(bean, (TreatOperation) o);
             case TREAT_DRUG -> this.setTreatDrugData(bean, (TreatDrug) o);
+            case CONSUME -> this.setConsumeData(bean, (Consume) o);
+            case BUDGET_LOG -> this.setBudgetLogData(bean, (BudgetLog) o);
+            case DREAM -> this.setDreamData(bean, (Dream) o);
+        }
+        return bean;
+    }
+
+    public CommonDataBean getBehaviorSourceData(BussType source, Long sourceId){
+        CommonDataBean bean = new CommonDataBean();
+        bean.setBussName(source.getName());
+        Object o = baseServicel.getObject(source.getBeanClass(),sourceId);
+        if(o==null){
+            bean.setTitle("未找到数据");
+            bean.setContent("sourceId="+sourceId);
+            return bean;
+        }
+        switch (source){
+            case COMMON_DATA -> this.setCommonDataData(bean, (CommonData) o);
             case CONSUME -> this.setConsumeData(bean, (Consume) o);
             case BUDGET_LOG -> this.setBudgetLogData(bean, (BudgetLog) o);
             case DREAM -> this.setDreamData(bean, (Dream) o);

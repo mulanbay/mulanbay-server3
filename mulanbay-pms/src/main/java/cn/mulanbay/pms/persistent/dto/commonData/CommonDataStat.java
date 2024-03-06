@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.dto.commonData;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class CommonDataStat {

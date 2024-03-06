@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.read.category;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

@@ -7,8 +7,8 @@ import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.PlanReportDataCleanType;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class PlanReportDataCleanForm extends QueryBuilder {

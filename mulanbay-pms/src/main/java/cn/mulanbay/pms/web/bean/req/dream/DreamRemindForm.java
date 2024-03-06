@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.dream;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.schedule.enums.TriggerType;
-
 import jakarta.validation.constraints.NotNull;
 
 public class DreamRemindForm implements BindUser {

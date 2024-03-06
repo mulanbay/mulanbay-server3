@@ -15,8 +15,6 @@ import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.report.ReportTreeSH;
-import cn.mulanbay.pms.web.bean.req.report.ReportUserTreeSH;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;

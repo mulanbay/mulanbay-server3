@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.life.sum;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import jakarta.validation.constraints.NotNull;
 
 public class ExperienceSumForm implements BindUser {

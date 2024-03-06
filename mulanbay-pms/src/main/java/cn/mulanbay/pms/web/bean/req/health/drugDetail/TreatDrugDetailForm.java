@@ -1,10 +1,10 @@
 package cn.mulanbay.pms.web.bean.req.health.drugDetail;
 
 import cn.mulanbay.common.aop.BindUser;
-
 import cn.mulanbay.pms.common.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class TreatDrugDetailForm implements BindUser {

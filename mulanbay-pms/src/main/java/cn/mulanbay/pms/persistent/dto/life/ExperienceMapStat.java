@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.dto.life;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class ExperienceMapStat {
 
