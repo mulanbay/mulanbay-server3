@@ -6,18 +6,21 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDTO;
+import cn.mulanbay.pms.persistent.enums.StatValueSource;
 import cn.mulanbay.pms.persistent.service.StatBindConfigService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.report.bind.StatBindConfigForm;
 import cn.mulanbay.pms.web.bean.req.report.bind.StatBindConfigSH;
 import cn.mulanbay.pms.web.bean.req.report.bind.StatBindConfigsSH;
+import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +37,51 @@ public class StatBindConfigController extends BaseController {
 
     @Autowired
     StatBindConfigService statBindConfigService;
+
+    /**
+     * 模版树
+     *
+     * @return
+     */
+    @RequestMapping(value = "/tree")
+    public ResultBean tree(StatBindConfigSH sh) {
+        PageRequest pr = sh.buildQuery();
+        pr.setBeanClass(beanClass);
+        pr.setPage(PageRequest.NO_PAGE);
+        Sort s = new Sort("source", Sort.ASC);
+        Sort s2 = new Sort("orderIndex", Sort.ASC);
+        pr.addSort(s);
+        pr.addSort(s2);
+        List<StatBindConfig> gtList = baseService.getBeanList(pr);
+        List<TreeBean> result = new ArrayList<>();
+        StatValueSource current = gtList.get(0).getSource();
+        TreeBean typeTreeBean = new TreeBean();
+        typeTreeBean.setId(current.name());
+        typeTreeBean.setText(current.getName());
+        int n = gtList.size();
+        for (int i = 0; i < n; i++) {
+            StatBindConfig pc = gtList.get(i);
+            TreeBean tb = new TreeBean();
+            tb.setId(pc.getConfigId());
+            tb.setText(pc.getConfigName());
+            StatValueSource m = pc.getSource();
+            if (m == current) {
+                typeTreeBean.addChild(tb);
+            }else{
+                current = m;
+                result.add(typeTreeBean);
+                typeTreeBean = new TreeBean();
+                typeTreeBean.setId(current.name());
+                typeTreeBean.setText(current.getName());
+                typeTreeBean.addChild(tb);
+            }
+            if (i == n - 1) {
+                //最后一个
+                result.add(typeTreeBean);
+            }
+        }
+        return callback(result);
+    }
 
     /**
      * 获取列表数据

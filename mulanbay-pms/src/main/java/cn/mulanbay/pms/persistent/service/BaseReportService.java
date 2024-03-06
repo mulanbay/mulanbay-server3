@@ -2,12 +2,8 @@ package cn.mulanbay.pms.persistent.service;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
-import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
-import cn.mulanbay.pms.persistent.domain.StatTemplate;
-import cn.mulanbay.pms.persistent.domain.UserStat;
-import cn.mulanbay.pms.persistent.dto.report.StatSQLDTO;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.enums.StatValueClass;
 
@@ -35,6 +31,13 @@ public class BaseReportService extends BaseHibernateDao {
             }
             case STRING -> {
                 return v;
+            }
+            case BOOLEAN -> {
+                if(v.equals("true")||v.equals("1")){
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }
         return v;

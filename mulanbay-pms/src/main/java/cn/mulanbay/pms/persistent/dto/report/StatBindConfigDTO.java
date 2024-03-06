@@ -15,6 +15,12 @@ public class StatBindConfigDTO {
 
     private CasCadeType casCadeType;
 
+    private Boolean nullable;
+
+    private String formField;
+
+    private String defaultValue;
+
     private List<StatBindConfigDetail> list = new ArrayList<>();
 
     public String getName() {
@@ -59,5 +65,29 @@ public class StatBindConfigDTO {
 
     public void setCasCadeType(CasCadeType casCadeType) {
         this.casCadeType = casCadeType;
+    }
+
+    public Boolean getNullable() {
+        return nullable;
+    }
+
+    public void setNullable(Boolean nullable) {
+        this.nullable = nullable;
+    }
+
+    public String getFormField() {
+        return formField;
+    }
+
+    public void setFormField(String formField) {
+        this.formField = formField;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

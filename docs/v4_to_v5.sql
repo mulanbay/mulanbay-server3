@@ -978,3 +978,26 @@ ALTER TABLE `calendar_template`
 
 #删除无效的历史用户日历
 delete from user_calendar where source_type!=0 and calendar_id>0;
+
+ALTER TABLE `chart_config`  RENAME TO  `chart_template` ;
+ALTER TABLE `chart_template`
+DROP COLUMN `support_date`,
+DROP COLUMN `detail_url`,
+DROP COLUMN `related_beans`,
+ADD COLUMN `buss_type` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `order_index`,
+ADD COLUMN `date_field` VARCHAR(32) NULL AFTER `url`,
+ADD COLUMN `date_format` VARCHAR(32) NULL AFTER `date_field`,
+CHANGE COLUMN `id` `template_id` BIGINT NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `name` `template_name` VARCHAR(45) CHARACTER SET 'utf8mb4' NOT NULL ,
+CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
+
+ALTER TABLE `stat_bind_config`
+    ADD COLUMN `form_field` VARCHAR(32) NULL AFTER `tree`,
+ADD COLUMN `nullable` TINYINT NOT NULL DEFAULT 0 AFTER `form_field`;
+
+ALTER TABLE `chart_template`
+    CHANGE COLUMN `url` `api` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL ;
+ALTER TABLE `chart_template`
+    ADD COLUMN `url` VARCHAR(100) NULL AFTER `api`;
+ALTER TABLE `stat_bind_config`
+    ADD COLUMN `default_value` VARCHAR(32) NULL AFTER `form_field`;

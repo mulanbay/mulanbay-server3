@@ -77,7 +77,7 @@ public class JsonUtil {
 			if (json == null || "".equals(json)) {
 				return null;
 			}
-			List list = (List) JSONUtil.toBean(json,cls);
+			List list = JSONUtil.toList(json,cls);
 			return list;
 		} catch (Exception e) {
 			logger.error("json[" + json + "]转换为Bean[" + cls + "]异常：", e);

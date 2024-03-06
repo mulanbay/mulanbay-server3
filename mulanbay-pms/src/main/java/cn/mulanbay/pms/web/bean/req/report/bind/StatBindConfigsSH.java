@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 public class StatBindConfigsSH implements BindUser {
 
     @NotNull(message = "外键不能为空")
-
     private Long fid;
 
     @NotNull(message = "业务类型不能为空")

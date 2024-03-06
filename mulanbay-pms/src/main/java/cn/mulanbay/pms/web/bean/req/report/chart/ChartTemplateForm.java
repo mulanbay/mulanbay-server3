@@ -31,6 +31,10 @@ public class ChartTemplateForm {
     @NotNull(message = "业务类型不能为空")
     private BussType bussType;
 
+    private String dateField;
+
+    private String dateFormat;
+
     //等级
     @NotNull(message = "级别不能为空")
     private Integer level;
@@ -38,6 +42,9 @@ public class ChartTemplateForm {
     //奖励积分(正为加，负为减)
     @NotNull(message = "图表类型不能为空")
     private ChartType chartType;
+
+    @NotEmpty(message = "接口地址不能为空")
+    private String api;
 
     private String url;
 
@@ -117,6 +124,22 @@ public class ChartTemplateForm {
         this.bussType = bussType;
     }
 
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
     public Integer getLevel() {
         return level;
     }
@@ -131,6 +154,14 @@ public class ChartTemplateForm {
 
     public void setChartType(ChartType chartType) {
         this.chartType = chartType;
+    }
+
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
     }
 
     public String getUrl() {

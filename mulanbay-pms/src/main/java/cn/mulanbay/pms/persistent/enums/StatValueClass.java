@@ -9,10 +9,11 @@ package cn.mulanbay.pms.persistent.enums;
  */
 public enum StatValueClass {
 
-    LONG(0, "LONG"),
-    INTEGER(1, "INTEGER"),
-    SHORT(2, "SHORT"),
-    STRING(3, "STRING");
+    LONG(0, "Long"),
+    INTEGER(1, "Integer"),
+    SHORT(2, "Short"),
+    STRING(3, "String"),
+    BOOLEAN(4, "Boolean");
 
     private int value;
 

@@ -55,9 +55,31 @@ public class ChartTemplate implements java.io.Serializable {
     @Column(name = "level")
     private Integer level;
 
-    //链接地址
+    /**
+     * 接口地址
+     */
+    @Column(name = "api")
+    private String api;
+
+    /**
+     * 业务跳转地址
+     */
     @Column(name = "url")
     private String url;
+
+    /**
+     * 时间字段
+     * 1. 如果时间条件只有一个字段，则写一个该字段，比如bussDate
+     * 2. 如果是区间类型，则两个字段中间用逗号分隔，比如startDate,endDate
+     */
+    @Column(name = "date_field")
+    private String dateField;
+
+    /**
+     * 时间格式化，比如:YYYY-MM-DD(与前端时间格式一致)
+     */
+    @Column(name = "date_format")
+    private String dateFormat;
 
     @Column(name = "chart_type")
     private ChartType chartType;
@@ -141,12 +163,36 @@ public class ChartTemplate implements java.io.Serializable {
         this.level = level;
     }
 
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
     }
 
     public ChartType getChartType() {
@@ -188,6 +234,11 @@ public class ChartTemplate implements java.io.Serializable {
         } else {
             return null;
         }
+    }
+
+    @Transient
+    public String getBussTypeName() {
+        return bussType==null ? null:bussType.getName();
     }
 
     @Override

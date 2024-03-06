@@ -49,6 +49,9 @@ public class StatBindConfig implements java.io.Serializable {
     @Column(name = "fid")
     private Long fid;
 
+    /**
+     * 具体的值，比如说起来，枚举类，字典组代码
+     */
     @Column(name = "config_value")
     private String configValue;
 
@@ -60,11 +63,35 @@ public class StatBindConfig implements java.io.Serializable {
     @Column(name = "cascade_type")
     private CasCadeType casCadeType;
 
+    /**
+     * SQL类型有效
+     */
     @Column(name = "bind_user")
     private Boolean bindUser;
 
+    /**
+     * 是否树形结构，SQL和JSON类型有效
+     */
     @Column(name = "tree")
     private Boolean tree;
+
+    /**
+     * 表单的字段名，针对type=CHART
+     */
+    @Column(name = "form_field")
+    private String formField;
+
+    /**
+     * 默认值，针对type=CHART
+     */
+    @Column(name = "default_value")
+    private String defaultValue;
+
+    /**
+     * 是否可为空，针对type=CHART
+     */
+    @Column(name = "nullable")
+    private Boolean nullable;
 
     @Column(name = "order_index")
     private Integer orderIndex;
@@ -174,6 +201,30 @@ public class StatBindConfig implements java.io.Serializable {
 
     public void setTree(Boolean tree) {
         this.tree = tree;
+    }
+
+    public String getFormField() {
+        return formField;
+    }
+
+    public void setFormField(String formField) {
+        this.formField = formField;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public Boolean getNullable() {
+        return nullable;
+    }
+
+    public void setNullable(Boolean nullable) {
+        this.nullable = nullable;
     }
 
     public Integer getOrderIndex() {

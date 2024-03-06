@@ -46,6 +46,16 @@ public class StatBindConfigForm implements java.io.Serializable {
     @NotNull(message = "是否树形结构不能为空")
     private Boolean tree;
 
+    private String formField;
+
+    private String defaultValue;
+
+    /**
+     * 是否可为空，针对type=CHART
+     */
+    @NotNull(message = "是否可为空不能为空")
+    private Boolean nullable;
+
     @NotNull(message = "排序号不能为空")
     private Integer orderIndex;
 
@@ -141,6 +151,30 @@ public class StatBindConfigForm implements java.io.Serializable {
 
     public void setTree(Boolean tree) {
         this.tree = tree;
+    }
+
+    public String getFormField() {
+        return formField;
+    }
+
+    public void setFormField(String formField) {
+        this.formField = formField;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public Boolean getNullable() {
+        return nullable;
+    }
+
+    public void setNullable(Boolean nullable) {
+        this.nullable = nullable;
     }
 
     public Integer getOrderIndex() {

@@ -10,6 +10,7 @@ import cn.mulanbay.pms.persistent.domain.DictItem;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDTO;
 import cn.mulanbay.pms.persistent.dto.report.StatBindConfigDetail;
+import cn.mulanbay.pms.persistent.enums.EnumIdType;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.enums.StatValueSource;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -84,6 +85,9 @@ public class StatBindConfigService extends BaseHibernateDao {
         scb.setMsg(svc.getMsg());
         scb.setTree(svc.getTree());
         scb.setCasCadeType(svc.getCasCadeType());
+        scb.setFormField(svc.getFormField());
+        scb.setDefaultValue(svc.getDefaultValue());
+        scb.setNullable(svc.getNullable());
         StatValueSource source = svc.getSource();
         List<StatBindConfigDetail> details = null;
         switch (source) {
