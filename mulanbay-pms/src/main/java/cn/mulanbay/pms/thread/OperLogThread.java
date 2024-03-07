@@ -1,15 +1,21 @@
 package cn.mulanbay.pms.thread;
 
+import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.util.BeanFactoryUtil;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
+import cn.mulanbay.pms.handler.bean.data.UserOpBean;
 import cn.mulanbay.pms.persistent.domain.OperLog;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.SysLog;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.util.BeanCopy;
 import org.slf4j.Logger;
@@ -47,7 +53,7 @@ public class OperLogThread extends BaseLogThread {
      */
     private void handleLog(OperLog log) {
         try {
-            SystemConfigHandler systemConfigHandler = getSystemConfigHandler();
+            SystemConfigHandler systemConfigHandler = BeanFactoryUtil.getBean(SystemConfigHandler.class);
             SysFunc sf = log.getSysFunc();
             int code = 0;
             String msgContent = "";
@@ -95,26 +101,48 @@ public class OperLogThread extends BaseLogThread {
      */
     private void handleReward(SysFunc sf, OperLog log) {
         try {
-
+            if (sf != null && sf.getRewardPoint() != 0 && log.getUserId() > 0) {
+                //积分奖励(操作类的积分记录管理的messageId为操作记录的编号)
+                RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
+                rewardHandler.rewardPoints(log.getUserId(), sf.getRewardPoint(), log.getId(),
+                        BussSource.OPERATION, "功能操作奖励", log.getId());
+                //连续操作奖励
+                CacheHandler cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
+                String key = CacheKey.getKey(CacheKey.USER_CONTINUE_OP, log.getUserId().toString(), sf.getFuncId().toString());
+                String dayString = DateUtil.getFormatDate(log.getOccurStartTime(), "yyyyMMdd");
+                int day = Integer.parseInt(dayString);
+                UserOpBean uco = cacheHandler.get(key, UserOpBean.class);
+                //缓存失效时间
+                Date now = new Date();
+                Date end = DateUtil.tillMiddleNight(now);
+                long leftExpired = end.getTime() - now.getTime();
+                if (uco == null) {
+                    uco = new UserOpBean();
+                    uco.setFistDay(day);
+                    uco.setLastDay(day);
+                    uco.setDays(1);
+                    cacheHandler.set(key, uco, (int) (leftExpired / 1000));
+                } else {
+                    if (day <= uco.getLastDay()) {
+                        //一样，不操作
+                        return;
+                    } else {
+                        uco.setLastDay(day);
+                        uco.addDay();
+                        cacheHandler.set(key, uco, (int) (leftExpired / 1000));
+                        if (uco.getDays() >= 3) {
+                            //奖励连续操作(相当于3天以上则双倍奖励，负分的也是一样)
+                            int rewards = sf.getRewardPoint() * uco.getDays();
+                            rewardHandler.rewardPoints(log.getUserId(), rewards, log.getId(),
+                                    BussSource.OPERATION, "功能操作连续" + uco.getDays() + "天奖励", log.getId());
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             logger.error("操作日志积分奖励处理异常", e);
         }
 
-    }
-
-    private void addParaNotFoundSystemLog(OperLog log) {
-        //有可能在request的InputStream里面
-        SysLog systemLog = new SysLog();
-        BeanCopy.copy(log, systemLog);
-        systemLog.setLogLevel(LogLevel.WARNING);
-        systemLog.setTitle("获取不到请求参数信息");
-        systemLog.setContent("获取不到请求参数信息");
-        systemLog.setErrorCode(PmsCode.OPERATION_LOG_PARA_IS_NULL);
-        BeanFactoryUtil.getBean(LogHandler.class).addSysLog(systemLog);
-    }
-
-    private SystemConfigHandler getSystemConfigHandler() {
-        return BeanFactoryUtil.getBean(SystemConfigHandler.class);
     }
 
 }

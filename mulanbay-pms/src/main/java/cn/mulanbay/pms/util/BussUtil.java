@@ -4,8 +4,10 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.enums.StatValueClass;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -250,4 +252,37 @@ public class BussUtil {
     public static String getCalendarBussIdentityKey(String bussKey,String bussValue){
         return bussKey+"_"+bussValue;
     }
+
+    /**
+     * 解析值
+     *
+     * @param vc
+     * @param v
+     * @return
+     */
+    public static Serializable formatBindValue(StatValueClass vc, String v){
+        switch (vc){
+            case LONG -> {
+                return Long.parseLong(v);
+            }
+            case INTEGER -> {
+                return Integer.parseInt(v);
+            }
+            case SHORT -> {
+                return Short.parseShort(v);
+            }
+            case STRING -> {
+                return v;
+            }
+            case BOOLEAN -> {
+                if(v.equals("true")||v.equals("1")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        return v;
+    }
+
 }

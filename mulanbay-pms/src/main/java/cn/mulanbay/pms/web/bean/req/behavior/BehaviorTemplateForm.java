@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.bean.req.behavior;
 
 import cn.mulanbay.common.aop.BindUser;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.SqlType;
@@ -65,7 +66,8 @@ public class BehaviorTemplateForm implements BindUser {
     @NotNull(message = "级别不能为空")
     private Integer level;
 
-    private String bussKey;
+    @NotNull(message = "来源不能为空")
+    private BussSource source;
 
     //链接地址
     private String url;
@@ -212,12 +214,12 @@ public class BehaviorTemplateForm implements BindUser {
         this.level = level;
     }
 
-    public String getBussKey() {
-        return bussKey;
+    public BussSource getSource() {
+        return source;
     }
 
-    public void setBussKey(String bussKey) {
-        this.bussKey = bussKey;
+    public void setSource(BussSource source) {
+        this.source = source;
     }
 
     public String getUrl() {

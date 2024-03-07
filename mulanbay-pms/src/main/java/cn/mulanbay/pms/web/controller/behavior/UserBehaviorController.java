@@ -7,6 +7,7 @@ import cn.mulanbay.pms.handler.DataHandler;
 import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.BehaviorTemplate;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.BehaviorService;
@@ -63,15 +64,17 @@ public class UserBehaviorController  extends BaseController {
                 BehaviorCalendarVo bean = new BehaviorCalendarVo();
                 bean.setSourceId(dto.getSourceId());
                 bean.setBussType(template.getBussType());
+                bean.setSource(template.getSource());
                 bean.setId(StringUtil.genUUID());
                 bean.setTitle(dto.getName());
+                bean.setContent(dto.getContent());
                 bean.setUnit(dto.getUnit());
                 bean.setValue(dto.getValue());
                 bean.setBussDay(dto.getDate());
                 bean.setAllDay(template.getAllDay());
                 int days = dto.getDays();
                 if(days>1){
-                    Date ex = DateUtil.getDate(days,dto.getDate());
+                    Date ex = DateUtil.getDate(days-1,dto.getDate());
                     bean.setExpireTime(ex);
                 }
                 res.add(bean);
@@ -86,8 +89,8 @@ public class UserBehaviorController  extends BaseController {
      * @return
      */
     @RequestMapping(value = "/sourceDetail", method = RequestMethod.GET)
-    public ResultBean sourceDetail(@RequestParam(name = "sourceId") Long sourceId,@RequestParam(name = "bussType") BussType bussType) {
-        CommonDataBean bean = dataHandler.getBehaviorSourceData(bussType,sourceId);
+    public ResultBean sourceDetail(@RequestParam(name = "sourceId") Long sourceId,@RequestParam(name = "source") BussSource source) {
+        CommonDataBean bean = dataHandler.getSourceData(source,sourceId);
         return callback(bean);
     }
 

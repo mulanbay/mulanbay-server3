@@ -6,12 +6,11 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -46,13 +45,15 @@ public class BudgetExecStatJob extends AbstractBaseJob {
 
     BudgetHandler budgetHandler;
 
+    RewardHandler rewardHandler;
+
     @Override
     public TaskResult doTask() {
         TaskResult tr = new TaskResult();
         //step 1:查询预算
         budgetService = BeanFactoryUtil.getBean(BudgetService.class);
         budgetHandler = BeanFactoryUtil.getBean(BudgetHandler.class);
-
+        rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
         List<Budget> list = budgetService.getActiveUserBudget(null, null);
         if (list.isEmpty()) {
             tr.setResult(JobResult.SKIP);
@@ -130,8 +131,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             Long messageId = notifyHandler.addNotifyMessage(code, title, cc,
                     bl.getUserId(), null);
             //增加积分
-            RewardPointsHandler rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
-            rewardPointsHandler.rewardPoints(bl.getUserId(), rewards, bl.getLogId(), RewardSource.BUDGET_LOG, null, messageId);
+            rewardHandler.rewardPoints(bl.getUserId(), rewards, bl.getLogId(), BussSource.BUDGET_LOG, null, messageId);
             if (code == PmsCode.BUDGET_CHECK_OVER) {
                 this.addToUserCalendar(bl, messageId, cc,bussDay);
             }
@@ -162,7 +162,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
                 uc.setBussDay(bussDay);
                 uc.setExpireTime(DateUtil.getMonthLast(bussDay));
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.BUDGET_LOG);
+                uc.setSourceType(BussSource.BUDGET_LOG);
                 uc.setSourceId(bl.getLogId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);

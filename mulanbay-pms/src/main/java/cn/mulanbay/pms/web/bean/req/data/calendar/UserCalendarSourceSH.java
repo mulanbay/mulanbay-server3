@@ -1,24 +1,24 @@
 package cn.mulanbay.pms.web.bean.req.data.calendar;
 
 import cn.mulanbay.common.aop.BindUser;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import jakarta.validation.constraints.NotNull;
 
 public class UserCalendarSourceSH implements BindUser {
 
     @NotNull(message = "来源不能为空")
-    private UserCalendarSource sourceType;
+    private BussSource sourceType;
 
     public Long userId;
 
     @NotNull(message = "来源ID不能为空")
     private Long sourceId;
 
-    public UserCalendarSource getSourceType() {
+    public BussSource getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(UserCalendarSource sourceType) {
+    public void setSourceType(BussSource sourceType) {
         this.sourceType = sourceType;
     }
 

@@ -10,6 +10,7 @@ import cn.mulanbay.pms.persistent.domain.DictGroup;
 import cn.mulanbay.pms.persistent.domain.DictItem;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.config.dictItem.DictItemForm;
@@ -20,6 +21,7 @@ import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class DictItemController extends BaseController {
             List<TreeBean> list = new ArrayList<TreeBean>();
             for (DictItem gt : gtList) {
                 TreeBean tb = new TreeBean();
-                String code = gt.getCode();
+                Serializable code = BussUtil.formatBindValue(gt.getValueClass(),gt.getCode());
                 code = (code == null ? gt.getItemName() : code);
                 tb.setId(code);
                 tb.setText(gt.getItemName());

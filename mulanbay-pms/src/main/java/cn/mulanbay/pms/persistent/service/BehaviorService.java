@@ -90,13 +90,23 @@ public class BehaviorService extends BaseReportService {
             }
             List<CalendarLogDTO> res = new ArrayList<>();
             for (Object[] oo : rr) {
+                int n = oo.length;
                 CalendarLogDTO clr = new CalendarLogDTO();
                 clr.setSourceId(Long.parseLong(oo[0].toString()));
                 clr.setDate((Date) oo[1]);
                 clr.setName(oo[2].toString());
-                clr.setValue(oo[3]==null? null : oo[3].toString());
-                clr.setUnit(oo[4]==null? null: oo[4].toString());
-                clr.setDays(oo[5]==null? 0: Integer.parseInt(oo[5].toString()));
+                if(n>3){
+                    clr.setValue(oo[3]==null? null : oo[3].toString());
+                }
+                if(n>4){
+                    clr.setUnit(oo[4]==null? null: oo[4].toString());
+                }
+                if(n>5){
+                    clr.setDays(oo[5]==null? 0: Integer.parseInt(oo[5].toString()));
+                }
+                if(n>6){
+                    clr.setContent(oo[6]==null? null: oo[6].toString());
+                }
                 res.add(clr);
             }
             return res;

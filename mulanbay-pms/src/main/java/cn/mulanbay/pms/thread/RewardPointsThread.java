@@ -6,7 +6,7 @@ import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.service.UserRewardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +27,17 @@ public class RewardPointsThread extends Thread {
 
     private Long sourceId;
 
-    private RewardSource rewardSource;
+    private BussSource BussSource;
 
     private String remark;
 
     private Long messageId;
 
-    public RewardPointsThread(Long userId, int rewards, Long sourceId, RewardSource rewardSource, String remark, Long messageId) {
+    public RewardPointsThread(Long userId, int rewards, Long sourceId, BussSource BussSource, String remark, Long messageId) {
         this.userId = userId;
         this.rewards = rewards;
         this.sourceId = sourceId;
-        this.rewardSource = rewardSource;
+        this.BussSource = BussSource;
         this.remark = remark;
         this.messageId = messageId;
     }
@@ -55,7 +55,7 @@ public class RewardPointsThread extends Thread {
             }
             // 获取当前的积分
             UserRewardService userRewardService = BeanFactoryUtil.getBean(UserRewardService.class);
-            userRewardService.updateUserPoint(userId, rewards, sourceId, rewardSource, remark, messageId);
+            userRewardService.updateUserPoint(userId, rewards, sourceId, BussSource, remark, messageId);
         } catch (Exception e) {
             logger.error("更新用户ID=" + userId + "积分异常", e);
             this.addErrorLog("更新用户积分锁异常", "更新用户积分锁异常,key=" + key, PmsCode.USER_REWARD_UPDATE_ERROR);

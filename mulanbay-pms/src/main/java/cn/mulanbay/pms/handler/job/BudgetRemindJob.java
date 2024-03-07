@@ -8,13 +8,12 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.dto.consume.ConsumeBudgetStat;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.fund.budget.BudgetSH;
@@ -89,9 +88,9 @@ public class BudgetRemindJob extends AbstractBaseJob {
             Long messageId = notifyHandler.addNotifyMessage(PmsCode.BUDGET_UN_COMPLETED, title, cc,
                     bd.getUserId(), null);
             //增加积分
-            RewardPointsHandler rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
-            //TODO 目前预算与预算日志无法区分，要么RewardSource区分不同的
-            rewardPointsHandler.rewardPoints(bd.getUserId(), para.getScore(), bd.getBudgetId(), RewardSource.BUDGET, null, messageId);
+            RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
+            //TODO 目前预算与预算日志无法区分，要么BussSource区分不同的
+            rewardHandler.rewardPoints(bd.getUserId(), para.getScore(), bd.getBudgetId(), BussSource.BUDGET, null, messageId);
             this.addToUserCalendar(bd, bussKey,bussDay, messageId, cc);
         } catch (Exception e) {
             logger.error("处理预算统计消息提醒异常");
@@ -120,7 +119,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
                 uc.setBussDay(bussDay);
                 uc.setExpireTime(DateUtil.getMonthLast(bussDay));
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.BUDGET);
+                uc.setSourceType(BussSource.BUDGET);
                 uc.setSourceId(bd.getBudgetId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);

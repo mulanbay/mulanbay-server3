@@ -4,7 +4,7 @@ import cn.mulanbay.pms.persistent.domain.*;
 
 /**
  * 业务类型
- *
+ * 对应的是大的模块分类
  * @author fenghong
  * @create 2017-07-10 21:44
  */

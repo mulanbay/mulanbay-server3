@@ -1023,3 +1023,11 @@ CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL ;
 
 ALTER TABLE `behavior_template`
     ADD COLUMN `all_day` TINYINT NOT NULL DEFAULT 0 AFTER `hour_stat`;
+
+ALTER TABLE `behavior_template`
+DROP COLUMN `buss_key`,
+ADD COLUMN `source` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `url`,
+CHANGE COLUMN `buss_type` `buss_type` SMALLINT NOT NULL DEFAULT '0' AFTER `level`;
+
+ALTER TABLE `dict_item`
+    ADD COLUMN `value_class` SMALLINT(5) NOT NULL DEFAULT 3 AFTER `code`;

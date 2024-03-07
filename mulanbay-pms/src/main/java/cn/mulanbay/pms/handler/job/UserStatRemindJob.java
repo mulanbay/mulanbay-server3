@@ -8,14 +8,13 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.handler.UserStatHandler;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.ResultType;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -49,7 +48,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
 
     NotifyHandler notifyHandler = null;
 
-    RewardPointsHandler rewardPointsHandler = null;
+    RewardHandler rewardHandler = null;
 
     UserStatHandler userStatHandler = null;
 
@@ -64,7 +63,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         List<UserStat> list = statService.getNeedRemindUserStat();
         cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
-        rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
+        rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
         userStatHandler = BeanFactoryUtil.getBean(UserStatHandler.class);
         userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
         baseService = BeanFactoryUtil.getBean(BaseService.class);
@@ -199,11 +198,11 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 rewards = -rewards;
                 remark = "用户提醒配置[" + us.getTitle() + "]触发警报惩罚";
             }
-            rewardPointsHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), RewardSource.NOTIFY, remark, messageId);
+            rewardHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
             if (isComplete) {
                 StatTemplate template = us.getTemplate();
                 String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
-                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), UserCalendarSource.STAT, messageId);
+                userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), BussSource.STAT, messageId);
             }
         } catch (Exception e) {
             logger.error("计划[" + us.getTitle() + "]积分奖励异常", e);
@@ -246,7 +245,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 }
                 uc.setExpireTime(DateUtil.getDate(remind.getTriggerInterval() * rate));
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.STAT);
+                uc.setSourceType(BussSource.STAT);
                 uc.setSourceId(us.getStatId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);

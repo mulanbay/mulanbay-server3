@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.enums.StatValueClass;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -39,6 +40,9 @@ public class DictItem implements java.io.Serializable {
     //子分类使用，可为空
     @Column(name = "code", nullable = false)
     private String code;
+
+    @Column(name = "value_class")
+    private StatValueClass valueClass;
 
     @Column(name = "status", nullable = false)
     private CommonStatus status;
@@ -86,6 +90,14 @@ public class DictItem implements java.io.Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public StatValueClass getValueClass() {
+        return valueClass;
+    }
+
+    public void setValueClass(StatValueClass valueClass) {
+        this.valueClass = valueClass;
     }
 
     public CommonStatus getStatus() {

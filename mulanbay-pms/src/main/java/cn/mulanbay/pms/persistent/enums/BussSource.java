@@ -2,7 +2,12 @@ package cn.mulanbay.pms.persistent.enums;
 
 import cn.mulanbay.pms.persistent.domain.*;
 
-public enum UserCalendarSource {
+/**
+ * 业务来源
+ *
+ * 对应的是具体的业务类
+ */
+public enum BussSource {
 
     MANUAL(0, "手动", UserCalendar.class),
     STAT(1, "提醒", UserStat.class),
@@ -13,7 +18,10 @@ public enum UserCalendarSource {
     TREAT_DRUG(6, "用药",TreatDrug.class),
     CONSUME(7, "消费",Consume.class),
     BUDGET_LOG(8, "预算日志", BudgetLog.class),
-    DREAM(9, "梦想", Dream.class);
+    DREAM(9, "梦想", Dream.class),
+    OPERATION(10, "用户操作", OperLog.class),
+    EXERCISE(11, "锻炼", Exercise.class),
+    EXPERIENCE(12, "人生经历", Experience.class);
 
     private int value;
 
@@ -21,12 +29,12 @@ public enum UserCalendarSource {
 
     private Class beanClass;
 
-    UserCalendarSource(int value, String name) {
+    BussSource(int value, String name) {
         this.value = value;
         this.name = name;
     }
 
-    UserCalendarSource(int value, String name, Class beanClass) {
+    BussSource(int value, String name, Class beanClass) {
         this.value = value;
         this.name = name;
         this.beanClass = beanClass;
@@ -56,4 +64,13 @@ public enum UserCalendarSource {
         this.beanClass = beanClass;
     }
 
+
+    public static BussSource getType(int ordinal) {
+        for (BussSource bt : BussSource.values()) {
+            if (bt.ordinal() == ordinal) {
+                return bt;
+            }
+        }
+        return null;
+    }
 }

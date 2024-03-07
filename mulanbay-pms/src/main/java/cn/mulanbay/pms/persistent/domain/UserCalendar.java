@@ -1,9 +1,9 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -58,7 +58,7 @@ public class UserCalendar implements java.io.Serializable {
     private String bussIdentityKey;
 
     @Column(name = "source_type")
-    private UserCalendarSource sourceType;
+    private BussSource sourceType;
 
     @Column(name = "source_id")
     private Long sourceId;
@@ -77,7 +77,7 @@ public class UserCalendar implements java.io.Serializable {
     private Long messageId;
 
     @Column(name = "finish_source")
-    private UserCalendarSource finishSource;
+    private BussSource finishSource;
 
     //完成的源ID
     @Column(name = "finish_source_id")
@@ -198,11 +198,11 @@ public class UserCalendar implements java.io.Serializable {
         this.bussIdentityKey = bussIdentityKey;
     }
 
-    public UserCalendarSource getSourceType() {
+    public BussSource getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(UserCalendarSource sourceType) {
+    public void setSourceType(BussSource sourceType) {
         this.sourceType = sourceType;
     }
 
@@ -238,11 +238,11 @@ public class UserCalendar implements java.io.Serializable {
         this.messageId = messageId;
     }
 
-    public UserCalendarSource getFinishSource() {
+    public BussSource getFinishSource() {
         return finishSource;
     }
 
-    public void setFinishSource(UserCalendarSource finishSource) {
+    public void setFinishSource(BussSource finishSource) {
         this.finishSource = finishSource;
     }
 

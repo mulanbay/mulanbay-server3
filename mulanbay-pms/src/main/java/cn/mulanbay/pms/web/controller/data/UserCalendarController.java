@@ -18,9 +18,9 @@ import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -182,8 +182,8 @@ public class UserCalendarController extends BaseController {
         checkUserCalendarData(bean);
         bean.setDelays(0);
         bean.setReadOnly(false);
-        bean.setSourceType(UserCalendarSource.MANUAL);
-        bean.setBussIdentityKey(UserCalendarSource.MANUAL.name()+"_"+StringUtil.genUUID());
+        bean.setSourceType(BussSource.MANUAL);
+        bean.setBussIdentityKey(BussSource.MANUAL.name()+"_"+StringUtil.genUUID());
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -230,7 +230,7 @@ public class UserCalendarController extends BaseController {
         UserCalendarSourceVo vo = new UserCalendarSourceVo();
         vo.setCalendarData(bean);
         if(bean.getSourceId()!=null){
-            CommonDataBean sourceData = dataHandler.getCalendarSourceData(bean.getSourceType(),bean.getSourceId());
+            CommonDataBean sourceData = dataHandler.getSourceData(bean.getSourceType(),bean.getSourceId());
             vo.setSourceData(sourceData);
         }
         if(bean.getMessageId()!=null){
@@ -238,7 +238,7 @@ public class UserCalendarController extends BaseController {
             vo.setSourceMessage(sourceMessage);
         }
         if(bean.getFinishSourceId()!=null){
-            CommonDataBean finishSourceData = dataHandler.getCalendarSourceData(bean.getFinishSource(),bean.getFinishSourceId());
+            CommonDataBean finishSourceData = dataHandler.getSourceData(bean.getFinishSource(),bean.getFinishSourceId());
             vo.setFinishSourceData(finishSourceData);
         }
         if(bean.getFinishMessageId()!=null){

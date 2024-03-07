@@ -201,7 +201,7 @@ public class UserCalendarService extends BaseReportService {
      * @param finishTime
      * @param finishType
      */
-    public void updateUserCalendarForFinish(Long userId, String bussIdentityKey, Date finishTime, UserCalendarFinishType finishType, Long finishSourceId,UserCalendarSource finishSource,Long finishMessageId) {
+    public void updateUserCalendarForFinish(Long userId, String bussIdentityKey, Date finishTime, UserCalendarFinishType finishType, Long finishSourceId, BussSource finishSource, Long finishMessageId) {
         try {
             //失效时间需要大于完成时间
             UserCalendar calendar = this.getUserCalendar(userId,bussIdentityKey,finishTime);

@@ -5,13 +5,12 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.Dream;
 import cn.mulanbay.pms.persistent.domain.DreamRemind;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.service.DreamService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -42,7 +41,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
 
     CacheHandler cacheHandler = null;
 
-    RewardPointsHandler rewardPointsHandler = null;
+    RewardHandler rewardHandler = null;
 
     UserCalendarService userCalendarService = null;
 
@@ -52,7 +51,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
         dreamService = BeanFactoryUtil.getBean(DreamService.class);
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
-        rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
+        rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
         userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
         List<Dream> list = dreamService.getNeedRemindDream();
         if (list.isEmpty()) {
@@ -115,7 +114,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
             //未完成减去
             int rewards = dream.getRewards() * (-1);
             String remark = "梦想[" + dream.getDreamName() + "]进度未达到要求惩罚";
-            rewardPointsHandler.rewardPoints(dream.getUserId(), rewards, dream.getDreamId(), RewardSource.DREAM, remark, messageId);
+            rewardHandler.rewardPoints(dream.getUserId(), rewards, dream.getDreamId(), BussSource.DREAM, remark, messageId);
             //添加到用户日历
             addToUserCalendar(dream, messageId);
         } catch (Exception e) {
@@ -142,7 +141,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
                 uc.setDelays(0);
                 uc.setBussDay(DateUtil.getDate(0));
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.DREAM);
+                uc.setSourceType(BussSource.DREAM);
                 uc.setSourceId(dream.getDreamId());
                 uc.setMessageId(messageId);
                 uc.setExpireTime(DateUtil.getMonthLast(uc.getBussDay()));

@@ -7,13 +7,13 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.CommonData;
 import cn.mulanbay.pms.persistent.domain.CommonDataType;
 import cn.mulanbay.pms.persistent.dto.commonData.CommonDataAnalyseStat;
 import cn.mulanbay.pms.persistent.dto.commonData.CommonDataDateStat;
 import cn.mulanbay.pms.persistent.dto.commonData.CommonDataStat;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.ValueType;
 import cn.mulanbay.pms.persistent.service.CommonDataService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -57,7 +57,7 @@ public class CommonDataController extends BaseController {
     CommonDataService commonDataService;
 
     @Autowired
-    RewardPointsHandler rewardPointsHandler;
+    RewardHandler rewardHandler;
 
     /**
      * 获取任务列表
@@ -119,8 +119,8 @@ public class CommonDataController extends BaseController {
         int rp = type.getRewardPoint();
         if (rp != 0) {
             //这里修改为通用类型ID
-            rewardPointsHandler.rewardPoints(form.getUserId(), type.getRewardPoint(), bean.getDataId(),
-                    RewardSource.COMMON_RECORD, "通用记录操作奖励", null);
+            rewardHandler.rewardPoints(form.getUserId(), type.getRewardPoint(), bean.getDataId(),
+                    BussSource.COMMON_DATA, "通用记录操作奖励", null);
         }
         return callback(bean);
     }

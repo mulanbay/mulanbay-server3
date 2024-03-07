@@ -25,7 +25,7 @@ public class CommonDataBean {
     /**
      * 业务时间
      */
-    private Date BussDay;
+    private Date bussDay;
 
     private Date createdTime;
 
@@ -61,11 +61,11 @@ public class CommonDataBean {
     }
 
     public Date getBussDay() {
-        return BussDay;
+        return bussDay;
     }
 
     public void setBussDay(Date bussDay) {
-        BussDay = bussDay;
+        bussDay = bussDay;
     }
 
     public Date getCreatedTime() {

@@ -53,7 +53,6 @@ public class StatTemplate implements java.io.Serializable {
     @Column(name = "order_index")
     private Short orderIndex;
 
-    //业务类型
     @Column(name = "buss_type")
     private BussType bussType;
 

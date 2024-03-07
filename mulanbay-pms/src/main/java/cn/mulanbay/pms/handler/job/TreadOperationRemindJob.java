@@ -7,7 +7,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.TreatOperation;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.service.TreatService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.schedule.ParaCheckResult;
@@ -105,7 +105,7 @@ public class TreadOperationRemindJob extends AbstractBaseRemindJob {
                 uc.setAllDay(true);
                 uc.setExpireTime(DateUtil.getMonthLast(new Date()));
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.TREAT_OPERATION);
+                uc.setSourceType(BussSource.TREAT_OPERATION);
                 uc.setSourceId(to.getOperationId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);

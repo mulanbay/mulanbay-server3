@@ -11,10 +11,10 @@ import cn.mulanbay.pms.handler.bean.calendar.UserCalendarBean;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarIdBean;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.TreatService;
@@ -67,7 +67,7 @@ public class UserCalendarHandler extends BaseHandler {
      * @param id
      * @return
      */
-    private String generateNewId(UserCalendarSource source, Long id){
+    private String generateNewId(BussSource source, Long id){
         return source.name()+"--"+id;
     }
 
@@ -129,7 +129,7 @@ public class UserCalendarHandler extends BaseHandler {
                 if (need) {
                     UserCalendarBean copy = new UserCalendarBean();
                     BeanCopy.copy(uc, copy);
-                    copy.setId(this.generateNewId(UserCalendarSource.MANUAL,uc.getCalendarId()));
+                    copy.setId(this.generateNewId(BussSource.MANUAL,uc.getCalendarId()));
                     //当前时间加上配置的时分秒时间
                     String bd = DateUtil.getFormatDate(dd, DateUtil.FormatDay1);
                     bd += " " + DateUtil.getFormatDate(uc.getBussDay(), "HH:mm:ss");
@@ -315,12 +315,12 @@ public class UserCalendarHandler extends BaseHandler {
      */
     private UserCalendarBean generateConsumeUserCalendar(Consume br) {
         UserCalendarBean uc = new UserCalendarBean();
-        uc.setId(this.generateNewId(UserCalendarSource.CONSUME,br.getConsumeId()));
+        uc.setId(this.generateNewId(BussSource.CONSUME,br.getConsumeId()));
         uc.setReadOnly(true);
         uc.setAllDay(false);
         uc.setTitle("商品过期");
         uc.setDelays(0);
-        uc.setSourceType(UserCalendarSource.CONSUME);
+        uc.setSourceType(BussSource.CONSUME);
         uc.setSourceId(br.getConsumeId());
         uc.setBussDay(br.getExpectInvalidTime());
         uc.setExpireTime(br.getExpectInvalidTime());
@@ -335,12 +335,12 @@ public class UserCalendarHandler extends BaseHandler {
      */
     private UserCalendarBean generateTreatDrugUserCalendar(TreatDrug b) {
         UserCalendarBean uc = new UserCalendarBean();
-        uc.setId(this.generateNewId(UserCalendarSource.TREAT_DRUG,b.getDrugId()));
+        uc.setId(this.generateNewId(BussSource.TREAT_DRUG,b.getDrugId()));
         uc.setReadOnly(true);
         uc.setAllDay(true);
         uc.setTitle(b.getDrugName());
         uc.setDelays(0);
-        uc.setSourceType(UserCalendarSource.TREAT_DRUG);
+        uc.setSourceType(BussSource.TREAT_DRUG);
         uc.setSourceId(b.getDrugId());
         uc.setBussDay(b.getBeginDate());
         uc.setExpireTime(b.getEndDate());
@@ -356,7 +356,7 @@ public class UserCalendarHandler extends BaseHandler {
      */
     private UserCalendarBean generateBudgetUserCalendar(Budget b, Date date) {
         UserCalendarBean uc = new UserCalendarBean();
-        uc.setId(this.generateNewId(UserCalendarSource.BUDGET,b.getBudgetId()));
+        uc.setId(this.generateNewId(BussSource.BUDGET,b.getBudgetId()));
         uc.setReadOnly(true);
         if(b.getPeriod()==PeriodType.ONCE){
             uc.setAllDay(false);
@@ -367,7 +367,7 @@ public class UserCalendarHandler extends BaseHandler {
         uc.setPeriod(b.getPeriod());
         String content = b.getBudgetName() + "预算金额:" + NumberUtil.getValue(b.getAmount(),SCALE) + "元。";
         uc.setDelays(0);
-        uc.setSourceType(UserCalendarSource.BUDGET);
+        uc.setSourceType(BussSource.BUDGET);
         uc.setSourceId(b.getBudgetId());
         String bussKey = BussUtil.getBussKey(b.getPeriod(), date);
         BudgetLog bl = budgetService.selectBudgetLog(bussKey, b.getUserId().longValue(), null, b.getBudgetId());

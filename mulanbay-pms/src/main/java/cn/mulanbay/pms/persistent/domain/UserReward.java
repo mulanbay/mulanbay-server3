@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.RewardSource;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,7 +36,7 @@ public class UserReward implements Serializable {
     @Column(name = "source_id")
     private Long sourceId;
     @Column(name = "source")
-    private RewardSource source;
+    private BussSource source;
     //奖励后的积分
     @Column(name = "after_points")
     private Integer afterPoints;
@@ -89,11 +89,11 @@ public class UserReward implements Serializable {
         this.sourceId = sourceId;
     }
 
-    public RewardSource getSource() {
+    public BussSource getSource() {
         return source;
     }
 
-    public void setSource(RewardSource source) {
+    public void setSource(BussSource source) {
         this.source = source;
     }
 
@@ -135,6 +135,10 @@ public class UserReward implements Serializable {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public String getSourceName() {
+        return source == null ? null : source.getName();
     }
 
     @Override

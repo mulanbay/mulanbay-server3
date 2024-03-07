@@ -6,8 +6,8 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.*;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.enums.UserCalendarSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +25,10 @@ public class DataHandler extends BaseHandler {
         super("数据处理器");
     }
 
-    public CommonDataBean getCalendarSourceData(UserCalendarSource source, Long sourceId){
+    public CommonDataBean getSourceData(BussSource source, Long sourceId){
         CommonDataBean bean = new CommonDataBean();
         bean.setBussName(source.getName());
-        if(source==UserCalendarSource.MANUAL){
+        if(source== BussSource.MANUAL){
             bean.setTitle("手动来源");
             bean.setContent("sourceId="+sourceId);
         }
@@ -48,24 +48,9 @@ public class DataHandler extends BaseHandler {
             case CONSUME -> this.setConsumeData(bean, (Consume) o);
             case BUDGET_LOG -> this.setBudgetLogData(bean, (BudgetLog) o);
             case DREAM -> this.setDreamData(bean, (Dream) o);
-        }
-        return bean;
-    }
-
-    public CommonDataBean getBehaviorSourceData(BussType source, Long sourceId){
-        CommonDataBean bean = new CommonDataBean();
-        bean.setBussName(source.getName());
-        Object o = baseServicel.getObject(source.getBeanClass(),sourceId);
-        if(o==null){
-            bean.setTitle("未找到数据");
-            bean.setContent("sourceId="+sourceId);
-            return bean;
-        }
-        switch (source){
-            case COMMON_DATA -> this.setCommonDataData(bean, (CommonData) o);
-            case CONSUME -> this.setConsumeData(bean, (Consume) o);
-            case BUDGET_LOG -> this.setBudgetLogData(bean, (BudgetLog) o);
-            case DREAM -> this.setDreamData(bean, (Dream) o);
+            case OPERATION -> this.setOperationData(bean, (OperLog) o);
+            case EXERCISE -> this.setExerciseData(bean, (Exercise) o);
+            case EXPERIENCE -> this.setExperienceData(bean, (Experience) o);
         }
         return bean;
     }
@@ -129,6 +114,30 @@ public class DataHandler extends BaseHandler {
     private void setDreamData(CommonDataBean bean, Dream us){
         bean.setTitle(us.getDreamName());
         bean.setContent("期望完成时间:"+ DateUtil.getFormatDate(us.getExpectDate(),DateUtil.Format24Datetime));
+        bean.setCreatedTime(us.getCreatedTime());
+        bean.setModifyTime(us.getModifyTime());
+    }
+
+    private void setOperationData(CommonDataBean bean, OperLog us){
+        bean.setTitle(us.getSysFunc().getFuncName());
+        bean.setContent("操作时间:"+ DateUtil.getFormatDate(us.getOccurStartTime(),DateUtil.Format24Datetime));
+        bean.setBussDay(us.getOccurStartTime());
+        bean.setCreatedTime(us.getCreatedTime());
+        bean.setModifyTime(us.getModifyTime());
+    }
+
+    private void setExerciseData(CommonDataBean bean, Exercise us){
+        bean.setTitle(us.getSport().getSportName());
+        bean.setContent("锻炼内容:"+ us.getDuration()+us.getSport().getUnit());
+        bean.setBussDay(us.getExerciseTime());
+        bean.setCreatedTime(us.getCreatedTime());
+        bean.setModifyTime(us.getModifyTime());
+    }
+
+    private void setExperienceData(CommonDataBean bean, Experience us){
+        bean.setTitle(us.getExpName());
+        bean.setContent("类型:"+ us.getType().getName()+",天数:"+us.getDays());
+        bean.setBussDay(us.getStartDate());
         bean.setCreatedTime(us.getCreatedTime());
         bean.setModifyTime(us.getModifyTime());
     }

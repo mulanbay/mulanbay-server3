@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.bean.res.behavior;
 
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 
 import java.util.Date;
@@ -23,6 +24,8 @@ public class BehaviorCalendarVo {
 
     private BussType bussType;
 
+    private BussSource source;
+
     private Date bussDay;
 
     private Date expireTime;
@@ -30,6 +33,8 @@ public class BehaviorCalendarVo {
     private Boolean allDay;
 
     private String title;
+
+    private String content;
 
     public String getId() {
         return id;
@@ -71,6 +76,14 @@ public class BehaviorCalendarVo {
         this.bussType = bussType;
     }
 
+    public BussSource getSource() {
+        return source;
+    }
+
+    public void setSource(BussSource source) {
+        this.source = source;
+    }
+
     public Date getBussDay() {
         return bussDay;
     }
@@ -102,4 +115,17 @@ public class BehaviorCalendarVo {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getBussTypeName() {
+        return bussType==null ? null:bussType.getName();
+    }
+
 }

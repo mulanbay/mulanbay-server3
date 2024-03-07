@@ -6,6 +6,7 @@ import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import cn.mulanbay.pms.persistent.enums.StatValueClass;
+import cn.mulanbay.pms.util.BussUtil;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,28 +20,7 @@ import java.util.List;
 public class BaseReportService extends BaseHibernateDao {
 
     protected Serializable formatBindValue(StatValueClass vc, String v){
-        switch (vc){
-            case LONG -> {
-                return Long.parseLong(v);
-            }
-            case INTEGER -> {
-                return Integer.parseInt(v);
-            }
-            case SHORT -> {
-                return Short.parseShort(v);
-            }
-            case STRING -> {
-                return v;
-            }
-            case BOOLEAN -> {
-                if(v.equals("true")||v.equals("1")){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-        }
-        return v;
+        return BussUtil.formatBindValue(vc,v);
     }
 
     /**

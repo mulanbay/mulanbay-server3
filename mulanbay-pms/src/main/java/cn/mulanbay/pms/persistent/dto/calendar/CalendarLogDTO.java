@@ -22,6 +22,8 @@ public class CalendarLogDTO implements Serializable {
 
     private int days;
 
+    private String content;
+
     public Long getSourceId() {
         return sourceId;
     }
@@ -68,5 +70,13 @@ public class CalendarLogDTO implements Serializable {
 
     public void setDays(int days) {
         this.days = days;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -9,7 +9,7 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.RewardPointsHandler;
+import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.service.PlanService;
@@ -45,7 +45,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
 
     CacheHandler cacheHandler = null;
 
-    RewardPointsHandler rewardPointsHandler = null;
+    RewardHandler rewardHandler = null;
 
     UserCalendarService userCalendarService = null;
 
@@ -61,7 +61,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
         planService = BeanFactoryUtil.getBean(PlanService.class);
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
-        rewardPointsHandler = BeanFactoryUtil.getBean(RewardPointsHandler.class);
+        rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
         userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
         baseService = BeanFactoryUtil.getBean(BaseService.class);
         List<UserPlan> list = planService.getNeedRemindUserPlan(para.getPlanType());
@@ -219,12 +219,12 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
                 rewards = userPlan.getTemplate().getRewards() * (-1);
                 remark = "计划[" + userPlan.getTitle() + "]进度未达到要求惩罚";
             }
-            rewardPointsHandler.rewardPoints(userPlan.getUserId(), rewards, userPlan.getPlanId(), RewardSource.PLAN, remark, messageId);
+            rewardHandler.rewardPoints(userPlan.getUserId(), rewards, userPlan.getPlanId(), BussSource.PLAN, remark, messageId);
             if (isComplete) {
                 //删除日历
                 PlanTemplate template = userPlan.getTemplate();
                 String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),userPlan.getBindValues());
-                userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,userPlan.getPlanId(),UserCalendarSource.PLAN, messageId);
+                userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,userPlan.getPlanId(), BussSource.PLAN, messageId);
             } else {
                 //添加到用户日历
                 addToUserCalendar(userPlan, messageId);
@@ -267,7 +267,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
                     uc.setExpireTime(DateUtil.getYearLast(DateUtil.getYear(uc.getBussDay())));
                 }
                 uc.setBussIdentityKey(bussIdentityKey);
-                uc.setSourceType(UserCalendarSource.PLAN);
+                uc.setSourceType(BussSource.PLAN);
                 uc.setSourceId(userPlan.getPlanId());
                 uc.setMessageId(messageId);
                 userCalendarService.addUserCalendarToDate(uc);
