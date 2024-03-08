@@ -49,6 +49,10 @@ public class BehaviorTemplateForm implements BindUser {
     //加入小时分析
     @NotNull(message = "小时分析不能为空")
     private Boolean hourStat;
+
+    @NotNull(message = "全天日历不能为空")
+    private Boolean allDay;
+
     /**
      * 计划值的单位，这里的值只是在配置用户计划时默认加载使用，实际还是根据UserPlan取里面的unit来
      * 因为比如运动锻炼，跑步的数值单位是公里，而平板支撑的数值单位是分钟
@@ -180,6 +184,14 @@ public class BehaviorTemplateForm implements BindUser {
 
     public void setHourStat(Boolean hourStat) {
         this.hourStat = hourStat;
+    }
+
+    public Boolean getAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(Boolean allDay) {
+        this.allDay = allDay;
     }
 
     public String getUnit() {

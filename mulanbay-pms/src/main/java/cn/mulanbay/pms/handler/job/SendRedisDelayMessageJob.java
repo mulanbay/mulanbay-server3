@@ -65,7 +65,7 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
     private boolean sendMessage(Message message) {
         try {
             long expectTime = message.getExpectSendTime().getTime();
-            if((System.currentTimeMillis()-expectTime)>para.getExpires()){
+            if((System.currentTimeMillis()-expectTime)>para.getExpires()*1000L){
                 logger.debug("消息已经过期");
                 redisDelayQueueHandler.removeMessage(message);
                 message.setSendStatus(MessageSendStatus.SKIP);
@@ -75,6 +75,7 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
             }
             Message mm = new Message();
             //需要拷贝一个新的，因为sendMessage会修改message内容，导致redisDelayQueueHandler无法删除
+            //todo 如果持久化产生msgId，应该不需要在拷贝了
             BeanCopy.copy(message, mm);
             boolean res = messageSendHandler.sendMessage(mm);
             redisDelayQueueHandler.removeMessage(message);

@@ -92,6 +92,9 @@ public class WXHandler extends BaseHandler {
     @Autowired
     SystemConfigHandler systemConfigHandler;
 
+    @Autowired
+    LogHandler logHandler;
+
     /**
      * 授权回调地址
      */
@@ -242,13 +245,15 @@ public class WXHandler extends BaseHandler {
                     // 获取accessToken
                     String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + secret;
                     HttpResult hr = HttpUtils.doGet(url);
+                    LogLevel level = LogLevel.NORMAL;
                     if (hr.getStatusCode() == Constant.SC_OK) {
                         AccessToken at = (AccessToken) JsonUtil.jsonToBean(hr.getBody(), AccessToken.class);
                         accessToken = at.getAccess_token();
                         cacheHandler.set(cacheKey, accessToken, at.getExpires_in() - 10);
-                    } else {
-                        logger.warn("无法获取到AccessToken");
+                    } else{
+                        level = LogLevel.ERROR;
                     }
+                    logHandler.addSysLog(level,"获取微信accessToken",hr.getBody(),PmsCode.WX_TOKEN_RESULT);
                     lock.readLock().lock();
                 } catch (Exception e) {
                     logger.error("从微信获取AccessToken异常",e);
@@ -278,7 +283,7 @@ public class WXHandler extends BaseHandler {
             JsApiTicket at = (JsApiTicket) JsonUtil.jsonToBean(hr.getBody(), JsApiTicket.class);
             return at;
         } else {
-            throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
+            throw new ApplicationException(PmsCode.WX_JSAPITOCKEN_ERROR);
         }
     }
 
@@ -310,7 +315,7 @@ public class WXHandler extends BaseHandler {
             return jta;
         } catch (Exception e) {
             logger.error("getJsapiTicketAuth error", e);
-            throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
+            throw new ApplicationException(PmsCode.WX_JSAPITOCKEN_ERROR);
         }
     }
 
@@ -329,7 +334,7 @@ public class WXHandler extends BaseHandler {
             JsApiTicket jt = this.getJsapiTicket(accessToken);
             jsapiTicket = jt.getTicket();
             if (jt.getExpires_in() <= 0) {
-                throw new ApplicationException(PmsCode.WXPAY_JSAPITOCKEN_ERROR);
+                throw new ApplicationException(PmsCode.WX_JSAPITOCKEN_ERROR);
             }
             cacheHandler.set(key, jt.getTicket(), jt.getExpires_in() - 60);
         }
@@ -382,7 +387,7 @@ public class WXHandler extends BaseHandler {
             return new String(buf);
         } catch (Exception e) {
             logger.error("getSha1 异常", e);
-            throw new ApplicationException(PmsCode.WXPAY_TOKEN_SHA_ERROR);
+            throw new ApplicationException(PmsCode.WX_TOKEN_SHA_ERROR);
         }
     }
 

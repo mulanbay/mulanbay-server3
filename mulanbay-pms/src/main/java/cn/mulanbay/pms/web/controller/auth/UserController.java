@@ -11,10 +11,7 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.common.PmsCode;
-import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.handler.ThreadPoolHandler;
-import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.handler.WXHandler;
+import cn.mulanbay.pms.handler.*;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import cn.mulanbay.pms.persistent.enums.AuthType;
@@ -41,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static cn.mulanbay.pms.common.Constant.DEFAULT_SCORE_GROUP_ID;
 
 /**
  * 用户
@@ -80,6 +79,10 @@ public class UserController extends BaseController {
 
     @Autowired
     WXHandler wxHandler;
+
+    @Autowired
+    UserHandler userHandler;
+
     /**
      * 用户树
      * @return
@@ -189,6 +192,7 @@ public class UserController extends BaseController {
         UserSet us = new UserSet();
         us.setSendWx(true);
         us.setSendEmail(true);
+        us.setScoreGroupId(DEFAULT_SCORE_GROUP_ID);
         authService.createUser(user, us);
         return callback(null);
     }
@@ -331,6 +335,7 @@ public class UserController extends BaseController {
         baseService.updateObject(user);
         BeanCopy.copy(eui, us);
         baseService.updateObject(us);
+        userHandler.expireUserSet(us.getUserId());
         return callback(null);
     }
 

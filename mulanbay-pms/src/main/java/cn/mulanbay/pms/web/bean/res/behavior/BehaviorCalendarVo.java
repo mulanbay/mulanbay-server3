@@ -2,6 +2,7 @@ package cn.mulanbay.pms.web.bean.res.behavior;
 
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
+import jakarta.persistence.Transient;
 
 import java.util.Date;
 
@@ -126,6 +127,14 @@ public class BehaviorCalendarVo {
 
     public String getBussTypeName() {
         return bussType==null ? null:bussType.getName();
+    }
+
+    /**
+     * 页面颜色分类使用
+     * @return
+     */
+    public int getSourceTypeIndex() {
+        return source == null ? 0 : source.getValue();
     }
 
 }

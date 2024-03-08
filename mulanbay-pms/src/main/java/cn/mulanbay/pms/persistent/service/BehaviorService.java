@@ -133,7 +133,7 @@ public class BehaviorService extends BaseReportService {
         dto.addArg(startTime);
         dto.addArg(endTime);
         if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.CALENDAR);
+            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.BEHAVIOR);
             String[] bs = bindValues.split(",");
             int n = bs.length;
             for(int i=0;i<n;i++){
@@ -141,6 +141,8 @@ public class BehaviorService extends BaseReportService {
             }
             String extraSql = template.getExtraSql();
             sqlContent = sqlContent.replace("{extra_sql}"," "+extraSql);
+        }else{
+            sqlContent = sqlContent.replace("{extra_sql}","");
         }
         dto.setSqlContent(sqlContent);
         return dto;

@@ -108,9 +108,7 @@ public class UserCalendar implements java.io.Serializable {
     private String periodValues;
 
     /**
-     * 以模板新增的，可以查询是否完成的判断
-     * 这里不需要多对一设置
-     * 判断是否完成以bussIdentityKey来判断
+     * 这里使用行为模版
      */
     @Column(name = "template_id")
     private Long templateId;

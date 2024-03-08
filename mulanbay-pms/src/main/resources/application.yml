@@ -29,9 +29,13 @@ mulanbay:
     corePoolSize: 20
     queueSize: 1024
     maximumPoolSize: 200
-  #缓存配置是否采用内存(false表示用redis)
-  configCache:
-    byMemoryCache: false
+  cache:
+    bean:
+      #通用bean的失效时间(秒)
+      expires: 300
+    config:
+      #缓存配置是否采用内存(false表示用redis)
+      byMemory: false
   #持久层列表查询缓存
   persistent:
     page:
@@ -96,9 +100,7 @@ mulanbay:
       expectSendTime: 09:00
       #是否需要提醒表单验证类的错误代码
       validateError: false
-      #表单验证类的错误代码最小值
-      minCode: 10000000
-      #大于改天数的不再发送
+      #大于该天数的不再发送
       expiredDays: 3
       send:
         #消息最大发送失败次数
@@ -106,7 +108,9 @@ mulanbay:
         #每次发送失败重试次数
         retryTimes: 3
         #消息发送是否需要锁定
-        lock: false
+        lock: true
+        #是否同步发送
+        sync: true
     code:
       #系统代码次数批量更新点
       batchUpdates: 20

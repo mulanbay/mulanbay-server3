@@ -15,12 +15,14 @@ import cn.mulanbay.pms.handler.UserCalendarHandler;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarBean;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarIdBean;
 import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
+import cn.mulanbay.pms.persistent.domain.BehaviorTemplate;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
+import cn.mulanbay.pms.persistent.service.BehaviorService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -64,6 +66,9 @@ public class UserCalendarController extends BaseController {
     @Autowired
     DataHandler dataHandler;
 
+    @Autowired
+    BehaviorService behaviorService;
+
     /**
      * 获取列表数据
      * @param sf
@@ -104,7 +109,8 @@ public class UserCalendarController extends BaseController {
         if(bean.getTemplateId()==null){
             return callback(new ArrayList<>());
         }
-        List<CalendarLogDTO> list = userCalendarService.getCalendarLogResultList(sf.getUserId(),sf.getStartDate(),sf.getEndDate(),bean.getTemplateId(),bean.getBindValues(),sf.getPage(),sf.getPageSize());
+        BehaviorTemplate template = baseService.getObject(BehaviorTemplate.class,bean.getTemplateId());
+        List<CalendarLogDTO> list = behaviorService.getCalendarLogList(sf.getUserId(),sf.getStartDate(),sf.getEndDate(),template,bean.getBindValues(),sf.getPage(),sf.getPageSize());
         return callback(list);
     }
 

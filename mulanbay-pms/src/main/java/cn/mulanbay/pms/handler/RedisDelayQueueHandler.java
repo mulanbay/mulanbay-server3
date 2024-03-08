@@ -34,9 +34,15 @@ public class RedisDelayQueueHandler extends BaseHandler {
     @Value("${mulanbay.namespace}")
     String namespace;
 
+    /**
+     * 当缓存被清空时，重新从数据库加载时，最大的失效天数，
+     */
     @Value("${mulanbay.notify.message.expiredDays:3}")
     int expiredDays;
 
+    /**
+     * 是否重启时清空队列中的消息
+     */
     @Value("${mulanbay.notify.message.clearAfterRestart}")
     boolean clearAfterRestart;
 
@@ -112,6 +118,10 @@ public class RedisDelayQueueHandler extends BaseHandler {
             String key = getQueueName();
             if (um.getExpectSendTime() == null) {
                 um.setExpectSendTime(new Date());
+            }
+            if(um.getMsgId()==null){
+                //持久化，产生msgId
+                baseService.saveObject(um);
             }
             //以预期发送时间顺序排列
             double score = um.getExpectSendTime().getTime();

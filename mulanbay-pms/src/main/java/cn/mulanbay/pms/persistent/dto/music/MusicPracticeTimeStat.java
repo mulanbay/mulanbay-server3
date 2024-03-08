@@ -2,8 +2,6 @@ package cn.mulanbay.pms.persistent.dto.music;
 
 import cn.mulanbay.pms.persistent.dto.common.DateStat;
 
-import java.math.BigInteger;
-
 public class MusicPracticeTimeStat implements DateStat {
     // 月份
     private Number indexValue;

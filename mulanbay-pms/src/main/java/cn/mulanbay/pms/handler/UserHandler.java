@@ -22,7 +22,7 @@ import java.util.List;
 public class UserHandler extends BaseHandler {
 
     @Autowired
-    BaseService baseService;
+    CommonCacheHandler commonCacheHandler;
 
     @Autowired
     MonitorUserService systemMonitorUserService;
@@ -33,24 +33,32 @@ public class UserHandler extends BaseHandler {
 
     /**
      * 用户配置
-     * todo 后期修改为缓存
      *
      * @param userId
      * @return
      */
     public UserSet getUserSet(Long userId){
-        return baseService.getObject(UserSet.class,userId);
+        return commonCacheHandler.getBean(UserSet.class,userId);
+    }
+
+    /**
+     * 删除用户配置
+     *
+     * @param userId
+     * @return
+     */
+    public void expireUserSet(Long userId){
+        commonCacheHandler.removeBean(UserSet.class,userId);
     }
 
     /**
      * 用户
-     * todo 后期修改为缓存
      *
      * @param userId
      * @return
      */
     public User getUser(Long userId){
-        return baseService.getObject(User.class,userId);
+        return commonCacheHandler.getBean(User.class,userId);
     }
 
 

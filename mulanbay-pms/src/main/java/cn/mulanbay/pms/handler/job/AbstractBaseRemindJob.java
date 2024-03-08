@@ -50,7 +50,7 @@ public abstract class AbstractBaseRemindJob extends AbstractBaseJob {
         if (lastRemindTime == null) {
             //说明没有通知过，马上通知
             //算上用户设置的时间:比如现在2017-11-03 03:00:00,用户设置为08：30，那么提醒时间=2017-11-03 08:30:00
-            Date next = DateUtil.addHourMinToDate(null, remindTime);
+            Date next = DateUtil.addHourMin(null, remindTime);
             bean.setNextRemindTime(next);
         } else {
             Date fromLastTime = new Date(lastRemindTime.getTime() + days * 24 * 3600 * 1000);

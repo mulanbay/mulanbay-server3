@@ -1,9 +1,11 @@
 package cn.mulanbay.pms.web.bean.req.report.plan;
 
 import cn.mulanbay.common.aop.BindUser;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.SqlType;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -44,8 +46,7 @@ public class PlanTemplateForm implements BindUser {
     @NotNull(message = "奖励积分不能为空")
     private Integer rewards;
 
-    private String bussKey;
-
+    private BussSource source;
     private String calendarTitle;
 
     private String url;
@@ -160,12 +161,12 @@ public class PlanTemplateForm implements BindUser {
         this.rewards = rewards;
     }
 
-    public String getBussKey() {
-        return bussKey;
+    public BussSource getSource() {
+        return source;
     }
 
-    public void setBussKey(String bussKey) {
-        this.bussKey = bussKey;
+    public void setSource(BussSource source) {
+        this.source = source;
     }
 
     public String getCalendarTitle() {

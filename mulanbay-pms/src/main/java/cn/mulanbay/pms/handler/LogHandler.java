@@ -32,11 +32,21 @@ public class LogHandler extends BaseHandler {
 
     }
 
+    /**
+     * 操作日志
+     *
+     * @param log
+     */
     public void addOperLog(OperLog log) {
         OperLogThread thread = new OperLogThread(log);
         threadPoolHandler.pushThread(thread);
     }
 
+    /**
+     * 系统日志
+     *
+     * @param log
+     */
     public void addSysLog(SysLog log) {
         if (log.getOccurTime() == null) {
             log.setOccurTime(new Date());
@@ -45,6 +55,14 @@ public class LogHandler extends BaseHandler {
         threadPoolHandler.pushThread(thread);
     }
 
+    /**
+     * 系统日志
+     *
+     * @param logLevel
+     * @param title
+     * @param content
+     * @param errorCode
+     */
     public void addSysLog(LogLevel logLevel, String title, String content, int errorCode) {
         SysLog log = new SysLog();
         log.setUserId(0L);

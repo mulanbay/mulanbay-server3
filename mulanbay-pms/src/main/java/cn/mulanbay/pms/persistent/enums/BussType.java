@@ -25,7 +25,8 @@ public enum BussType {
     ACCOUNT(12, Account.class, "资金"),
     INCOME(13, Income.class,"收入"),
     BODY_INFO(14, BodyInfo.class,"身体数据"),
-    BUDGET_LOG(15, BudgetLog.class,"预算日志");
+    BUDGET_LOG(15, BudgetLog.class,"预算日志"),
+    LOG(16, OperLog.class,"日志");
 
     private int value;
 

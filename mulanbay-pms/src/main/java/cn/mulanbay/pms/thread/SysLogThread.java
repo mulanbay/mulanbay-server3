@@ -69,7 +69,7 @@ public class SysLogThread extends BaseLogThread {
                 BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
                 baseService.saveObject(log);
             }
-            this.notifyError(log.getUserId(), ec, log.getContent());
+            this.notifyError(log.getUserId(), ec.getCode(), log.getContent());
         } catch (Exception e) {
             String msg = "增加系统日志异常，log=" + log.getContent();
             logger.error(msg, e);

@@ -149,7 +149,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
     private void addToUserCalendar(BudgetLog bl, Long messageId, String content, Date bussDay) {
         try {
             UserCalendarService userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(bl.getBussKey(),null);
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussSource.BUDGET_LOG,bl.getBussKey());
             UserCalendar uc = userCalendarService.getUserCalendar(bl.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

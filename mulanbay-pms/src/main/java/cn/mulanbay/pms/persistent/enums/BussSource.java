@@ -10,9 +10,9 @@ import cn.mulanbay.pms.persistent.domain.*;
 public enum BussSource {
 
     MANUAL(0, "手动", UserCalendar.class),
-    STAT(1, "提醒", UserStat.class),
+    STAT(1, "统计", UserStat.class),
     PLAN(2, "计划", UserPlan.class),
-    COMMON_DATA(3, "通用", CommonData.class),
+    COMMON_DATA(3, "通用记录", CommonData.class),
     BUDGET(4, "预算", Budget.class),
     TREAT_OPERATION(5, "手术", TreatOperation.class),
     TREAT_DRUG(6, "用药",TreatDrug.class),
@@ -21,7 +21,17 @@ public enum BussSource {
     DREAM(9, "梦想", Dream.class),
     OPERATION(10, "用户操作", OperLog.class),
     EXERCISE(11, "锻炼", Exercise.class),
-    EXPERIENCE(12, "人生经历", Experience.class);
+    EXPERIENCE(12, "人生经历", Experience.class),
+    DIET(13, "饮食", Diet.class),
+    TREAT(14, "看病", Treat.class),
+    BODY_INFO(15, "身体数据", BodyInfo.class),
+    BODY_ABNORMAL(16, "身体不适", BodyAbnormal.class),
+    READ_DETAIL(17, "阅读", ReadDetail.class),
+    MUSIC_PRACTICE(18, "音乐练习", MusicPractice.class),
+    WORK_OVERTIME(19, "加班", WorkOvertime.class),
+    SLEEP(20, "睡眠", Sleep.class),
+    BUSINESS_TRIP(21, "出差", BusinessTrip.class),
+    OPER_LOG(21, "操作日志", OperLog.class);
 
     private int value;
 

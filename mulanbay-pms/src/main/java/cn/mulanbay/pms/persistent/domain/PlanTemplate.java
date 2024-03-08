@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.SqlType;
@@ -64,13 +65,13 @@ public class PlanTemplate implements java.io.Serializable {
     private Integer rewards;
 
     /**
-     * 业务key，该key目前作为日历自动更新的匹配类型
+     * 业务来源，该key目前作为日历自动更新的匹配类型
      * 业务逻辑：UserPlan、UserStat、UserCalendar都可以使用这个bussKey来匹配某个日历是否为同一种类型
      * 比如：UserPlan定义了用户消费限制计划，UserStat定义消费限制统计，都生成到UserCalendar中
      *      在定时任务中检查时，任意的一个业务查询到已经完成，就可以更新这个日历为已经完成
      */
-    @Column(name = "buss_key")
-    private String bussKey;
+    @Column(name = "source")
+    private BussSource source;
 
     @Column(name = "calendar_title")
     private String calendarTitle;
@@ -181,12 +182,12 @@ public class PlanTemplate implements java.io.Serializable {
         this.rewards = rewards;
     }
 
-    public String getBussKey() {
-        return bussKey;
+    public BussSource getSource() {
+        return source;
     }
 
-    public void setBussKey(String bussKey) {
-        this.bussKey = bussKey;
+    public void setSource(BussSource source) {
+        this.source = source;
     }
 
     public String getCalendarTitle() {

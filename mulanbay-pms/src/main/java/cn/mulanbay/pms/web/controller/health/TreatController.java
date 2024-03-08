@@ -553,7 +553,7 @@ public class TreatController extends BaseController {
             TreatDateStatSH monthStatSearch = this.generateSearch(sf.getYears().get(i), sf);
             List<TreatDateStat> list = treatService.getDateStat(monthStatSearch);
             for (TreatDateStat bean : list) {
-                String dateString = DateUtil.getFormatDateString(bean.getDateIndexValue().toString(), "yyyyMMdd", "yyyy-MM-dd");
+                String dateString = DateUtil.getFormatDate(bean.getDateIndexValue().toString(), "yyyyMMdd", "yyyy-MM-dd");
                 if (sf.getGroupType() == GroupType.COUNT) {
                     data.addData(sf.getYears().get(i), dateString, bean.getTotalCount());
                 } else {

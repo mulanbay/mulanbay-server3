@@ -8,7 +8,6 @@ import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.BehaviorTemplate;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.BehaviorService;
 import cn.mulanbay.pms.web.bean.req.behavior.BehaviorTemplateSH;
@@ -93,6 +92,5 @@ public class UserBehaviorController  extends BaseController {
         CommonDataBean bean = dataHandler.getSourceData(source,sourceId);
         return callback(bean);
     }
-
 
 }

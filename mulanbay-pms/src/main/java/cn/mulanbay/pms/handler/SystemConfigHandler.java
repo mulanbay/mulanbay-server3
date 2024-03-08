@@ -43,7 +43,7 @@ public class SystemConfigHandler extends BaseHandler {
     /**
      * 是否采用内存缓存
      */
-    @Value("${mulanbay.configCache.byMemoryCache}")
+    @Value("${mulanbay.cache.config.byMemory:false}")
     boolean byMemoryCache = false;
 
     @Autowired

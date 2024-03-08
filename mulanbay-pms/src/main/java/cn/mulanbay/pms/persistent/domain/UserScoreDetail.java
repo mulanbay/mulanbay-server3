@@ -25,20 +25,31 @@ public class UserScoreDetail implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    private Long id;
+    @Column(name = "detail_id", unique = true, nullable = false)
+    private Long detalId;
 
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "user_score_id")
-    private Long userScoreId;
+    /**
+     * 外键编号
+     */
+    @Column(name = "score_id")
+    private Long scoreId;
 
     @ManyToOne
     @JoinColumn(name = "config_id")
     private ScoreConfig scoreConfig;
+
+    /**
+     * 单项得分
+     */
     @Column(name = "score")
     private Integer score;
+
+    /**
+     * 统计值
+     */
     @Column(name = "stat_value")
     private Double statValue;
     @Column(name = "remark")
@@ -56,12 +67,12 @@ public class UserScoreDetail implements java.io.Serializable {
     @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
-    public Long getId() {
-        return id;
+    public Long getDetalId() {
+        return detalId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDetalId(Long detalId) {
+        this.detalId = detalId;
     }
 
     public Long getUserId() {
@@ -72,12 +83,12 @@ public class UserScoreDetail implements java.io.Serializable {
         this.userId = userId;
     }
 
-    public Long getUserScoreId() {
-        return userScoreId;
+    public Long getScoreId() {
+        return scoreId;
     }
 
-    public void setUserScoreId(Long userScoreId) {
-        this.userScoreId = userScoreId;
+    public void setScoreId(Long scoreId) {
+        this.scoreId = scoreId;
     }
 
     public ScoreConfig getScoreConfig() {
@@ -131,7 +142,7 @@ public class UserScoreDetail implements java.io.Serializable {
     @Override
     public boolean equals(Object other) {
         if (other instanceof UserScoreDetail bean) {
-            return bean.getId().equals(this.getId());
+            return bean.getDetalId().equals(this.getDetalId());
         }else {
             return false;
         }
@@ -139,6 +150,6 @@ public class UserScoreDetail implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(detalId);
     }
 }

@@ -3,6 +3,7 @@ package cn.mulanbay.pms.util;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.domain.Budget;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.StatValueClass;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
@@ -245,12 +246,12 @@ public class BussUtil {
     /**
      * 用户日历唯一业务key
      *
-     * @param bussKey 业务类型
+     * @param source 业务类型
      * @param bussValue 业务值（比如用户计划的绑定值）
      * @return
      */
-    public static String getCalendarBussIdentityKey(String bussKey,String bussValue){
-        return bussKey+"_"+bussValue;
+    public static String getCalendarBussIdentityKey(BussSource source, String bussValue){
+        return source.name()+"_"+bussValue;
     }
 
     /**

@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.persistent.dto.health;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 public class TreatDrugDetailStat {

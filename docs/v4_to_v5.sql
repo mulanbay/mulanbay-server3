@@ -1031,3 +1031,29 @@ CHANGE COLUMN `buss_type` `buss_type` SMALLINT NOT NULL DEFAULT '0' AFTER `level
 
 ALTER TABLE `dict_item`
     ADD COLUMN `value_class` SMALLINT(5) NOT NULL DEFAULT 3 AFTER `code`;
+
+#删除统计绑定数据中的无效数据
+delete from stat_bind_config where type=5 and config_id>0;
+delete from stat_bind_config where type=1 and config_id>0;
+delete from stat_bind_config where type=4 and config_id>0;
+delete from stat_bind_config where type=0 and fid not in (select template_id from stat_template) and config_id>0;
+delete from stat_bind_config where type=2 and fid not in (select template_id from plan_template) and config_id>0;
+delete from stat_bind_config where type=3 and fid not in (select template_id from behavior_template) and config_id>0;
+
+ALTER TABLE `plan_template`
+DROP COLUMN `buss_key`,
+ADD COLUMN `source` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `rewards`;
+
+ALTER TABLE `stat_template`
+DROP COLUMN `buss_key`,
+ADD COLUMN `source` SMALLINT(5) NOT NULL DEFAULT 0 AFTER `rewards`;
+
+ALTER TABLE `user_score`
+    CHANGE COLUMN `id` `scoreId` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `user_score_detail`
+    CHANGE COLUMN `id` `detail_id` BIGINT NOT NULL AUTO_INCREMENT ,
+    CHANGE COLUMN `user_score_id` `score_id` BIGINT NOT NULL ;
+
+ALTER TABLE `behavior_template`
+    CHANGE COLUMN `month_stat` `month_stat` BIT(1) NOT NULL DEFAULT 1 ;

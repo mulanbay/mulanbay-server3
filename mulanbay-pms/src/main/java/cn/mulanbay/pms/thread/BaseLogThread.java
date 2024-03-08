@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.thread;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
+import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.MapUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.NotifyHandler;
@@ -64,31 +65,14 @@ public class BaseLogThread extends Thread {
      * @param code
      * @param message
      */
-    protected void notifyError(Long userId, int code, String message) {
-        if (code == 0) {
-            return;
-        }
-        SystemConfigHandler systemConfigHandler = BeanFactoryUtil.getBean(SystemConfigHandler.class);
-        SysCode ec = systemConfigHandler.getSysCode(code);
-        notifyError(userId, ec, message);
-    }
-
-
-    /**
-     * 消息提醒
-     * @param userId
-     * @param ec
-     * @param message
-     */
-    protected void notifyError(Long userId, SysCode ec, String message) {
+    protected void notifyError(Long userId,  int code, String message) {
         try {
-            if (ec == null) {
+            if (code == ErrorCode.SUCCESS) {
                 return;
             }
-            String title = "错误代码通知" + ec.getName();
             //通知
             NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
-            notifyHandler.addMessageToNotifier(ec.getCode(), title, message + "," + getUserInfo(userId),
+            notifyHandler.addMessageToNotifier(code, "错误代码通知", message + "," + getUserInfo(userId),
                     null, null);
         } catch (Exception e) {
             logger.error("处理错误代码异常", e);

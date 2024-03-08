@@ -7,7 +7,6 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.bean.data.CommonDataBean;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +37,7 @@ public class DataHandler extends BaseHandler {
             bean.setContent("sourceId="+sourceId);
             return bean;
         }
+        bean.setOriginData(o);
         switch (source){
             case STAT -> this.setUserStatData(bean, (UserStat) o);
             case PLAN -> this.setUserPlanData(bean, (UserPlan) o);

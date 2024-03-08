@@ -31,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 积分记录
@@ -107,8 +109,10 @@ public class UserRewardController extends BaseController {
     public ResultBean sourceDetail(@RequestParam(name = "id") Long id) {
         UserReward bean = baseService.getObject(beanClass,id);
         CommonDataBean data = dataHandler.getSourceData(bean.getSource(),bean.getSourceId());
-        data.setOriginData(bean);
-        return callback(data);
+        Map<String,Object> res = new HashMap<>();
+        res.put("rewardData",bean);
+        res.put("beanData",data);
+        return callback(res);
     }
 
     /**

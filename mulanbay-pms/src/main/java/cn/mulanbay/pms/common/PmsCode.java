@@ -369,9 +369,11 @@ public class PmsCode {
      * 微信 start
      **/
 
-    public static final int WXPAY_JSAPITOCKEN_ERROR = 1160100;
+    public static final int WX_JSAPITOCKEN_ERROR = 1160100;
 
-    public static final int WXPAY_TOKEN_SHA_ERROR = 1160101;
+    public static final int WX_TOKEN_SHA_ERROR = 1160101;
+
+    public static final int WX_TOKEN_RESULT = 1160102;
 
     /** 微信 end **/
 

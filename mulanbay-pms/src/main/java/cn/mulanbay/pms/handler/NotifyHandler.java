@@ -26,6 +26,8 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 
+import static cn.mulanbay.common.exception.ErrorCode.FORM_VALID_ERROR;
+
 /**
  * 提醒处理
  *
@@ -54,12 +56,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      */
     @Value("${mulanbay.notify.message.validateError}")
     boolean notifyValidateError;
-
-    /**
-     * 表单验证类的系统代码最小值，一般是8位数开始
-     */
-    @Value("${mulanbay.notify.message.minCode}")
-    int minValidateCode;
 
     @Autowired
     BaseService baseService;
@@ -163,7 +159,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      */
     public void addMessageToNotifier(int code, String title, String content, Date notifyTime, String url, String remark) {
         try {
-            if (!notifyValidateError && code >= minValidateCode) {
+            //表单验证类的跳过
+            if (!notifyValidateError && code == FORM_VALID_ERROR) {
                 return;
             }
             SysCode ec = systemConfigHandler.getSysCode(code);

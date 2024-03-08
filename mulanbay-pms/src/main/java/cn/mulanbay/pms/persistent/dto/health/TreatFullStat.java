@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.dto.health;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 public class TreatFullStat {

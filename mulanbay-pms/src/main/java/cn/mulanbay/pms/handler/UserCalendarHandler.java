@@ -4,6 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
+import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.NullType;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.service.BaseService;
@@ -15,10 +16,7 @@ import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
-import cn.mulanbay.pms.persistent.service.BudgetService;
-import cn.mulanbay.pms.persistent.service.ConsumeService;
-import cn.mulanbay.pms.persistent.service.TreatService;
-import cn.mulanbay.pms.persistent.service.UserCalendarService;
+import cn.mulanbay.pms.persistent.service.*;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.data.calendar.UserCalendarListSH;
@@ -56,6 +54,9 @@ public class UserCalendarHandler extends BaseHandler {
 
     @Autowired
     BaseService baseService;
+
+    @Autowired
+    BehaviorService behaviorService;
 
     public UserCalendarHandler() {
         super("用户日历处理");
@@ -107,8 +108,9 @@ public class UserCalendarHandler extends BaseHandler {
             Long templateId = uc.getTemplateId();
             Map<String,CalendarLogDTO> flowMap = new HashMap<>();
             if (templateId != null && sf.getNeedBandLog()) {
-                //流水日志
-                List<CalendarLogDTO> flowLogs = userCalendarService.getCalendarLogResultList(sf.getUserId(), sf.getStartDate(), sf.getEndDate(), templateId, uc.getBindValues());
+                //流水日志(和行为绑定)
+                BehaviorTemplate template = baseService.getObject(BehaviorTemplate.class,templateId);
+                List<CalendarLogDTO> flowLogs = behaviorService.getCalendarLogList(sf.getUserId(),sf.getStartDate(),sf.getEndDate(),template,uc.getBindValues(), BaseHibernateDao.NO_PAGE,BaseHibernateDao.NO_PAGE_SIZE);
                 for(CalendarLogDTO dto : flowLogs){
                     flowMap.put(DateUtil.getFormatDate(dto.getDate(),DateUtil.FormatDay1),dto);
                 }

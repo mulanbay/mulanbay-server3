@@ -14,7 +14,6 @@ import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.data.reward.UserRewardDateStatSH;
 import cn.mulanbay.pms.web.bean.req.data.reward.UserRewardSourceStatSH;
-import cn.mulanbay.pms.web.bean.req.music.musicPractice.MusicPracticeDateStatSH;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

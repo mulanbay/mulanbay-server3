@@ -11,7 +11,10 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.*;
-import cn.mulanbay.pms.persistent.enums.*;
+import cn.mulanbay.pms.persistent.enums.BussSource;
+import cn.mulanbay.pms.persistent.enums.CompareType;
+import cn.mulanbay.pms.persistent.enums.PlanType;
+import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -223,7 +226,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
             if (isComplete) {
                 //删除日历
                 PlanTemplate template = userPlan.getTemplate();
-                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),userPlan.getBindValues());
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),userPlan.getBindValues());
                 userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,userPlan.getPlanId(), BussSource.PLAN, messageId);
             } else {
                 //添加到用户日历
@@ -242,7 +245,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
     private void addToUserCalendar(UserPlan userPlan, Long messageId) {
         try {
             PlanTemplate template = userPlan.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),userPlan.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),userPlan.getBindValues());
             UserCalendar uc = userCalendarService.getUserCalendar(userPlan.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);
@@ -257,7 +260,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
                     uc.setBussDay(DateUtil.getDate(0));
                     uc.setAllDay(true);
                 } else {
-                    Date bussDay = DateUtil.addHourMinToDate(null, calendarTime);
+                    Date bussDay = DateUtil.addHourMin(null, calendarTime);
                     uc.setBussDay(bussDay);
                     uc.setAllDay(false);
                 }
@@ -307,7 +310,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
             if (planType == PlanType.MONTH) {
                 nextRemindTime = DateUtil.getMonthLast(new Date());
             } else if (planType == PlanType.YEAR) {
-                nextRemindTime = DateUtil.getLastDayOfCurrYear();
+                nextRemindTime = DateUtil.getYearLast(new Date());
             }
         }
         /**

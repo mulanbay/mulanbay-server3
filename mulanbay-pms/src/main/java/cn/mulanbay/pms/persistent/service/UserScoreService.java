@@ -39,14 +39,14 @@ public class UserScoreService extends BaseHibernateDao {
                 String hh = "from UserScore where userId=?1 and startTime=?2 and endTime=?3";
                 UserScore old = this.getEntity(hh,UserScore.class, us.getUserId(), us.getStartTime(), us.getEndTime());
                 if (old != null) {
-                    String hql = "delete from UserScoreDetail where userScoreId=?0 ";
-                    this.updateEntities(hql, old.getId());
+                    String hql = "delete from UserScoreDetail where scoreId=?0 ";
+                    this.updateEntities(hql, old.getScoreId());
                     this.removeEntity(old);
                 }
             }
             this.saveEntity(us);
             for (UserScoreDetail dd : list) {
-                dd.setUserScoreId(us.getId());
+                dd.setScoreId(us.getScoreId());
                 this.saveEntity(dd);
             }
         } catch (BaseException e) {
@@ -123,10 +123,10 @@ public class UserScoreService extends BaseHibernateDao {
      *
      * @return
      */
-    public List<UserScoreDetail> selectDetailList(Long userScoreId) {
+    public List<UserScoreDetail> selectDetailList(Long scoreId) {
         try {
-            String hql = "from UserScoreDetail where userScoreId=?1 ";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,UserScoreDetail.class, userScoreId);
+            String hql = "from UserScoreDetail where scoreId=?1 ";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,UserScoreDetail.class, scoreId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取评分详情异常", e);
@@ -211,9 +211,9 @@ public class UserScoreService extends BaseHibernateDao {
         try {
             String hql=null;
             if(compareType==LogCompareType.EARLY){
-               hql = "select id from UserScore where id <?1 and userId=?2 order by id desc";
+               hql = "select scoreId from UserScore where scoreId <?1 and userId=?2 order by id desc";
             }else{
-                hql = "select id from UserScore where id >?1 and userId=?2 order by id asc";
+                hql = "select scoreId from UserScore where scoreId >?1 and userId=?2 order by id asc";
             }
             return this.getEntity(hql,Long.class,currentId,userId);
         } catch (BaseException e) {

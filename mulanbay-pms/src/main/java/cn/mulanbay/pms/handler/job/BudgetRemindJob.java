@@ -106,7 +106,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
     private void addToUserCalendar(Budget bd, String bussKey,Date bussDay, Long messageId, String content) {
         try {
             UserCalendarService userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(bussKey,null);
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussSource.BUDGET,bd.getBudgetId().toString());
             UserCalendar uc = userCalendarService.getUserCalendar(bd.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

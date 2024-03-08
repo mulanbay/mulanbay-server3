@@ -9,8 +9,8 @@ import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.Dream;
 import cn.mulanbay.pms.persistent.domain.DreamRemind;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.BussSource;
+import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.service.DreamService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -129,7 +129,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
      */
     private void addToUserCalendar(Dream dream, Long messageId) {
         try {
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussType.DREAM.name(),dream.getDreamId().toString());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(BussSource.DREAM,dream.getDreamId().toString());
             UserCalendar uc = userCalendarService.getUserCalendar(dream.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.bean.req.report.stat;
 
 import cn.mulanbay.pms.persistent.enums.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -41,7 +42,7 @@ public class StatTemplateForm {
     @NotNull(message = "奖励积分不能为空")
     private Integer rewards;
 
-    private String bussKey;
+    private BussSource source;
 
     private String calendarTitle;
 
@@ -156,12 +157,12 @@ public class StatTemplateForm {
         this.rewards = rewards;
     }
 
-    public String getBussKey() {
-        return bussKey;
+    public BussSource getSource() {
+        return source;
     }
 
-    public void setBussKey(String bussKey) {
-        this.bussKey = bussKey;
+    public void setSource(BussSource source) {
+        this.source = source;
     }
 
     public String getCalendarTitle() {

@@ -62,8 +62,8 @@ public class StatTemplate implements java.io.Serializable {
     @Column(name = "rewards")
     private Integer rewards;
 
-    @Column(name = "buss_key")
-    private String bussKey;
+    @Column(name = "source")
+    private BussSource source;
 
     @Column(name = "calendar_title")
     private String calendarTitle;
@@ -182,12 +182,12 @@ public class StatTemplate implements java.io.Serializable {
         this.rewards = rewards;
     }
 
-    public String getBussKey() {
-        return bussKey;
+    public BussSource getSource() {
+        return source;
     }
 
-    public void setBussKey(String bussKey) {
-        this.bussKey = bussKey;
+    public void setSource(BussSource source) {
+        this.source = source;
     }
 
     public String getCalendarTitle() {

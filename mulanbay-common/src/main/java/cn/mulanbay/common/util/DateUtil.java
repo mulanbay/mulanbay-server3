@@ -304,7 +304,7 @@ public class DateUtil {
 	 * @根据日期以及日期格式，获取日期
 	 * @return String
 	 */
-	public static java.util.Date getDate(String date, String format) {
+	public static Date getDate(String date, String format) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
 		try {
 			return simpleDateFormat.parse(date);
@@ -317,7 +317,7 @@ public class DateUtil {
 	 * @根据日期以及日期格式，获取日期
 	 * @return String
 	 */
-	public static java.util.Date getDate(Date date, String format) {
+	public static Date getDate(Date date, String format) {
 		String dateString = getFormatDate(date, format);
 		return getDate(dateString, format);
 	}
@@ -326,7 +326,7 @@ public class DateUtil {
 	 * @根据日期以及日期格式，获取日期
 	 * @return String
 	 */
-	public static java.util.Date getCurrentFormatDate() {
+	public static Date getCurrentFormatDate() {
 		String dateString = getFormatDate(new Date(), Format24Datetime);
 		return getDate(dateString, Format24Datetime);
 	}
@@ -338,34 +338,9 @@ public class DateUtil {
 	 *            Date
 	 * @return String
 	 */
-	public static String getShortFormatDate(java.util.Date date) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FormatDay1);
-		return simpleDateFormat.format(date);
-	}
-
-	/**
-	 * 获取短时间类型时间字符串,格式为'yyyy-MM-dd'
-	 *
-	 * @param date
-	 *            Date
-	 * @return String
-	 */
-	public static String getFormatDateString(String date,String oldFormat,String newFormat) {
+	public static String getFormatDate(String date, String oldFormat, String newFormat) {
 		Date date1 =getDate(date,oldFormat);
 		return getFormatDate(date1,newFormat);
-	}
-
-	/**
-	 * 获取长时间类型时间字符串,格式为'yyyy-MM-dd'
-	 *
-	 * @param date
-	 *            Date
-	 * @return String
-	 */
-	public static String getLongFormatDate(java.util.Date date) {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-				Format24Datetime);
-		return simpleDateFormat.format(date);
 	}
 
 	/**
@@ -418,17 +393,10 @@ public class DateUtil {
 	 * 获取当年的最后一天
 	 * @return
 	 */
-	public static Date getLastDayOfCurrYear(){
-		Calendar currCal=Calendar.getInstance();
-		int currentYear = currCal.get(Calendar.YEAR);
-		return getYearLast(currentYear);
-	}
-
-	/**
-	 * 获取当年的最后一天
-	 * @return
-	 */
 	public static Date getYearLast(Date date){
+		if(date==null){
+			date = new Date();
+		}
 		String y = DateUtil.getFormatDate(date,"yyyy");
 		int currentYear = Integer.valueOf(y);
 		return getYearLast(currentYear);
@@ -514,23 +482,6 @@ public class DateUtil {
 	}
 
 	/**
-	 * 根据年 月 获取对应的月份 天数
-	 *
-	 * @param year
-	 * @param month
-	 * @return
-	 */
-	public static int getDaysByYearMonth(int year, int month) {
-		Calendar a = Calendar.getInstance();
-		a.set(Calendar.YEAR, year);
-		a.set(Calendar.MONTH, month - 1);
-		a.set(Calendar.DATE, 1);
-		a.roll(Calendar.DATE, -1);
-		int maxDate = a.get(Calendar.DATE);
-		return maxDate;
-	}
-
-	/**
 	 * 分钟转换为小时
 	 *
 	 * @param minutes
@@ -551,29 +502,13 @@ public class DateUtil {
 	 * @param ht，格式:08:30
 	 * @return
 	 */
-	public static Date addHourMinToDate(Date date,String ht){
+	public static Date addHourMin(Date date, String ht){
 		if(date==null){
 			date = new Date();
 		}
 		String ss = DateUtil.getFormatDate(date,DateUtil.FormatDay1);
 		Date dd= DateUtil.getDate(ss+" "+ht+":00",DateUtil.Format24Datetime);
 		return dd;
-	}
-
-	/**
-	 * 判断两个日期是否同一天
-	 * @param d1
-	 * @param d2
-	 * @return
-	 */
-	public static boolean isTheSameDay(Date d1,Date d2) {
-		Calendar c1 = Calendar.getInstance();
-		Calendar c2 = Calendar.getInstance();
-		c1.setTime(d1);
-		c2.setTime(d2);
-		return (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR))
-				&& (c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH))
-				&& (c1.get(Calendar.DAY_OF_MONTH) == c2.get(Calendar.DAY_OF_MONTH));
 	}
 
 }

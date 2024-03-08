@@ -9,6 +9,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -32,17 +33,46 @@ public class CommonCacheHandler extends BaseHandler {
     @Autowired
     BaseService baseService;
 
+    /**
+     * bean的缓存失效时间(秒)
+     */
+    @Value("${mulanbay.cache.bean.expires:300}")
+    int expires;
+
+    /**
+     * 上锁时的锁失效时间(秒)
+     */
+    @Value("${mulanbay.cache.bean.lockExpires:3}")
+    long lockExpires;
+
+    /**
+     * 上锁重试次数
+     */
+    @Value("${mulanbay.cache.bean.retryTimes:3}")
+    int retryTimes;
+
     public CommonCacheHandler() {
         super("通用bean缓存方案");
     }
 
+    /**
+     * key 创建
+     *
+     * @param cls
+     * @param id
+     * @return
+     */
+    private String createKey(Class cls, Serializable id){
+        String key = "beanCache:" + cls.getName() + ":" + id;
+        return key;
+    }
     /**
      * 移除缓存
      * @param cls
      * @param id
      */
     public void removeBean(Class cls, Serializable id){
-        String key = "beanCache:" + cls.getName() + ":" + id;
+        String key = this.createKey(cls,id);
         cacheHandler.delete(key);
     }
     /**
@@ -57,11 +87,11 @@ public class CommonCacheHandler extends BaseHandler {
         boolean lock = false;
         String lockKey = null;
         try {
-            String key = "beanCache:" + cls.getName() + ":" + id;
+            String key = this.createKey(cls,id);
             T bean = cacheHandler.get(key, cls);
             if (bean == null) {
                 lockKey = "lock:" + key;
-                lock = distributedLock.lock(lockKey, 3000L,3);
+                lock = distributedLock.lock(lockKey, lockExpires*1000,retryTimes);
                 if (!lock) {
                     return null;
                 }
@@ -73,7 +103,7 @@ public class CommonCacheHandler extends BaseHandler {
                 //获取Bean
                 bean = baseService.getObject(cls, id);
                 if (bean != null) {
-                    cacheHandler.set(key, bean, 300);
+                    cacheHandler.set(key, bean, expires);
                 }
             }
             return bean;

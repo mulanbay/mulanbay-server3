@@ -41,7 +41,6 @@ public class ErrorCode {
 	public final static int NULL_POINT_EXCEPTION =14;
 
 	// 系统级别 end
-
 	public final static int FORM_VALID_ERROR =15;
 
 	public final static int THREAD_CAN_ONLY_DO_ONCE =16;

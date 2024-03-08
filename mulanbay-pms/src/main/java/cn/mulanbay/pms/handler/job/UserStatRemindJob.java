@@ -201,7 +201,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             rewardHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
             if (isComplete) {
                 StatTemplate template = us.getTemplate();
-                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),us.getBindValues());
                 userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), BussSource.STAT, messageId);
             }
         } catch (Exception e) {
@@ -218,7 +218,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         try {
             UserStat us = remind.getStat();
             StatTemplate template = us.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getBussKey(),us.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),us.getBindValues());
             UserCalendar uc = userCalendarService.getUserCalendar(us.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);
@@ -233,7 +233,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                     uc.setBussDay(DateUtil.getDate(0));
                     uc.setAllDay(true);
                 } else {
-                    Date bussDay = DateUtil.addHourMinToDate(null, calendarTime);
+                    Date bussDay = DateUtil.addHourMin(null, calendarTime);
                     uc.setBussDay(bussDay);
                     uc.setAllDay(false);
                 }

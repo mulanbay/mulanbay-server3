@@ -44,8 +44,20 @@ public class MessageSendHandler extends BaseHandler {
     /**
      * 消息发送是否需要锁定
      */
-    @Value("${mulanbay.notify.message.send.lock:false}")
+    @Value("${mulanbay.notify.message.send.lock:true}")
     boolean sendLock;
+
+    /**
+     * 上锁重试次数
+     */
+    @Value("${mulanbay.notify.message.send.lockRetryTimes:0}")
+    int lockRetryTimes;
+
+    /**
+     * 发送是否同步(即一个一个顺序发送)
+     */
+    @Value("${mulanbay.notify.message.send.sync:true}")
+    boolean sync;
 
     @Value("${mulanbay.nodeId}")
     String nodeId;
@@ -82,23 +94,19 @@ public class MessageSendHandler extends BaseHandler {
      * @return
      */
     public boolean sendMessage(Message message) {
-        boolean needLock;
-        if (message.getMsgId() == null) {
-            needLock = false;
-        } else {
-            needLock = true;
-        }
         //这个message有可能在其他地方被设置了id
         String key = "messageSendLock:" + message.getMsgId();
         try {
-            if (needLock) {
-                boolean b = redisDistributedLock.lock(key, 0);
+            if (sendLock) {
+                boolean b = redisDistributedLock.lock(key, lockRetryTimes);
                 if (!b) {
                     logger.warn("消息ID=" + message.getMsgId() + "正在被发送，无法重复发送");
                     logHandler.addSysLog(LogLevel.WARNING, "消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
                             PmsCode.MESSAGE_DUPLICATE_SEND);
                     return true;
                 }
+                //取得锁后应该再查一次是否发送或者发送失败次数超过
+
             }
             UserSet us = userHandler.getUserSet(message.getUserId());
             if (us == null) {
@@ -134,7 +142,7 @@ public class MessageSendHandler extends BaseHandler {
             logger.error("发送消息失败，id=" + message.getMsgId(), e);
             return false;
         } finally {
-            if (needLock) {
+            if (sendLock) {
                 boolean b = redisDistributedLock.releaseLock(key);
                 if (!b) {
                     logger.warn("释放消息发送锁key=" + key + "失败");
@@ -164,7 +172,7 @@ public class MessageSendHandler extends BaseHandler {
      * @return
      */
     private boolean sendUserMessage(UserSet us, Message message) {
-        User user = baseService.getObject(User.class, message.getUserId());
+        User user = userHandler.getUser(message.getUserId());
         boolean b1 = true;
         if (us.getSendEmail() && StringUtil.isNotEmpty(user.getEmail())) {
             // 发送邮件

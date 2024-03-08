@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static cn.mulanbay.persistent.query.PageRequest.NO_PAGE;
+import static cn.mulanbay.pms.common.Constant.DEFAULT_SCORE_GROUP_ID;
 import static cn.mulanbay.pms.common.Constant.SCALE;
 
 /**
@@ -97,7 +98,7 @@ public class UserScoreHandler extends BaseHandler {
         UserSet us = baseService.getObject(UserSet.class,userId);
         Long scoreGroupId = us.getScoreGroupId();
         if (scoreGroupId==null) {
-            scoreGroupId = 1L;
+            scoreGroupId = DEFAULT_SCORE_GROUP_ID;
         }
         return this.getUseScore(userId, scoreGroupId, startTime, endTime);
     }

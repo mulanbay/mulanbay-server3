@@ -25,19 +25,28 @@ public class UserScore implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    private Long id;
+    @Column(name = "score_id", unique = true, nullable = false)
+    private Long scoreId;
 
     @Column(name = "user_id")
     private Long userId;
 
+    /**
+     * 当前得分
+     */
     @Column(name = "score")
     private Integer score;
 
+    /**
+     * 评分统计开始时间
+     */
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "start_time")
     private Date startTime;
 
+    /**
+     * 评分统计结束时间
+     */
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     @Column(name = "end_time")
     private Date endTime;
@@ -56,12 +65,12 @@ public class UserScore implements java.io.Serializable {
     @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
-    public Long getId() {
-        return id;
+    public Long getScoreId() {
+        return scoreId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setScoreId(Long scoreId) {
+        this.scoreId = scoreId;
     }
 
     public Long getUserId() {
@@ -122,7 +131,7 @@ public class UserScore implements java.io.Serializable {
     @Override
     public boolean equals(Object other) {
         if (other instanceof UserScore bean) {
-            return bean.getId().equals(this.getId());
+            return bean.getScoreId().equals(this.getScoreId());
         }else {
             return false;
         }
@@ -130,7 +139,7 @@ public class UserScore implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(scoreId);
     }
 
 }

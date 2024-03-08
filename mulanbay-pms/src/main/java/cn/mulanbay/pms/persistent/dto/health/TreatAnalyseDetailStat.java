@@ -3,9 +3,7 @@ package cn.mulanbay.pms.persistent.dto.health;
 import cn.mulanbay.pms.persistent.domain.Treat;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class TreatAnalyseDetailStat {
 

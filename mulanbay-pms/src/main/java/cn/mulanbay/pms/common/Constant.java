@@ -18,6 +18,11 @@ public class Constant {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";// 24
 
     /**
+     * 默认评分组
+     */
+    public static Long DEFAULT_SCORE_GROUP_ID=1L;
+
+    /**
      * 管理员
      */
     public static long ADMIN_USER_ID=0L;
