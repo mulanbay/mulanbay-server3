@@ -1057,3 +1057,6 @@ ALTER TABLE `user_score_detail`
 
 ALTER TABLE `behavior_template`
     CHANGE COLUMN `month_stat` `month_stat` BIT(1) NOT NULL DEFAULT 1 ;
+
+ALTER TABLE `user_score`
+    CHANGE COLUMN `scoreId` `score_id` BIGINT NOT NULL AUTO_INCREMENT ;

@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.controller.behavior;
 
+import cn.mulanbay.ai.nlp.processor.NLPProcessor;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
@@ -12,18 +13,21 @@ import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.BehaviorService;
 import cn.mulanbay.pms.web.bean.req.behavior.BehaviorTemplateSH;
 import cn.mulanbay.pms.web.bean.req.behavior.UserBehaviorCalendarSH;
+import cn.mulanbay.pms.web.bean.req.behavior.UserBehaviorWordCloudSH;
 import cn.mulanbay.pms.web.bean.res.behavior.BehaviorCalendarVo;
+import cn.mulanbay.pms.web.bean.res.chart.ChartNameValueVo;
+import cn.mulanbay.pms.web.bean.res.chart.ChartWorldCloudData;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 
@@ -36,11 +40,17 @@ import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 @RequestMapping("/userBehavior")
 public class UserBehaviorController  extends BaseController {
 
+    @Value("${mulanbay.behavior.tag.num:5}")
+    int tagNum;
+
     @Autowired
     BehaviorService behaviorService;
 
     @Autowired
     DataHandler dataHandler;
+
+    @Autowired
+    NLPProcessor nlpProcessor;
 
     /**
      * 日历列表
@@ -49,6 +59,11 @@ public class UserBehaviorController  extends BaseController {
      */
     @RequestMapping(value = "/calendarList")
     public ResultBean calendarList(UserBehaviorCalendarSH sf) {
+        List<BehaviorCalendarVo> res = this.getCalendarList(sf);
+        return callback(res);
+    }
+
+    private List<BehaviorCalendarVo> getCalendarList(UserBehaviorCalendarSH sf){
         BehaviorTemplateSH btsh = new BehaviorTemplateSH();
         btsh.setBussType(sf.getBussType());
         btsh.setStatus(CommonStatus.ENABLE);
@@ -79,7 +94,7 @@ public class UserBehaviorController  extends BaseController {
                 res.add(bean);
             }
         }
-        return callback(res);
+        return res;
     }
 
     /**
@@ -91,6 +106,49 @@ public class UserBehaviorController  extends BaseController {
     public ResultBean sourceDetail(@RequestParam(name = "sourceId") Long sourceId,@RequestParam(name = "source") BussSource source) {
         CommonDataBean bean = dataHandler.getSourceData(source,sourceId);
         return callback(bean);
+    }
+
+
+    /**
+     * 我的词云
+     *
+     * @return
+     */
+    @RequestMapping(value = "/wordCloudStat", method = RequestMethod.GET)
+    public ResultBean wordCloudStat(@Valid UserBehaviorWordCloudSH sf) {
+        List<BehaviorCalendarVo> res = this.getCalendarList(sf);
+        Map<String,Integer> statData = new HashMap<>();
+        for (BehaviorCalendarVo vo : res) {
+            String content = vo.getContent();
+            if(StringUtil.isEmpty(content)){
+                continue;
+            }
+            //先分词
+            List<String> list = nlpProcessor.extractKeyword(content,tagNum);
+            for(String s : list){
+                //忽略分词后为词长度为1的
+                if(sf.getIgnoreShort()!=null&&sf.getIgnoreShort()){
+                    if(s.length()<2){
+                        continue;
+                    }
+                }
+                Integer n = statData.get(s);
+                if(n==null){
+                    statData.put(s,1);
+                }else{
+                    statData.put(s,n+1);
+                }
+            }
+        }
+        ChartWorldCloudData chartData = new ChartWorldCloudData();
+        for(String key : statData.keySet()){
+            ChartNameValueVo dd = new ChartNameValueVo();
+            dd.setName(key);
+            dd.setValue(statData.get(key).intValue());
+            chartData.addData(dd);
+        }
+        chartData.setTitle("我的词云");
+        return callback(chartData);
     }
 
 }

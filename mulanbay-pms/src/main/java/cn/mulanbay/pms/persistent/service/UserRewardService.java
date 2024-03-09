@@ -87,14 +87,14 @@ public class UserRewardService  extends BaseHibernateDao {
             if(sf.getSource()!=null){
                 groupField = "source_id";
             }
-            String hql= """
+            String sql= """
                     select {group_field} as id,count(0) as totalCount,sum(rewards) as totalRewards from user_reward
                      {query_para}
-                     order by {group_field}
+                     group by {group_field}
                     """;
-            hql = hql.replace("{query_para}",pr.getParameterString())
+            sql = sql.replace("{query_para}",pr.getParameterString())
                      .replace("{group_field}",groupField);
-            return this.getEntityListHI(hql, NO_PAGE,NO_PAGE_SIZE,UserRewardSourceStat.class, pr.getParameterValue());
+            return this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE,UserRewardSourceStat.class, pr.getParameterValue());
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取来源统计异常", e);
@@ -110,7 +110,7 @@ public class UserRewardService  extends BaseHibernateDao {
     public List<UserRewardSourceStat> getUserRewardScoreStat(UserRewardSourceStatSH sf) {
         try {
             PageRequest pr = sf.buildQuery();
-            String hql= """
+            String sql= """
                     select score as id,count(0) as totalCount,sum(rewards) as totalRewards from
                     (
                      select
@@ -120,10 +120,10 @@ public class UserRewardService  extends BaseHibernateDao {
                      ELSE 0 END) as score,rewards from user_reward
                      {query_para}
                     ) as res
-                    order by score
+                    group by score
                     """;
-            hql = hql.replace("{query_para}",pr.getParameterString());
-            return this.getEntityListHI(hql, NO_PAGE,NO_PAGE_SIZE,UserRewardSourceStat.class, pr.getParameterValue());
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            return this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE,UserRewardSourceStat.class, pr.getParameterValue());
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "分数统计异常", e);

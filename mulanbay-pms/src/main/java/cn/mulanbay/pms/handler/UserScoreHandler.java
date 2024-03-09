@@ -74,23 +74,23 @@ public class UserScoreHandler extends BaseHandler {
         super("用户评分");
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, Date bussDay) {
+    public List<UserScoreDetail> calcUseScore(Long userId, Date bussDay) {
         Date[] dates = this.getDays(bussDay);
-        return this.getUseScore(userId, dates[0], dates[1]);
+        return this.calcUseScore(userId, dates[0], dates[1]);
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, Long scoreGroupId, Date bussDay) {
+    public List<UserScoreDetail> calcUseScore(Long userId, Long scoreGroupId, Date bussDay) {
         Date[] dates = this.getDays(bussDay);
-        return this.getUseScore(userId, scoreGroupId, dates[0], dates[1]);
+        return this.calcUseScore(userId, scoreGroupId, dates[0], dates[1]);
     }
 
     public Date[] getDays(Date bussDay) {
         Date endTime = DateUtil.tillMiddleNight(bussDay);
-        Date startTime = DateUtil.getDate(0 - statDays, bussDay);
+        Date startTime = DateUtil.getDate(- statDays, bussDay);
         return new Date[]{startTime, endTime};
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, Date startTime, Date endTime) {
+    public List<UserScoreDetail> calcUseScore(Long userId, Date startTime, Date endTime) {
         /**
          * todo 对于key，后期可以根据年龄或者不同阶段来设置的值，即可以分不同的组别
          * 比如：不同的年龄阶段可以用不同的评分标准
@@ -100,10 +100,19 @@ public class UserScoreHandler extends BaseHandler {
         if (scoreGroupId==null) {
             scoreGroupId = DEFAULT_SCORE_GROUP_ID;
         }
-        return this.getUseScore(userId, scoreGroupId, startTime, endTime);
+        return this.calcUseScore(userId, scoreGroupId, startTime, endTime);
     }
 
-    public List<UserScoreDetail> getUseScore(Long userId, Long scoreGroupId, Date startTime, Date endTime) {
+    /**
+     * 计算评分
+     *
+     * @param userId
+     * @param scoreGroupId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public List<UserScoreDetail> calcUseScore(Long userId, Long scoreGroupId, Date startTime, Date endTime) {
         List<ScoreConfig> scList = userScoreService.selectActiveScoreConfigList(scoreGroupId);
         List<UserScoreDetail> list = new ArrayList<>();
         for (ScoreConfig sc : scList) {
@@ -130,7 +139,7 @@ public class UserScoreHandler extends BaseHandler {
      * @param redo
      */
     public void saveUseScore(Long userId, Date startTime, Date endTime, boolean redo) {
-        List<UserScoreDetail> list = this.getUseScore(userId, startTime, endTime);
+        List<UserScoreDetail> list = this.calcUseScore(userId, startTime, endTime);
         int totalScore = 0;
         for (UserScoreDetail usd : list) {
             totalScore += usd.getScore();

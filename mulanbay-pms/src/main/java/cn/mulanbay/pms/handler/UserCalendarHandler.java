@@ -159,6 +159,7 @@ public class UserCalendarHandler extends BaseHandler {
                 copy.setMatch(false);
                 copy.setValue(dto.getValue());
                 copy.setUnit(dto.getUnit());
+                copy.setAllDay(false);
                 //有些日历的实际内容是具体操作的详情
                 if (StringUtil.isNotEmpty(dto.getName())) {
                     copy.setContent(dto.getName());

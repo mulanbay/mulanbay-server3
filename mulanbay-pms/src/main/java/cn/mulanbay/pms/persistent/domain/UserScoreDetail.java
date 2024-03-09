@@ -26,7 +26,7 @@ public class UserScoreDetail implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "detail_id", unique = true, nullable = false)
-    private Long detalId;
+    private Long detailId;
 
     @Column(name = "user_id")
     private Long userId;
@@ -67,12 +67,12 @@ public class UserScoreDetail implements java.io.Serializable {
     @Column(name = "modify_time",insertable = false)
     private Date modifyTime;
 
-    public Long getDetalId() {
-        return detalId;
+    public Long getDetailId() {
+        return detailId;
     }
 
-    public void setDetalId(Long detalId) {
-        this.detalId = detalId;
+    public void setDetailId(Long detailId) {
+        this.detailId = detailId;
     }
 
     public Long getUserId() {
@@ -142,7 +142,7 @@ public class UserScoreDetail implements java.io.Serializable {
     @Override
     public boolean equals(Object other) {
         if (other instanceof UserScoreDetail bean) {
-            return bean.getDetalId().equals(this.getDetalId());
+            return bean.getDetailId().equals(this.getDetailId());
         }else {
             return false;
         }
@@ -150,6 +150,6 @@ public class UserScoreDetail implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(detalId);
+        return Objects.hashCode(detailId);
     }
 }

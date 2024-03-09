@@ -62,6 +62,9 @@ public class NumberUtil {
 		if(value==null){
 			return 0;
 		}
+		if(counts==null||counts.compareTo(BigDecimal.ZERO)==0){
+			return 0;
+		}
 		BigDecimal avg = value.divide(counts,RoundingMode.HALF_UP);
 		return avg.setScale(scale,RoundingMode.HALF_UP).doubleValue();
 	}

@@ -55,7 +55,7 @@ public class BehaviorService extends BaseReportService {
         try {
             //删除配置绑定
             String sql = "delete from stat_bind_config where type=?1 and fid=?2";
-            this.execSqlUpdate(sql, StatBussType.CALENDAR,templateId);
+            this.execSqlUpdate(sql, StatBussType.BEHAVIOR,templateId);
 
             //删除模版
             String sql4 = "delete from behavior_template where template_id=?1 ";

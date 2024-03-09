@@ -12,6 +12,8 @@ public class ChartRadarIndicatorData {
 
     private long max;
 
+    private long min=0L;
+
     public String getText() {
         return text;
     }
@@ -26,5 +28,13 @@ public class ChartRadarIndicatorData {
 
     public void setMax(long max) {
         this.max = max;
+    }
+
+    public long getMin() {
+        return min;
+    }
+
+    public void setMin(long min) {
+        this.min = min;
     }
 }

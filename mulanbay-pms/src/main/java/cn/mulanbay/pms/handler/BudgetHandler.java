@@ -61,6 +61,10 @@ public class BudgetHandler extends BaseHandler {
     @Autowired
     BudgetConsumeYEvaluateProcessor budgetConsumeYEvaluateProcessor;
 
+    public BudgetHandler() {
+        super("预算处理");
+    }
+
     /**
      * 计算预算
      *

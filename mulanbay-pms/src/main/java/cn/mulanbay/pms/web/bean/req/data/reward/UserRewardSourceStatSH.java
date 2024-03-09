@@ -21,7 +21,7 @@ public class UserRewardSourceStatSH extends PageSearch implements BindUser, Full
     @Query(fieldName = "created_time", op = Parameter.Operator.LTE)
     private Date endDate;
 
-    @Query(fieldName = "userId", op = Parameter.Operator.EQ)
+    @Query(fieldName = "user_id", op = Parameter.Operator.EQ)
     private Long userId;
 
     @Query(fieldName = "source", op = Parameter.Operator.EQ)

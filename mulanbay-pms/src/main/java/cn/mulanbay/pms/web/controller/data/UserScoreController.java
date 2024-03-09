@@ -89,7 +89,7 @@ public class UserScoreController extends BaseController {
      */
     @RequestMapping(value = "/selfJudge", method = RequestMethod.POST)
     public ResultBean selfJudge(@RequestBody @Valid SelfJudgeLevelForm jlr) {
-        List<UserScoreDetail> list = userScoreHandler.getUseScore(jlr.getUserId(), jlr.getScoreGroupId(), new Date());
+        List<UserScoreDetail> list = userScoreHandler.calcUseScore(jlr.getUserId(), jlr.getScoreGroupId(), new Date());
         return callback(list);
     }
 
@@ -237,8 +237,8 @@ public class UserScoreController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/scorePointsCompare", method = RequestMethod.GET)
-    public ResultBean scorePointsCompare(@Valid UserScorePointsCompareSH sf) {
+    @RequestMapping(value = "/compare", method = RequestMethod.GET)
+    public ResultBean compare(@Valid UserScorePointsCompareSH sf) {
         List<UserScorePointsCompareDTO> list = userScoreService.scorePointsCompare(sf.getUserId(), sf.getStartDate(), sf.getEndDate());
         ChartData chartData = new ChartData();
         chartData.setTitle("用户评分与积分比较");

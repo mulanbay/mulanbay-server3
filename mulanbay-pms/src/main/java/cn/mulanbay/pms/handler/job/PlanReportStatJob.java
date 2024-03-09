@@ -88,6 +88,7 @@ public class PlanReportStatJob extends AbstractBaseJob {
                 planReport = new PlanReport();
                 BeanCopy.copy(timeline, planReport);
                 planReport.setBussDay(bussDay);
+                planReport.setReportName(userPlan.getTitle()+"["+timeline.getBussKey()+"]");
             } else {
                 String bussKey = BussUtil.getBussKey(userPlan.getPlanType().getPeriodType(),bussDay);
                 planReport = planService.statPlanReport(userPlan, bussKey);
