@@ -28,6 +28,21 @@ import java.util.List;
 @Service
 public class UserRewardService  extends BaseHibernateDao {
 
+    /**
+     * 获取积分列表
+     *
+     * @param userId
+     * @return
+     */
+    public List<UserReward> getUserRewardList(Long userId, int pageSize) {
+        try {
+            String hql = "from UserReward where userId=?1 order by createdTime desc";
+            return this.getEntityListHI(hql, 1, pageSize,UserReward.class, userId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获获取积分列表异常", e);
+        }
+    }
 
     /**
      * 更新用户积分

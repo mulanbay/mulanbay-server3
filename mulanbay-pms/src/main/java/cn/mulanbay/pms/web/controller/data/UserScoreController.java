@@ -11,7 +11,7 @@ import cn.mulanbay.pms.persistent.domain.UserScoreDetail;
 import cn.mulanbay.pms.persistent.dto.score.UserScorePointsCompareDTO;
 import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.service.UserScoreService;
-import cn.mulanbay.pms.web.bean.req.data.score.SelfJudgeLevelForm;
+import cn.mulanbay.pms.web.bean.req.data.score.SelfJudgeForm;
 import cn.mulanbay.pms.web.bean.req.data.score.UserScorePointsCompareSH;
 import cn.mulanbay.pms.web.bean.req.data.score.UserScoreReSaveForm;
 import cn.mulanbay.pms.web.bean.req.score.UserScoreSH;
@@ -88,7 +88,7 @@ public class UserScoreController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/selfJudge", method = RequestMethod.POST)
-    public ResultBean selfJudge(@RequestBody @Valid SelfJudgeLevelForm jlr) {
+    public ResultBean selfJudge(@RequestBody @Valid SelfJudgeForm jlr) {
         List<UserScoreDetail> list = userScoreHandler.calcUseScore(jlr.getUserId(), jlr.getScoreGroupId(), new Date());
         return callback(list);
     }

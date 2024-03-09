@@ -13,6 +13,7 @@ import cn.mulanbay.pms.handler.UserStatHandler;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.enums.BussSource;
+import cn.mulanbay.pms.persistent.enums.CompareType;
 import cn.mulanbay.pms.persistent.enums.ResultType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.service.StatService;
@@ -89,56 +90,68 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
 
     private boolean handleUserStat(UserStat us) {
         try {
+            //Step 1: 查询是否要通知及是否已经达到时间比例
             if (!us.getRemind()) {
                 return true;
             }
             Long userId = us.getUserId();
-            StatResultDTO resultDTO = null;
-            if (para.getCacheResult()) {
-                //如果设置需要缓存，那么第一步先去缓存结果
-                resultDTO = statService.getStatResult(us);
-                userStatHandler.cacheStatResult(resultDTO, para.getExpireSeconds());
-            }
-            if(resultDTO.getValue()==null||resultDTO.getValue()==0){
-                logger.debug("用户ID=" + userId + "的提醒[" + us.getTitle() + "],id=" + us.getStatId() + "的统计值为空或者为零，不需要提醒");
-                return true;
-            }
-            //step 1: 记录时间线日志
-            this.addTimeline(resultDTO);
+
             //Step 2: 第一步先判断是否已经通知过
             String key = CacheKey.getKey(CacheKey.USER_NOTIFY, userId.toString(), us.getStatId().toString());
             String cs = cacheHandler.getForString(key);
             if (cs != null) {
-                logger.debug("用户ID=" + userId + "的提醒[" + us.getTitle() + "],id=" + us.getStatId() + "已经提醒过了");
+                logger.debug("用户ID=" + userId + "的统计[" + us.getTitle() + "],id=" + us.getStatId() + "已经提醒过了");
                 return true;
             }
-            //Step 3: 通知
-            UserStatRemind unr = statService.getUserStatRemind(us.getStatId(), us.getUserId());
-
-            //Step 3: 通知
-            String title = null;
-            String content = null;
-            UserStat userStat = resultDTO.getUserStat();
-            StatTemplate template = userStat.getTemplate();
-            long overRate = resultDTO.getOverValue()*100/resultDTO.getValue();
-            if(overRate>=unr.getOverRate()){
-                title = "[" + userStat.getTitle() + "]报警";
-                if (template.getResultType() == ResultType.DATE_NAME || template.getResultType() == ResultType.NUMBER_NAME) {
-                    content = "[" + userStat.getTitle() + "][" + resultDTO.getNameValue() + "]超过报警比例[" + unr.getOverRate() + "%],实际值为["
-                            + resultDTO.getOverValue() + "],计量单位:[" + template.getValueTypeName() + "]\n";
-                } else {
-                    content = "[" + userStat.getTitle() + "]超过报警比例[" + unr.getOverRate() + "%],实际值为["
-                            + resultDTO.getOverValue() + "],计量单位:[" + template.getValueTypeName() + "]\n";
-                }
-                this.notifyMessage(title,content,unr);
-            } else {
-                logger.debug("用户ID=" + userId + "的提醒[" + userStat.getTitle() + "],id=" + userStat.getStatId() + "不需要提醒");
-                rewardPoint(userStat, true, null);
+            StatResultDTO resultDTO = statService.getStatResult(us);;
+            if (para.getCacheResult()) {
+                userStatHandler.cacheStatResult(resultDTO, para.getExpireSeconds());
             }
 
+            //step 3: 记录时间线日志
+            this.addTimeline(resultDTO);
+
+            // 没有数据,无法计算比例
+            if(resultDTO.getValue()==null||resultDTO.getValue()==0){
+                logger.debug("用户ID=" + userId + "的统计[" + us.getTitle() + "],id=" + us.getStatId() + "的统计值为空或者为零，不需要提醒");
+                return true;
+            }
+
+            //step 4: 比较，通知
+            UserStatRemind unr = statService.getUserStatRemind(us.getStatId(),userId);
+            String title = null;
+            UserStat userStat = resultDTO.getUserStat();
+            StatTemplate template = userStat.getTemplate();
+            String unit = template.getValueTypeName();
+            String content = null;
+            if (template.getResultType() == ResultType.DATE_NAME || template.getResultType() == ResultType.NUMBER_NAME) {
+                content = "[" + userStat.getTitle() + "][" + resultDTO.getNameValue() + "]期望值[" + us.getExpectValue() + "],实际值为["
+                        + resultDTO.getStatValue() + "],计量单位:[" + unit + "]\n";
+            } else {
+                content = "[" + userStat.getTitle() + "]期望值[" + us.getExpectValue() + "],实际值为["
+                        + resultDTO.getStatValue() + "],计量单位:[" + unit + "]\n";
+            }
+            content +=",期望类型:"+us.getCompareType().getName();
+            boolean complete = true;
+            if(us.getCompareType()==CompareType.MORE &&resultDTO.getStatValue()<us.getExpectValue()){
+                //需要大于且没有达到期望
+                title = "[" + userStat.getTitle() + "]未达到报警";
+                complete = false;
+            }
+            if(us.getCompareType()==CompareType.LESS &&resultDTO.getStatValue()>us.getExpectValue()){
+                //需要小于且超出期望
+                title = "[" + userStat.getTitle() + "]超出报警";
+                complete = false;
+            }
+            if(!complete){
+                this.notifyMessage(title,content,unr);
+            }else{
+                logger.debug("用户ID=" + userId + "的统计[" + userStat.getTitle() + "],id=" + userStat.getStatId() + "不需要提醒");
+                rewardPoint(userStat, true, null,content);
+            }
             return true;
         } catch (Exception e) {
-            logger.error("处理用户提醒:" + us.getTitle() + "异常", e);
+            logger.error("处理用户统计配置:" + us.getTitle() + "异常", e);
             return false;
         }
     }
@@ -162,7 +175,15 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         }
     }
 
-    private void notifyMessage(String title, String content, UserStatRemind remind) {
+    /**
+     * 未达到
+     *
+     * @param title
+     * @param content
+     * @param remind
+     * @return
+     */
+    private Long notifyMessage(String title, String content, UserStatRemind remind) {
         content = content + "统计日期:" + DateUtil.getFormatDate(this.getBussDay(), DateUtil.FormatDay1);
         RemindTimeBean bean = this.calcRemindExpectTime(remind.getTriggerInterval(), remind.getTriggerType(), remind.getLastRemindTime(), remind.getRemindTime());
         //Step 1: 发送消息通知
@@ -179,9 +200,10 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         //失效时间为通知周期的秒数，-5为了保证第二次通知时间点job能执行
         cacheHandler.set(key, "123", bean.getDays() * 24 * 3600 - 5);
         //Step 4: 更新积分
-        rewardPoint(remind.getStat(), false, messageId);
+        rewardPoint(remind.getStat(), false, messageId,content);
         //Step 5: 加入用户日历
         addToUserCalendar(remind, messageId);
+        return messageId;
     }
 
     /**
@@ -189,14 +211,14 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
      *
      * @param us
      */
-    private void rewardPoint(UserStat us, boolean isComplete, Long messageId) {
+    private void rewardPoint(UserStat us, boolean isComplete, Long messageId,String content) {
         try {
             int radio = 1;
             int rewards = us.getTemplate().getRewards() * radio;
-            String remark = "用户提醒配置[" + us.getTitle() + "]达到要求奖励";
+            String remark = "用户统计配置[" + us.getTitle() + "]达到要求奖励,"+content;
             if (!isComplete) {
                 rewards = -rewards;
-                remark = "用户提醒配置[" + us.getTitle() + "]触发警报惩罚";
+                remark = "用户统计配置[" + us.getTitle() + "]触发警报惩罚,"+content;
             }
             rewardHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
             if (isComplete) {
@@ -205,7 +227,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), BussSource.STAT, messageId);
             }
         } catch (Exception e) {
-            logger.error("计划[" + us.getTitle() + "]积分奖励异常", e);
+            logger.error("用户统计配置[" + us.getTitle() + "]积分奖励异常", e);
         }
     }
 

@@ -1,16 +1,13 @@
-package cn.mulanbay.pms.web.bean.req.data.score;
+package cn.mulanbay.pms.web.bean.req.config.levelConfig;
 
 import cn.mulanbay.common.aop.BindUser;
 import jakarta.validation.constraints.NotNull;
 
-public class SelfJudgeLevelForm implements BindUser {
+public class JudgeLevelForm implements BindUser {
 
     private Long userId;
 
-    @NotNull(message = "评分组号不能为空")
-    private Long scoreGroupId;
-
-    @NotNull(message = "是否更新级别不能为空")
+    @NotNull(message = "请选择是否要更新级别")
     private Boolean updateLevel;
 
     @Override
@@ -21,14 +18,6 @@ public class SelfJudgeLevelForm implements BindUser {
     @Override
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getScoreGroupId() {
-        return scoreGroupId;
-    }
-
-    public void setScoreGroupId(Long scoreGroupId) {
-        this.scoreGroupId = scoreGroupId;
     }
 
     public Boolean getUpdateLevel() {

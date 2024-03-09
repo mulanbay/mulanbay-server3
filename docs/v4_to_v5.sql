@@ -1060,3 +1060,9 @@ ALTER TABLE `behavior_template`
 
 ALTER TABLE `user_score`
     CHANGE COLUMN `scoreId` `score_id` BIGINT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `level_config`
+    CHANGE COLUMN `name` `level_name` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
+    CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
+
+

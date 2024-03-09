@@ -195,6 +195,10 @@ mulanbay:
     tag:
       #词语统计时的分词数
       num: 5
+  user:
+    level:
+      #用户级别评定统计间隔区间天数
+      judgeDays: 30
   nlp:
     model:
       #模型是否要初始化

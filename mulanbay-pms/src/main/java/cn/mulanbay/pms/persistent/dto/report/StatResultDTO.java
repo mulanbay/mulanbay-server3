@@ -86,11 +86,11 @@ public class StatResultDTO implements Serializable {
      * 计算
      */
     public void calculte() {
-        StatTemplate template = userStat.getTemplate();
         if (value == null) {
             //没有数据
             return;
         }
+        StatTemplate template = userStat.getTemplate();
         //计算比较值
         if (template.getResultType() == ResultType.DATE || template.getResultType() == ResultType.DATE_NAME) {
             //计算秒数

@@ -49,7 +49,7 @@ public class RoleController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(Boolean needRoot) {
+    public ResultBean tree() {
         try {
             RoleSH sf = new RoleSH();
             sf.setPage(PageRequest.NO_PAGE);
@@ -62,7 +62,7 @@ public class RoleController extends BaseController {
                 tb.setText(gt.getRoleName());
                 list.add(tb);
             }
-            return callback(TreeBeanUtil.addRoot(list, needRoot));
+            return callback(list);
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取角色树异常",
                     e);
