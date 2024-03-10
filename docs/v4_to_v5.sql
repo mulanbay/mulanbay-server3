@@ -1035,7 +1035,7 @@ ALTER TABLE `dict_item`
 #删除统计绑定数据中的无效数据
 delete from stat_bind_config where type=5 and config_id>0;
 delete from stat_bind_config where type=1 and config_id>0;
-delete from stat_bind_config where type=4 and config_id>0;
+delete from stat_bind_config where type=4 and fid not in (select template_id from chart_template) and config_id>0;
 delete from stat_bind_config where type=0 and fid not in (select template_id from stat_template) and config_id>0;
 delete from stat_bind_config where type=2 and fid not in (select template_id from plan_template) and config_id>0;
 delete from stat_bind_config where type=3 and fid not in (select template_id from behavior_template) and config_id>0;
@@ -1065,4 +1065,27 @@ ALTER TABLE `level_config`
     CHANGE COLUMN `name` `level_name` VARCHAR(100) CHARACTER SET 'utf8mb4' NOT NULL COMMENT '名称' ,
     CHANGE COLUMN `last_modify_time` `modify_time` DATETIME NULL DEFAULT NULL COMMENT '最后更新时间' ;
 
+#表清理
+DROP TABLE `calendar_template`;
+DROP TABLE `city_location`;
+DROP TABLE `consume_type`;
+DROP TABLE `data_input_analyse`;
+DROP TABLE `diary`;
+DROP TABLE `price_region`;
+DROP TABLE `report_config`;
+DROP TABLE `qa_config`;
+DROP TABLE `shares_index_price`;
+DROP TABLE `shares_price`;
+DROP TABLE `system_config`;
+DROP TABLE `treat_check_standard`;
+DROP TABLE `user_behavior`;
+DROP TABLE `user_chart`;
+DROP TABLE `user_operation_config`;
+DROP TABLE `user_qa`;
+DROP TABLE `user_report_config`;
+DROP TABLE `user_report_remind`;
+DROP TABLE `user_shares`;
+DROP TABLE `user_shares_score`;
+DROP TABLE `user_shares_score_config`;
+DROP TABLE `user_shares_warn`;
 

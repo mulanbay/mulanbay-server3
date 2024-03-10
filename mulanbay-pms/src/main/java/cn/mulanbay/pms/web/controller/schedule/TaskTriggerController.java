@@ -404,8 +404,10 @@ public class TaskTriggerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/recentSchedules", method = RequestMethod.GET)
-    public ResultBean recentSchedules() {
-        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules();
+    public ResultBean recentSchedules(RecentSchedulesSH sf) {
+        Date start = new Date();
+        Date end = new Date(start.getTime()+sf.getHours()*3600*1000L);
+        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules(start,end,sf.getPage(),sf.getPageSize());
         return callback(list);
     }
 

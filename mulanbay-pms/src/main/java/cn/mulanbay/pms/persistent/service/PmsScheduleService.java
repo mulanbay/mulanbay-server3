@@ -160,12 +160,10 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
      *
      * @return
      */
-    public List<TaskTrigger> getRecentSchedules() {
+    public List<TaskTrigger> getRecentSchedules(Date start,Date end,int page,int pageSize) {
         try {
-            Date now = new Date();
-            Date end = new Date(now.getTime()+24*3600*1000L);
             String hql ="from TaskTrigger where nextExecuteTime>=?1 and nextExecuteTime<=?2 and triggerStatus=?3 and triggerType in (4,5,6,7,8) order by nextExecuteTime ";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,TaskTrigger.class,now,end,TriggerStatus.ENABLE);
+            return this.getEntityListHI(hql,page,pageSize,TaskTrigger.class,start,end,TriggerStatus.ENABLE);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "最近的调度异常", e);
