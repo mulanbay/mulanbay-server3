@@ -384,8 +384,8 @@ public class PlanReportController extends BaseController {
         }
         List<PlanReportTimeline> datas = new ArrayList<>();
         Date cc = firstDay;
+        PlanValueDTO upc = planService.getPlanValue(PlanValueCompareType.ORIGINAL, bussKey,userPlan.getPlanId());
         while (!cc.after(lastDay)) {
-            PlanValueDTO upc = planService.getPlanValue(PlanValueCompareType.ORIGINAL, bussKey,userPlan.getPlanId());
             //统计指定日期
             PlanReport planReport = planService.statPlanReport(userPlan, bussKey,firstDay,cc, upc);
             if (planReport == null) {

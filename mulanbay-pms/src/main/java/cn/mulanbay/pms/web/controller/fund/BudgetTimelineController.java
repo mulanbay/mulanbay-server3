@@ -89,6 +89,11 @@ public class BudgetTimelineController extends BaseController {
             legends.add("预测值");
             scoreMap = userScoreHandler.getUserScoreMap(userId,pdb.getStartDate(),pdb.getEndDate(),sf.getStatPeriod());
             predictData.setName(legends.get(2));
+            if (sf.getStatType() == BudgetTimelineSH.StatType.RATE) {
+                predictData.setUnit("%");
+            } else {
+                predictData.setUnit("元");
+            }
         }
         chartData.setLegendData(legends.toArray(new String[legends.size()]));
         ChartYData cbData = new ChartYData(legends.get(0),chartData.getUnit());
@@ -221,7 +226,7 @@ public class BudgetTimelineController extends BaseController {
             //增加时间线流水
             BudgetTimeline timeline = new BudgetTimeline();
             BudgetLog bl = budgetHandler.statBudget(re.getUserId(), budgetAmount, firstDay, cc, bussKey, false, re.getStatPeriod());
-            BeanCopy.copyProperties(bl, timeline);
+            BeanCopy.copy(bl, timeline);
             timeline.setModifyTime(null);
             timeline.setBussDay(cc);
             timeline.setTotalDays(tds);

@@ -220,6 +220,10 @@ public class TreatService extends BaseHibernateDao {
      */
     public void deleteTreat(Long treatId) {
         try {
+            // step 0 删除看病记录中的手术记录的测试报告
+            String hql0 = "delete from TreatTest where operation.treat.treatId=?1 ";
+            this.updateEntities(hql0, treatId);
+
             // step 1 删除看病记录中的手术记录
             String hql = "delete from TreatOperation where treat.treatId=?1 ";
             this.updateEntities(hql, treatId);

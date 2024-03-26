@@ -125,9 +125,8 @@ public class BudgetController extends BaseController {
         PageResult<Budget> qr = baseService.getBeanResult(pr);
         PageResult<BudgetDetailVo> res = new PageResult<>(qr);
         List<BudgetDetailVo> list = new ArrayList<>();
-        Date now = new Date();
         for (Budget bg : qr.getBeanList()) {
-            BudgetDetailVo bdb = this.getDetail(bg,now);
+            BudgetDetailVo bdb = this.getDetail(bg);
             list.add(bdb);
         }
         res.setBeanList(list);
@@ -137,24 +136,29 @@ public class BudgetController extends BaseController {
     /**
      * 获取详情
      * @param bg
-     * @param now
      * @return
      */
-    private BudgetDetailVo getDetail(Budget bg,Date now){
+    private BudgetDetailVo getDetail(Budget bg){
         BudgetDetailVo bdb = new BudgetDetailVo();
         BeanCopy.copy(bg, bdb);
+        Date bussDay = null;
+        if(bg.getPeriod()==PeriodType.MONTHLY){
+            bussDay = DateUtil.getMonthFirst(new Date());
+        }else{
+            bussDay = DateUtil.getYearFirst(new Date());
+        }
         if (bg.getStatus() == CommonStatus.ENABLE) {
             //直接根据实际花费实时查询
             if (bg.getGoodsTypeId()!=null) {
-                ConsumeBudgetStat bs= budgetHandler.getActualAmount(bg,now);
+                ConsumeBudgetStat bs= budgetHandler.getActualAmount(bg,bussDay);
                 if (bs.getTotalPrice() != null) {
                     bdb.setCpPaidTime(bs.getMaxConsumeDate());
                     bdb.setCpPaidAmount(bs.getTotalPrice());
                 }else{
                     //计算下一次支付时间
-                    Date nextPayTime = budgetHandler.getNextPayTime(bg, now);
+                    Date nextPayTime = budgetHandler.getNextPayTime(bg, bussDay);
                     bdb.setNextPayTime(nextPayTime);
-                    Integer ld = DateUtil.getIntervalDays(now, nextPayTime);
+                    Integer ld = DateUtil.getIntervalDays(bussDay, nextPayTime);
                     bdb.setLeftDays(ld);
                 }
             }
@@ -236,9 +240,8 @@ public class BudgetController extends BaseController {
             return callbackErrorInfo("不支持的周期查询类型:" + sf.getPeriod());
         }
         List<BudgetDetailVo> res = new ArrayList<>();
-        Date now = new Date();
         for (Budget bg : newList) {
-            BudgetDetailVo bdb = this.getDetail(bg,now);
+            BudgetDetailVo bdb = this.getDetail(bg);
             res.add(bdb);
         }
         return callback(res);

@@ -142,17 +142,20 @@ public class RedisDistributedLock extends AbstractDistributedLock {
             List<String> keys = new ArrayList<String>();
             keys.add(key);
             List<String> args = new ArrayList<String>();
-            args.add(lockFlag.get());
+            String lf =  lockFlag.get();
+            if(lf==null){
+                logger.warn("releaseLock key flag is null");
+                return false;
+            }
+            args.add(lf);
             //移除
             lockFlag.remove();
             // 使用lua脚本删除redis中匹配value的key，可以避免由于方法执行时间过长而redis锁自动过期失效的时候误删其他线程的锁
             // spring自带的执行脚本方法中，集群模式直接抛出不支持执行脚本的异常，所以只能拿到原redis的connection来执行脚本
             Long result = redisTemplate.execute(new RedisCallback<Long>() {
-
                 @Override
                 public Long doInRedis(RedisConnection connection) throws DataAccessException {
                     Object nativeConnection = connection.getNativeConnection();
-                    logger.debug("releaseLock key flag: "+args);
                     // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
                     // 集群模式
                     if (nativeConnection instanceof JedisCluster) {
