@@ -44,6 +44,8 @@ public class ExperienceDetailController extends BaseController {
         pr.setBeanClass(beanClass);
         Sort s = new Sort("occurDate", Sort.ASC);
         pr.addSort(s);
+        Sort s2 = new Sort("createdTime", Sort.ASC);
+        pr.addSort(s2);
         PageResult<ExperienceDetail> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }
@@ -65,7 +67,9 @@ public class ExperienceDetailController extends BaseController {
         BeanCopy.copy(form, bean);
         Experience experience = baseService.getObject(Experience.class,form.getExpId());
         bean.setExperience(experience);
-        bean.setCost(new BigDecimal(0));
+        if(bean.getCost()==null){
+            bean.setCost(new BigDecimal(0));
+        }
         //出发
         Country startCountry = baseService.getObject(Country.class,form.getStartCountryId());
         bean.setStartCountry(startCountry);

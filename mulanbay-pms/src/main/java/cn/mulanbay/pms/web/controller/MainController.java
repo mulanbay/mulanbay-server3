@@ -361,8 +361,10 @@ public class MainController extends BaseController {
         if(today==null){
             today = new Date();
         }
-        FundStatBean monthStat = this.generalStat(PeriodType.MONTHLY,today,userId);
-        FundStatBean yearStat = this.generalStat(PeriodType.YEARLY,today,userId);
+        Date monthBussDay = DateUtil.getMonthFirst(today);
+        Date yearBussDay = DateUtil.getYearFirst(today);
+        FundStatBean monthStat = this.generalStat(PeriodType.MONTHLY,monthBussDay,userId);
+        FundStatBean yearStat = this.generalStat(PeriodType.YEARLY,yearBussDay,userId);
         //获取预算
         List<Budget> budgetList = budgetService.getActiveUserBudget(ugs.getUserId(), null);
         if (!budgetList.isEmpty()) {

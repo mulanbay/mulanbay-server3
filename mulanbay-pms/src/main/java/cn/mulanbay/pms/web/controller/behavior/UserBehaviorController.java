@@ -73,7 +73,7 @@ public class UserBehaviorController  extends BaseController {
         List<BehaviorCalendarVo> res = new ArrayList<>();
         List<BehaviorTemplate> templateList = baseService.getBeanList(pr);
         for(BehaviorTemplate template: templateList){
-            List<CalendarLogDTO> dtoList = behaviorService.getCalendarLogList(sf.getUserId(),sf.getStartDate(),sf.getEndDate(),template,null,sf.getPage(),sf.getPageSize());
+            List<CalendarLogDTO> dtoList = behaviorService.getCalendarLogList(sf.getUserId(),sf.getStartDate(),sf.getEndDate(),template,null,NO_PAGE,sf.getPageSize());
             for(CalendarLogDTO dto : dtoList){
                 BehaviorCalendarVo bean = new BehaviorCalendarVo();
                 bean.setSourceId(dto.getSourceId());

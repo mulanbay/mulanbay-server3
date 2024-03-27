@@ -124,7 +124,9 @@ public class ExperienceController extends BaseController {
 
     private void formToBean(ExperienceForm form, Experience bean){
         BeanCopy.copy(form,bean);
-        bean.setCost(new BigDecimal(0));
+        if(bean.getCost()==null){
+            bean.setCost(new BigDecimal(0));
+        }
         Country country = baseService.getObject(Country.class,form.getCountryId());
         bean.setCountry(country);
         if(form.getProvinceId()!=null){

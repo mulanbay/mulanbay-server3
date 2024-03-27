@@ -32,8 +32,6 @@ public class ExperienceForm implements BindUser {
     @NotNull(message = "结束日期不能为空")
     private Date endDate;
 
-    private BigDecimal cost;
-
     private String tags;
 
     @NotNull(message = "国家不能为空")
@@ -106,14 +104,6 @@ public class ExperienceForm implements BindUser {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
     }
 
     public String getTags() {

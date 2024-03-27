@@ -44,8 +44,6 @@ public class ExperienceDetailForm implements BindUser {
     @NotNull(message = "出发日期不能为空")
     private Date occurDate;
 
-    private BigDecimal cost;
-
     //是否加入到地图的绘制
     private Boolean mapStat;
     //国际线路
@@ -148,14 +146,6 @@ public class ExperienceDetailForm implements BindUser {
 
     public void setOccurDate(Date occurDate) {
         this.occurDate = occurDate;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
     }
 
     public Boolean getMapStat() {
