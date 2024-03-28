@@ -407,7 +407,7 @@ public class TaskTriggerController extends BaseController {
     public ResultBean recentSchedules(RecentSchedulesSH sf) {
         Date start = new Date();
         Date end = new Date(start.getTime()+sf.getHours()*3600*1000L);
-        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules(start,end,sf.getPage(),sf.getPageSize());
+        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules(start,end,sf.getPage(),sf.getPageSize(),sf.isPeriod());
         return callback(list);
     }
 

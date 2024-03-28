@@ -13,11 +13,21 @@ public class RecentSchedulesSH extends PageSearch {
      */
     private Integer hours = 24;
 
+    private Boolean period = true;
+
     public Integer getHours() {
         return hours;
     }
 
     public void setHours(Integer hours) {
         this.hours = hours;
+    }
+
+    public Boolean isPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Boolean period) {
+        this.period = period;
     }
 }
