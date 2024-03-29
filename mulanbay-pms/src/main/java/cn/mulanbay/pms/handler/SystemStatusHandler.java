@@ -100,6 +100,7 @@ public class SystemStatusHandler extends BaseHandler {
     private void createUnlockCode(){
        String uc = NumberUtil.getRandNum(randoms);
        unlockCode = uc;
+       logger.warn("系统解锁码:"+uc);
        notifyHandler.addMessageToNotifier(SYSTEM_LOCK,"系统解锁码","系统解锁码为"+uc,new Date());
     }
 

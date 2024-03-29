@@ -2,6 +2,7 @@ package cn.mulanbay.pms.web.bean.req.data.calendar;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
@@ -49,6 +50,8 @@ public class UserCalendarForm implements BindUser {
 
     //用户自己选择的值，以模板新增的，可以查询是否完成的判断
     private String bindValues;
+
+    private BussSource sourceType;
 
     private String remark;
 
@@ -157,6 +160,14 @@ public class UserCalendarForm implements BindUser {
 
     public void setBindValues(String bindValues) {
         this.bindValues = bindValues;
+    }
+
+    public BussSource getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(BussSource sourceType) {
+        this.sourceType = sourceType;
     }
 
     public String getRemark() {

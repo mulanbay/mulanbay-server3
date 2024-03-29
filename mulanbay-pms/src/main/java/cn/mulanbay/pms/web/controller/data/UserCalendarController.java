@@ -188,7 +188,7 @@ public class UserCalendarController extends BaseController {
         checkUserCalendarData(bean);
         bean.setDelays(0);
         bean.setReadOnly(false);
-        bean.setSourceType(BussSource.MANUAL);
+        //bean.setSourceType(BussSource.MANUAL);
         bean.setBussIdentityKey(BussSource.MANUAL.name()+"_"+StringUtil.genUUID());
         baseService.saveObject(bean);
         return callback(null);
