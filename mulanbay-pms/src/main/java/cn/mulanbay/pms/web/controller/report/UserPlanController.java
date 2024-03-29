@@ -4,6 +4,7 @@ import cn.mulanbay.ai.ml.processor.bean.PlanReportER;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -73,6 +74,9 @@ public class UserPlanController extends BaseController {
             pr.addSort(s);
             List<UserPlan> unList = baseService.getBeanList(pr);
             List<TreeBean> result = new ArrayList<>();
+            if(StringUtil.isEmpty(unList)){
+                return callback(result);
+            }
             PlanType current = unList.get(0).getPlanType();
             TreeBean typeTreeBean = new TreeBean();
             typeTreeBean.setId(current.name());

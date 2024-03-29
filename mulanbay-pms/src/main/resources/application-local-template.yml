@@ -1,0 +1,62 @@
+#mulanbay配置
+mulanbay:
+  #节点编号(应用场景：调度)
+  nodeId: mulanbay
+  #命名空间，主要是缓存使用
+  namespace: mulanbay
+  picture:
+    #图片路径（头像使用）
+    baseUrl: http://localhost:99/avatar
+    #本地存放文件夹地址
+    folder:  /your_path/picture
+  #备份
+  backup:
+    #备份文件存放路径
+    filePath: /your_path/backup
+  #调度相关
+  schedule:
+    #是否开启调度服务
+    enable: true
+  #微信相关
+  wx:
+    #公众号ID
+    appId: <your appId>
+    secret: <your secret>
+    token: <your token>
+    #授权回调地址
+    accessAuthRedirectUrl: /api/wechat/getWxOpenId
+    #消息模版编号
+    msgTemplateId: <your msgTemplateId>
+    #公众号地址
+    oaUrl: http://weixin.qq.com/r/_UPM1NjEA4V8rZy39xbr
+    #公众号图片地址(移动端使用)
+    oaPicUrl: <your oaPicUrl>
+  nlp:
+    model:
+      #模型是否要初始化
+      init: true
+  ml:
+    #机器学习模型文件
+    pmml:
+      modelPath: /your_path/pmml
+      initModel: true
+
+spring:
+  # 数据库相关
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/mulanbay_db?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+    username: root
+    password: 123456
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 1
+      password: <your password>
+  mail:
+    #发送邮件的邮箱地址：改成自己的邮箱
+    username: xx@qq.com
+    #qq邮箱采用授权码发送，非邮箱密码
+    password: <your password>
+    #与发件邮箱一致
+    from: xx@qq.com

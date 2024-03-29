@@ -19,7 +19,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
  * @create 2017-07-10 21:44
  */
 @Entity
-@Table(name = "User_stat_remind")
+@Table(name = "user_stat_remind")
 public class UserStatRemind implements java.io.Serializable {
 
     private static final long serialVersionUID = 4317959207470871680L;

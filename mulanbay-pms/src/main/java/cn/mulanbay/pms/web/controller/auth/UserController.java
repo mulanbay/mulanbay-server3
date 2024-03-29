@@ -241,7 +241,9 @@ public class UserController extends BaseController {
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ss = deleteRequest.getIds().split(",");
         for(String s : ss){
-            authService.deleteUser(Long.valueOf(s));
+            Long userId = Long.valueOf(s);
+            this.deleteData(userId);
+            authService.deleteUser(userId);
         }
         return callback(null);
     }
@@ -265,9 +267,9 @@ public class UserController extends BaseController {
             Role role = baseService.getObject(Role.class, roleId);
             ups.setRoleName(role.getRoleName());
         }
-        UserLevel lc = userLevelService.getUserLevel(user.getLevel());
+        LevelConfig lc = userLevelService.getUserLevel(user.getLevel());
         ups.setAvatar(systemConfigHandler.getPictureFullUrl(ups.getAvatar()));
-        ups.setLevelName(lc.getName());
+        ups.setLevelName(lc.getLevelName());
         return callback(ups);
     }
 
@@ -346,7 +348,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/offline", method = RequestMethod.POST)
-    public ResultBean offline(@RequestBody @Valid UserCommonFrom ucr) {
+    public ResultBean offline(@RequestBody @Valid UserDataForm ucr) {
         return callback(null);
     }
 
@@ -356,14 +358,17 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteUserData", method = RequestMethod.POST)
-    public ResultBean deleteUserData(@RequestBody @Valid UserCommonFrom ucr) {
-        threadPoolHandler.pushThread(new Runnable() {
-            @Override
-            public void run() {
-                baseService.updateJobProcedure("delete_user_data", ucr.getUserId());
-            }
-        });
+    public ResultBean deleteUserData(@RequestBody @Valid UserDataForm ucr) {
+        this.deleteData(ucr.getUserId());
         return callback(null);
+    }
+
+    /**
+     * 删除用户数据
+     * @param userId
+     */
+    private void deleteData(Long userId){
+        threadPoolHandler.pushThread(() -> baseService.updateJobProcedure("delete_user_data", userId));
     }
 
     /**
@@ -372,7 +377,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/initUserData", method = RequestMethod.POST)
-    public ResultBean initUserData(@RequestBody @Valid UserCommonFrom ucr) {
+    public ResultBean initUserData(@RequestBody @Valid UserDataForm ucr) {
         threadPoolHandler.pushThread(new Runnable() {
             @Override
             public void run() {

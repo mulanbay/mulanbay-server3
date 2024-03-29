@@ -4,7 +4,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
-import cn.mulanbay.pms.persistent.domain.UserLevel;
+import cn.mulanbay.pms.persistent.domain.LevelConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +25,10 @@ public class UserLevelService  extends BaseHibernateDao {
      * @param points
      * @return
      */
-    public UserLevel getPreJudgeLevel(Integer score, Integer points) {
+    public LevelConfig getPreJudgeLevel(Integer score, Integer points) {
         try {
-            String hql = "from UserLevel where points<=?1 and score<=?2 order by level desc";
-            return this.getEntity(hql,UserLevel.class, points, score);
+            String hql = "from LevelConfig where points<=?1 and score<=?2 order by level desc";
+            return this.getEntity(hql,LevelConfig.class, points, score);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取预判定用户等级异常", e);
@@ -41,10 +41,10 @@ public class UserLevelService  extends BaseHibernateDao {
      * @param level
      * @return
      */
-    public UserLevel getUserLevel(Integer level) {
+    public LevelConfig getUserLevel(Integer level) {
         try {
-            String hql = "from UserLevel where level=?1";
-            return this.getEntity(hql,UserLevel.class, level);
+            String hql = "from LevelConfig where level=?1";
+            return this.getEntity(hql,LevelConfig.class, level);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
                     "获取用户等级配置异常", e);
