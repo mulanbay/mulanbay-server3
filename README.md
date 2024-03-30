@@ -192,7 +192,8 @@ release文件下载地址：https://gitee.com/mulanbay/mulanbay-server3/releases
         }
     }
 ```
-启动Nginx后，在浏览器输入: http://localhost/index,就可以访问了
+启动Nginx后，在浏览器输入: http://localhost/index
+账号密码：mulanbay / 123456
 
 ### 软件要求
 | 软件                    | 版本    |
