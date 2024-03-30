@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS `account`;
 CREATE TABLE `account` (
   `account_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `account_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `account_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `card_no` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `type` smallint NOT NULL,
   `amount` decimal(9,2) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `account_flow` (
   `flow_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
   `account_id` bigint NOT NULL,
-  `account_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `account_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `card_no` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `type` smallint DEFAULT NULL,
   `before_amount` decimal(9,2) NOT NULL,
@@ -96,7 +96,7 @@ DROP TABLE IF EXISTS `account_snapshot`;
 CREATE TABLE `account_snapshot` (
   `snapshot_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `snapshot_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `snapshot_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `period` smallint DEFAULT NULL,
   `buss_key` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -124,7 +124,7 @@ DROP TABLE IF EXISTS `ai_model`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ai_model` (
   `model_id` bigint NOT NULL AUTO_INCREMENT,
-  `model_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `model_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `file_name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `du` tinyint NOT NULL,
@@ -187,7 +187,7 @@ DROP TABLE IF EXISTS `behavior_template`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `behavior_template` (
   `template_id` bigint NOT NULL AUTO_INCREMENT,
-  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `sql_type` smallint NOT NULL,
   `sql_content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -198,7 +198,7 @@ CREATE TABLE `behavior_template` (
   `day_stat` tinyint NOT NULL DEFAULT '1',
   `hour_stat` tinyint NOT NULL DEFAULT '1',
   `all_day` tinyint NOT NULL DEFAULT '0',
-  `unit` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `unit` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `order_index` smallint NOT NULL,
   `level` int NOT NULL DEFAULT '3',
   `buss_type` smallint NOT NULL DEFAULT '0',
@@ -339,7 +339,7 @@ DROP TABLE IF EXISTS `book_category`;
 CREATE TABLE `book_category` (
   `cate_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL DEFAULT '1',
-  `cate_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cate_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `order_index` smallint NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime NOT NULL,
@@ -369,7 +369,7 @@ DROP TABLE IF EXISTS `budget`;
 CREATE TABLE `budget` (
   `budget_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `budget_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `budget_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `type` smallint NOT NULL,
   `period` smallint NOT NULL,
   `expect_paid_time` datetime DEFAULT NULL,
@@ -378,7 +378,7 @@ CREATE TABLE `budget` (
   `amount` decimal(9,2) NOT NULL,
   `remind` tinyint(1) NOT NULL DEFAULT '1',
   `status` smallint NOT NULL,
-  `tags` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tags` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `goods_type_id` bigint DEFAULT NULL,
   `icg` tinyint NOT NULL DEFAULT '1',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -449,10 +449,10 @@ CREATE TABLE `budget_snapshot` (
   `user_id` bigint NOT NULL,
   `budget_log_id` bigint DEFAULT NULL,
   `stat_period` smallint DEFAULT NULL,
-  `buss_key` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `buss_key` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `buss_day` datetime DEFAULT NULL,
   `budget_id` bigint NOT NULL,
-  `budget_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `budget_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `type` smallint NOT NULL,
   `period` smallint NOT NULL,
   `expect_paid_time` datetime DEFAULT NULL,
@@ -461,7 +461,7 @@ CREATE TABLE `budget_snapshot` (
   `amount` decimal(9,2) NOT NULL,
   `remind` tinyint(1) NOT NULL DEFAULT '1',
   `status` smallint NOT NULL,
-  `tags` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tags` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `goods_type_id` int DEFAULT NULL,
   `icg` tinyint DEFAULT '1',
   `ac_amount` decimal(9,2) DEFAULT NULL,
@@ -562,14 +562,14 @@ DROP TABLE IF EXISTS `chart_template`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chart_template` (
   `template_id` bigint NOT NULL AUTO_INCREMENT,
-  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `para` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `status` smallint NOT NULL,
   `order_index` smallint NOT NULL,
   `buss_type` smallint NOT NULL DEFAULT '0',
   `level` int NOT NULL,
-  `api` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `api` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `url` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date_field` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `date_format` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -600,7 +600,7 @@ DROP TABLE IF EXISTS `city`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `city` (
   `city_id` bigint NOT NULL DEFAULT '0' COMMENT 'ID',
-  `city_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Name',
+  `city_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Name',
   `map_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `province_id` bigint DEFAULT NULL COMMENT 'PROVINCE',
   `zip_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'ZIPCODE',
@@ -669,7 +669,7 @@ CREATE TABLE `common_data` (
   `data_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
   `type_id` int DEFAULT NULL,
-  `data_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `data_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `value` int NOT NULL,
   `occur_time` datetime NOT NULL,
   `location` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -698,7 +698,7 @@ DROP TABLE IF EXISTS `common_data_type`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `common_data_type` (
   `type_id` bigint NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `type_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `user_id` bigint NOT NULL,
   `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `unit` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -735,7 +735,7 @@ DROP TABLE IF EXISTS `company`;
 CREATE TABLE `company` (
   `company_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `company_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `company_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `days` int NOT NULL COMMENT '天数',
   `entry_date` date NOT NULL COMMENT '入职日期',
   `quit_date` date DEFAULT NULL COMMENT '离职日期',
@@ -769,7 +769,7 @@ CREATE TABLE `consume` (
   `user_id` bigint NOT NULL,
   `sub_goods_type_id` int DEFAULT NULL,
   `goods_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '商品名称',
-  `sku` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `sku` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `shop_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `price` decimal(9,2) NOT NULL COMMENT '商品单价',
   `amount` int NOT NULL DEFAULT '1' COMMENT '数量',
@@ -782,7 +782,7 @@ CREATE TABLE `consume` (
   `invalid_time` datetime DEFAULT NULL,
   `expert_invalid_time` datetime DEFAULT NULL,
   `duration` bigint DEFAULT NULL,
-  `tags` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `tags` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `brand` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `secondhand` bit(1) NOT NULL,
   `stat` bit(1) DEFAULT NULL,
@@ -835,7 +835,7 @@ DROP TABLE IF EXISTS `consume_source`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `consume_source` (
   `source_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `source_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `source_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `user_id` bigint NOT NULL DEFAULT '1',
   `status` smallint NOT NULL COMMENT '状态',
   `order_index` smallint NOT NULL COMMENT '排序号',
@@ -904,7 +904,7 @@ CREATE TABLE `db_clean` (
   `date_field` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `days` int NOT NULL,
   `clean_type` smallint NOT NULL,
-  `extra_condition` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `extra_condition` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `last_clean_time` datetime DEFAULT NULL,
   `last_clean_counts` bigint DEFAULT NULL,
   `status` smallint NOT NULL,
@@ -934,7 +934,7 @@ DROP TABLE IF EXISTS `dict_group`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dict_group` (
   `group_id` bigint NOT NULL AUTO_INCREMENT,
-  `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `code` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `status` smallint NOT NULL,
   `order_index` smallint NOT NULL,
@@ -963,7 +963,7 @@ DROP TABLE IF EXISTS `dict_item`;
 CREATE TABLE `dict_item` (
   `item_id` bigint NOT NULL AUTO_INCREMENT,
   `group_id` bigint NOT NULL,
-  `item_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `item_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `code` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `value_class` smallint NOT NULL DEFAULT '3',
   `status` smallint NOT NULL,
@@ -1057,7 +1057,7 @@ DROP TABLE IF EXISTS `district`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `district` (
   `district_id` bigint NOT NULL DEFAULT '0' COMMENT 'ID',
-  `district_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'NAME',
+  `district_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'NAME',
   `map_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `city_id` bigint DEFAULT NULL COMMENT 'CITY',
   `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -1091,7 +1091,7 @@ DROP TABLE IF EXISTS `dream`;
 CREATE TABLE `dream` (
   `dream_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `dream_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '梦想名称',
+  `dream_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '梦想名称',
   `cost` decimal(9,2) DEFAULT NULL COMMENT '最低资金要求',
   `difficulty` int NOT NULL COMMENT '难度等级',
   `important` decimal(5,1) NOT NULL COMMENT '重要等级',
@@ -1208,7 +1208,7 @@ CREATE TABLE `exercise` (
   `avg_heart_rate` int DEFAULT NULL COMMENT '平均心率',
   `value_best` smallint DEFAULT NULL,
   `fast_best` smallint DEFAULT NULL,
-  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '备注',
+  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   `created_time` datetime NOT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`exercise_id`)
@@ -1234,7 +1234,7 @@ DROP TABLE IF EXISTS `experience`;
 CREATE TABLE `experience` (
   `exp_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `exp_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `exp_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `type` int NOT NULL COMMENT '类型',
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
@@ -1271,7 +1271,7 @@ DROP TABLE IF EXISTS `experience_consume`;
 CREATE TABLE `experience_consume` (
   `consume_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `consume_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `consume_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `detail_id` bigint NOT NULL COMMENT '人生经历明细',
   `goods_type_id` bigint NOT NULL COMMENT '消费类型编号',
   `cost` decimal(9,2) NOT NULL COMMENT '花费',
@@ -1373,7 +1373,7 @@ DROP TABLE IF EXISTS `family`;
 CREATE TABLE `family` (
   `family_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `family_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `family_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `status` smallint DEFAULT NULL COMMENT '状态',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   `created_time` datetime NOT NULL COMMENT '创建时间',
@@ -1455,7 +1455,7 @@ DROP TABLE IF EXISTS `food_category`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `food_category` (
   `cate_id` bigint NOT NULL AUTO_INCREMENT,
-  `tags` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `tags` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `class_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `type` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `status` smallint NOT NULL,
@@ -1486,8 +1486,8 @@ DROP TABLE IF EXISTS `goods_lifetime`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `goods_lifetime` (
   `lifetime_id` bigint NOT NULL AUTO_INCREMENT,
-  `lifetime_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `tags` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `lifetime_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tags` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `days` int NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime NOT NULL,
@@ -1518,7 +1518,7 @@ CREATE TABLE `goods_type` (
   `type_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `user_id` bigint NOT NULL DEFAULT '1',
   `pid` int DEFAULT '0' COMMENT '上级ID，支持多级，实际中只有两级，否则比较复杂',
-  `type_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `type_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `behavior_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '默认',
   `status` smallint NOT NULL COMMENT '状态',
   `order_index` smallint NOT NULL COMMENT '排序好',
@@ -1551,7 +1551,7 @@ DROP TABLE IF EXISTS `income`;
 CREATE TABLE `income` (
   `income_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `income_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `income_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `type` smallint NOT NULL,
   `account_id` bigint DEFAULT NULL,
   `amount` decimal(9,2) NOT NULL,
@@ -1582,7 +1582,7 @@ DROP TABLE IF EXISTS `instrument`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `instrument` (
   `instrument_id` bigint NOT NULL AUTO_INCREMENT,
-  `instrument_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `instrument_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `user_id` bigint NOT NULL DEFAULT '1',
   `status` smallint DEFAULT '1',
   `order_index` smallint NOT NULL,
@@ -1614,7 +1614,7 @@ DROP TABLE IF EXISTS `level_config`;
 CREATE TABLE `level_config` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `level` int NOT NULL COMMENT '等级',
-  `level_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `level_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `points` int NOT NULL COMMENT '达到该等级的最低积分数要求',
   `points_days` int NOT NULL COMMENT '达到该等级的最低积分数的至少连续天数',
   `score` int NOT NULL COMMENT '达到该等级的最低评分要求',
@@ -1848,7 +1848,7 @@ DROP TABLE IF EXISTS `plan_report`;
 CREATE TABLE `plan_report` (
   `report_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `report_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `report_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `buss_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `buss_day` date NOT NULL,
   `plan_id` bigint NOT NULL,
@@ -1885,7 +1885,7 @@ DROP TABLE IF EXISTS `plan_report_timeline`;
 CREATE TABLE `plan_report_timeline` (
   `timeline_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `timeline_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `timeline_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `buss_key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `buss_day` date NOT NULL,
   `plan_id` bigint NOT NULL,
@@ -1921,7 +1921,7 @@ DROP TABLE IF EXISTS `plan_template`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `plan_template` (
   `template_id` bigint NOT NULL AUTO_INCREMENT,
-  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `sql_type` smallint NOT NULL,
   `sql_content` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -1932,7 +1932,7 @@ CREATE TABLE `plan_template` (
   `level` int NOT NULL DEFAULT '3',
   `rewards` int NOT NULL DEFAULT '0',
   `source` smallint NOT NULL DEFAULT '0',
-  `calendar_title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `calendar_title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `url` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime NOT NULL,
@@ -1960,7 +1960,7 @@ DROP TABLE IF EXISTS `province`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `province` (
   `province_id` bigint NOT NULL COMMENT 'ID',
-  `province_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '名称',
+  `province_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
   `map_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `country_id` bigint DEFAULT '290',
   `code` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -2022,7 +2022,7 @@ DROP TABLE IF EXISTS `role`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role` (
   `role_id` bigint NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `role_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `status` smallint NOT NULL,
   `order_index` smallint NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -2076,7 +2076,7 @@ DROP TABLE IF EXISTS `score_config`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `score_config` (
   `config_id` bigint NOT NULL AUTO_INCREMENT,
-  `config_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `config_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `group_id` bigint NOT NULL DEFAULT '1',
   `sql_content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `limit_value` decimal(9,2) NOT NULL DEFAULT '1.00',
@@ -2109,7 +2109,7 @@ DROP TABLE IF EXISTS `score_group`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `score_group` (
   `group_id` bigint NOT NULL AUTO_INCREMENT,
-  `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `group_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `code` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `status` smallint NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -2176,7 +2176,7 @@ DROP TABLE IF EXISTS `sport`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sport` (
   `sport_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `sport_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `sport_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `user_id` bigint NOT NULL DEFAULT '1',
   `status` smallint NOT NULL COMMENT '状态',
   `unit` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '公里',
@@ -2208,7 +2208,7 @@ DROP TABLE IF EXISTS `sport_milestone`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sport_milestone` (
   `milestone_id` bigint NOT NULL AUTO_INCREMENT,
-  `milestone_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `milestone_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `alais` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `user_id` bigint NOT NULL,
   `sport_id` bigint NOT NULL,
@@ -2246,7 +2246,7 @@ DROP TABLE IF EXISTS `stat_bind_config`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stat_bind_config` (
   `config_id` bigint NOT NULL AUTO_INCREMENT,
-  `config_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `config_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `type` smallint NOT NULL,
   `source` smallint NOT NULL DEFAULT '0',
   `value_class` smallint NOT NULL,
@@ -2260,7 +2260,7 @@ CREATE TABLE `stat_bind_config` (
   `default_value` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nullable` tinyint NOT NULL DEFAULT '0',
   `order_index` smallint NOT NULL,
-  `msg` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `msg` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime DEFAULT NULL,
   `modify_time` datetime DEFAULT NULL,
@@ -2287,7 +2287,7 @@ DROP TABLE IF EXISTS `stat_template`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stat_template` (
   `template_id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
+  `template_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `sql_type` smallint NOT NULL COMMENT '查询语句类型0:sql,1:hql',
   `sql_content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -2299,7 +2299,7 @@ CREATE TABLE `stat_template` (
   `level` int NOT NULL DEFAULT '3',
   `rewards` int NOT NULL DEFAULT '0',
   `source` smallint NOT NULL DEFAULT '0',
-  `calendar_title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `calendar_title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `url` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime NOT NULL,
@@ -2366,7 +2366,7 @@ DROP TABLE IF EXISTS `sys_func`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sys_func` (
   `func_id` bigint NOT NULL AUTO_INCREMENT,
-  `func_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `func_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `support_methods` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `url_address` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `url_type` smallint NOT NULL,
@@ -2530,7 +2530,7 @@ DROP TABLE IF EXISTS `task_trigger`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `task_trigger` (
   `trigger_id` bigint NOT NULL AUTO_INCREMENT,
-  `trigger_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `trigger_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `deploy_id` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `task_class` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `distriable` tinyint NOT NULL,
@@ -2591,10 +2591,10 @@ CREATE TABLE `treat` (
   `disease` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '疾病',
   `pain_level` int NOT NULL COMMENT '疼痛等级',
   `important` decimal(5,1) NOT NULL COMMENT '重要等级',
-  `confirm_disease` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '确诊疾病',
+  `confirm_disease` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '确诊疾病',
   `sick` smallint NOT NULL COMMENT '是否有病',
   `treat_time` datetime NOT NULL COMMENT '看病日期',
-  `os` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `os` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `doctor` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `reg_fee` decimal(9,2) NOT NULL COMMENT '挂号费',
   `drug_fee` decimal(9,2) NOT NULL COMMENT '药费',
@@ -2631,7 +2631,7 @@ CREATE TABLE `treat_drug` (
   `drug_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `treat_id` bigint NOT NULL,
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `drug_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '药名称',
+  `drug_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '药名称',
   `unit` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '单位',
   `amount` int NOT NULL COMMENT '数量',
   `disease` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '治疗疾病',
@@ -2675,7 +2675,7 @@ CREATE TABLE `treat_drug_detail` (
   `drug_id` bigint NOT NULL,
   `user_id` bigint NOT NULL COMMENT '用户编号',
   `occur_time` datetime NOT NULL,
-  `eu` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `eu` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ec` decimal(5,1) DEFAULT NULL,
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   `created_time` datetime NOT NULL COMMENT '创建时间',
@@ -2704,7 +2704,7 @@ CREATE TABLE `treat_operation` (
   `operation_id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `treat_id` bigint NOT NULL,
   `user_id` bigint NOT NULL COMMENT '用户编号',
-  `operation_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手术名',
+  `operation_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '手术名',
   `category` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `treat_date` date NOT NULL,
   `review_date` date DEFAULT NULL,
@@ -2996,7 +2996,7 @@ CREATE TABLE `user_reward` (
   `source` smallint NOT NULL DEFAULT '0',
   `after_points` int NOT NULL DEFAULT '0',
   `message_id` bigint DEFAULT NULL,
-  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_time` datetime NOT NULL,
   `modify_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -3308,7 +3308,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
@@ -3337,7 +3337,7 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
@@ -3366,7 +3366,7 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
@@ -3396,7 +3396,7 @@ DELIMITER ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
