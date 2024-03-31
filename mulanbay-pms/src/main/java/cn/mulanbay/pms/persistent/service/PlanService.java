@@ -23,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 计划service
+ */
 @Service
 @Transactional
 public class PlanService extends BaseReportService {

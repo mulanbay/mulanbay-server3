@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.util.bean;
 
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 
 import java.util.Date;
@@ -82,5 +83,15 @@ public class PeriodDateBean {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    /**
+     * 更新截止日期，因为有些情况下，截止日期不是最后一天，而是当前日期(运营日)
+     * @param endDate
+     */
+    public void updateEndDate(Date endDate){
+        this.endDate = endDate;
+        int totalDays = DateUtil.getIntervalDays(startDate,endDate);
+        this.setTotalDays(totalDays);
     }
 }

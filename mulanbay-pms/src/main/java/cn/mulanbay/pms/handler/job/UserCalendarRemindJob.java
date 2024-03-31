@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * ${DESCRIPTION}
+ * 用户日历提醒
  *
  * @author fenghong
  * @create 2018-03-13 21:12

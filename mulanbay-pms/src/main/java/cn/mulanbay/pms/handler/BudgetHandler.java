@@ -322,6 +322,10 @@ public class BudgetHandler extends BaseHandler {
             ccList = bab.getYearBudgetList();
         }
         PeriodDateBean pdb = BussUtil.calPeriod(bussDay,period);
+        if(!useLastDay){
+            //使用运营日
+            pdb.updateEndDate(DateUtil.tillMiddleNight(bussDay));
+        }
         BudgetLog bl = this.statBudget(userId, budgetAmount, pdb.getStartDate(),pdb.getEndDate(), bussKey, isRedo, period);
         //自动计算
         bl.setSource(BudgetLogSource.AUTO);

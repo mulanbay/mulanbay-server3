@@ -29,7 +29,7 @@ public class BussUtil {
     /**
      * 计算周期
      *
-     * @param bussDay 周期的第一天
+     * @param bussDay 运营日
      * @param period
      * @param amn 是否添加午夜
      * @return
@@ -41,11 +41,11 @@ public class BussUtil {
         String bussKey = BussUtil.getBussKey(period,bussDay);
         switch (period){
             case YEARLY -> {
-                startDate = bussDay;
+                startDate = DateUtil.getYearFirst(bussDay);
                 endDate = DateUtil.getYearLast(startDate);
             }
             case MONTHLY -> {
-                startDate = bussDay;
+                startDate = DateUtil.getMonthFirst(bussDay);
                 endDate = DateUtil.getMonthLast(startDate);
             }
             case WEEKLY -> {
