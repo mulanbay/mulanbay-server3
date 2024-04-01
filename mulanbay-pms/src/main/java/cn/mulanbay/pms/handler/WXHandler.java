@@ -264,7 +264,11 @@ public class WXHandler extends BaseHandler {
         }catch (Exception e) {
             logger.error("获取AccessToken异常",e);
         } finally {
-            lock.readLock().unlock();
+            try {
+                lock.readLock().unlock();
+            } catch (Exception e) {
+                logger.error("readLock unlock异常",e);
+            }
         }
         return accessToken;
     }

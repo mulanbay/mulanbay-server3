@@ -327,6 +327,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
         } else {
             expireSeconds = bean.getDays() * 24 * 3600;
         }
+        logger.debug("user plan remind expireSeconds:"+expireSeconds);
         cacheHandler.set(key, "123", expireSeconds - 5);
         //Step 4:积分奖励
         rewardPoint(userPlan, isComplete, messageId);

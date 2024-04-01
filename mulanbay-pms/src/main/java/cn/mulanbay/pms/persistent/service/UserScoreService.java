@@ -160,8 +160,8 @@ public class UserScoreService extends BaseHibernateDao {
      */
     public List<Long> selectNeedStatScoreUserIdList() {
         try {
-            String hql = "select userId from UserSet where statScore=?1";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Long.class,true);
+            String hql = "select userId from UserSet where scoreGroupId is not null";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Long.class);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取需要积分统计的用户Id异常", e);

@@ -205,7 +205,7 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
                     and tl.redoTimes < tt.allowedRedoTimes \n
                     """;
             if(distriable){
-                hql+=" and (tt.deployId=?6 or tt.distriable=1) ";
+                hql+=" and (tt.deployId=?6 or tt.distriable=true) ";
             }else{
                 hql+=" and tt.deployId=?6 ";
             }
