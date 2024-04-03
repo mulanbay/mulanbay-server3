@@ -209,9 +209,7 @@ release文件下载地址：https://gitee.com/mulanbay/mulanbay-server3/releases
  内存4G+
  
 ## 系统架构
-
-### 系统模块
-![系统模块](https://images.gitee.com/uploads/images/2020/1116/153208_763552c9_352331.png "系统模块.png")
+![系统架构](docs/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png)
 
 ## 在线演示
 暂未提供
