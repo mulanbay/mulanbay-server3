@@ -761,7 +761,7 @@ public class ConsumeService extends BaseHibernateDao {
      */
     public List<ConsumeConsumeTypeStat> getConsumeTypeAmountStat(Date startTime, Date endTime, Long userId) {
         try {
-            String sql = "select consume_type as ConsumeType,count(0) as totalCount,sum(total_price) as totalPrice from consume where buy_time>=?1 and buy_time<=?2 and user_id=?3 group by consume_type";
+            String sql = "select consume_type as consumeType,count(0) as totalCount,sum(total_price) as totalPrice from consume where buy_time>=?1 and buy_time<=?2 and user_id=?3 group by consume_type";
             List args = new ArrayList();
             args.add(startTime);
             args.add(endTime);

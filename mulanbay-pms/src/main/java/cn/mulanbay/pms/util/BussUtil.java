@@ -62,6 +62,7 @@ public class BussUtil {
 
             }
         }
+        startDate = DateUtil.fromMiddleNight(startDate);
         //添加午夜时分秒
         if(amn){
             endDate = DateUtil.tillMiddleNight(endDate);
