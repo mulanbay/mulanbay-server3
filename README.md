@@ -209,9 +209,7 @@ release文件下载地址：https://gitee.com/mulanbay/mulanbay-server3/releases
  内存4G+
  
 ## 系统架构
-
-### 系统模块
-![系统模块](https://images.gitee.com/uploads/images/2020/1116/153208_763552c9_352331.png "系统模块.png")
+![系统架构](docs/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png)
 
 ## 在线演示
 暂未提供
@@ -270,3 +268,10 @@ vue3版本未开发
     </tr>
 
 </table>
+
+### 鸣谢
+谢谢JetBrains公司一直以来对木兰湾项目的支持，提供了全系列产品的免费license。
+
+<img src="https://foruda.gitee.com/images/1712229322943756523/d28d99c2_352331.png" width="100px" height="100px">
+
+JetBrains开源支持计划：https://jb.gg/OpenSourceSupport.
