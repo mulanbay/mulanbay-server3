@@ -16,21 +16,21 @@ import java.util.List;
 @ConfigurationProperties(prefix = "mulanbay.security.lock")
 public class LockProperties {
 
-    private List<String> whitList = new ArrayList<>();
+    private List<String> whiteList = new ArrayList<>();
 
-    public List<String> getWhitList() {
-        return whitList;
+    public List<String> getWhiteList() {
+        return whiteList;
     }
 
-    public void setWhitList(List<String> whitList) {
-        this.whitList = whitList;
+    public void setWhiteList(List<String> whiteList) {
+        this.whiteList = whiteList;
     }
 
     public boolean auth(String path){
-        if(StringUtil.isEmpty(whitList)){
+        if(StringUtil.isEmpty(whiteList)){
             return false;
         }else{
-            for(String s : whitList){
+            for(String s : whiteList){
                 if(s.equals(path)){
                     return true;
                 }

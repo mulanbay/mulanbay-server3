@@ -54,7 +54,7 @@ public class SystemStatusHandler extends BaseHandler {
     /**
      * 解锁码
      */
-    private static String unlockCode;
+    private String unlockCode;
 
     public SystemStatusHandler() {
         super("系统状态");
@@ -66,26 +66,26 @@ public class SystemStatusHandler extends BaseHandler {
      * @param afterStatus
      * @param msg
      * @param expireTime
-     * @param unlockCode  解锁码
+     * @param ulc  解锁码
      * @return
      */
-    public boolean lock(int afterStatus, String msg, Date expireTime, String unlockCode) {
+    public boolean lock(int afterStatus, String msg, Date expireTime, String ulc) {
         if (afterStatus > status) {
             if (unlockStatus > afterStatus) {
                 //无法上锁，上次的解锁码比此次大
                 return false;
             }
-            this.lockSystem(afterStatus, msg, expireTime, unlockCode);
+            this.lockSystem(afterStatus, msg, expireTime, ulc);
             return true;
         } else {
             return false;
         }
     }
 
-    private synchronized void lockSystem(int afterStatus, String msg, Date expireTime, String unlockCode) {
+    private synchronized void lockSystem(int afterStatus, String msg, Date expireTime, String ulc) {
         status = afterStatus;
         message = (msg == null ? "系统锁定" : msg);
-        this.handleUnlockCode(unlockCode);
+        this.handleUnlockCode(ulc);
         //增加定定时恢复
         if (expireTime != null) {
             message += ",重新开启时间:" + DateUtil.getFormatDate(expireTime, DateUtil.Format24Datetime);
@@ -100,11 +100,16 @@ public class SystemStatusHandler extends BaseHandler {
         logger.warn("设置系统状态,code={}", afterStatus);
     }
 
-    private void handleUnlockCode(String unlockCode) {
-        if (StringUtil.isEmpty(unlockCode)) {
-            String uc = NumberUtil.getRandNum(randoms);
-            unlockCode = uc;
+    /**
+     * 处理解锁码
+     *
+     * @param ulc 解锁码，可以用户直接输入，默认由系统产生
+     */
+    private void handleUnlockCode(String ulc) {
+        if (StringUtil.isEmpty(ulc)) {
+            ulc = NumberUtil.getRandNum(randoms);
         }
+        this.unlockCode = ulc;
         logger.warn("系统解锁码:" + unlockCode);
         notifyHandler.addMessageToNotifier(SYSTEM_LOCK, "系统解锁码", "系统解锁码为" + unlockCode, new Date());
     }

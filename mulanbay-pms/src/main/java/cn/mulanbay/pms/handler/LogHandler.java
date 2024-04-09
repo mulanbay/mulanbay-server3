@@ -58,18 +58,16 @@ public class LogHandler extends BaseHandler {
     /**
      * 系统日志
      *
-     * @param logLevel
      * @param title
      * @param content
      * @param errorCode
      */
-    public void addSysLog(LogLevel logLevel, String title, String content, int errorCode) {
+    public void addSysLog(String title, String content, int errorCode) {
         SysLog log = new SysLog();
         log.setUserId(0L);
         log.setUsername("系统操作");
         log.setTitle(title);
         log.setContent(content);
-        log.setLogLevel(logLevel);
         log.setErrorCode(errorCode);
         if (log.getOccurTime() == null) {
             log.setOccurTime(new Date());

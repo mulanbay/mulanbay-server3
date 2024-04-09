@@ -106,7 +106,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
         SysCode ec = systemConfigHandler.getSysCode(code);
         if (ec == null) {
-            logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置",
+            logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置",
                     PmsCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
@@ -165,7 +165,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             }
             SysCode ec = systemConfigHandler.getSysCode(code);
             if (ec == null) {
-                logHandler.addSysLog(LogLevel.WARNING, "系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
+                logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
                         PmsCode.ERROR_CODE_NOT_DEFINED);
                 ec = systemConfigHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
@@ -278,7 +278,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         //发消息
         this.addMessageToNotifier(code, title, message, null, null, null);
         //记录系统日志
-        logHandler.addSysLog(LogLevel.WARNING,title,message,code);
+        logHandler.addSysLog(title,message,code);
     }
 
     @HandlerMethod(desc = "清除所有未发送消息")

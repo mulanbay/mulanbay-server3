@@ -37,15 +37,18 @@ public class SystemStatusJob extends AbstractBaseJob {
         boolean ns = this.needStop();
         Boolean res = null;
         String msg = null;
+        int sysCode = 0;
         if(ns){
             if(status!=stopStatus){
                 String cc = "系统定时关闭时间:"+para.getStopPeriod()+","+para.getMessage();
                 res = systemStatusHandler.lock(stopStatus,cc,null,null);
                 msg = "关闭系统，stopStatus = "+stopStatus+",执行结果:"+res;
+                sysCode = PmsCode.SYSTEM_LOCK;
             }
         }else{
             if(status!= ErrorCode.SUCCESS){
                 res = systemStatusHandler.revert(para.getStopStatus());
+                sysCode = PmsCode.SYSTEM_UNLOCK;
             }
         }
         if(res!=null){
@@ -57,7 +60,7 @@ public class SystemStatusJob extends AbstractBaseJob {
             }
             //写系统日志
             LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);
-            logHandler.addSysLog(LogLevel.WARNING,"系统状态操作","系统状态调度器设置系统状态,"+msg, PmsCode.SYSTEM_LOCK);
+            logHandler.addSysLog("系统状态操作","系统状态调度器设置系统状态,"+msg, sysCode);
 
         }
         return tr;

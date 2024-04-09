@@ -245,15 +245,12 @@ public class WXHandler extends BaseHandler {
                     // 获取accessToken
                     String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + secret;
                     HttpResult hr = HttpUtils.doGet(url);
-                    LogLevel level = LogLevel.NORMAL;
                     if (hr.getStatusCode() == Constant.SC_OK) {
                         AccessToken at = (AccessToken) JsonUtil.jsonToBean(hr.getBody(), AccessToken.class);
                         accessToken = at.getAccess_token();
                         cacheHandler.set(cacheKey, accessToken, at.getExpires_in() - 10);
-                    } else{
-                        level = LogLevel.ERROR;
                     }
-                    logHandler.addSysLog(level,"获取微信accessToken",hr.getBody(),PmsCode.WX_TOKEN_RESULT);
+                    logHandler.addSysLog("获取微信accessToken",hr.getBody(),PmsCode.WX_TOKEN_RESULT);
                     lock.readLock().lock();
                 } catch (Exception e) {
                     logger.error("从微信获取AccessToken异常",e);

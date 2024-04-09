@@ -50,6 +50,7 @@ public class SysLogThread extends BaseLogThread {
                     log.setSysFunc(sf);
                     log.setIdValue(this.getParaIdValue(sf, log.getParaMap()));
                 }
+                log.setLogLevel(ec.getLevel());
                 Date now = new Date();
                 log.setStoreTime(now);
                 //会比较慢

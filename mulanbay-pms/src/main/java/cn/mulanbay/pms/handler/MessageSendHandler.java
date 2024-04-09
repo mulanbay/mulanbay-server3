@@ -101,7 +101,7 @@ public class MessageSendHandler extends BaseHandler {
                 boolean b = redisDistributedLock.lock(key, lockRetryTimes);
                 if (!b) {
                     logger.warn("消息ID=" + message.getMsgId() + "正在被发送，无法重复发送");
-                    logHandler.addSysLog(LogLevel.WARNING, "消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
+                    logHandler.addSysLog("消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
                             PmsCode.MESSAGE_DUPLICATE_SEND);
                     return true;
                 }

@@ -90,7 +90,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
             //增加积分
             RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
             //TODO 目前预算与预算日志无法区分，要么BussSource区分不同的
-            rewardHandler.rewardPoints(bd.getUserId(), para.getScore(), bd.getBudgetId(), BussSource.BUDGET, null, messageId);
+            rewardHandler.reward(bd.getUserId(), para.getScore(), bd.getBudgetId(), BussSource.BUDGET, null, messageId);
             this.addToUserCalendar(bd, bussKey,bussDay, messageId, cc);
         } catch (Exception e) {
             logger.error("处理预算统计消息提醒异常");

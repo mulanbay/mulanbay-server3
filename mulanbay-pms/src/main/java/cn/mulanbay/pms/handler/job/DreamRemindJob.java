@@ -10,7 +10,6 @@ import cn.mulanbay.pms.persistent.domain.Dream;
 import cn.mulanbay.pms.persistent.domain.DreamRemind;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.service.DreamService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
@@ -114,7 +113,7 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
             //未完成减去
             int rewards = dream.getRewards() * (-1);
             String remark = "梦想[" + dream.getDreamName() + "]进度未达到要求惩罚";
-            rewardHandler.rewardPoints(dream.getUserId(), rewards, dream.getDreamId(), BussSource.DREAM, remark, messageId);
+            rewardHandler.reward(dream.getUserId(), rewards, dream.getDreamId(), BussSource.DREAM, remark, messageId);
             //添加到用户日历
             addToUserCalendar(dream, messageId);
         } catch (Exception e) {

@@ -5,6 +5,7 @@ import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.PmsScheduleHandler;
 import cn.mulanbay.pms.handler.SystemStatusHandler;
 import cn.mulanbay.pms.handler.job.SystemStatusJob;
 import cn.mulanbay.pms.handler.job.SystemStatusJobPara;
@@ -43,6 +44,9 @@ public class SystemController extends BaseController {
 
     @Autowired
     PmsScheduleService pmsScheduleService;
+
+    @Autowired
+    PmsScheduleHandler pmsScheduleHandler;
 
     /**
      * 锁定
@@ -112,7 +116,7 @@ public class SystemController extends BaseController {
             trigger.setTriggerStatus(hc.getTriggerStatus());
             trigger.setModifyTime(new Date());
             baseService.updateObject(trigger);
-            //pmsScheduleService.updateTaskTriggerPara(trigger.getTriggerId(),JsonUtil.beanToJson(jobPara));
+            pmsScheduleHandler.refreshTask(trigger);
         }
         return callback(null);
     }

@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.aop;
 
 import cn.mulanbay.business.handler.CacheHandler;
-import cn.mulanbay.common.aop.BindFamily;
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.BindUserLevel;
 import cn.mulanbay.common.aop.FullEndDateTime;
@@ -12,7 +11,6 @@ import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
-import cn.mulanbay.pms.persistent.enums.FamilyMode;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.web.bean.request.PageSearch;
 import jakarta.servlet.http.HttpServletRequest;
@@ -220,27 +218,9 @@ public class ControllerHandler {
                         bu.setLevel(loginUser.getLevel());
                     }
                     // 个人模式下，直接设置为当前用户
-                    if (arg instanceof BindUser && loginUser.getFamilyMode() == FamilyMode.P) {
+                    if (arg instanceof BindUser) {
                         BindUser bu = (BindUser) arg;
                         bu.setUserId(loginUser.getUserId());
-                    }
-                    if (loginUser.getFamilyMode() == FamilyMode.F) {
-                        //家庭模式下设置家庭组员
-                        if (arg instanceof BindFamily) {
-                            BindFamily bf = (BindFamily) arg;
-                            bf.setUserIdList(loginUser.getUserIdList());
-                            //假如是要支持家庭模式，判断用户编号是否在家庭组员里面
-                            if (arg instanceof BindUser) {
-                                BindUser bu = (BindUser) arg;
-                                Long userId = bu.getUserId();
-                                if (userId != null) {
-                                    boolean b = loginUser.userInFamily(userId);
-                                    if (!b) {
-                                        throw new ApplicationException(PmsCode.USER_NOT_IN_FAMILY);
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
                 // 判断分页数据中的最大数

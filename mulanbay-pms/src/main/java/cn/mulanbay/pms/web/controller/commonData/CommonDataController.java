@@ -119,7 +119,7 @@ public class CommonDataController extends BaseController {
         int rp = type.getRewardPoint();
         if (rp != 0) {
             //这里修改为通用类型ID
-            rewardHandler.rewardPoints(form.getUserId(), type.getRewardPoint(), bean.getDataId(),
+            rewardHandler.reward(form.getUserId(), type.getRewardPoint(), bean.getDataId(),
                     BussSource.COMMON_DATA, "通用记录操作奖励", null);
         }
         return callback(bean);

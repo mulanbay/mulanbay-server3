@@ -55,7 +55,7 @@ mulanbay:
       #系统状态解锁码位数
       unlockRandoms: 6
       #白名单
-      whitList:
+      whiteList:
         - /system/unlock
         - /captcha/captchaImage
     #图形验证码

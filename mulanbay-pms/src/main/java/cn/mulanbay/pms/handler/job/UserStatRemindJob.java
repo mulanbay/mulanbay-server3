@@ -220,7 +220,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 rewards = -rewards;
                 remark = "用户统计配置[" + us.getTitle() + "]触发警报惩罚,"+content;
             }
-            rewardHandler.rewardPoints(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
+            rewardHandler.reward(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
             if (isComplete) {
                 StatTemplate template = us.getTemplate();
                 String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),us.getBindValues());

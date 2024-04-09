@@ -131,7 +131,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             Long messageId = notifyHandler.addNotifyMessage(code, title, cc,
                     bl.getUserId(), null);
             //增加积分
-            rewardHandler.rewardPoints(bl.getUserId(), rewards, bl.getLogId(), BussSource.BUDGET_LOG, null, messageId);
+            rewardHandler.reward(bl.getUserId(), rewards, bl.getLogId(), BussSource.BUDGET_LOG, null, messageId);
             if (code == PmsCode.BUDGET_CHECK_OVER) {
                 this.addToUserCalendar(bl, messageId, cc,bussDay);
             }

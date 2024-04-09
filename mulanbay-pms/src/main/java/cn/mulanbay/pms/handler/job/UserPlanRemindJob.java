@@ -222,7 +222,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
                 rewards = userPlan.getTemplate().getRewards() * (-1);
                 remark = "计划[" + userPlan.getTitle() + "]进度未达到要求惩罚";
             }
-            rewardHandler.rewardPoints(userPlan.getUserId(), rewards, userPlan.getPlanId(), BussSource.PLAN, remark, messageId);
+            rewardHandler.reward(userPlan.getUserId(), rewards, userPlan.getPlanId(), BussSource.PLAN, remark, messageId);
             if (isComplete) {
                 //删除日历
                 PlanTemplate template = userPlan.getTemplate();

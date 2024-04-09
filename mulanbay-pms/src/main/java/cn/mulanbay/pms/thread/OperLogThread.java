@@ -99,7 +99,7 @@ public class OperLogThread extends BaseLogThread {
             if (sf != null && sf.getRewardPoint() != 0 && log.getUserId() > 0) {
                 //积分奖励(操作类的积分记录管理的messageId为操作记录的编号)
                 RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
-                rewardHandler.rewardPoints(log.getUserId(), sf.getRewardPoint(), log.getId(),
+                rewardHandler.reward(log.getUserId(), sf.getRewardPoint(), log.getId(),
                         BussSource.OPERATION, "功能操作奖励", log.getId());
                 //连续操作奖励
                 CacheHandler cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
@@ -128,7 +128,7 @@ public class OperLogThread extends BaseLogThread {
                         if (uco.getDays() >= 3) {
                             //奖励连续操作(相当于3天以上则双倍奖励，负分的也是一样)
                             int rewards = sf.getRewardPoint() * uco.getDays();
-                            rewardHandler.rewardPoints(log.getUserId(), rewards, log.getId(),
+                            rewardHandler.reward(log.getUserId(), rewards, log.getId(),
                                     BussSource.OPERATION, "功能操作连续" + uco.getDays() + "天奖励", log.getId());
                         }
                     }
