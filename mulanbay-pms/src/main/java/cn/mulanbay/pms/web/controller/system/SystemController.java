@@ -51,7 +51,7 @@ public class SystemController extends BaseController {
      */
     @RequestMapping(value = "/lock", method = RequestMethod.POST)
     public ResultBean lock(@RequestBody @Valid SystemLockForm hc) {
-        Boolean b = systemStatusHandler.lock(hc.getStatus(),hc.getMessage(),hc.getExpireTime());
+        Boolean b = systemStatusHandler.lock(hc.getStatus(),hc.getMessage(),hc.getExpireTime(),hc.getUnlockCode());
         return callback(b);
     }
 

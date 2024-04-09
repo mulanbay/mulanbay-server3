@@ -18,6 +18,8 @@ public class SystemLockForm {
     @DateTimeFormat(pattern = Constant.DATE_TIME_FORMAT)
     private Date expireTime;
 
+    private String unlockCode;
+
     public Integer getStatus() {
         return status;
     }
@@ -40,5 +42,13 @@ public class SystemLockForm {
 
     public void setExpireTime(Date expireTime) {
         this.expireTime = expireTime;
+    }
+
+    public String getUnlockCode() {
+        return unlockCode;
+    }
+
+    public void setUnlockCode(String unlockCode) {
+        this.unlockCode = unlockCode;
     }
 }

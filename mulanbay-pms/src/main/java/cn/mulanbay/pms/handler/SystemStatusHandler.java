@@ -5,6 +5,7 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class SystemStatusHandler extends BaseHandler {
     /**
      * 解锁码
      */
-    private static String unlockCode ;
+    private static String unlockCode;
 
     public SystemStatusHandler() {
         super("系统状态");
@@ -64,28 +65,30 @@ public class SystemStatusHandler extends BaseHandler {
      *
      * @param afterStatus
      * @param msg
+     * @param expireTime
+     * @param unlockCode  解锁码
      * @return
      */
-    public boolean lock(int afterStatus, String msg, Date expireTime) {
+    public boolean lock(int afterStatus, String msg, Date expireTime, String unlockCode) {
         if (afterStatus > status) {
-            if(unlockStatus>afterStatus){
+            if (unlockStatus > afterStatus) {
                 //无法上锁，上次的解锁码比此次大
                 return false;
             }
-            this.lockSystem(afterStatus,msg,expireTime);
+            this.lockSystem(afterStatus, msg, expireTime, unlockCode);
             return true;
         } else {
             return false;
         }
     }
 
-    private synchronized void lockSystem(int afterStatus, String msg, Date expireTime){
+    private synchronized void lockSystem(int afterStatus, String msg, Date expireTime, String unlockCode) {
         status = afterStatus;
-        message = (msg ==null? "系统锁定":msg);
-        this.createUnlockCode();
+        message = (msg == null ? "系统锁定" : msg);
+        this.handleUnlockCode(unlockCode);
         //增加定定时恢复
         if (expireTime != null) {
-            message += ",重新开启时间:"+DateUtil.getFormatDate(expireTime,DateUtil.Format24Datetime);
+            message += ",重新开启时间:" + DateUtil.getFormatDate(expireTime, DateUtil.Format24Datetime);
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -97,11 +100,13 @@ public class SystemStatusHandler extends BaseHandler {
         logger.warn("设置系统状态,code={}", afterStatus);
     }
 
-    private void createUnlockCode(){
-       String uc = NumberUtil.getRandNum(randoms);
-       unlockCode = uc;
-       logger.warn("系统解锁码:"+uc);
-       notifyHandler.addMessageToNotifier(SYSTEM_LOCK,"系统解锁码","系统解锁码为"+uc,new Date());
+    private void handleUnlockCode(String unlockCode) {
+        if (StringUtil.isEmpty(unlockCode)) {
+            String uc = NumberUtil.getRandNum(randoms);
+            unlockCode = uc;
+        }
+        logger.warn("系统解锁码:" + unlockCode);
+        notifyHandler.addMessageToNotifier(SYSTEM_LOCK, "系统解锁码", "系统解锁码为" + unlockCode, new Date());
     }
 
     /**
@@ -119,10 +124,11 @@ public class SystemStatusHandler extends BaseHandler {
 
     /**
      * 系统解锁
+     *
      * @param uc
      * @return
      */
-    public synchronized boolean unlock(String uc,int beforeStatus) {
+    public synchronized boolean unlock(String uc, int beforeStatus) {
         if (uc.equals(unlockCode)) {
             this.revert();
             //需要设置解锁状态码，否则可能其他模块会再次上锁
@@ -148,12 +154,12 @@ public class SystemStatusHandler extends BaseHandler {
             logger.warn("恢复系统状态,beforeCode={}", beforeStatus);
             return true;
         } else {
-            logger.warn("恢复系统状态失败,级别不够,beforeCode={},status={}", beforeStatus,status);
+            logger.warn("恢复系统状态失败,级别不够,beforeCode={},status={}", beforeStatus, status);
             return false;
         }
     }
 
-    private synchronized void revert(){
+    private synchronized void revert() {
         status = ErrorCode.SUCCESS;
         unlockStatus = ErrorCode.SUCCESS;
         message = null;

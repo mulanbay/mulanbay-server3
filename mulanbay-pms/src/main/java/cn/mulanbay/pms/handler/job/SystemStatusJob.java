@@ -40,7 +40,7 @@ public class SystemStatusJob extends AbstractBaseJob {
         if(ns){
             if(status!=stopStatus){
                 String cc = "系统定时关闭时间:"+para.getStopPeriod()+","+para.getMessage();
-                res = systemStatusHandler.lock(stopStatus,cc,null);
+                res = systemStatusHandler.lock(stopStatus,cc,null,null);
                 msg = "关闭系统，stopStatus = "+stopStatus+",执行结果:"+res;
             }
         }else{
