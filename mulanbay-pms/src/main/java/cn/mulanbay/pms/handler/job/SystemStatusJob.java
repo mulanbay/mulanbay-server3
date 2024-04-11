@@ -55,13 +55,12 @@ public class SystemStatusJob extends AbstractBaseJob {
             tr.setComment(msg);
             if(res){
                 tr.setResult(JobResult.SUCCESS);
+                //写系统日志
+                LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);
+                logHandler.addSysLog("系统状态操作","系统状态调度器设置系统状态,"+msg, sysCode);
             }else{
                 tr.setResult(JobResult.FAIL);
             }
-            //写系统日志
-            LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);
-            logHandler.addSysLog("系统状态操作","系统状态调度器设置系统状态,"+msg, sysCode);
-
         }
         return tr;
     }
