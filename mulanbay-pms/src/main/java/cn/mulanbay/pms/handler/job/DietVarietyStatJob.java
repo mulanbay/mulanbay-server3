@@ -51,7 +51,7 @@ public class DietVarietyStatJob extends AbstractBaseJob {
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         Date bussDay = this.getBussDay();
         Date endDate = DateUtil.tillMiddleNight(bussDay);
-        Date startDate = DateUtil.getDate(0 - para.getDays(), bussDay);
+        Date startDate = DateUtil.getDate(- para.getDays(), bussDay);
         List<Long> userIds = dietService.getUserIdList(startDate, endDate);
         if (StringUtil.isEmpty(userIds)) {
             tr.setResult(JobResult.SKIP);
@@ -81,13 +81,15 @@ public class DietVarietyStatJob extends AbstractBaseJob {
             sf.setOrderByField(para.getOrderByField());
             float v = dietHandler.getFoodsAvgSim(sf);
             //发送消息
-            String sv = String.valueOf(NumberUtil.getValue(v * 100,0));
-            String dietTypeName = dietType == null ? "" : dietType.getName();
-            String title = dietTypeName + "多样性统计";
-            String ds = DateUtil.getFormatDate(startDate, DateUtil.FormatDay1) + "~" + DateUtil.getFormatDate(endDate, DateUtil.FormatDay1);
-            String content = ds + dietTypeName + "的重复度为:" + sv + "%";
-            notifyHandler.addNotifyMessage(PmsCode.DIET_VARIETY_STAT, title, content,
-                    userId, null);
+            if(v>=para.getWarnRate()){
+                String sv = String.valueOf(NumberUtil.getValue(v * 100,0));
+                String dietTypeName = dietType == null ? "" : dietType.getName();
+                String title = dietTypeName + "多样性统计";
+                String ds = DateUtil.getFormatDate(startDate, DateUtil.FormatDay1) + "~" + DateUtil.getFormatDate(endDate, DateUtil.FormatDay1);
+                String content = ds + dietTypeName + "的重复度为:" + sv + "%";
+                notifyHandler.addNotifyMessage(PmsCode.DIET_VARIETY_STAT, title, content,
+                        userId, null);
+            }
             //加入统计历史
             addStatLog(startDate, endDate, userId, dietType, v);
         } catch (Exception e) {

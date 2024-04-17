@@ -20,6 +20,9 @@ public class DietVarietyStatJobPara extends AbstractTriggerPara {
             desc = "周期类型")
     private String orderByField;
 
+    @JobParameter(name = "警告比例", dataType = Float.class, desc = "重复度,值:0.01-0.99", editType = EditType.NUMBER)
+    private float warnRate = 0.9f;
+
     public int getDays() {
         return days;
     }
@@ -34,5 +37,13 @@ public class DietVarietyStatJobPara extends AbstractTriggerPara {
 
     public void setOrderByField(String orderByField) {
         this.orderByField = orderByField;
+    }
+
+    public float getWarnRate() {
+        return warnRate;
+    }
+
+    public void setWarnRate(float warnRate) {
+        this.warnRate = warnRate;
     }
 }

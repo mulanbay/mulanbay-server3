@@ -7,5 +7,12 @@ package cn.mulanbay.schedule.para;
  * @create 2018-01-20 21:44
  */
 public enum EditType {
-    BOOLEAN,CHECKBOX,COMBOBOX,DATEBOX,NUMBER,RADIO,TEXT,TIME;
+    BOOLEAN,
+    CHECKBOX,
+    COMBOBOX,
+    DATEBOX,
+    NUMBER,
+    RADIO,
+    TEXT,
+    TIME;
 }
