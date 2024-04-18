@@ -84,7 +84,7 @@ mulanbay:
       expireTime: 1800
       # 验证令牌有效期（默认20分钟）
       verifyTime: 1200
-    UnDefineFunc:
+    unDefineFunc:
       #是否跳过未定义的功能点（新功能调试使用）
       skip: false
   log:

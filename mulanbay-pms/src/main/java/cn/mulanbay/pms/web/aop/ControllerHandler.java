@@ -45,7 +45,7 @@ public class ControllerHandler {
     /**
      * 是否跳过未定义的功能点（新功能调试使用）
      */
-    @Value("${mulanbay.security.UnDefineFunc.skip:false}")
+    @Value("${mulanbay.security.unDefineFunc.skip:false}")
     boolean skipUnDefineFunc;
 
     @Autowired

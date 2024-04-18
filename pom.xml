@@ -24,7 +24,6 @@
         <java.version>17</java.version>
         <slf4j-log4j12.version>2.0.7</slf4j-log4j12.version>
         <hutool.version>5.8.23</hutool.version>
-        <spring.version>6.0.11</spring.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <commons-io.version>2.15.1</commons-io.version>
         <xstream.version>1.4.20</xstream.version>
