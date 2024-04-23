@@ -36,7 +36,7 @@ public class StartListener extends BaseListener implements ApplicationListener<C
                     System.exit(-1);
                 }
             }
-            if (bh.isDoSystemLog()) {
+            if (bh.isDoLog()) {
                 doLog(null, bh.getHandlerName() + "初始化", bh.getHandlerName() + "初始化成功");
             }
             logger.info(bh.getHandlerName() + " Handler init end");

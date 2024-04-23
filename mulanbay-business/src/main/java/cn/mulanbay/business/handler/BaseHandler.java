@@ -1,11 +1,5 @@
 package cn.mulanbay.business.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.support.AbstractMessageSource;
-
-import java.util.Locale;
-
 /**
  * 基础Handler，定义通用的方法及流程
  * 项目中涉及到第三方或者在service-controller之间的调用的可以集成及实现
@@ -14,9 +8,6 @@ import java.util.Locale;
  * @create 2017-07-10 21:44
  */
 public class BaseHandler {
-
-	@Autowired(required = false)
-	AbstractMessageSource messageSource;
 
 	// 自检失败关闭系统
 	boolean scfShutdown = false;
@@ -86,45 +77,6 @@ public class BaseHandler {
 	}
 
 	/**
-	 * 获取message文件的常量定义，目前没什么作用
-	 * @param key
-	 * @return
-	 */
-	String getConfig(String key) {
-		try {
-			return messageSource.getMessage(key, null, Locale.ROOT);
-		} catch (NoSuchMessageException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * 读取配置信息
-	 *
-	 * @param key
-	 * @param defaultValue
-	 * @return
-	 */
-	String getConfig(String key, String defaultValue) {
-		String s = getConfig(key);
-		if (s == null || s.isEmpty()) {
-			return defaultValue;
-		} else {
-			return s;
-		}
-	}
-
-	int getIntegerConfig(String key, int defaultValue) {
-		String s = getConfig(key);
-		if (s == null || s.isEmpty()) {
-			return defaultValue;
-		} else {
-			return Integer.valueOf(s);
-		}
-	}
-
-
-	/**
 	 * 处理信息
 	 * @return
 	 */
@@ -132,7 +84,12 @@ public class BaseHandler {
 		return new HandlerInfo(this.handlerName);
 	}
 
-	public boolean isDoSystemLog(){
+	/**
+	 * 是否记录日志
+	 *
+	 * @return
+	 */
+	public boolean isDoLog(){
 		return false;
 	}
 }

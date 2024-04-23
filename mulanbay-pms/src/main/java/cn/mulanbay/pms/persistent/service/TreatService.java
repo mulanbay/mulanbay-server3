@@ -558,11 +558,12 @@ public class TreatService extends BaseHibernateDao {
     public List<TreatDrugDetailStat> getDrugDetailStat(TreatDrugDetailStatSH sf) {
         try {
             PageRequest pr = sf.buildQuery();
-            //pr.setNeedWhere(false);
+            pr.setNeedWhere(false);
             String sql= """
                     select td.drug_id as drugId ,td.drug_name as drugName,td.treat_date as treatDate,
                     min(tdd.occur_time) as minTime,max(tdd.occur_time) as maxTime,count(0) as totalCount,datediff(max(tdd.occur_time) ,min(tdd.occur_time)) as days
                     from treat_drug_detail tdd,treat_drug td
+                    where tdd.drug_id = td.drug_id
                     {query_para}
                     group by td.drug_id ,td.drug_name order by td.drug_name
                     """;

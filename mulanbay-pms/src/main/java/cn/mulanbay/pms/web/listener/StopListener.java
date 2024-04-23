@@ -27,7 +27,7 @@ public class StopListener extends BaseListener implements ApplicationListener<Co
         for (BaseHandler bh : hm.getHandlerList()) {
             logger.info(bh.getHandlerName() + " Handler begin to destroy...");
             bh.destroy();
-            if (bh.isDoSystemLog()) {
+            if (bh.isDoLog()) {
                 doLog(null, bh.getHandlerName() + "关闭", bh.getHandlerName() + "关闭成功");
             }
             logger.error(bh.getHandlerName() + " Handler destroyed。");

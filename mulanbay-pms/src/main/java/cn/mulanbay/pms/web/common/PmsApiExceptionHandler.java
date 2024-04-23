@@ -25,7 +25,7 @@ import java.util.Map;
  * @author fenghong
  */
 @ControllerAdvice
-public class PmsApiExceptionHandler extends ApiExceptionHandler {
+public class  PmsApiExceptionHandler extends ApiExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(PmsApiExceptionHandler.class);
 
