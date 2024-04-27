@@ -3,7 +3,7 @@ package cn.mulanbay.pms.handler;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.util.Md5Util;
+import cn.mulanbay.common.util.DigestUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
@@ -90,9 +90,9 @@ public class TokenHandler extends BaseHandler {
      */
     public String encodePassword(String originalPwd) {
         if (md5Salt == null) {
-            return Md5Util.encodeByMD5(originalPwd);
+            return DigestUtil.md5(originalPwd);
         } else {
-            return Md5Util.encodeByMD5(originalPwd + md5Salt);
+            return DigestUtil.md5(originalPwd + md5Salt);
         }
     }
 

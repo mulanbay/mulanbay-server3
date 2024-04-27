@@ -305,7 +305,7 @@ public class WXHandler extends BaseHandler {
             MessageDigest crypt = MessageDigest.getInstance("SHA-1");
             crypt.reset();
             crypt.update(toBeSign.getBytes("UTF-8"));
-            String sign = Md5Util.byteArrayToHexString(crypt.digest());
+            String sign = DigestUtil.byteArrayToHexString(crypt.digest());
             logger.debug("JsapiTicketAuth sign:" + sign);
             JsApiTicketAuth jta = new JsApiTicketAuth();
             jta.setNoncestr(noncestr);

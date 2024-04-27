@@ -26,24 +26,6 @@ public class HibernateConfig {
     @Value("${hibernate.show_sql}")
     private String showSql;
 
-    /**
-     * 列表数据数据是否缓存
-     */
-    @Value("${mulanbay.persistent.page.list.cache}")
-    private boolean listCache;
-
-    /**
-     * 总页数是否缓存
-     */
-    @Value("${mulanbay.persistent.page.total.cache}")
-    private boolean totalCache;
-
-    /**
-     * 需要缓存的bean
-     */
-    @Value("${mulanbay.persistent.page.cacheBeans}")
-    private String cacheBeans;
-
     @Bean
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
@@ -69,15 +51,11 @@ public class HibernateConfig {
 
     /**
      * 列表查询类统一缓存处理
-     * @param cacheProcessor
      * @return
      */
     @Bean
-    public PageCacheManager pageCacheManager(CacheProcessor cacheProcessor) {
-        PageCacheManager pcm =  new PageCacheManager(cacheProcessor);
-        pcm.setCacheBeans(cacheBeans);
-        pcm.setListCache(listCache);
-        pcm.setTotalCache(totalCache);
+    public PageCacheManager pageCacheManager() {
+        PageCacheManager pcm =  new PageCacheManager();
         return pcm;
     }
 }

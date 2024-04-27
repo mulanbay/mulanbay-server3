@@ -2,15 +2,18 @@ package cn.mulanbay.persistent.cache;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
-import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.common.util.Md5Util;
+import cn.mulanbay.common.util.DigestUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,58 +21,43 @@ import java.util.List;
  * @Author: fenghong
  * @Create : 2020/10/9 22:22
  */
+@Component
 public class PageCacheManager extends BaseHibernateDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(PageCacheManager.class);
 
     /**
      * 前缀
      */
-    private static final String KEY_PREFIX="pageSearch:";
+    @Value("${mulanbay.persistent.page.cache.keyPrefix:pageSearch}")
+    private String keyPrefix;
 
     /**
      * 列表数据数据是否缓存
      */
+    @Value("${mulanbay.persistent.page.cache.list:false}")
     private boolean listCache;
 
     /**
      * 总页数是否缓存
      */
+    @Value("${mulanbay.persistent.page.cache.total:false}")
     private boolean totalCache;
 
     /**
      * 需要缓存的bean
      */
+    @Value("${mulanbay.persistent.page.cache.beans:}")
     private String cacheBeans;
 
     /**
      * 缓存失效时间
      */
-    private int expireSeconds = 300;
+    @Value("${mulanbay.persistent.page.cache.expireSeconds:300}")
+    private int expireSeconds;
 
+    @Autowired(required = false)
     CacheProcessor cacheProcessor;
-
-    public PageCacheManager(CacheProcessor cacheProcessor) {
-        this.cacheProcessor = cacheProcessor;
-    }
-
-    public void setListCache(boolean listCache) {
-        this.listCache = listCache;
-    }
-
-    public void setTotalCache(boolean totalCache) {
-        this.totalCache = totalCache;
-    }
-
-    public void setCacheBeans(String cacheBeans) {
-        this.cacheBeans = cacheBeans;
-    }
-
-    public int getExpireSeconds() {
-        return expireSeconds;
-    }
-
-    public void setExpireSeconds(int expireSeconds) {
-        this.expireSeconds = expireSeconds;
-    }
 
     /**
      * 是否启用缓存
@@ -117,12 +105,13 @@ public class PageCacheManager extends BaseHibernateDao {
         if(!this.isListCache(beanClass)) {
             return this.getBeanList(paraString,values,sortString,beanClass,page,pageSize);
         }
-        String beanName = this.getBeanClassName(beanClass);
-        String key = KEY_PREFIX+beanName+":"+this.getParaKey(paraString,values,sortString)+":"+page+":"+pageSize;
+        String key = createCacheKey(paraString,values,sortString,beanClass)+":"+page+":"+pageSize;
         List list = cacheProcessor.get(key,List.class);
         if(list == null){
             list = this.getBeanList(paraString,values,sortString,beanClass,page,pageSize);
             cacheProcessor.set(key,list,expireSeconds);
+        }else{
+            logger.debug("获取列表缓存,beanClass:{},key:{}",beanClass,key);
         }
         return list;
     }
@@ -146,6 +135,19 @@ public class PageCacheManager extends BaseHibernateDao {
     }
 
     /**
+     * 创建缓存KEY
+     * @param paraString
+     * @param values
+     * @param sortString
+     * @param beanClass
+     * @return
+     */
+    private String createCacheKey(String paraString,Object[] values,String sortString,Class beanClass){
+        String beanName = this.getBeanClassName(beanClass);
+        return keyPrefix +":" +beanName+":"+this.getParaKey(paraString,values,sortString);
+    }
+
+    /**
      * 获取总记录值
      * @param paraString
      * @param values
@@ -157,12 +159,13 @@ public class PageCacheManager extends BaseHibernateDao {
         if(!this.isTotalCache(beanClass)) {
             return this.getMaxRow(paraString,beanClass,values);
         }
-        String beanName = this.getBeanClassName(beanClass);
-        String key = KEY_PREFIX+beanName+":"+this.getParaKey(paraString,values,sortString)+":t";
+        String key = createCacheKey(paraString,values,sortString,beanClass)+":t";
         Long total = cacheProcessor.get(key,Long.class);
         if(total == null){
             total = this.getMaxRow(paraString,beanClass,values);
             cacheProcessor.set(key,total,expireSeconds);
+        }else{
+            logger.debug("获取总数缓存,beanClass:{},key:{}",beanClass,key);
         }
         return total.longValue();
     }
@@ -186,7 +189,7 @@ public class PageCacheManager extends BaseHibernateDao {
      */
     public void removeCache(Class beanClass){
         String beanName = this.getBeanClassName(beanClass);
-        String key = KEY_PREFIX+beanName+":*";
+        String key = keyPrefix +beanName+":*";
         cacheProcessor.delete(key);
     }
 
@@ -263,7 +266,6 @@ public class PageCacheManager extends BaseHibernateDao {
             }
         }
         sb.append(","+sortString);
-        String paraKey = Md5Util.encodeByMD5(sb.toString()).toLowerCase();
-        return paraKey;
+        return DigestUtil.sha1(sb.toString()).toLowerCase();
     }
 }

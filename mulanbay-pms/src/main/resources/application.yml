@@ -41,14 +41,17 @@ mulanbay:
     page:
       #最大的每页数量
       maxPageSize: 20
-      list:
+      cache:
+        #缓存前缀
+        keyPrefix: pageSearch
         #列表数据是否缓存
-        cache: false
-      total:
+        list : false
         #总记录值是否缓存
-        cache: false
-      #需要缓存的bean，多个以英文逗号分隔，如果是全部则直接用* 表示
-      cacheBeans: SystemLog
+        total : false
+        #需要缓存的bean，多个以英文逗号分隔，如果是全部则直接用* 表示
+        beans: SysLog,OperLog
+        #缓存时长
+        expireSeconds: 300
   #安全相关
   security:
     lock:
