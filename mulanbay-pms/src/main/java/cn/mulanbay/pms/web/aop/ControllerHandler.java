@@ -6,6 +6,7 @@ import cn.mulanbay.common.aop.BindUserLevel;
 import cn.mulanbay.common.aop.FullEndDateTime;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
@@ -41,12 +42,6 @@ public class ControllerHandler {
 
     @Value("${mulanbay.persistent.page.maxPageSize}")
     int maxPageSize;
-
-    /**
-     * 是否跳过未定义的功能点（新功能调试使用）
-     */
-    @Value("${mulanbay.security.unDefineFunc.skip:false}")
-    boolean skipUnDefineFunc;
 
     @Autowired
     SystemConfigHandler systemConfigHandler;
@@ -97,9 +92,9 @@ public class ControllerHandler {
                 tokenHandler.verifyToken(loginUser);
                 Long userId = loginUser.getUserId();
                 //请求限制检查
-                checkRequestLimit(userId,url,sf);
+                checkRequestLimit(userId,sf);
                 //每日限制检查
-                checkDayLimit(userId,url,sf);
+                checkDayLimit(userId,sf);
                 // 权限认证
                 Long roleId = loginUser.getRoleId();
                 checkPermission(roleId,sf);
@@ -117,12 +112,11 @@ public class ControllerHandler {
     /**
      * 请求限制验证
      * @param userId
-     * @param url
      * @param sf
      */
-    private void checkRequestLimit(Long userId,String url,SysFunc sf){
+    private void checkRequestLimit(Long userId,SysFunc sf){
         if (sf.getRequestLimit()) {
-            String key = "request_limit:" + userId + ":" + url;
+            String key = CacheKey.REQUEST_LIMIT + ":" + userId + ":" + sf.getFuncId();
             //请求限制
             String s = cacheHandler.getForString(key);
             if (s != null) {
@@ -136,12 +130,11 @@ public class ControllerHandler {
     /**
      * 请求限制验证
      * @param userId
-     * @param url
      * @param sf
      */
-    private void checkDayLimit(Long userId,String url,SysFunc sf){
+    private void checkDayLimit(Long userId,SysFunc sf){
         if (sf.getDayLimit() > 0) {
-            String key = "request_limit_day:" + DateUtil.getToday(DateUtil.FormatDay1) + ":" + userId + ":" + url;
+            String key = CacheKey.REQUEST_DAY_LIMIT + ":" + DateUtil.getToday(DateUtil.FormatDay1) + ":" + userId + ":" + sf.getFuncId();
             //请求限制
             Integer s = cacheHandler.get(key, Integer.class);
             if (s != null) {
@@ -162,10 +155,7 @@ public class ControllerHandler {
      * @param sf
      */
     private void checkSysFunc(SysFunc sf){
-        if (sf == null && !skipUnDefineFunc) {
-            if(sf==null){
-                logger.warn("url:" + sf.getUrlAddress() + ",method:" + sf.getSupportMethods() + "未配置功能定义");
-            }
+        if (sf == null) {
             throw new ApplicationException(PmsCode.FUNCTION_UN_DEFINE);
         } else if (sf.getStatus() == CommonStatus.DISABLE) {
             throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_DISABLED);

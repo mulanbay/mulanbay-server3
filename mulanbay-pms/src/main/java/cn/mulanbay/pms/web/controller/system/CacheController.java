@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,12 @@ import java.util.*;
 public class CacheController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(CacheController.class);
+
+    /**
+     * 前缀
+     */
+    @Value("${mulanbay.persistent.page.cache.keyPrefix:pageSearch}")
+    private String pageCacheKeyPrefix;
 
     @Autowired
     CacheHandler cacheHandler;
@@ -51,6 +58,7 @@ public class CacheController extends BaseController {
         //caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.SYS_FUNC), "功能点"));
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.ROLE_FUNC), "角色功能"));
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.SYS_CODE_COUNTS, "*")), "系统代码计数"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(pageCacheKeyPrefix+":*"), "查询列表缓存"));
     }
 
     /**

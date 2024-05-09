@@ -184,6 +184,14 @@ public class CacheKey {
     public static String SYS_CODE_COUNTS ="sys_code_counts:{0}";
 
     /**
+     * 请求限制
+     */
+    public static String REQUEST_LIMIT ="request_limit";
+
+    public static String REQUEST_DAY_LIMIT ="request_day_limit";
+
+
+    /**
      * @param pattern
      * @param args
      * @return

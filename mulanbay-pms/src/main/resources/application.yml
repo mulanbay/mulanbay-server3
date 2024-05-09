@@ -48,10 +48,12 @@ mulanbay:
         list : false
         #总记录值是否缓存
         total : false
+        #缓存数据开始页码
+        startPage: 1
         #需要缓存的bean，多个以英文逗号分隔，如果是全部则直接用* 表示
         beans: SysLog,OperLog
         #缓存时长
-        expireSeconds: 300
+        expireSeconds: 10
   #安全相关
   security:
     lock:
@@ -87,9 +89,6 @@ mulanbay:
       expireTime: 1800
       # 验证令牌有效期（默认20分钟）
       verifyTime: 1200
-    unDefineFunc:
-      #是否跳过未定义的功能点（新功能调试使用）
-      skip: false
   log:
     #是否记录系统日志
     sysLog: true

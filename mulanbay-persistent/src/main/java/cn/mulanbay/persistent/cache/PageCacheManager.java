@@ -51,9 +51,15 @@ public class PageCacheManager extends BaseHibernateDao {
     private String cacheBeans;
 
     /**
+     * 缓存数据开始页码
+     */
+    @Value("${mulanbay.persistent.page.cache.startPage:1}")
+    private int startPage;
+
+    /**
      * 缓存失效时间
      */
-    @Value("${mulanbay.persistent.page.cache.expireSeconds:300}")
+    @Value("${mulanbay.persistent.page.cache.expireSeconds:10}")
     private int expireSeconds;
 
     @Autowired(required = false)
@@ -79,7 +85,7 @@ public class PageCacheManager extends BaseHibernateDao {
             String paraString =  pr.getParameterString();
             Object[] values = pr.getParameterValue();
             String sortString = pr.getSortString();
-            if (pr.getPage() > 0&&pr.isNeedTotal()) {
+            if (pr.getPage() > NO_PAGE && pr.isNeedTotal()) {
                 long maxRow = this.getTotal(paraString,values,sortString,pr.getBeanClass());
                 qb.setMaxRow(maxRow);
             }
@@ -101,8 +107,8 @@ public class PageCacheManager extends BaseHibernateDao {
      * @param beanClass
      * @return
      */
-    private <T> List<T> getList(String paraString,Object[] values,String sortString,Class beanClass,int page,int pageSize) throws BaseException{
-        if(!this.isListCache(beanClass)) {
+    private <T> List<T> getList(String paraString,Object[] values,String sortString,Class<T> beanClass,int page,int pageSize) throws BaseException{
+        if(page<startPage || !this.isListCache(beanClass)) {
             return this.getBeanList(paraString,values,sortString,beanClass,page,pageSize);
         }
         String key = createCacheKey(paraString,values,sortString,beanClass)+":"+page+":"+pageSize;
@@ -128,7 +134,7 @@ public class PageCacheManager extends BaseHibernateDao {
      * @return
      * @throws BaseException
      */
-    private <T> List<T> getBeanList(String paraString,Object[] values,String sortString,Class beanClass,int page,int pageSize) throws BaseException {
+    private <T> List<T> getBeanList(String paraString,Object[] values,String sortString,Class<T> beanClass,int page,int pageSize) throws BaseException {
         String hql = "from " + beanClass.getName()+paraString+sortString;
         List<T> list = this.getEntityListHI(hql,page, pageSize,beanClass, values);
         return list;
