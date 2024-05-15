@@ -24,7 +24,9 @@ public class QueryBuilder {
      */
     public PageRequest buildQuery(){
         return build(this,START_OPL);
-    }/**
+    }
+
+    /**
      * 创建查询
      * @return
      */

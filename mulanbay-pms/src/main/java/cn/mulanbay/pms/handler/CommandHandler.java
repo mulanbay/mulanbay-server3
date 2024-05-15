@@ -1,19 +1,14 @@
 package cn.mulanbay.pms.handler;
 
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.config.OSType;
 import cn.mulanbay.common.exception.CommonResult;
-import cn.mulanbay.common.thread.CommandExecuteThread;
-import cn.mulanbay.common.util.CommandUtil;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.service.CommandService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import cn.mulanbay.pms.thread.CommandExecuteThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CommandHandler extends BaseHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(CommandHandler.class);
-
-    @Autowired
-    NotifyHandler notifyHandler;
-
-    @Autowired
-    DistributedLock distributedLock;
 
     @Autowired
     BaseService baseService;
@@ -42,52 +29,47 @@ public class CommandHandler extends BaseHandler {
     }
 
 
-    public CommonResult handleCmd(Long id, boolean sync, Long userId) {
+    public CommonResult handleCmd(Long id, boolean sync) {
         Command cc = baseService.getObject(Command.class, id);
-        return handleCmd(cc, sync, userId);
+        return handleCmd(cc, sync);
     }
 
-    public CommonResult handleCmdScode(String scode, boolean sync, Long userId) {
+    public CommonResult handleCmdScode(String scode, boolean sync) {
         Command cc = commandService.getCommandByScode(scode);
-        return handleCmd(cc, sync, userId);
+        return handleCmd(cc, sync);
     }
 
-    public CommonResult handleCmdCode(String code, boolean sync, Long userId) {
+    public CommonResult handleCmdCode(String code, boolean sync) {
         Command cc = commandService.getCommand(code);
-        return handleCmd(cc, sync, userId);
+        return handleCmd(cc, sync);
     }
 
-    public CommonResult handleCmd(Command cc, boolean sync, Long userId) {
+    public CommonResult handleCmd(Command cc, boolean sync) {
         CommonResult cr = new CommonResult();
         if (cc.getStatus() == CommonStatus.DISABLE) {
             cr.setCode(PmsCode.CMD_DISABLED);
             return cr;
         }
-        String key = CacheKey.getKey(CacheKey.CMD_SEND_LOCK, cc.getId().toString());
-        try {
-            boolean b = distributedLock.lock(key, 5000L, 3, 20);
-            if (!b) {
-                //cr.setCode(-1);
-                cr.setInfo("相同任务可能还在执行，请稍后再试!");
-                return cr;
-            }
-            if (sync) {
-                String s = CommandUtil.executeCmd(OSType.UNKNOWN, cc.getUrl());
-                cr.setInfo(s);
-                return cr;
-            } else {
-                CommandExecuteThread thread = new CommandExecuteThread(cc.getUrl(), OSType.UNKNOWN, notifyHandler);
-                thread.start();
-                cr.setInfo("请稍后检查执行结果!");
-                return cr;
-            }
-        } catch (Exception e) {
-            logger.error("处理命令ID=" + cc.getId() + "异常", e);
-            cr.setInfo("处理异常!" + e.getMessage());
-            return cr;
-        } finally {
-            //不释放锁,避免同一个命令被连续执行
-            //distributedLock.releaseLock(key);
+        return this.handleCmd(cc.getUrl(),OSType.UNKNOWN,sync);
+    }
+
+    /**
+     * 处理命令
+     * @param cmd 命令地址(在操作系统下的全路径)
+     * @param sync
+     * @return
+     */
+    public CommonResult handleCmd(String cmd,OSType osType, boolean sync) {
+        CommonResult cr = new CommonResult();
+        CommandExecuteThread thread = new CommandExecuteThread(cmd,osType);
+        if(sync){
+            String res = thread.exeCmd();
+            cr.setInfo(res);
+        }else{
+            thread.start();
+            cr.setInfo("请稍后检查执行结果!");
         }
+        return cr;
+
     }
 }

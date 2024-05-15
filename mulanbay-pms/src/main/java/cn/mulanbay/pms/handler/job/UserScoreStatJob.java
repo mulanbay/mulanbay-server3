@@ -39,6 +39,11 @@ public class UserScoreStatJob extends AbstractBaseJob {
         int fail = 0;
         for (Long userId : userIdList) {
             boolean b = statScore(userId, dates[0], dates[1]);
+            if(b){
+                success++;
+            }else{
+                fail++;
+            }
         }
         result.setResult(JobResult.SUCCESS);
         result.setComment("一共统计了" + userIdList.size() + "个用户积分,成功:" + success + "个,失败" + fail + "个");

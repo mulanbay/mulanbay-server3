@@ -6,7 +6,6 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemStatusHandler;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.schedule.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -60,6 +59,7 @@ public class SystemStatusJob extends AbstractBaseJob {
                 logHandler.addSysLog("系统状态操作","系统状态调度器设置系统状态,"+msg, sysCode);
             }else{
                 tr.setResult(JobResult.FAIL);
+                tr.setComment(msg);
             }
         }
         return tr;

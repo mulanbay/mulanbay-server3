@@ -56,7 +56,7 @@ public class CommandController extends BaseController {
      */
     @RequestMapping(value = "/exe", method = RequestMethod.POST)
     public ResultBean exe(@RequestBody @Valid CommandExeForm csr) {
-        CommonResult cr = commandHandler.handleCmdCode(csr.getCode(), csr.isSync(), csr.getUserId());
+        CommonResult cr = commandHandler.handleCmdCode(csr.getCode(), csr.isSync());
         if (cr.getCode() != ErrorCode.SUCCESS) {
             return callbackErrorCode(cr.getCode());
         } else {

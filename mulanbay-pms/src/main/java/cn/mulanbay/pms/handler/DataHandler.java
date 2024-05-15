@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class DataHandler extends BaseHandler {
 
     @Autowired
-    BaseService baseServicel;
+    BaseService baseService;
 
     public DataHandler() {
         super("数据处理器");
@@ -31,7 +31,7 @@ public class DataHandler extends BaseHandler {
             bean.setTitle("手动来源");
             bean.setContent("sourceId="+sourceId);
         }
-        Object o = baseServicel.getObject(source.getBeanClass(),sourceId);
+        Object o = baseService.getObject(source.getBeanClass(),sourceId);
         if(o==null){
             bean.setTitle("未找到数据");
             bean.setContent("sourceId="+sourceId);

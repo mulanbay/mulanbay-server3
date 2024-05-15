@@ -22,7 +22,7 @@ public class PmsCommandJobPara extends AbstractTriggerPara {
     private OSType osType;
 
     @JobParameter(name = "是否同步", editType = EditType.BOOLEAN, dataType = Boolean.class)
-    private boolean asyn = false;
+    private boolean sync = false;
 
     @JobParameter(name = "代码", editType = EditType.TEXT, dataType = String.class, desc = "配置了命令直接使用命令，否则用命令代码表配置")
     private String code;
@@ -43,12 +43,12 @@ public class PmsCommandJobPara extends AbstractTriggerPara {
         this.osType = osType;
     }
 
-    public boolean isAsyn() {
-        return asyn;
+    public boolean isSync() {
+        return sync;
     }
 
-    public void setAsyn(boolean asyn) {
-        this.asyn = asyn;
+    public void setSync(boolean sync) {
+        this.sync = sync;
     }
 
     public String getCode() {

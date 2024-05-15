@@ -2,11 +2,11 @@ package cn.mulanbay.pms.handler.job;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ApplicationException;
-import cn.mulanbay.common.thread.CommandExecuteThread;
-import cn.mulanbay.common.util.CommandUtil;
+import cn.mulanbay.common.exception.CommonResult;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.CommandHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.Command;
 import cn.mulanbay.schedule.ParaCheckResult;
@@ -14,8 +14,6 @@ import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -26,32 +24,15 @@ import org.slf4j.LoggerFactory;
  */
 public class PmsCommandJob extends AbstractBaseJob {
 
-    private static final Logger logger = LoggerFactory.getLogger(PmsCommandJob.class);
-
     private PmsCommandJobPara para;
-
-    NotifyHandler notifyHandler;
 
     @Override
     public TaskResult doTask() {
         TaskResult tr = new TaskResult();
-        String res = "";
         String cmd = this.getCmd();
-        notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
-        if (para.isAsyn()) {
-            CommandExecuteThread thread = new CommandExecuteThread(cmd, para.getOsType(), notifyHandler);
-            res = "将在" + thread.getAsynTime() + "秒后执行命令:" + cmd;
-            thread.start();
-            logger.debug(res);
-        } else {
-            res = CommandUtil.executeCmd(para.getOsType(), cmd);
-            logger.debug("执行了命令:" + cmd + ",命令结果：" + res);
-        }
-        if (res != null && res.length() > 200) {
-            // 避免过长
-            res = res.substring(0, 200);
-        }
-        tr.setComment(res);
+        CommandHandler commandHandler = BeanFactoryUtil.getBean(CommandHandler.class);
+        CommonResult cr = commandHandler.handleCmd(cmd,para.getOsType(),para.isSync());
+        tr.setComment(cr.getInfo());
         tr.setResult(JobResult.SUCCESS);
         return tr;
     }
@@ -74,7 +55,6 @@ public class PmsCommandJob extends AbstractBaseJob {
     @Override
     public ParaCheckResult checkTriggerPara() {
         ParaCheckResult rb = new ParaCheckResult();
-        rb.setMessage("参数格式为：1. 命令,2.操作系统类型（-1由程序判断 0LINUX 1WINDOWS）,3. 是否异步（true|false）");
         para = this.getTriggerParaBean();
         if (para == null) {
             rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
@@ -90,6 +70,7 @@ public class PmsCommandJob extends AbstractBaseJob {
     public void notifyLog(String cmd) {
         //通知
         String title = "服务器执行了脚本命令";
+        NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         notifyHandler.addMessageToNotifier(PmsCode.CMD_EXECUTED, title,
                 "服务器执行了脚本命令：" + cmd, null, null);
     }
