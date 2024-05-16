@@ -31,7 +31,7 @@ public class CacheAspect {
     /**
      * 空对象,预防缓存穿透时使用
      */
-    private static NullObject nullObject = new NullObject();
+    private static final NullObject nullObject = new NullObject();
 
     /**
      * 通过@Pointcut指定切入点
@@ -53,7 +53,7 @@ public class CacheAspect {
         boolean lock = false;
         String lockKey = null;
         try {
-            logger.debug("开始进行YcCache缓存操作");
+            logger.debug("开始进行MCache缓存操作");
             String key = KeyParser.parseExpression(cache.key(), point);
             Object object = cacheHandler.get(key);
             if (object != null) {
@@ -68,7 +68,7 @@ public class CacheAspect {
             if (cache.lock()) {
                 lockKey = "lock:" + key;
                 lock = distributedLock.lock(lockKey, 3000L, 3);
-                if (lock == true) {
+                if (lock) {
                     //此时应该需要重新再去查一下缓存，有可能其他线程获取设置了
                     object = cacheHandler.get(key);
                     if (object != null) {

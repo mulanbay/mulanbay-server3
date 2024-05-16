@@ -32,9 +32,9 @@ public class CacheKey {
     public static final String USER_PLAN_NOTIFY = "userPlanNotify:{0}:{1}";
 
     /**
-     * 用户提醒配置（用户编号：planId）
+     * 用户提醒配置（用户编号：statId）
      */
-    public static final String USER_NOTIFY = "userNotify:{0}:{1}";
+    public static final String USER_STAT_NOTIFY = "userStatNotify:{0}:{1}";
 
     /**
      * 用户积分的锁定（用户编号）

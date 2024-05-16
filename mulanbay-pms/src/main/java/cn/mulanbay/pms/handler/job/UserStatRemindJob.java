@@ -97,7 +97,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             Long userId = us.getUserId();
 
             //Step 2: 第一步先判断是否已经通知过
-            String key = CacheKey.getKey(CacheKey.USER_NOTIFY, userId.toString(), us.getStatId().toString());
+            String key = CacheKey.getKey(CacheKey.USER_STAT_NOTIFY, userId.toString(), us.getStatId().toString());
             String cs = cacheHandler.getForString(key);
             if (cs != null) {
                 logger.debug("用户ID=" + userId + "的统计[" + us.getTitle() + "],id=" + us.getStatId() + "已经提醒过了");
@@ -196,7 +196,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
          * 需要在这里设置上一次的提醒缓存，不能再handleUserPlanRemind方法里设置
          * 因为只有触发了提醒条件才能告知下一次是否能提醒
          */
-        String key = CacheKey.getKey(CacheKey.USER_NOTIFY, remind.getUserId().toString(), remind.getStat().getStatId().toString());
+        String key = CacheKey.getKey(CacheKey.USER_STAT_NOTIFY, remind.getUserId().toString(), remind.getStat().getStatId().toString());
         //失效时间为通知周期的秒数，-5为了保证第二次通知时间点job能执行
         cacheHandler.set(key, "123", bean.getDays() * 24 * 3600 - 5);
         //Step 4: 更新积分

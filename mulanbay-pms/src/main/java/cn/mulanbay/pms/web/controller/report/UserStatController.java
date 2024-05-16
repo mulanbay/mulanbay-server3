@@ -23,7 +23,6 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -42,9 +41,6 @@ import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 public class UserStatController extends BaseController {
 
     private static Class<UserStat> beanClass = UserStat.class;
-
-    @Value("${mulanbay.report.userStat.expires}")
-    int userStatExpires;
 
     @Autowired
     StatService statService;
@@ -175,7 +171,7 @@ public class UserStatController extends BaseController {
         PageResult<UserStat> unResult = baseService.getBeanResult(pr);
         List<StatResultDTO> list = new ArrayList<>();
         for (UserStat un : unResult.getBeanList()) {
-            StatResultDTO nr = userStatHandler.getStatResult(un, userStatExpires);
+            StatResultDTO nr = userStatHandler.getStatResult(un);
             list.add(nr);
         }
         PageResult<StatResultDTO> res = new PageResult<>(sf.getPage(), sf.getPageSize());

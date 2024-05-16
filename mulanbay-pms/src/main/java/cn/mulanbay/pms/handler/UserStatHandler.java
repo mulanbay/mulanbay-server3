@@ -7,11 +7,12 @@ import cn.mulanbay.pms.persistent.domain.UserStat;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.service.StatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
  * @author fenghong
- * @title: NotifyStatHandler
+ * @title: UserStatHandler
  * @description: 提醒统计, 首页的统计使用很频繁，通过日终已有的调度统计进行缓存
  * 开启日终统计缓存的逻辑：每日的调度凌晨查询统计提醒的统计值时根据job里面的缓存设置进行缓存（通常为24小时）
  * 首页的提醒统计列表就根据日终已有的统计值直接查询，加快查询速度
@@ -20,6 +21,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserStatHandler extends BaseHandler {
+
+    /**
+     * 缓存失效时间(秒)
+     */
+    @Value("${mulanbay.report.userStat.expires}")
+    int userStatExpires;
 
     @Autowired
     CacheHandler cacheHandler;
@@ -33,19 +40,18 @@ public class UserStatHandler extends BaseHandler {
 
     /**
      * @param un
-     * @param expireSeconds
      * @return
      */
-    public StatResultDTO getStatResult(UserStat un, int expireSeconds) {
-        if (expireSeconds <= 0) {
-            return this.getStatResult(un);
+    public StatResultDTO getStatResult(UserStat un) {
+        if (userStatExpires <= 0) {
+            return statService.getStatResult(un);
         }
         Long userId = un.getUserId();
         String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), un.getStatId().toString());
         StatResultDTO nr = cacheHandler.get(cacheKey, StatResultDTO.class);
         if (nr == null) {
-            nr = this.getStatResult(un);
-            cacheStatResult(nr, expireSeconds);
+            nr = statService.getStatResult(un);
+            cacheStatResult(nr, userStatExpires);
         }
         return nr;
     }
@@ -60,17 +66,6 @@ public class UserStatHandler extends BaseHandler {
         Long userId = nr.getUserStat().getUserId();
         String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), nr.getUserStat().getStatId().toString());
         cacheHandler.set(cacheKey, nr, expireSeconds);
-    }
-
-    /**
-     * 获取统计结果
-     *
-     * @param un
-     * @return
-     */
-    public StatResultDTO getStatResult(UserStat un) {
-        StatResultDTO nr = statService.getStatResult(un);
-        return nr;
     }
 
     /**
