@@ -129,12 +129,12 @@ public class CacheKey {
     /**
      * 消费记录缓存队列:用户ID
      */
-    public static final String CONSUME_CACHE_QUEUE = "consume:cacheQueue:{0}";
+    public static final String CONSUME_CACHE_QUEUE = "consume:cacheQueue:x:{0}";
 
     /**
      * 商品类型的匹配列表:用户ID
      */
-    public static final String GOODS_TYPE_MATCH_LIST = "goodsType:matchList:{0}";
+    public static final String GOODS_TYPE_MATCH_LIST = "goodsType:matchList:x:{0}";
 
     /**
      * 商品的寿命

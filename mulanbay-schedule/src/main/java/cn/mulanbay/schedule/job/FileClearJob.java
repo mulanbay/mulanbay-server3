@@ -102,8 +102,6 @@ public class FileClearJob extends AbstractBaseJob {
 	@Override
 	public ParaCheckResult checkTriggerPara() {
 		ParaCheckResult rb = new ParaCheckResult();
-		rb.setMessage("参数格式为：1. 待清理的路径 ,2. 保留天数, 3. 备份的路径,4. 是否要备份（true/false）," +
-				"5. 备份时是否要打包（true/false）,6. 备份文件时间格式");
 		para = this.getTriggerParaBean();
 		if(para==null){
 			rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);

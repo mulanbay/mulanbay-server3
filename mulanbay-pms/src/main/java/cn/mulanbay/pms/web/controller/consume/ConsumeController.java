@@ -246,9 +246,6 @@ public class ConsumeController extends BaseController {
                 bean.setTraceId(traceId);
                 consumeHandler.traceMatch(traceId,bean);
             }
-            List<String> keywords = nlpProcessor.extractKeyword(mr.getGoodsName(),tagNum);
-            String tags= keywords.stream().map(String::valueOf).collect(Collectors.joining(","));
-            bean.setTags(tags);
             if(bean.getCompareId()==null){
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());

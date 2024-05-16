@@ -129,6 +129,22 @@ public class ConsumeService extends BaseHibernateDao {
     }
 
     /**
+     * 最近消费列表
+     * @param userId
+     * @param size
+     * @return
+     */
+    public List<Consume> getLastestCosumeList(Long userId,int size) {
+        try {
+            String hql="from Consume where userId=?1 order by buyTime desc ";
+            return this.getEntityListHI(hql,1,size,Consume.class,userId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取最近消费列表异常", e);
+        }
+    }
+
+    /**
      * 设置上级
      * @param consumeId
      * @param pid

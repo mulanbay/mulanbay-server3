@@ -540,7 +540,7 @@ public abstract class AbstractBaseJob implements Job {
 			// 已经检查过
 			return doTask();
 		} else {
-			logger.info("检查[" + getTaskTrigger().getTriggerName() + "]的参数:"
+			logger.debug("检查[" + getTaskTrigger().getTriggerName() + "]的参数:"
 					+ getTaskTrigger().getTriggerParas());
 			ParaCheckResult pcr = checkTriggerPara();
 			if (pcr.getErrorCode() != ErrorCode.SUCCESS) {

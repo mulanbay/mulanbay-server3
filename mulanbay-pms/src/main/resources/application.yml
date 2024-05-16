@@ -160,13 +160,15 @@ mulanbay:
       size: 100
     match:
       #NLP匹配时的最高匹配度，高于这个数不再往下匹配
-      maxDegree: 0.9
+      maxDegree: 0.8
       #NLP匹配时的最低匹配度，低于这个数认为没有匹配到
-      minDegree: 0.7
+      minDegree: 0.4
       #商品类型的匹配列表过期时间(秒)
       goodsTypeExpireTime: 3600
       #匹配追踪有效时长(秒)
       traceExpires: 180
+      #参与比较的关键字数
+      tag: 3
   sport:
     #最大的基准心率
     maxHeartRate: 220
