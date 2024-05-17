@@ -238,14 +238,10 @@ public class ConsumeController extends BaseController {
         ConsumeMatchBean bean = null;
         try {
             bean = consumeHandler.match(mr.getUserId(),mr.getGoodsName());
-            if(bean==null){
-                bean = new ConsumeMatchBean();
-            }else{
-                //匹配到的才追踪记录
-                String traceId = StringUtil.genUUID();
-                bean.setTraceId(traceId);
-                consumeHandler.traceMatch(traceId,bean);
-            }
+            //追踪匹配记录
+            String traceId = StringUtil.genUUID();
+            bean.setTraceId(traceId);
+            consumeHandler.traceMatch(traceId,bean);
             if(bean.getCompareId()==null){
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());

@@ -189,10 +189,10 @@ public class ConsumeHandler extends BaseHandler {
     public ConsumeMatchBean match(Long userId, String goodsName){
         //先选出待匹配的关键字
         String cmTags = this.extractTags(goodsName);
-
         //先从消费缓存中比对，看以前是否已经保存过类似的消费
         ConsumeMatchBean bean = this.matchConsume(userId,cmTags);
         bean.setGoodsName(goodsName);
+        bean.setTags(cmTags);
         if(bean.getMatch()>=maxMatchDegree){
             return bean;
         }
@@ -202,6 +202,8 @@ public class ConsumeHandler extends BaseHandler {
             float m = nlpProcessor.sentenceSimilarity(cmTags,gcb.getCompareName());
             if(m>bean.getMatch()){
                 bean = new ConsumeMatchBean();
+                bean.setGoodsName(goodsName);
+                bean.setTags(cmTags);
                 bean.setGoodsTypeId(gcb.getGoodsTypeId());
                 bean.setCompareId(gcb.getCompareId());
                 bean.setMatch(m);
@@ -213,7 +215,7 @@ public class ConsumeHandler extends BaseHandler {
         }
         if(bean.getMatch()<minMatchDegree){
             logger.debug("匹配度过低,{}与{},匹配度:{}",goodsName,bean.getCompareName(),bean.getMatch());
-            return null;
+            //return null;
         }
         return bean;
     }
@@ -238,10 +240,10 @@ public class ConsumeHandler extends BaseHandler {
     /**
      * 通过缓存中的匹配
      * @param userId
-     * @param goodsName
+     * @param name
      * @return
      */
-    private ConsumeMatchBean matchConsume(Long userId, String goodsName){
+    private ConsumeMatchBean matchConsume(Long userId, String name){
         ConsumeMatchBean bean = new ConsumeMatchBean();
         String key = CacheKey.getKey(CacheKey.CONSUME_CACHE_QUEUE,userId.toString());
         LimitQueue<ConsumeCompareBean> queue = cacheHandler.get(key, LimitQueue.class);
@@ -250,7 +252,7 @@ public class ConsumeHandler extends BaseHandler {
             return bean;
         }else{
             for(ConsumeCompareBean ccb : queue.getList()){
-                float m = nlpProcessor.sentenceSimilarity(goodsName, ccb.getCompareName());
+                float m = nlpProcessor.sentenceSimilarity(name, ccb.getCompareName());
                 if(m>bean.getMatch()){
                     BeanCopy.copy(ccb,bean);
                     bean.setMatch(m);
@@ -310,9 +312,10 @@ public class ConsumeHandler extends BaseHandler {
      * @return
      */
     public GoodsLifetimeMatchBean matchLifetime(String goodsName,List<GoodsLifetime> list,boolean skipMin){
+        String cmTags = this.extractTags(goodsName);
         GoodsLifetimeMatchBean bean = new GoodsLifetimeMatchBean();
         for(GoodsLifetime lt : list){
-            float m = nlpProcessor.sentenceSimilarity(goodsName,lt.getTags());
+            float m = nlpProcessor.sentenceSimilarity(cmTags,lt.getTags());
             if(m>bean.getMatch()){
                 BeanCopy.copy(lt,bean);
                 bean.setMatch(m);
