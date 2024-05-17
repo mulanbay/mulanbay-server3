@@ -268,7 +268,7 @@ public class ExperienceService extends BaseHibernateDao {
             } else {
                 saveOrUpdateExperience(bean, true);
             }
-            //还需要去更新BuyRecord的关键字
+            //还需要去更新Consume的关键字
             if (bean.getScId() != null) {
                 Consume consume = this.getEntityById(Consume.class, bean.getScId());
                 ExperienceDetail detail = this.getEntityById(ExperienceDetail.class, bean.getDetail().getDetailId());

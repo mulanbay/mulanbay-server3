@@ -128,11 +128,7 @@ public class ConsumeController extends BaseController {
         Consume bean = new Consume();
         changeFormToBean(form, bean);
         consumeService.saveConsume(bean);
-        consumeHandler.addToCache(bean);
-        String traceId = form.getTraceId();
-        if(StringUtil.isNotEmpty(traceId)){
-            consumeHandler.addMatchLog(traceId,bean.getConsumeId(),bean.getUserId());
-        }
+        consumeHandler.afterCreate(bean,form.getTraceId());
         return callback(null);
     }
 
@@ -167,9 +163,13 @@ public class ConsumeController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ConsumeForm form) {
         Consume consume = baseService.getObject(beanClass,form.getConsumeId());
+        BigDecimal dbPrice = consume.getTotalPrice();
         changeFormToBean(form, consume);
         consumeService.updateConsume(consume);
-        //lifeExperienceService.updateLifeExperienceConsumeByBuyRecord(buyRecord);
+        if(!NumberUtil.priceEquals(dbPrice,consume.getTotalPrice())){
+            //更新
+            consumeHandler.afterEdit(consume);
+        }
         return callback(null);
     }
 
@@ -285,7 +285,7 @@ public class ConsumeController extends BaseController {
         //计算下一级
         boolean deepCost = form.getDeepCost();
         ConsumeChildrenCostStat cc = null;
-        if(deepCost==true){
+        if(deepCost){
             cc = consumeService.getChildrenTotalDeepCost(form.getConsumeId());
         }else{
             cc = consumeService.getChildrenTotalCost(form.getConsumeId());

@@ -19,6 +19,7 @@ import cn.mulanbay.pms.persistent.domain.GoodsType;
 import cn.mulanbay.pms.persistent.domain.MatchLog;
 import cn.mulanbay.pms.persistent.enums.GoodsMatchType;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
+import cn.mulanbay.pms.persistent.service.ExperienceService;
 import cn.mulanbay.pms.util.BeanCopy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,13 +89,43 @@ public class ConsumeHandler extends BaseHandler {
     ConsumeService consumeService;
 
     @Autowired
+    ExperienceService experienceService;
+
+    @Autowired
     CacheHandler cacheHandler;
+
+    @Autowired
+    ThreadPoolHandler threadPoolHandler;
 
     @Autowired
     NLPProcessor nlpProcessor;
 
     public ConsumeHandler() {
         super("消费处理类");
+    }
+
+    /**
+     * 创建后业务处理
+     * @param consume
+     * @param traceId
+     */
+    public void afterCreate(Consume consume,String traceId){
+        threadPoolHandler.pushThread(() -> {
+            this.addToCache(consume);
+            if(StringUtil.isNotEmpty(traceId)){
+                this.addMatchLog(traceId,consume.getConsumeId(),consume.getUserId());
+            }
+        });
+    }
+
+    /**
+     * 修改后业务处理
+     * @param consume
+     */
+    public void afterEdit(Consume consume){
+        threadPoolHandler.pushThread(() -> {
+            experienceService.updateCostByConsume(consume);
+        });
     }
 
     /**
