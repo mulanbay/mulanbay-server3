@@ -143,7 +143,7 @@ public class ReadDetailController extends BaseController {
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
         String total = totalCounts.longValue() + "次," + NumberUtil.getAvg(totalMinutes, 60L, 1) + "小时";
-        String subTitle = this.getDateTitle(sf, total);
+        String subTitle = ChartUtil.getDateTitle(sf, total);
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return callback(chartData);

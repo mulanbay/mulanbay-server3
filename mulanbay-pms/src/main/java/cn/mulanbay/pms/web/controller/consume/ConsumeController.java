@@ -191,7 +191,11 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
-        baseService.deleteObjects(beanClass, NumberUtil.stringToLongArray(deleteRequest.getIds()));
+        String[] ss = deleteRequest.getIds().split(",");
+        for(String s : ss){
+            Long consumeId = Long.parseLong(s);
+            consumeService.deleteConsume(consumeId);
+        }
         return callback(null);
     }
 
@@ -238,16 +242,16 @@ public class ConsumeController extends BaseController {
         ConsumeMatchBean bean = null;
         try {
             bean = consumeHandler.match(mr.getUserId(),mr.getGoodsName());
-            //追踪匹配记录
-            String traceId = StringUtil.genUUID();
-            bean.setTraceId(traceId);
-            consumeHandler.traceMatch(traceId,bean);
             if(bean.getCompareId()==null){
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());
                 bean.setSourceId(us.getTreatSourceId());
                 bean.setPayment(us.getPayment());
             }
+            //追踪匹配记录
+            String traceId = StringUtil.genUUID();
+            bean.setTraceId(traceId);
+            consumeHandler.traceMatch(traceId,bean);
         } catch (Exception e) {
             logger.error("根据商品名智能分析出其分类及品牌等异常",e);
             return callback(null);
@@ -483,7 +487,7 @@ public class ConsumeController extends BaseController {
             mdd.addChild(child);
         }
         chartData.setData(new ArrayList<>(dataMap.values()));
-        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
         chartData.setSubTitle(subTitle);
         return chartData;
 
@@ -512,7 +516,7 @@ public class ConsumeController extends BaseController {
             seriesData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(seriesData);
         return chartPieData;
@@ -539,7 +543,7 @@ public class ConsumeController extends BaseController {
             yData.getData().add(bean.getValue());
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = this.getDateTitle(sf,getSubTitlePostfix(sf.getType(),totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(),totalValue));
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         return chartData;
@@ -596,7 +600,7 @@ public class ConsumeController extends BaseController {
     private ChartData createDateStatChart(ConsumeDateStatSH sf){
         ChartData chartData = new ChartData();
         chartData.setTitle("消费统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"消费","次数"});
         //混合图形下使用(最后一组数据默认为次数)
         chartData.addYAxis("消费","元");
@@ -617,7 +621,7 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -643,7 +647,7 @@ public class ConsumeController extends BaseController {
      */
     private ChartData createYoyChartData(ConsumeYoyStatSH sf){
         String unit = sf.getGroupType().getUnit();
-        ChartData chartData = initYoyCharData(sf, "消费统计同期对比", null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, "消费统计同期对比", null);
         chartData.setUnit(unit);
         String[] legendData = new String[sf.getYears().size()];
         for (int i = 0; i < sf.getYears().size(); i++) {
@@ -730,7 +734,7 @@ public class ConsumeController extends BaseController {
         List<ConsumeTagsStat> list = consumeService.getTagsStat(sf);
         ChartData chartData = new ChartData();
         chartData.setTitle("标签统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"消费","次数"});
         //混合图形下使用
         chartData.addYAxis("消费","元");
@@ -750,7 +754,7 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return callback(chartData);

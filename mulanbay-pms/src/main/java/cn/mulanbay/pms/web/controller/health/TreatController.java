@@ -254,7 +254,7 @@ public class TreatController extends BaseController {
         //统计医保、个人的支付比例
         ChartPieData chartPieData = new ChartPieData();
         chartPieData.setTitle("费用统计");
-        chartPieData.setSubTitle(this.getDateTitle(sf));
+        chartPieData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartPieData.getXdata().add("医保支付");
         chartPieData.getXdata().add("个人支付");
         chartPieData.getXdata().add("挂号费");
@@ -358,7 +358,7 @@ public class TreatController extends BaseController {
             totalValue = totalValue.add(bean.getTotalFee());
             serieData.getData().add(dataDetail);
         }
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;
@@ -393,7 +393,7 @@ public class TreatController extends BaseController {
         }
         chartData.getYdata().add(yData1);
         chartData.getYdata().add(yData2);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         return chartData;
 
@@ -441,7 +441,7 @@ public class TreatController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -492,7 +492,7 @@ public class TreatController extends BaseController {
         } else {
             unit = sf.getGroupType().getUnit();
         }
-        ChartData chartData = initYoyCharData(sf, "看病记录同期对比", null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, "看病记录同期对比", null);
         chartData.setUnit(unit);
         String[] legendData = new String[sf.getYears().size()];
         for (int i = 0; i < sf.getYears().size(); i++) {

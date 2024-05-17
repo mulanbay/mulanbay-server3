@@ -2,10 +2,12 @@ package cn.mulanbay.pms.util;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.dto.common.CalendarDateStat;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
+import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
 import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 
@@ -290,4 +292,64 @@ public class ChartUtil {
         chartData.addSeriesData(detailData);
         return chartData;
     }
+
+    /**
+     * 初始化同期对比数据
+     *
+     * @param sf
+     * @param title
+     * @param subTitle
+     * @return
+     */
+    public static ChartData initYoyCharData(BaseYoyStatSH sf, String title, String subTitle) {
+        ChartData chartData = new ChartData();
+        chartData.setTitle(title);
+        chartData.setSubTitle(subTitle);
+        if (sf.getDateGroupType() == DateGroupType.MONTH) {
+            for (int i = 1; i <= Constant.MAX_MONTH; i++) {
+                chartData.getIntXData().add(i);
+                chartData.getXdata().add(i + "月份");
+            }
+        } else if (sf.getDateGroupType() == DateGroupType.WEEK) {
+            for (int i = 1; i <= Constant.MAX_WEEK; i++) {
+                chartData.getIntXData().add(i);
+                chartData.getXdata().add("第" + i + "周");
+            }
+        }
+        return chartData;
+    }
+
+    /**
+     * 获取日期的标题，只要用于报表的子标题
+     *
+     * @param sf
+     * @return
+     */
+    public static String getDateTitle(DateStatSH sf) {
+        if (sf.getStartDate() == null && sf.getEndDate() == null) {
+            return "";
+        } else if (sf.getStartDate() != null && sf.getEndDate() == null) {
+            return "从" + DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "开始";
+        } else if (sf.getStartDate() == null && sf.getEndDate() != null) {
+            return "截止" + DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
+        } else {
+            return DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" +
+                    DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
+        }
+    }
+
+    /**
+     * 获取日期的标题，只要用于报表的子标题
+     *
+     * @param sf
+     * @return
+     */
+    public static String getDateTitle(DateStatSH sf,String cs) {
+        String title = getDateTitle(sf);
+        if(StringUtil.isNotEmpty(cs)){
+            title+=",总计:"+cs;
+        }
+        return title;
+    }
+
 }

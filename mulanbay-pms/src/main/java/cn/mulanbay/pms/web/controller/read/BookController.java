@@ -293,7 +293,7 @@ public class BookController extends BaseController {
             totalValue = totalValue.add(new BigDecimal(bean.getTotalCount()));
         }
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "本");
+        String subTitle = ChartUtil.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "本");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -408,7 +408,7 @@ public class BookController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue = totalValue.add(new BigDecimal(bean.getValue()));
         }
-        String subTitle = this.getDateTitle(sf, String.valueOf(totalValue.intValue()) + "本");
+        String subTitle = ChartUtil.getDateTitle(sf, String.valueOf(totalValue.intValue()) + "本");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;

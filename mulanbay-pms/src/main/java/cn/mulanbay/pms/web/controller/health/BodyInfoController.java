@@ -172,7 +172,7 @@ public class BodyInfoController extends BaseController {
         } else if (groupType == GroupType.BMI) {
             unit= "kg/m2";
         }
-        ChartData chartData = initYoyCharData(sf, "身体基本情况同期对比", null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, "身体基本情况同期对比", null);
         String[] legendData = new String[sf.getYears().size()];
         for (int i = 0; i < sf.getYears().size(); i++) {
             legendData[i] = sf.getYears().get(i).toString();

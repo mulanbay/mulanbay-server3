@@ -85,6 +85,26 @@ public class ConsumeService extends BaseHibernateDao {
     }
 
     /**
+     * 删除消费
+     * @param consumeId
+     * @return
+     */
+    public void deleteConsume(Long consumeId) {
+        try {
+            //删除消费关联
+            String hql="delete from ConsumeRefer where consumeId=?1 ";
+            this.updateEntities(hql,consumeId);
+
+            //删除消费
+            String hql2="delete from Consume where consumeId=?1 ";
+            this.updateEntities(hql2,consumeId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除消费异常", e);
+        }
+    }
+
+    /**
      * 更新消费记录
      *
      * @param consume

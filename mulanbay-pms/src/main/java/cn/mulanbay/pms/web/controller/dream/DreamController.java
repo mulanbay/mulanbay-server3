@@ -13,6 +13,7 @@ import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.enums.DreamStatus;
 import cn.mulanbay.pms.persistent.service.DreamService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.dream.DreamDelaySH;
 import cn.mulanbay.pms.web.bean.req.dream.DreamForm;
@@ -172,7 +173,7 @@ public class DreamController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue = totalValue.add(new BigDecimal(bean.getTotalCount().intValue()));
         }
-        String subTitle = this.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "个");
+        String subTitle = ChartUtil.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "个");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;
@@ -200,7 +201,7 @@ public class DreamController extends BaseController {
             totalValue = totalValue.add(new BigDecimal(bean.getTotalCount().intValue()));
         }
         chartData.getYdata().add(yData);
-        String subTitle = this.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "个");
+        String subTitle = ChartUtil.getDateTitle(sf, String.valueOf(totalValue.longValue()) + "个");
         chartData.setSubTitle(subTitle);
         return chartData;
 

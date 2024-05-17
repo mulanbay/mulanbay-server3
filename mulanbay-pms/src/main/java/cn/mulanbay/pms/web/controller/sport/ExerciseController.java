@@ -301,7 +301,7 @@ public class ExerciseController extends BaseController {
             totalKilometres = totalKilometres.add(bean.getTotalValue());
         }
         String totalString = totalCount.longValue() + "(次)," + totalKilometres.doubleValue() + "(" + unit + ")";
-        chartData.setSubTitle(this.getDateTitle(sf,totalString));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf,totalString));
         chartData.getYdata().add(kilometresData);
         if (sf.getFullStat()) {
             if (dateGroupType != DateGroupType.DAY) {
@@ -365,7 +365,7 @@ public class ExerciseController extends BaseController {
         }
         Sport sp = baseService.getObject(Sport.class,sf.getSportId());
         String title = "["+sp.getSportName()+"]运动锻炼同期对比";
-        ChartData chartData = initYoyCharData(sf, title, null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, title, null);
         String unit = sp.getUnit();
         if(sf.getGroupType()== GroupType.VALUE){
             unit = sp.getUnit();

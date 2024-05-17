@@ -4,26 +4,18 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.ValidateError;
-import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
-import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.web.bean.LoginUser;
-import cn.mulanbay.pms.web.bean.req.BaseYoyStatSH;
-import cn.mulanbay.pms.web.bean.req.DateStatSH;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
-import cn.mulanbay.pms.web.bean.res.chart.ChartData;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -132,88 +124,4 @@ public class BaseController {
         return bussId;
     }
 
-
-    /**
-     * 获取日期的标题，只要用于报表的子标题
-     *
-     * @param sf
-     * @return
-     */
-    protected String getDateTitle(DateStatSH sf) {
-        if (sf.getStartDate() == null && sf.getEndDate() == null) {
-            return "";
-        } else if (sf.getStartDate() != null && sf.getEndDate() == null) {
-            return "从" + DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "开始";
-        } else if (sf.getStartDate() == null && sf.getEndDate() != null) {
-            return "截止" + DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
-        } else {
-            return DateUtil.getFormatDate(sf.getStartDate(), DateUtil.FormatDay1) + "~" +
-                    DateUtil.getFormatDate(sf.getEndDate(), DateUtil.FormatDay1);
-        }
-    }
-
-    /**
-     * 获取日期的标题，只要用于报表的子标题
-     *
-     * @param sf
-     * @return
-     */
-    protected String getDateTitle(DateStatSH sf,String cs) {
-        String title = this.getDateTitle(sf);
-        if(StringUtil.isNotEmpty(cs)){
-            title+=",总计:"+cs;
-        }
-        return title;
-    }
-
-    /**
-     * 初始化同期对比数据
-     *
-     * @param sf
-     * @param title
-     * @param subTitle
-     * @return
-     */
-    protected ChartData initYoyCharData(BaseYoyStatSH sf, String title, String subTitle) {
-        ChartData chartData = new ChartData();
-        chartData.setTitle(title);
-        chartData.setSubTitle(subTitle);
-        if (sf.getDateGroupType() == DateGroupType.MONTH) {
-            for (int i = 1; i <= Constant.MAX_MONTH; i++) {
-                chartData.getIntXData().add(i);
-                chartData.getXdata().add(i + "月份");
-            }
-        } else if (sf.getDateGroupType() == DateGroupType.WEEK) {
-            for (int i = 1; i <= Constant.MAX_WEEK; i++) {
-                chartData.getIntXData().add(i);
-                chartData.getXdata().add("第" + i + "周");
-            }
-        }
-        return chartData;
-    }
-
-
-    /**
-     * 获取时间区间
-     *
-     * @param dateGroupType
-     * @param date
-     * @return
-     */
-    protected Date[] getStatDateRange(DateGroupType dateGroupType, Date date) {
-        Date[] dd = new Date[2];
-        if (dateGroupType == DateGroupType.DAY) {
-            dd[0] = DateUtil.fromMiddleNight(date);
-            dd[1] = DateUtil.tillMiddleNight(date);
-        } else if (dateGroupType == DateGroupType.MONTH) {
-            dd[0] = DateUtil.fromMiddleNight(DateUtil.getMonthFirst(date));
-            Date endDate = DateUtil.getMonthLast(date);
-            dd[1] = DateUtil.tillMiddleNight(endDate);
-        } else {
-            int year = Integer.parseInt(DateUtil.getFormatDate(date, "yyyy"));
-            dd[0] = DateUtil.getDate(year + "-01-01 00:00:00", DateUtil.Format24Datetime);
-            dd[1] = DateUtil.getDate(year + "-12-31 23:59:59", DateUtil.Format24Datetime);
-        }
-        return dd;
-    }
 }

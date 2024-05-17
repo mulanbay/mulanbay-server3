@@ -341,7 +341,7 @@ public class DietController extends BaseController {
     private ChartData createAnalyseStatLineData(List<DietPriceAnalyseStat> list, DietPriceAnalyseSH sf){
         ChartData chartData = new ChartData();
         chartData.setTitle("饮食价格统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"消费","次数","预测"});
         //混合图形下使用
         chartData.addYAxis("消费","元");
@@ -368,7 +368,7 @@ public class DietController extends BaseController {
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData3);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -434,7 +434,7 @@ public class DietController extends BaseController {
             dataDetail.setValue(map.get(key));
             serieData.getData().add(dataDetail);
         }
-        String subTitle = this.getDateTitle(sf, totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalValue.doubleValue() + "元");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;
@@ -463,7 +463,7 @@ public class DietController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getTotalPrice());
         }
-        String subTitle = this.getDateTitle(sf, totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalValue.doubleValue() + "元");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;
@@ -541,7 +541,7 @@ public class DietController extends BaseController {
             }
             values.set(m.getDietType().getValue(), v);
         }
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartData.setSubTitle(subTitle);
         return callback(chartData);
     }
@@ -603,7 +603,7 @@ public class DietController extends BaseController {
             dataDetail.setValue(map.get(key).getTotalCount().longValue());
             serieData.getData().add(dataDetail);
         }
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;
@@ -636,7 +636,7 @@ public class DietController extends BaseController {
             chartData.getXdata().add(m.getKey());
             yData.getData().add(m.getValue().getTotalCount().longValue());
         }
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         return chartData;

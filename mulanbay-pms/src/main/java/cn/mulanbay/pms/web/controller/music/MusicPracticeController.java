@@ -194,7 +194,7 @@ public class MusicPracticeController extends BaseController {
         List<InstrumentStat> list = musicPracticeService.getInstrumentStat(sf);
         ChartPieData chartPieData = new ChartPieData();
         chartPieData.setTitle("音乐练习统计");
-        chartPieData.setSubTitle(this.getDateTitle(sf));
+        chartPieData.setSubTitle(ChartUtil.getDateTitle(sf));
         ChartPieSerieData serieData = new ChartPieSerieData();
         serieData.setName("音乐练习统计(小时)");
         ChartPieSerieData serieDataCount = new ChartPieSerieData();
@@ -297,7 +297,7 @@ public class MusicPracticeController extends BaseController {
         //次数放最后
         chartData.getYdata().add(yData1);
         String totalString = totalCount.longValue() + "(次)," + minutesToHours(totalValue) + "(小时)";
-        chartData.setSubTitle(this.getDateTitle(sf,totalString));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf,totalString));
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
     }
@@ -382,7 +382,7 @@ public class MusicPracticeController extends BaseController {
      * @return
      */
     private ChartData createYoyChartData(MusicPracticeYoyStatSH sf) {
-        ChartData chartData = initYoyCharData(sf, musicPracticeService.getInstrumentName(sf.getInstrumentId()) + "练习统计同期对比", null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, musicPracticeService.getInstrumentName(sf.getInstrumentId()) + "练习统计同期对比", null);
         chartData.setUnit(sf.getGroupType().getUnit());
         String[] legendData = new String[sf.getYears().size()];
         for (int i = 0; i < sf.getYears().size(); i++) {
@@ -470,7 +470,7 @@ public class MusicPracticeController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue = totalValue.add(new BigDecimal(bean.getTotalCount()));
         }
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartPieData.setSubTitle(subTitle + ",总计:" + totalValue.longValue() + "次");
         chartPieData.getDetailData().add(serieData);
         return callback(chartPieData);
@@ -501,7 +501,7 @@ public class MusicPracticeController extends BaseController {
         }
         chartData.getYdata().add(yData1);
         chartData = ChartUtil.completeDate(chartData, sf);
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartData.setSubTitle(subTitle + ",总计:" + totalValue.longValue() + "次");
         return callback(chartData);
     }

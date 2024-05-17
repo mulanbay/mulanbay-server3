@@ -585,7 +585,7 @@ public class ExperienceController extends BaseController {
      */
     @RequestMapping(value = "/yoyStat", method = RequestMethod.GET)
     public ResultBean yoyStat(@Valid ExperienceYoyStatSH sf) {
-        ChartData chartData = initYoyCharData(sf, "人生经历同期对比", null);
+        ChartData chartData = ChartUtil.initYoyCharData(sf, "人生经历同期对比", null);
         chartData.setUnit(sf.getGroupType().getUnit());
         String[] legendData = new String[sf.getYears().size()];
         for (int i = 0; i < sf.getYears().size(); i++) {

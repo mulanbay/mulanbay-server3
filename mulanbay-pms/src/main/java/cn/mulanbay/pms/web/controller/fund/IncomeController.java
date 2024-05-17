@@ -189,7 +189,7 @@ public class IncomeController extends BaseController {
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
         String totalString = totalCount.longValue() + "(次)," + totalValue.doubleValue() + "(元)";
-        chartData.setSubTitle(this.getDateTitle(sf,totalString));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf,totalString));
         chartData = ChartUtil.completeDate(chartData, sf);
         return callback(chartData);
     }
@@ -238,7 +238,7 @@ public class IncomeController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getTotalAmount());
         }
-        String subTitle = this.getDateTitle(sf,totalValue.intValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf,totalValue.intValue() + "元");
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return chartPieData;

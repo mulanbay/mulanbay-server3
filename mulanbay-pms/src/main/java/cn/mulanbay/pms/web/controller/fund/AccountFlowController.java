@@ -9,6 +9,7 @@ import cn.mulanbay.pms.persistent.domain.Account;
 import cn.mulanbay.pms.persistent.domain.AccountFlow;
 import cn.mulanbay.pms.persistent.dto.fund.AccountFlowSnapshotStat;
 import cn.mulanbay.pms.persistent.service.AccountFlowService;
+import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.fund.accountFlow.AccountFlowSH;
 import cn.mulanbay.pms.web.bean.res.chart.ChartData;
@@ -88,7 +89,7 @@ public class AccountFlowController extends BaseController {
             yData.getData().add(NumberUtil.getValue(bean.getAfterAmount(),0));
             y2Data.getData().add(NumberUtil.getValue( bean.getAfterAmount().subtract(bean.getBeforeAmount()),0));
         }
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         chartData.getYdata().add(y2Data);
@@ -132,7 +133,7 @@ public class AccountFlowController extends BaseController {
             }
         }
 
-        String subTitle = this.getDateTitle(sf);
+        String subTitle = ChartUtil.getDateTitle(sf);
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         chartData.getYdata().add(y2Data);

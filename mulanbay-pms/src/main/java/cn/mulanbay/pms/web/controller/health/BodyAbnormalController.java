@@ -207,7 +207,7 @@ public class BodyAbnormalController extends BaseController {
             totalCount = totalCount.add(new BigDecimal(bean.getTotalCount()));
         }
         chartPieData.getDetailData().add(serieData);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次");
         chartPieData.setSubTitle(subTitle);
         return chartPieData;
     }
@@ -216,7 +216,6 @@ public class BodyAbnormalController extends BaseController {
      * 统计柱状图数据
      *
      * @param list
-     * @param sf
      * @return
      */
     private ChartData createStatBarData(List<BodyAbnormalStat> list) {
@@ -257,7 +256,7 @@ public class BodyAbnormalController extends BaseController {
         List<BodyAbnormalDateStat> list = bodyService.getAbnormalDateStat(sf);
         ChartData chartData = new ChartData();
         chartData.setTitle("身体不适统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"持续天数","次数"});
         //混合图形下使用
         chartData.addYAxis("持续天数","天");
@@ -274,7 +273,7 @@ public class BodyAbnormalController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;

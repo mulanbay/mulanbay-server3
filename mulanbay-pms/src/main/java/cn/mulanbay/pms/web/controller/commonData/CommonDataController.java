@@ -330,7 +330,7 @@ public class CommonDataController extends BaseController {
         ChartData chartData = new ChartData();
         CommonDataType type = baseService.getObject(CommonDataType.class,sf.getTypeId());
         chartData.setTitle(type.getTypeName() + "统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"次数"});
         ChartYData yData1 = new ChartYData("次数","次");
         //总的值
@@ -342,7 +342,7 @@ public class CommonDataController extends BaseController {
             totalCount = totalCount.add(new BigDecimal(map.get(key)));
         }
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + type.getUnit());
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + type.getUnit());
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
@@ -359,7 +359,7 @@ public class CommonDataController extends BaseController {
         CommonDataType type = baseService.getObject(CommonDataType.class,sf.getTypeId());
         ChartData chartData = new ChartData();
         chartData.setTitle(type.getTypeName() + "统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{"时长","次数"});
         //混合图形下使用
         chartData.addYAxis("时长",type.getUnit());
@@ -376,7 +376,7 @@ public class CommonDataController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = this.getDateTitle(sf, totalCount.longValue() + "次");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;

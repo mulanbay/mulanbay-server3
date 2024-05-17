@@ -153,7 +153,7 @@ public class WorkOvertimeController extends BaseController {
     private ChartData createChartData(WorkOvertimeDateStatSH sf){
         ChartData chartData = new ChartData();
         chartData.setTitle("加班统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{ "总时长", "平均每天加班","次数"});
         //混合图形下使用
         chartData.addYAxis("时长","小时");

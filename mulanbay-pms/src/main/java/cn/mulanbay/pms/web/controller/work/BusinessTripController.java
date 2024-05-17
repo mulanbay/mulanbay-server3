@@ -164,7 +164,7 @@ public class BusinessTripController extends BaseController {
     private ChartData createChartData(BusinessTripDateStatSH sf){
         ChartData chartData = new ChartData();
         chartData.setTitle("出差统计");
-        chartData.setSubTitle(this.getDateTitle(sf));
+        chartData.setSubTitle(ChartUtil.getDateTitle(sf));
         chartData.setLegendData(new String[]{ "天数","次数"});
         //混合图形下使用
         chartData.addYAxis("天数","天");
