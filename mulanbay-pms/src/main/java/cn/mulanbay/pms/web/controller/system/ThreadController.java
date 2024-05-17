@@ -42,7 +42,7 @@ public class ThreadController extends BaseController {
         List<ThreadVo> beanList = new ArrayList();
         for (EnhanceThread et : list) {
             ThreadVo tb = new ThreadVo();
-            BeanCopy.copyProperties(et, tb);
+            BeanCopy.copy(et, tb);
             beanList.add(tb);
         }
         res.setBeanList(beanList);

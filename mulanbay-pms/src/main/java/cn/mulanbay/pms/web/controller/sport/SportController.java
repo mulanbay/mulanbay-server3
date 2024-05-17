@@ -113,7 +113,7 @@ public class SportController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid SportForm form) {
         Sport bean = baseService.getObject(beanClass,form.getSportId());
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(bean);
     }

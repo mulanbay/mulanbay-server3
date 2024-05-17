@@ -136,7 +136,7 @@ public class BudgetSnapShotController extends BaseController {
      */
     private BudgetDetailVo createDefault(BudgetSnapshot bg){
         BudgetDetailVo vo = new BudgetDetailVo();
-        BeanCopy.copyProperties(bg,vo);
+        BeanCopy.copy(bg,vo);
         vo.setBudgetId(bg.getBudgetId());
         vo.setHasChild(true);
         return vo;
@@ -221,11 +221,11 @@ public class BudgetSnapShotController extends BaseController {
      */
     private BudgetDetailVo getDetail(BudgetSnapshot bg,Date bussDay,String bussKey ){
         BudgetDetailVo bdb = new BudgetDetailVo();
-        BeanCopy.copyProperties(bg, bdb);
+        BeanCopy.copy(bg, bdb);
         if (bg.getGoodsTypeId()!=null) {
             //查询预算实际支付
             Budget budget = new Budget();
-            BeanCopy.copyProperties(bg,budget);
+            BeanCopy.copy(bg,budget);
             ConsumeBudgetStat bs= budgetHandler.getActualAmount(budget,bussDay);
             if (bs.getTotalPrice() != null) {
                 bdb.setCpPaidTime(bs.getMaxConsumeDate());

@@ -314,7 +314,7 @@ public class ConsumeHandler extends BaseHandler {
         for(GoodsLifetime lt : list){
             float m = nlpProcessor.sentenceSimilarity(goodsName,lt.getTags());
             if(m>bean.getMatch()){
-                BeanCopy.copyProperties(lt,bean);
+                BeanCopy.copy(lt,bean);
                 bean.setMatch(m);
                 if(m>=maxMatchDegree){
                     logger.debug("快速寻找到商品寿命匹配:"+lt.getLifetimeName());

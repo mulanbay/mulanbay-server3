@@ -206,7 +206,7 @@ public class BudgetController extends BaseController {
             }
         }
         Budget budget = baseService.getObject(beanClass,form.getBudgetId());
-        BeanCopy.copyProperties(form, budget);
+        BeanCopy.copy(form, budget);
         baseService.updateObject(budget);
         return callback(null);
     }

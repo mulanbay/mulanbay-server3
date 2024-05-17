@@ -92,7 +92,7 @@ public class GoodsLifetimeController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid GoodsLifetimeForm form) {
         GoodsLifetime bean = baseService.getObject(beanClass,form.getLifetimeId());
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(null);
     }
@@ -151,7 +151,7 @@ public class GoodsLifetimeController extends BaseController {
         GoodsLifetime bean = baseService.getObject(beanClass,mr.getLifetimeId());
         float m = nlpProcessor.sentenceSimilarity(bean.getTags(),mr.getGoodsName());
         GoodsLifetimeMatchBean match = new GoodsLifetimeMatchBean();
-        BeanCopy.copyProperties(bean,match);
+        BeanCopy.copy(bean,match);
         match.setMatch(m);
         return callback(match);
     }

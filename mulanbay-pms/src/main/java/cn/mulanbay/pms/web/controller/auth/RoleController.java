@@ -121,7 +121,7 @@ public class RoleController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid RoleForm formRequest) {
         Role bean = baseService.getObject(beanClass, formRequest.getRoleId());
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         baseService.updateObject(bean);
         return callback(null);
     }

@@ -70,7 +70,7 @@ public class SysCodeController extends BaseController {
 
     private void createBean(SysCodeForm formRequest) {
         SysCode bean = new SysCode();
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         bean.setCount(0);
         baseService.saveObject(bean);
     }
@@ -83,7 +83,7 @@ public class SysCodeController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid SysCodeForm formRequest) {
         SysCode bean = baseService.getObject(beanClass, formRequest.getCode());
-        BeanCopy.copyProperties(formRequest, bean);
+        BeanCopy.copy(formRequest, bean);
         baseService.updateObject(bean);
         systemConfigHandler.refreshSysCode(bean.getCode());
         return callback(null);

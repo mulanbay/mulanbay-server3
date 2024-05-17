@@ -117,7 +117,7 @@ public class MusicPracticeController extends BaseController {
                 List<MusicPracticeDetail> newTuneList = new ArrayList<>();
                 for (MusicPracticeDetail mpt : tuneList) {
                     MusicPracticeDetail ntn = new MusicPracticeDetail();
-                    BeanCopy.copyProperties(mpt, ntn);
+                    BeanCopy.copy(mpt, ntn);
                     ntn.setDetailId(null);
                     ntn.setRemark("以模板新增");
                     newTuneList.add(ntn);
@@ -148,7 +148,7 @@ public class MusicPracticeController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid MusicPracticeForm form) {
         MusicPractice bean = baseService.getObject(beanClass, form.getPracticeId());
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         bean.setPracticeDate(DateUtil.getDate(bean.getStartTime(), DateUtil.FormatDay1));
         Instrument instrument = baseService.getObject(Instrument.class, form.getInstrumentId());
         bean.setInstrument(instrument);

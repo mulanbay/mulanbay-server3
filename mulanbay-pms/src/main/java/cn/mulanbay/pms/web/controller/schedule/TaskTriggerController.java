@@ -154,7 +154,7 @@ public class TaskTriggerController extends BaseController {
         List<TaskTriggerVo> newList = new ArrayList<>();
         for (TaskTrigger tt : beanList) {
             TaskTriggerVo tb = new TaskTriggerVo();
-            BeanCopy.copyProperties(tt, tb);
+            BeanCopy.copy(tt, tb);
             if (tt.getTriggerStatus() == TriggerStatus.ENABLE) {
                 boolean executing = pmsScheduleHandler.isExecuting(tt.getTriggerId());
                 tb.setExecuting(executing);

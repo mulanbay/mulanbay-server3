@@ -85,7 +85,7 @@ public class ConsumeSourceController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid ConsumeSourceForm form) {
         ConsumeSource bean = new ConsumeSource();
-        BeanCopy.copyProperties(form,bean);
+        BeanCopy.copy(form,bean);
         baseService.saveObject(bean);
         return callback(null);
     }
@@ -110,7 +110,7 @@ public class ConsumeSourceController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ConsumeSourceForm form) {
         ConsumeSource bean = baseService.getObject(beanClass,form.getSourceId());
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(null);
     }

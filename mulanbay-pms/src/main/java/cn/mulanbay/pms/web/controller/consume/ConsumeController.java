@@ -268,7 +268,7 @@ public class ConsumeController extends BaseController {
     public ResultBean costStat(ConsumeCostStatForm form) {
         Consume consume = baseService.getObject(beanClass,form.getConsumeId());
         ConsumeCostStatVo vo = new ConsumeCostStatVo();
-        BeanCopy.copyProperties(consume,vo);
+        BeanCopy.copy(consume,vo);
         Date expDate = vo.getInvalidTime();
         if(expDate==null){
             expDate = new Date();

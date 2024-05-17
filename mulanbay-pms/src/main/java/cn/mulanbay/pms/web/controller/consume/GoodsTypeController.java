@@ -102,7 +102,7 @@ public class GoodsTypeController extends BaseController {
             long myPid = cc.getPid();
             if(myPid==pid){
                 GoodsTypeVo child = new GoodsTypeVo();
-                BeanCopy.copyProperties(cc, child);
+                BeanCopy.copy(cc, child);
                 child.setPid(cc.getPid());
                 //child.setParentName();
                 //寻找下一个子列表
@@ -123,7 +123,7 @@ public class GoodsTypeController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid GoodsTypeForm form) {
         GoodsType bean = new GoodsType();
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         if (bean.getBehaviorName() == null) {
             bean.setBehaviorName(bean.getTypeName());
         }

@@ -181,7 +181,7 @@ public class StatTemplateController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid StatTemplateForm form) {
         StatTemplate bean = baseService.getObject(beanClass, form.getTemplateId());
-        BeanCopy.copyProperties(form, bean);
+        BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(bean);
     }
