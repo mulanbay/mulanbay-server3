@@ -182,6 +182,12 @@ mulanbay:
     cate:
       #分类的统计天数
       days: 14
+      #缓存失效时间
+      expireTime: 3600
+      #NLP匹配时的最高匹配度，高于这个数不再往下匹配
+      maxDegree: 0.85
+      #NLP匹配时的最低匹配度，低于这个数认为没有匹配到
+      minDegree: 0.1
   experience:
     mapStat:
       #地图统计使用字段，出发城市或者抵达,值：start / arrive

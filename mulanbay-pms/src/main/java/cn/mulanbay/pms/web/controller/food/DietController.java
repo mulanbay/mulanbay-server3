@@ -23,14 +23,11 @@ import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.food.category.FoodCategorySH;
 import cn.mulanbay.pms.web.bean.req.food.diet.*;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -49,8 +46,6 @@ import static cn.mulanbay.pms.common.Constant.ROUNDING_MODE;
 @RestController
 @RequestMapping("/diet")
 public class DietController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(DietController.class);
 
     private static Class<Diet> beanClass = Diet.class;
 
@@ -470,35 +465,6 @@ public class DietController extends BaseController {
     }
 
     /**
-     * 获取有效的食品分类列表
-     *
-     * @return
-     */
-    private List<FoodCategory> getActiveFoodCategoryList() {
-        FoodCategorySH sf = new FoodCategorySH();
-        sf.setStatus(CommonStatus.ENABLE);
-        PageRequest pr = sf.buildQuery();
-        pr.setBeanClass(FoodCategory.class);
-        Sort sort = new Sort("orderIndex", Sort.ASC);
-        pr.addSort(sort);
-        List<FoodCategory> list = baseService.getBeanList(pr);
-        return list;
-    }
-
-    private FoodCategory findDietCategory(List<FoodCategory> list, String s) {
-        for (FoodCategory dc : list) {
-            String[] ks = dc.getTags().split(",");
-            for (String k : ks) {
-                if (s.contains(k)) {
-                    return dc;
-                }
-            }
-        }
-        logger.warn("饮食[" + s + "]找不到食品类型分析");
-        return null;
-    }
-
-    /**
      * 比对
      *
      * @return
@@ -547,7 +513,7 @@ public class DietController extends BaseController {
     }
 
     /**
-     * 封装消费记录分析的树形图数据
+     * 封装树形图数据
      *
      * @param sf
      * @return
@@ -559,9 +525,9 @@ public class DietController extends BaseController {
         chartData.setUnit("次");
         Map<String, ChartTreeMapDetailData> dataMap = new HashMap<>();
         List<DietAnalyseStat> list = dietService.getDietAnalyseStat(sf);
-        List<FoodCategory> dcList = this.getActiveFoodCategoryList();
+        List<FoodCategory> cateList = dietHandler.loadFoodCategoryList();
         for (DietAnalyseStat bean : list) {
-            FoodCategory dc = this.findDietCategory(dcList, bean.getName());
+            FoodCategory dc = dietHandler.matchCategory(cateList,bean.getName());
             if (dc == null) {
                 if (!sf.isIncludeUnknown()) {
                     continue;
@@ -625,12 +591,9 @@ public class DietController extends BaseController {
         // 将map.entrySet()转换成list
         List<Map.Entry<String, DietAnalyseStat>> list = new ArrayList<>(map.entrySet());
         // 通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<String, DietAnalyseStat>>() {
-            @Override
-            public int compare(Map.Entry<String, DietAnalyseStat> o1, Map.Entry<String, DietAnalyseStat> o2) {
-                // 降序排序
-                return o2.getValue().getTotalCount().compareTo(o1.getValue().getTotalCount());
-            }
+        Collections.sort(list, (o1, o2) -> {
+            // 降序排序
+            return o2.getValue().getTotalCount().compareTo(o1.getValue().getTotalCount());
         });
         for (Map.Entry<String, DietAnalyseStat> m : list) {
             chartData.getXdata().add(m.getKey());
@@ -644,13 +607,11 @@ public class DietController extends BaseController {
     }
 
     private Map<String, DietAnalyseStat> getDietAnalyseStat(DietAnalyseSH sf) {
-        List<FoodCategory> dcList = null;
         DietStatField statField = sf.getField();
         //是否根据类别统计
         boolean isDs = false;
         if (statField == DietStatField.CLASS_NAME || statField == DietStatField.TYPE) {
             isDs = true;
-            dcList = this.getActiveFoodCategoryList();
         }
         List<DietAnalyseStat> list = null;
         if (sf.getField() == DietStatField.FOOD_TYPE ||
@@ -661,10 +622,11 @@ public class DietController extends BaseController {
             list = dietService.getDietAnalyseStat(sf);
         }
         Map<String, DietAnalyseStat> map = new HashMap<>();
+        List<FoodCategory> cateList = dietHandler.loadFoodCategoryList();
         for (DietAnalyseStat da : list) {
             FoodCategory dc = null;
             if (isDs) {
-                dc = this.findDietCategory(dcList, da.getName());
+                dc = dietHandler.matchCategory(cateList,da.getName());
                 if (dc == null) {
                     if (!sf.isIncludeUnknown()) {
                         continue;

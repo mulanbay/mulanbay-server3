@@ -137,6 +137,11 @@ public class CacheKey {
     public static final String GOODS_TYPE_MATCH_LIST = "goodsType:matchList:x:{0}";
 
     /**
+     * 饮食分类
+     */
+    public static final String FOOD_CATEGORY_LIST = "diet:foodCategory";
+
+    /**
      * 商品的寿命
      */
     public static final String GOODS_LIFETIME_LIST = "goods:lifetimeList";
