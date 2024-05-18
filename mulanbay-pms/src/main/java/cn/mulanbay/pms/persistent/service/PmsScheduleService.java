@@ -100,6 +100,11 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
         return super.getTaskServer(deployId);
     }
 
+    @Override
+    public Long getCostTime(Long taskTriggerId, int days, CostTimeCalcType type) {
+        return super.getCostTime(taskTriggerId, days,type);
+    }
+
     /**
      * 更新调度参数
      *

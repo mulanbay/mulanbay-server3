@@ -9,6 +9,7 @@ import cn.mulanbay.schedule.*;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
@@ -80,7 +81,7 @@ public class ScheduleHandler extends BaseHandler {
      * 分布式任务最小的花费时间(秒数)
      */
     @Value("${mulanbay.schedule.distriTaskMinCost:2}")
-    int distriTaskMinCost;
+    long distriTaskMinCost;
 
     @Value("${mulanbay.schedule.threadPool.corePoolSize:20}")
     int corePoolSize;
@@ -96,6 +97,24 @@ public class ScheduleHandler extends BaseHandler {
      */
     @Value("${mulanbay.schedule.monitorInterval:60}")
     long monitorInterval;
+
+    /**
+     * 花费时间计算方式
+     */
+    @Value("${mulanbay.schedule.costTimeCalcType:MAX}")
+    CostTimeCalcType costTimeCalcType;
+
+    /**
+     * 花费时间计算天数
+     */
+    @Value("${mulanbay.schedule.costTimeDays:7}")
+    int costTimeDays;
+
+    /**
+     * 花费时间计算天数
+     */
+    @Value("${mulanbay.schedule.costTimeRate:1.2}")
+    double costTimeRate;
 
     @Autowired
     SchedulePersistentProcessor schedulePersistentProcessor;
@@ -121,6 +140,9 @@ public class ScheduleHandler extends BaseHandler {
             quartzSource.setScheduleLocker(scheduleLocker);
             quartzSource.setDistriTaskMinCost(distriTaskMinCost);
             quartzSource.setNotifiableProcessor(notifiableProcessor);
+            quartzSource.setCostTimeCalcType(costTimeCalcType);
+            quartzSource.setCostTimeDays(costTimeDays);
+            quartzSource.setCostTimeRate(costTimeRate);
 
             //判断分布式支持
             if(quartzSource.getDistriable()&&quartzSource.getScheduleLocker()==null){

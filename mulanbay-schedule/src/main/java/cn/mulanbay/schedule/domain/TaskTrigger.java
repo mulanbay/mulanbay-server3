@@ -80,6 +80,7 @@ public class TaskTrigger implements java.io.Serializable {
 
 	/**
 	 * 超时时间,单位:毫秒
+	 * 小于0 由系统决定
 	 */
 	@Column(name = "timeout")
 	private Long timeout;

@@ -1,6 +1,7 @@
 package cn.mulanbay.schedule;
 
 
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
 
 /**
@@ -12,9 +13,24 @@ import cn.mulanbay.schedule.lock.ScheduleLocker;
 public class QuartzSource {
 
     /**
-     *  分布式任务最小的花费时间(秒数)
+     * 花费时间计算方式
      */
-    private int distriTaskMinCost=2;
+    private CostTimeCalcType costTimeCalcType = CostTimeCalcType.MAX;
+
+    /**
+     * 花费时间计算天数
+     */
+    private int costTimeDays = 7 ;
+
+    /**
+     * 花费时间比例
+     */
+    private double costTimeRate = 1.2;
+
+    /**
+     *  分布式任务最小的花费时间(毫秒)
+     */
+    private long distriTaskMinCost=2000;
 
     /**
      * 部署点
@@ -41,11 +57,35 @@ public class QuartzSource {
      */
     private NotifiableProcessor notifiableProcessor;
 
-    public int getDistriTaskMinCost() {
+    public CostTimeCalcType getCostTimeCalcType() {
+        return costTimeCalcType;
+    }
+
+    public void setCostTimeCalcType(CostTimeCalcType costTimeCalcType) {
+        this.costTimeCalcType = costTimeCalcType;
+    }
+
+    public int getCostTimeDays() {
+        return costTimeDays;
+    }
+
+    public void setCostTimeDays(int costTimeDays) {
+        this.costTimeDays = costTimeDays;
+    }
+
+    public double getCostTimeRate() {
+        return costTimeRate;
+    }
+
+    public void setCostTimeRate(double costTimeRate) {
+        this.costTimeRate = costTimeRate;
+    }
+
+    public long getDistriTaskMinCost() {
         return distriTaskMinCost;
     }
 
-    public void setDistriTaskMinCost(int distriTaskMinCost) {
+    public void setDistriTaskMinCost(long distriTaskMinCost) {
         this.distriTaskMinCost = distriTaskMinCost;
     }
 

@@ -9,10 +9,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.schedule.*;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskTrigger;
-import cn.mulanbay.schedule.enums.JobResult;
-import cn.mulanbay.schedule.enums.TaskUniqueType;
-import cn.mulanbay.schedule.enums.TriggerStatus;
-import cn.mulanbay.schedule.enums.TriggerType;
+import cn.mulanbay.schedule.enums.*;
 import cn.mulanbay.schedule.lock.LockStatus;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
 import cn.mulanbay.schedule.para.TriggerExecTimePeriods;
@@ -252,7 +249,7 @@ public abstract class AbstractBaseJob implements Job {
 					logger.error("保存执行记录异常", e);
 				}
 				// 解锁
-				unlock(costTime/1000);
+				unlock(costTime);
 			}
 		}
 	}
@@ -344,7 +341,7 @@ public abstract class AbstractBaseJob implements Job {
 					logger.error("保存执行记录异常", e);
 				}
 				notifyMessage();
-				unlock(taskLog.getCostTime()/1000);
+				unlock(taskLog.getCostTime());
 			}
 		}
 	}
@@ -421,7 +418,7 @@ public abstract class AbstractBaseJob implements Job {
 			return LockStatus.SUCCESS;
 		}else{
 			String lockKey = getLockKey();
-			LockStatus lockStatus= scheduleLocker.lock(lockKey,taskTrigger.getTimeout());
+			LockStatus lockStatus= scheduleLocker.lock(lockKey,this.getTimeout());
 			logger.debug("调度锁key="+lockKey+",上锁结果:"+lockStatus);
 			return lockStatus;
 		}
@@ -435,21 +432,22 @@ public abstract class AbstractBaseJob implements Job {
 	 * (2)另外一种identifyKey通过JobExecutionContext的ScheduleFireTime来确定唯一性(精确到秒)
 	 * 可以解决时钟不同步的问题
 	 * (3)目前实现方式：添加scheduleIdentityId检查，即使时钟不同步也无问题
-	 * @param costSeconds
+	 * @param costTime 实际任务花费时间
 	 * @return
 	 */
-	private LockStatus unlock(long costSeconds){
+	private LockStatus unlock(long costTime){
 		if(!taskTrigger.getDistriable()){
 			//不支持分布式的不需要上锁
 			return LockStatus.SUCCESS;
 		}
-		if(costSeconds<quartzSource.getDistriTaskMinCost()){
-			try {
-				Thread.sleep((quartzSource.getDistriTaskMinCost()-costSeconds)*1000L);
-			} catch (Exception e) {
-				logger.error("unlock sleep error",e);
-			}
-		}
+		//取消distriTaskMinCost最小时间等待
+//		if(costTime<quartzSource.getDistriTaskMinCost()){
+//			try {
+//				Thread.sleep((quartzSource.getDistriTaskMinCost()-costTime));
+//			} catch (Exception e) {
+//				logger.error("unlock sleep error",e);
+//			}
+//		}
 		ScheduleLocker scheduleLocker = quartzSource.getScheduleLocker();
 		if(scheduleLocker==null){
 			return LockStatus.SUCCESS;
@@ -475,6 +473,33 @@ public abstract class AbstractBaseJob implements Job {
 			key +=":"+this.generateScheduleId();
 		}
 		return key;
+	}
+
+	/**
+	 * 获取超时时间
+	 *
+	 * @return
+	 */
+	private long getTimeout(){
+		try {
+			long t = taskTrigger.getTimeout();
+			if(t<0){
+				SchedulePersistentProcessor spp = quartzSource.getSchedulePersistentProcessor();
+				CostTimeCalcType costTimeCalcType = quartzSource.getCostTimeCalcType();
+				Long ct = spp.getCostTime(taskTrigger.getTriggerId(), quartzSource.getCostTimeDays(), costTimeCalcType);
+				if(ct==null){
+					logger.warn("未能获取到taskTrigger={}的花费时间计算结果，JOB超时时间采用系统默认:{}毫秒",taskTrigger.getTriggerId(),quartzSource.getDistriTaskMinCost());
+					return quartzSource.getDistriTaskMinCost();
+				}else{
+					return (long) (ct * quartzSource.getCostTimeRate());
+				}
+			}else{
+				return t;
+			}
+		} catch (Exception e) {
+			logger.error("获取超时时间异常",e);
+			return quartzSource.getDistriTaskMinCost();
+		}
 	}
 
 	/**

@@ -3,6 +3,7 @@ package cn.mulanbay.schedule;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 
 import java.util.Date;
@@ -113,4 +114,12 @@ public interface SchedulePersistentProcessor {
      * @return
      */
     TaskServer getTaskServer(String deployId);
+
+    /**
+     * 获取耗时
+     * @param taskTriggerId
+     * @param days 多少天内
+     * @return
+     */
+    Long getCostTime(Long taskTriggerId, int days, CostTimeCalcType type);
 }

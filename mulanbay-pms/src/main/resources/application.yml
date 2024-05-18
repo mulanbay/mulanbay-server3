@@ -122,10 +122,16 @@ mulanbay:
     enable: false
     #是否支持分布式
     distriable: true
-    #分布式任务最小的花费时间(秒数)
-    distriTaskMinCost: 2
+    #分布式任务最小的花费时间(毫秒)
+    distriTaskMinCost: 2000
     #调度触发器检查周期(秒),<=0不检查
     monitorInterval: 60
+    #花费时间计算方式（取值类型：AVG,MIN,MAX,LAST）
+    costTimeCalcType: MAX
+    #花费时间计算天数
+    costTimeDays: 7
+    #花费时间比例
+    costTimeRate: 1.2
     #线程池
     threadPool:
       corePoolSize: 20

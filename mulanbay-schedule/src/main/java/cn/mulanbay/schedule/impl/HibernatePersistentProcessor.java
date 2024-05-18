@@ -2,6 +2,7 @@ package cn.mulanbay.schedule.impl;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.schedule.ScheduleCode;
@@ -9,10 +10,12 @@ import cn.mulanbay.schedule.SchedulePersistentProcessor;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -236,7 +239,24 @@ public class HibernatePersistentProcessor  extends BaseHibernateDao implements S
             String hql="from TaskServer where deployId=?1 ";
             return this.getEntity(hql,TaskServer.class,deployId);
         } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取调度器服务器信息ß失败！",e);
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取调度器服务器信息失败！",e);
+        }
+    }
+
+    @Override
+    public Long getCostTime(Long taskTriggerId, int days, CostTimeCalcType type) {
+        try {
+            if(type==CostTimeCalcType.LAST){
+                String sql="select cost_time from task_log where task_trigger_id=?1 order by start_time desc ";
+                return this.getEntitySQL(sql,Long.class,taskTriggerId);
+            }else{
+                Date compareDate = DateUtil.getDate(-days);
+                String sql="select "+type.getMethod()+"(cost_time) from task_log where task_trigger_id=?1 and start_time>=?2 ";
+                BigDecimal o = this.getEntitySQL(sql,BigDecimal.class,taskTriggerId,compareDate);
+                return o==null? null : o.longValue();
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取耗时失败！",e);
         }
     }
 }
