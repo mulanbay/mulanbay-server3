@@ -2,7 +2,6 @@ package cn.mulanbay.persistent.service;
 
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
-import cn.mulanbay.persistent.cache.PageCacheManager;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
@@ -28,11 +27,6 @@ import java.util.List;
 @Transactional
 @Service
 public class BaseService extends BaseHibernateDao {
-
-	private static final Logger logger = LoggerFactory.getLogger(BaseService.class);
-
-	@Autowired(required = false)
-	PageCacheManager pageCacheManager;
 
 	/**
 	 * 删除对象
@@ -315,6 +309,35 @@ public class BaseService extends BaseHibernateDao {
 
 	}
 
+
+	/**
+	 * 获取列表数据
+	 * @param pr
+	 * @param <T>
+	 * @return
+	 */
+	public <T> PageResult<T> getBeanResult(PageRequest pr) {
+		try {
+			PageResult<T> qb = new PageResult<T>();
+			String hql = "from " + pr.getBeanClass().getName();
+			hql += pr.getParameterString();
+			Object[] values = pr.getParameterValue();
+			if (pr.getPage() > NO_PAGE&&pr.isNeedTotal()) {
+				long maxRow = this.getCount("select count(0) " + hql,pr.getBeanClass(),values);
+				qb.setMaxRow(maxRow);
+			}
+			hql+=pr.getSortString();
+			List<T> list = this.getEntityListHI(hql.toString(),
+					pr.getPage(), pr.getPageSize(), pr.getBeanClass(),values);
+			qb.setBeanList(list);
+			qb.setPage(pr.getPage());
+			return qb;
+		} catch (BaseException e) {
+			throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,"获取列表数据异常", e);
+		}
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public <T> PageResult<T> getBeanResult(Class<T> c, int page, int pageSize, Sort sort) {
 		try {
@@ -322,8 +345,7 @@ public class BaseService extends BaseHibernateDao {
 			StringBuffer hql = new StringBuffer();
 			hql.append("from " + c.getName());
 			if (page >= 0) {
-				long maxRow = this
-						.getCount("select count(*) " + hql.toString());
+				long maxRow = this.getCount("select count(*) " + hql.toString(),c);
 				qb.setMaxRow(maxRow);
 			}
 			if (sort != null) {
@@ -350,65 +372,6 @@ public class BaseService extends BaseHibernateDao {
 			return list;
 		} catch (BaseException e) {
 			throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取列表异常", e);
-		}
-	}
-
-	/**
-	 * 获取对象列表
-	 * @param sql
-	 * @param page
-	 * @param pageSize
-	 * @param objects
-	 * @return
-	 */
-	public List<Object[]> getBeanListSQL(String sql, int page, int pageSize,
-									Object... objects) {
-		try {
-			return this.getEntityListHI(sql,page,pageSize,Object[].class,objects);
-		} catch (BaseException e) {
-			throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,"获取列表异常", e);
-		}
-	}
-
-	/**
-	 * 获取列表数据
-	 * @param pr
-	 * @param <T>
-	 * @return
-	 */
-	public <T> PageResult<T> getBeanResult(PageRequest pr) {
-		if(pageCacheManager.enableCache()){
-			return pageCacheManager.getBeanResult(pr);
-		}else{
-			return this.getBeanResultDf(pr);
-		}
-	}
-
-	/**
-	 * 获取列表数据
-	 * @param pr
-	 * @param <T>
-	 * @return
-	 */
-	public <T> PageResult<T> getBeanResultDf(PageRequest pr) {
-		try {
-			PageResult<T> qb = new PageResult<T>();
-			String hql = "from " + pr.getBeanClass().getName();
-			hql += pr.getParameterString();
-			Object[] values = pr.getParameterValue();
-			if (pr.getPage() > NO_PAGE&&pr.isNeedTotal()) {
-				long maxRow = this.getCount("select count(0) " + hql,
-						values);
-				qb.setMaxRow(maxRow);
-			}
-			hql+=pr.getSortString();
-			List<T> list = this.getEntityListHI(hql.toString(),
-					pr.getPage(), pr.getPageSize(), pr.getBeanClass(),values);
-			qb.setBeanList(list);
-			qb.setPage(pr.getPage());
-			return qb;
-		} catch (BaseException e) {
-			throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,"获取列表数据异常", e);
 		}
 	}
 

@@ -2,6 +2,7 @@ package cn.mulanbay.persistent.dao;
 
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.util.JsonUtil;
+import cn.mulanbay.persistent.cache.PageCacheProcessor;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.common.OPUtil;
 import jakarta.persistence.NoResultException;
@@ -65,6 +66,13 @@ public class BaseHibernateDao {
 	@Autowired
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	private PageCacheProcessor pageCacheProcessor;
+
+	@Autowired
+	public void setPageCacheProcessor(PageCacheProcessor pageCacheProcessor) {
+		this.pageCacheProcessor = pageCacheProcessor;
 	}
 
 	/**
@@ -292,6 +300,49 @@ public class BaseHibernateDao {
 	}
 
 	/**
+	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
+	 *
+	 * @param hql
+	 *            HQL语句
+	 * @param clazz
+	 *            指定类名
+	 * @param iObjects
+	 *            以索引变量绑定参数
+	 * @return Query 返回Query
+	 */
+	@SuppressWarnings("rawtypes")
+	public Long getCount(String hql, Class clazz,Object... iObjects) throws BaseException {
+		Long result;
+		if(pageCacheProcessor.isListCache(clazz)){
+			String key = pageCacheProcessor.createTotalCacheKey(hql,clazz,iObjects);
+			result = pageCacheProcessor.getCacheTotal(key);
+			if(result==null){
+				result = this.getCount_DT(hql,iObjects);
+				pageCacheProcessor.cacheTotal(key,result);
+			}else {
+				logger.debug("得到总数HQL缓存，hql:{},key:{}",hql,key);
+			}
+		}else{
+			result = this.getCount_DT(hql,iObjects);
+		}
+		return result;
+	}
+
+	/**
+	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
+	 *
+	 * @param hql
+	 *            HQL语句
+	 * @param iObjects
+	 *            以索引变量绑定参数
+	 * @return Query 返回Query
+	 */
+	@SuppressWarnings("rawtypes")
+	public Long getCount(String hql,Object... iObjects) throws BaseException {
+		return this.getCount_DT(hql,iObjects);
+	}
+
+	/**
 	 * 利用预编译HQL查询记录总数
 	 *
 	 * @param hql
@@ -301,7 +352,7 @@ public class BaseHibernateDao {
 	 * @return Long 返回记录条数
 	 */
 	@SuppressWarnings("unchecked")
-	protected Long getCount(String hql, Object... objects) throws BaseException {
+	protected Long getCount_DT(String hql, Object... objects) throws BaseException {
 		try {
 			if(logger.isDebugEnabled()){
 				logger.debug("getCount hql:" + hql);
@@ -339,7 +390,7 @@ public class BaseHibernateDao {
 	 */
 	@SuppressWarnings("rawtypes")
 	protected <T> List<T>  getEntityListHI(String hql, int page,int pageSize, Class<T> clazz, Object... objects) throws BaseException {
-		return this.getEntityListHQL(hql,page,pageSize,clazz,null,objects);
+		return this.getEntityListHQL(hql,page,pageSize,clazz,objects);
 	}
 
 	/**
@@ -351,48 +402,53 @@ public class BaseHibernateDao {
 	 * @param pageSize
 	 * @param clazz
 	 *            指定类名
-	 * @param mParas
-	 *            变量绑定参数
-	 * @return Query 返回Query
-	 */
-	@SuppressWarnings("rawtypes")
-	protected <T> List<T>  getEntityListHM(String hql, int page,int pageSize, Class<T> clazz, Map<String,Object> mParas) throws BaseException {
-		return this.getEntityListHQL(hql,page,pageSize,clazz,mParas);
-	}
-
-	/**
-	 * 利用预编译HQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
-	 *
-	 * @param hql
-	 *            SQL语句
-	 * @param page
-	 * @param pageSize
-	 * @param clazz
-	 *            指定类名
-	 * @param mParas
-	 *            以名称变量绑定参数
 	 * @param iObjects
 	 *            以索引变量绑定参数
 	 * @return Query 返回Query
 	 */
 	@SuppressWarnings("rawtypes")
-	private <T> List<T>  getEntityListHQL(String hql, int page,int pageSize, Class<T> clazz, Map<String,Object> mParas,Object... iObjects) throws BaseException {
+	private <T> List<T>  getEntityListHQL(String hql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
+		List<T> result;
+		if(pageCacheProcessor.isListCache(clazz)){
+			String key = pageCacheProcessor.createListCacheKey(hql,page,pageSize,clazz,iObjects);
+			result = pageCacheProcessor.getCacheList(key,clazz);
+			if(result==null){
+				result = this.getEntityListHQL_DT(hql,page,pageSize,clazz,iObjects);
+				pageCacheProcessor.cacheList(key,result);
+			} else {
+				logger.debug("得到列表HQL缓存，hql:{},key:{}",hql,key);
+			}
+		}else{
+			result = this.getEntityListHQL_DT(hql,page,pageSize,clazz,iObjects);
+		}
+		return result;
+	}
+
+	/**
+	 * 利用预编译HQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
+	 *
+	 * @param hql
+	 *            SQL语句
+	 * @param page
+	 * @param pageSize
+	 * @param clazz
+	 *            指定类名
+	 * @param iObjects
+	 *            以索引变量绑定参数
+	 * @return Query 返回Query
+	 */
+	@SuppressWarnings("rawtypes")
+	private <T> List<T>  getEntityListHQL_DT(String hql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
 		try {
 			if(logger.isDebugEnabled()){
 				logger.debug("retrieveSQLObjs hql:" + hql);
 				logger.debug("参数：page=" + page + ",pageSize=" + pageSize);
-				logger.debug("mParas:" + JsonUtil.beanToJson(mParas));
 				logger.debug("iObjects:" + JsonUtil.beanToJson(iObjects));
 			}
 			Query query = getSession().createQuery(hql,clazz);
 			int i = START_OPL;
 			for (Object object : iObjects) {
 				query.setParameter(i++, object);
-			}
-			if(mParas!=null&&!mParas.isEmpty()){
-				for(String key : mParas.keySet()){
-					query.setParameter(key,mParas.get(key));
-				}
 			}
 			if(page>NO_PAGE){
 				query.setFirstResult(pageSize * (page - 1));
@@ -421,33 +477,14 @@ public class BaseHibernateDao {
 	 * @param pageSize
 	 * @param clazz
 	 *            指定类名
-	 * @param mParas
-	 *            以名称变量绑定参数
-	 * @return Query 返回Query
-	 */
-	@SuppressWarnings("rawtypes")
-	protected <T> List<T>  getEntityListSM(String sql, int page,int pageSize, Class<T> clazz, Map<String,Object> mParas) throws BaseException {
-		return this.getEntityListSQL(sql,page,pageSize,clazz,mParas);
-	}
-
-	/**
-	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param page
-	 * @param pageSize
-	 * @param clazz
-	 *            指定类名
 	 * @param iObjects
 	 *            以索引变量绑定参数
 	 * @return Query 返回Query
 	 */
 	@SuppressWarnings("rawtypes")
 	protected <T> List<T>  getEntityListSI(String sql, int page,int pageSize, Class<T> clazz, Object... iObjects) throws BaseException {
-		return this.getEntityListSQL(sql,page,pageSize,clazz,null,iObjects);
+		return this.getEntityListSQL(sql,page,pageSize,clazz,iObjects);
 	}
-
 
 	/**
 	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
@@ -458,29 +495,52 @@ public class BaseHibernateDao {
 	 * @param pageSize
 	 * @param clazz
 	 *            指定类名
-	 * @param mParas
-	 *            以名称变量绑定参数
 	 * @param iObjects
 	 *            以索引变量绑定参数
 	 * @return Query 返回Query
 	 */
-	private <T> List<T> getEntityListSQL(String sql, int page,int pageSize, Class<T> clazz, Map<String,Object> mParas,Object... iObjects) throws BaseException {
+	@SuppressWarnings("rawtypes")
+	private <T> List<T> getEntityListSQL(String sql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
+		List<T> result;
+		if(pageCacheProcessor.isListCache(clazz)){
+			String key = pageCacheProcessor.createListCacheKey(sql,page,pageSize,clazz,iObjects);
+			result = pageCacheProcessor.getCacheList(key,clazz);
+			if(result==null){
+				result = this.getEntityListSQL_DT(sql,page,pageSize,clazz,iObjects);
+				pageCacheProcessor.cacheList(key,result);
+			} else {
+				logger.debug("得到列表SQL缓存，sql:{},key:{}",sql,key);
+			}
+		}else{
+			result = this.getEntityListSQL_DT(sql,page,pageSize,clazz,iObjects);
+		}
+		return result;
+	}
+
+	/**
+	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
+	 *
+	 * @param sql
+	 *            SQL语句
+	 * @param page
+	 * @param pageSize
+	 * @param clazz
+	 *            指定类名
+	 * @param iObjects
+	 *            以索引变量绑定参数
+	 * @return Query 返回Query
+	 */
+	private <T> List<T> getEntityListSQL_DT(String sql, int page,int pageSize, Class<T> clazz, Object... iObjects) throws BaseException {
 		try {
 			if(logger.isDebugEnabled()){
 				logger.debug("retrieveSQLObjs sql:" + sql);
 				logger.debug("参数：page=" + page + ",pageSize=" + pageSize);
-				logger.debug("mParas:" + JsonUtil.beanToJson(mParas));
 				logger.debug("iObjects:" + JsonUtil.beanToJson(iObjects));
 			}
 			NativeQuery<T> query =  getSession().createNativeQuery(sql,clazz);
 			int i = START_OPL;
 			for (Object object : iObjects) {
 				query.setParameter(i++, object);
-			}
-			if(mParas!=null&&!mParas.isEmpty()){
-				for(String key : mParas.keySet()){
-					query.setParameter(key,mParas.get(key));
-				}
 			}
 			if (page > NO_PAGE) {
 				query.setFirstResult(pageSize * (page - 1));

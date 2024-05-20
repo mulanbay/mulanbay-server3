@@ -48,8 +48,6 @@ mulanbay:
         list : false
         #总记录值是否缓存
         total : false
-        #缓存数据开始页码
-        startPage: 1
         #需要缓存的bean，多个以英文逗号分隔，如果是全部则直接用* 表示
         beans: SysLog,OperLog
         #缓存时长
