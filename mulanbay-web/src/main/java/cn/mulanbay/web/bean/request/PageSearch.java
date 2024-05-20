@@ -15,7 +15,7 @@ public class PageSearch extends QueryBuilder {
 	/**
 	 * 页码
 	 */
-	protected Integer page;
+	protected Integer page = 0;
 
 	/**
 	 * 单页显示条数

@@ -478,7 +478,7 @@ public class ConsumeService extends BaseHibernateDao {
             String sql = "select distinct tags from consume ";
             sql += pr.getParameterString();
             sql += " and tags is not null ";
-            return this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,String.class, pr.getParameterValue());
+            return this.getEntityListSI(sql,sf.getPage(),sf.getPageSize(),String.class, pr.getParameterValue());
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "获取购买记录关键字异常", e);

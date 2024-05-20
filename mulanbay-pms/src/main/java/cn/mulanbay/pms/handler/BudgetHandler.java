@@ -6,6 +6,7 @@ import cn.mulanbay.ai.ml.processor.bean.BudgetConsumeER;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.bean.consume.ConsumeBean;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
 import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
@@ -167,7 +168,7 @@ public class BudgetHandler extends BaseHandler {
     public ConsumeBudgetStat getActualAmount(Budget budget, Date bussDay) {
         ConsumeBudgetStat v = null;
         PeriodDateBean pdb = BussUtil.calPeriod(bussDay,budget.getPeriod());
-        if (budget.getGoodsTypeId() != null) {
+        if (budget.getGoodsTypeId() != null|| StringUtil.isNotEmpty(budget.getTags())) {
             v = consumeService.statConsumeAmount(pdb.getStartDate(), pdb.getEndDate(), budget.getUserId(), budget.getGoodsTypeId(), budget.getTags(),budget.getIcg());
         }
         return v;

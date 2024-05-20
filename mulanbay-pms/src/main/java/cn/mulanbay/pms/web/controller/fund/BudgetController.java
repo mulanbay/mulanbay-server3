@@ -4,6 +4,7 @@ import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -149,7 +150,7 @@ public class BudgetController extends BaseController {
         }
         if (bg.getStatus() == CommonStatus.ENABLE) {
             //直接根据实际花费实时查询
-            if (bg.getGoodsTypeId()!=null) {
+            if (bg.getGoodsTypeId()!=null||StringUtil.isNotEmpty(bg.getTags())) {
                 ConsumeBudgetStat bs= budgetHandler.getActualAmount(bg,bussDay);
                 if (bs.getTotalPrice() != null) {
                     bdb.setCpPaidTime(bs.getMaxConsumeDate());
