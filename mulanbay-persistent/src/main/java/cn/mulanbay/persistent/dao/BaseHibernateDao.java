@@ -22,7 +22,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 数据库基本操作:Hibernate基类
@@ -313,7 +312,7 @@ public class BaseHibernateDao {
 	@SuppressWarnings("rawtypes")
 	public Long getCount(String hql, Class clazz,Object... iObjects) throws BaseException {
 		Long result;
-		if(pageCacheProcessor.isListCache(clazz)){
+		if(pageCacheProcessor.isTotalCache(clazz)){
 			String key = pageCacheProcessor.createTotalCacheKey(hql,clazz,iObjects);
 			result = pageCacheProcessor.getCacheTotal(key);
 			if(result==null){
@@ -390,36 +389,18 @@ public class BaseHibernateDao {
 	 */
 	@SuppressWarnings("rawtypes")
 	protected <T> List<T>  getEntityListHI(String hql, int page,int pageSize, Class<T> clazz, Object... objects) throws BaseException {
-		return this.getEntityListHQL(hql,page,pageSize,clazz,objects);
-	}
-
-	/**
-	 * 利用预编译HQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
-	 *
-	 * @param hql
-	 *            SQL语句
-	 * @param page
-	 * @param pageSize
-	 * @param clazz
-	 *            指定类名
-	 * @param iObjects
-	 *            以索引变量绑定参数
-	 * @return Query 返回Query
-	 */
-	@SuppressWarnings("rawtypes")
-	private <T> List<T>  getEntityListHQL(String hql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
 		List<T> result;
 		if(pageCacheProcessor.isListCache(clazz)){
-			String key = pageCacheProcessor.createListCacheKey(hql,page,pageSize,clazz,iObjects);
+			String key = pageCacheProcessor.createListCacheKey(hql,page,pageSize,clazz,objects);
 			result = pageCacheProcessor.getCacheList(key,clazz);
 			if(result==null){
-				result = this.getEntityListHQL_DT(hql,page,pageSize,clazz,iObjects);
+				result = this.getEntityListHQL(hql,page,pageSize,clazz,objects);
 				pageCacheProcessor.cacheList(key,result);
 			} else {
 				logger.debug("得到列表HQL缓存，hql:{},key:{}",hql,key);
 			}
 		}else{
-			result = this.getEntityListHQL_DT(hql,page,pageSize,clazz,iObjects);
+			result = this.getEntityListHQL(hql,page,pageSize,clazz,objects);
 		}
 		return result;
 	}
@@ -438,7 +419,7 @@ public class BaseHibernateDao {
 	 * @return Query 返回Query
 	 */
 	@SuppressWarnings("rawtypes")
-	private <T> List<T>  getEntityListHQL_DT(String hql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
+	private <T> List<T>  getEntityListHQL(String hql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
 		try {
 			if(logger.isDebugEnabled()){
 				logger.debug("retrieveSQLObjs hql:" + hql);
@@ -483,36 +464,18 @@ public class BaseHibernateDao {
 	 */
 	@SuppressWarnings("rawtypes")
 	protected <T> List<T>  getEntityListSI(String sql, int page,int pageSize, Class<T> clazz, Object... iObjects) throws BaseException {
-		return this.getEntityListSQL(sql,page,pageSize,clazz,iObjects);
-	}
-
-	/**
-	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param page
-	 * @param pageSize
-	 * @param clazz
-	 *            指定类名
-	 * @param iObjects
-	 *            以索引变量绑定参数
-	 * @return Query 返回Query
-	 */
-	@SuppressWarnings("rawtypes")
-	private <T> List<T> getEntityListSQL(String sql, int page,int pageSize, Class<T> clazz,Object... iObjects) throws BaseException {
 		List<T> result;
 		if(pageCacheProcessor.isListCache(clazz)){
 			String key = pageCacheProcessor.createListCacheKey(sql,page,pageSize,clazz,iObjects);
 			result = pageCacheProcessor.getCacheList(key,clazz);
 			if(result==null){
-				result = this.getEntityListSQL_DT(sql,page,pageSize,clazz,iObjects);
+				result = this.getEntityListSQL(sql,page,pageSize,clazz,iObjects);
 				pageCacheProcessor.cacheList(key,result);
 			} else {
 				logger.debug("得到列表SQL缓存，sql:{},key:{}",sql,key);
 			}
 		}else{
-			result = this.getEntityListSQL_DT(sql,page,pageSize,clazz,iObjects);
+			result = this.getEntityListSQL(sql,page,pageSize,clazz,iObjects);
 		}
 		return result;
 	}
@@ -530,7 +493,7 @@ public class BaseHibernateDao {
 	 *            以索引变量绑定参数
 	 * @return Query 返回Query
 	 */
-	private <T> List<T> getEntityListSQL_DT(String sql, int page,int pageSize, Class<T> clazz, Object... iObjects) throws BaseException {
+	private <T> List<T> getEntityListSQL(String sql, int page,int pageSize, Class<T> clazz, Object... iObjects) throws BaseException {
 		try {
 			if(logger.isDebugEnabled()){
 				logger.debug("retrieveSQLObjs sql:" + sql);

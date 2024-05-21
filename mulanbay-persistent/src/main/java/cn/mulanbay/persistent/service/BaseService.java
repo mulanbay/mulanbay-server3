@@ -8,10 +8,7 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -299,6 +296,11 @@ public class BaseService extends BaseHibernateDao {
 		}
 	}
 
+	/**
+	 * 保存或更新对象
+	 *
+	 * @param object
+	 */
 	public void saveOrUpdateObject(Object object) {
 		try {
 			this.mergeEntity(object);
@@ -337,7 +339,15 @@ public class BaseService extends BaseHibernateDao {
 		}
 	}
 
-
+	/**
+	 * 获取列表数据
+	 * @param c
+	 * @param page
+	 * @param pageSize
+	 * @param sort
+	 * @return
+	 * @param <T>
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> PageResult<T> getBeanResult(Class<T> c, int page, int pageSize, Sort sort) {
 		try {
@@ -360,6 +370,15 @@ public class BaseService extends BaseHibernateDao {
 		}
 	}
 
+	/**
+	 * 获取列表数据
+	 * @param c
+	 * @param page
+	 * @param pageSize
+	 * @param sort
+	 * @return
+	 * @param <T>
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getBeanList(Class<T> c, int page, int pageSize, Sort sort) {
 		try {
