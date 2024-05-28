@@ -12,6 +12,7 @@ import cn.mulanbay.pms.handler.bean.calendar.UserCalendarBean;
 import cn.mulanbay.pms.handler.bean.calendar.UserCalendarIdBean;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
+import cn.mulanbay.pms.persistent.dto.consume.ConsumeBudgetStat;
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
@@ -104,6 +105,9 @@ public class UserCalendarHandler extends BaseHandler {
         List<UserCalendarBean> culist = baseService.getBeanList(pr);
         List<UserCalendarBean> res = new ArrayList<>();
         for (UserCalendar uc : culist) {
+            if(!sf.getNeedExpired()&&uc.getFinishType()==UserCalendarFinishType.EXPIRED){
+                continue;
+            }
             PeriodType period = uc.getPeriod();
             Long templateId = uc.getTemplateId();
             Map<String,CalendarLogDTO> flowMap = new HashMap<>();
@@ -372,16 +376,14 @@ public class UserCalendarHandler extends BaseHandler {
         uc.setDelays(0);
         uc.setSourceType(BussSource.BUDGET);
         uc.setSourceId(b.getBudgetId());
-        String bussKey = BussUtil.getBussKey(b.getPeriod(), date);
-        BudgetLog bl = budgetService.selectBudgetLog(bussKey, b.getUserId().longValue(), null, b.getBudgetId());
-        Date nextPayTime = budgetHandler.getNextPayTime(b, date);
-        if (bl != null) {
-            uc.setFinishTime(bl.getBussDay());
+        ConsumeBudgetStat bs= budgetHandler.getActualAmount(b,date);
+        if (bs.getTotalPrice() != null) {
+            uc.setFinishTime(bs.getMaxConsumeDate());
             uc.setFinishType(UserCalendarFinishType.MANUAL);
-            BigDecimal total = bl.getTrAmount().add(bl.getNcAmount()).add(bl.getBcAmount());
-            content += "实际支出金额:" + NumberUtil.getValue(total,SCALE ) + "元,";
-            content += "支出时间:" + DateUtil.getFormatDate(bl.getBussDay(), DateUtil.Format24Datetime);
+            content += "实际支出金额:" + NumberUtil.getValue(bs.getTotalPrice(),SCALE ) + "元,";
+            content += "支出时间:" + DateUtil.getFormatDate(bs.getMaxConsumeDate(), DateUtil.Format24Datetime);
         }
+        Date nextPayTime = budgetHandler.getNextPayTime(b, date);
         uc.setBussDay(nextPayTime);
         uc.setExpireTime(nextPayTime);
         uc.setCreatedTime(b.getCreatedTime());

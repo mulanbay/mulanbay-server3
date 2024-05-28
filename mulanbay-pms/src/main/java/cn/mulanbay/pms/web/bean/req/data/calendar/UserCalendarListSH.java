@@ -75,6 +75,12 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
      */
     private Boolean needBandLog = false;
 
+    /**
+     * 包含过期
+     */
+    private Boolean needExpired = false;
+
+
     public Date getStartDate() {
         return startDate;
     }
@@ -189,5 +195,13 @@ public class UserCalendarListSH extends QueryBuilder implements BindUser, FullEn
 
     public void setNeedBandLog(Boolean needBandLog) {
         this.needBandLog = needBandLog;
+    }
+
+    public Boolean getNeedExpired() {
+        return needExpired;
+    }
+
+    public void setNeedExpired(Boolean needExpired) {
+        this.needExpired = needExpired;
     }
 }

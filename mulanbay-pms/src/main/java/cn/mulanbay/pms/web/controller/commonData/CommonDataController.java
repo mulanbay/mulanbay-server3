@@ -315,7 +315,7 @@ public class CommonDataController extends BaseController {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         //不分页
-        pr.setPage(0);
+        pr.setPage(PageRequest.NO_PAGE);
         List<CommonData> list = baseService.getBeanList(pr);
         Map<String, Integer> map = new HashMap<>();
         for (CommonData cr : list) {
