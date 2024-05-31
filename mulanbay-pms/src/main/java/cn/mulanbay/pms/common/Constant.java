@@ -111,4 +111,10 @@ public class Constant {
      * 小时
      */
     public static final int MAX_HOUR = 24;
+
+    /**
+     * 附加查询条件替换字符
+     */
+    public static final String EXTRA_SQL_RPC = "{extra_sql}";
+
 }

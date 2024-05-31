@@ -33,6 +33,9 @@ public class StatTemplateForm {
     @NotNull(message = "排序号不能为空")
     private Short orderIndex;
 
+    @NotNull(message = "参数数量不能为空")
+    private Integer paras;
+
     @NotNull(message = "业务类型不能为空")
     private BussType bussType;
 
@@ -131,6 +134,14 @@ public class StatTemplateForm {
 
     public void setOrderIndex(Short orderIndex) {
         this.orderIndex = orderIndex;
+    }
+
+    public Integer getParas() {
+        return paras;
+    }
+
+    public void setParas(Integer paras) {
+        this.paras = paras;
     }
 
     public BussType getBussType() {

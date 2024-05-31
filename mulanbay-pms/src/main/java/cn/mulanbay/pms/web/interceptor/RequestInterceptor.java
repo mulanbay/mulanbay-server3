@@ -1,12 +1,8 @@
 package cn.mulanbay.pms.web.interceptor;
 
-import cn.mulanbay.business.handler.CacheHandler;
-import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.MapUtil;
-import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.handler.TokenHandler;
@@ -132,13 +128,6 @@ public class RequestInterceptor extends BaseInterceptor {
                 log.setUsername(loginUser.getUsername());
             }
             log.setOccurEndTime(new Date());
-            String cacheKey = CacheKey.getKey(CacheKey.USER_OPERATE_OP, request.getRequestedSessionId(), url);
-            //todo CacheHandler 如果采用AutoWired模式注入，导致拦截器无法正常功能，且JsonWebMvcConfig无法正常加载，一时未找到原因
-            CacheHandler cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
-            String idValue = cacheHandler.getForString(cacheKey);
-            if (StringUtil.isNotEmpty(idValue)) {
-                log.setIdValue(idValue);
-            }
             logHandler.addOperLog(log);
             logger.debug("记录了操作日志");
         } catch (ApplicationException e) {

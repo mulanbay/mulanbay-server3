@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 
+import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -75,19 +76,19 @@ public class StatBindConfig implements java.io.Serializable {
     private Boolean tree;
 
     /**
-     * 表单的字段名，针对type=CHART
+     * 表单的字段名
      */
     @Column(name = "form_field")
     private String formField;
 
     /**
-     * 默认值，针对type=CHART
+     * 默认值
      */
     @Column(name = "default_value")
     private String defaultValue;
 
     /**
-     * 是否可为空，针对type=CHART
+     * 是否可为空
      */
     @Column(name = "nullable")
     private Boolean nullable;

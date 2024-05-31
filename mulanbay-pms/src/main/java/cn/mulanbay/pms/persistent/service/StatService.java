@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static cn.mulanbay.pms.common.Constant.EXTRA_SQL_RPC;
+
 @Service
 @Transactional
 public class StatService extends BaseReportService {
@@ -129,17 +131,9 @@ public class StatService extends BaseReportService {
         StatTemplate template = un.getTemplate();
         dto.setSqlContent(template.getSqlContent());
         String bindValues = un.getBindValues();
-        if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.STAT);
-            String[] bs = bindValues.split(",");
-            int n = bs.length;
-            for(int i=0;i<n;i++){
-                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
-            }
-        }
         //肯定绑定userId
         dto.addArg(un.getUserId());
-        return dto;
+        return this.appendExtraBindSQL(template.getTemplateId(), StatBussType.STAT,bindValues,template.getParas(),dto);
     }
 
     /**

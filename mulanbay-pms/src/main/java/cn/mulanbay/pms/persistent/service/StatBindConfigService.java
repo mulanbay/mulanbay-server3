@@ -78,6 +78,15 @@ public class StatBindConfigService extends BaseHibernateDao {
      */
     public StatBindConfigDTO getStatValueConfigBean(StatBindConfig svc, String pid, Long userId) {
         StatBindConfigDTO scb = new StatBindConfigDTO();
+        scb.setConfigId(svc.getConfigId());
+        if(svc.getType()==StatBussType.CHART){
+            scb.setModel(svc.getFormField());
+        }else{
+            /**
+             * 使用在 BaseReportService 的appendExtraBindSQL方法
+             */
+            scb.setModel(svc.getConfigId().toString());
+        }
         scb.setName(svc.getConfigName());
         scb.setMsg(svc.getMsg());
         scb.setTree(svc.getTree());

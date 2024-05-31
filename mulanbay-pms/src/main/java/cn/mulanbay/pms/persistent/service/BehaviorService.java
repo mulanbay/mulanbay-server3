@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static cn.mulanbay.pms.common.Constant.EXTRA_SQL_RPC;
+
 @Service
 @Transactional
 public class BehaviorService extends BaseReportService {
@@ -126,25 +128,12 @@ public class BehaviorService extends BaseReportService {
      */
     protected StatSQLDTO assembleSQL(BehaviorTemplate template,Long userId,String bindValues, Date startTime,Date endTime) {
         StatSQLDTO dto = new StatSQLDTO();
-        String sqlContent = template.getSqlContent();
+        dto.setSqlContent(template.getSqlContent());
         //肯定绑定userId
         dto.addArg(userId);
         //绑定时间
         dto.addArg(startTime);
         dto.addArg(endTime);
-        if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.BEHAVIOR);
-            String[] bs = bindValues.split(",");
-            int n = bs.length;
-            for(int i=0;i<n;i++){
-                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
-            }
-            String extraSql = template.getExtraSql();
-            sqlContent = sqlContent.replace("{extra_sql}"," "+extraSql);
-        }else{
-            sqlContent = sqlContent.replace("{extra_sql}","");
-        }
-        dto.setSqlContent(sqlContent);
-        return dto;
+        return this.appendExtraBindSQL(template.getTemplateId(), StatBussType.BEHAVIOR,bindValues,template.getParas(),dto);
     }
 }

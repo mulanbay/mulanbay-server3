@@ -53,6 +53,9 @@ public class StatTemplate implements java.io.Serializable {
     @Column(name = "order_index")
     private Short orderIndex;
 
+    @Column(name = "paras")
+    private Integer paras;
+
     @Column(name = "buss_type")
     private BussType bussType;
 
@@ -156,6 +159,14 @@ public class StatTemplate implements java.io.Serializable {
 
     public void setOrderIndex(Short orderIndex) {
         this.orderIndex = orderIndex;
+    }
+
+    public Integer getParas() {
+        return paras;
+    }
+
+    public void setParas(Integer paras) {
+        this.paras = paras;
     }
 
     public BussType getBussType() {

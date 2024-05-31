@@ -7,6 +7,15 @@ import java.util.List;
 
 public class StatBindConfigDTO {
 
+    private Long configId;
+
+    /**
+     * 绑定的值模型
+     * CHART类型为formField
+     * 其他类型为configId
+     */
+    private String model;
+
     private String name;
 
     private String msg;
@@ -22,6 +31,22 @@ public class StatBindConfigDTO {
     private String defaultValue;
 
     private List<StatBindConfigDetail> list = new ArrayList<>();
+
+    public Long getConfigId() {
+        return configId;
+    }
+
+    public void setConfigId(Long configId) {
+        this.configId = configId;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
 
     public String getName() {
         return name;

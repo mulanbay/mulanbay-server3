@@ -366,20 +366,12 @@ public class PlanService extends BaseReportService {
         PlanTemplate template = userPlan.getTemplate();
         dto.setSqlContent(template.getSqlContent());
         String bindValues = userPlan.getBindValues();
-        if(StringUtil.isNotEmpty(bindValues)){
-            List<StatValueClass> vcs = this.getBindValueClassList(template.getTemplateId(), StatBussType.PLAN);
-            String[] bs = bindValues.split(",");
-            int n = bs.length;
-            for(int i=0;i<n;i++){
-                dto.addArg(this.formatBindValue(vcs.get(i),bs[i]));
-            }
-        }
         //肯定绑定userId
         dto.addArg(userPlan.getUserId());
         //最后绑定时间
         dto.addArg(startTime);
         dto.addArg(endTime);
-        return dto;
+        return this.appendExtraBindSQL(template.getTemplateId(), StatBussType.PLAN,bindValues,template.getParas(),dto);
     }
 
     /**
