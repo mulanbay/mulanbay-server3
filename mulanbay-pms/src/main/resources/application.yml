@@ -124,6 +124,8 @@ mulanbay:
     distriTaskMinCost: 2000
     #调度触发器检查周期(秒),<=0不检查
     monitorInterval: 60
+    #调度服务器关闭时停止等待时间
+    shutDownWaitSeconds: 5
     #花费时间计算方式（取值类型：AVG,MIN,MAX,LAST）
     costTimeCalcType: MAX
     #花费时间计算天数

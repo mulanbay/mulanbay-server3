@@ -7,6 +7,7 @@ import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.thread.OperLogThread;
 import cn.mulanbay.pms.thread.SysLogThread;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -19,6 +20,12 @@ import java.util.Date;
  */
 @Component
 public class LogHandler extends BaseHandler {
+
+    @Value("${mulanbay.log.operLog}")
+    boolean enableOperLog;
+
+    @Value("${mulanbay.log.sysLog}")
+    boolean enableSysLog;
 
     @Autowired
     ThreadPoolHandler threadPoolHandler;
@@ -38,6 +45,9 @@ public class LogHandler extends BaseHandler {
      * @param log
      */
     public void addOperLog(OperLog log) {
+        if(!enableOperLog){
+            return;
+        }
         OperLogThread thread = new OperLogThread(log);
         threadPoolHandler.pushThread(thread);
     }
@@ -48,6 +58,9 @@ public class LogHandler extends BaseHandler {
      * @param log
      */
     public void addSysLog(SysLog log) {
+        if(!enableSysLog){
+            return;
+        }
         if (log.getOccurTime() == null) {
             log.setOccurTime(new Date());
         }
@@ -63,6 +76,9 @@ public class LogHandler extends BaseHandler {
      * @param errorCode
      */
     public void addSysLog(String title, String content, int errorCode) {
+        if(!enableSysLog){
+            return;
+        }
         SysLog log = new SysLog();
         log.setUserId(0L);
         log.setUsername("系统操作");

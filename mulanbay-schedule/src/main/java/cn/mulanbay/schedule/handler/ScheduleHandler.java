@@ -116,6 +116,13 @@ public class ScheduleHandler extends BaseHandler {
     @Value("${mulanbay.schedule.costTimeRate:1.2}")
     double costTimeRate;
 
+    /**
+     * 调度服务器关闭时停止等待时间
+     */
+    @Value("${mulanbay.schedule.shutDownWaitSeconds:5}")
+    long shutDownWaitSeconds;
+
+
     @Autowired
     SchedulePersistentProcessor schedulePersistentProcessor;
 
@@ -228,9 +235,8 @@ public class ScheduleHandler extends BaseHandler {
             quartzMonitorThread.stopThread();
             scheduledThreadPool.shutdown();
             try {
-                long waitSeconds = this.getShutDownWaitSeconds();
-                if(waitSeconds>0&&activeJobs>0){
-                    Thread.sleep(getShutDownWaitSeconds()*1000);
+                if(shutDownWaitSeconds>0&&activeJobs>0){
+                    Thread.sleep(shutDownWaitSeconds*1000);
                 }
             } catch (InterruptedException e) {
                 logger.error("destroy error:"+e.getMessage());
@@ -312,7 +318,6 @@ public class ScheduleHandler extends BaseHandler {
         redoThread.setQuartzSource(quartzSource);
         if(!isSync){
             scheduledThreadPool.execute(redoThread);
-            //redoThread.start();
             logger.debug("启动一个调度日志重做线程任务");
         }else{
             redoThread.run();
@@ -327,15 +332,6 @@ public class ScheduleHandler extends BaseHandler {
      */
     public boolean shutDownWaitForJobsToComplete(){
         return true;
-    }
-
-    /**
-     * 停止等待时间（有些正在运行的任务可能需要等待一会）
-     * 默认5秒
-     * @return
-     */
-    public long getShutDownWaitSeconds(){
-        return 5;
     }
 
     public boolean isEnableSchedule() {

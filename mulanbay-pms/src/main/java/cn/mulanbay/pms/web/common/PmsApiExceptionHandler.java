@@ -30,7 +30,7 @@ public class  PmsApiExceptionHandler extends ApiExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(PmsApiExceptionHandler.class);
 
     @Value("${mulanbay.log.sysLog}")
-    boolean needSysLog;
+    boolean enableSysLog;
 
     @Autowired
     LogHandler logHandler;
@@ -43,7 +43,7 @@ public class  PmsApiExceptionHandler extends ApiExceptionHandler {
 
     @Override
     protected boolean doSystemLog() {
-        return needSysLog;
+        return enableSysLog;
     }
 
     @Override

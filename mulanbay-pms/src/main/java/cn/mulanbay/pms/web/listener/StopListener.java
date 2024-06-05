@@ -25,12 +25,12 @@ public class StopListener extends BaseListener implements ApplicationListener<Co
         logger.info("SpringContext begin to destroy....................");
         HandlerManager hm = BeanFactoryUtil.getBean(HandlerManager.class);
         for (BaseHandler bh : hm.getHandlerList()) {
-            logger.info(bh.getHandlerName() + " Handler begin to destroy...");
+            logger.warn(bh.getHandlerName() + " Handler begin to destroy...");
             bh.destroy();
             if (bh.isDoLog()) {
                 doLog(null, bh.getHandlerName() + "关闭", bh.getHandlerName() + "关闭成功");
             }
-            logger.error(bh.getHandlerName() + " Handler destroyed。");
+            logger.warn(bh.getHandlerName() + " Handler destroyed。");
         }
         logger.info("关闭了" + hm.getHandlerList().size() + "个Handler");
         ThreadManager.getInstance().stopAll();

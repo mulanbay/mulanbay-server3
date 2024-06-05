@@ -95,7 +95,7 @@ public class ControllerHandler {
                 checkRequestLimit(userId,sf);
                 //每日限制检查
                 checkDayLimit(userId,sf);
-                // 权限认证
+                //权限认证
                 Long roleId = loginUser.getRoleId();
                 checkPermission(roleId,sf);
             }

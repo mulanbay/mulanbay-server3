@@ -375,7 +375,7 @@ public class BudgetService extends BaseHibernateDao {
             this.saveEntity(timeline);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "梦想统计异常", e);
+                    "保存预算时间线异常", e);
         }
     }
 
@@ -421,7 +421,7 @@ public class BudgetService extends BaseHibernateDao {
     }
 
     /**
-     * 获取用户预算即收入分析
+     * 获取用户预算及收入分析
      *
      * @param period
      * @return

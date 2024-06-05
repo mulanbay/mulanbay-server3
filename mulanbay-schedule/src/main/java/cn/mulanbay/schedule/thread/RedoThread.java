@@ -1,18 +1,15 @@
 package cn.mulanbay.schedule.thread;
 
-import cn.mulanbay.common.thread.EnhanceThread;
 import cn.mulanbay.schedule.QuartzSource;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-
 /**
  * 调度重做
  */
-public class RedoThread extends EnhanceThread {
+public class RedoThread extends Thread {
 
 	private static final Logger logger = LoggerFactory.getLogger(RedoThread.class);
 
@@ -50,7 +47,7 @@ public class RedoThread extends EnhanceThread {
 	}
 
 	@Override
-	public void doTask() {
+	public void run() {
 		try {
 			// this.sleep(10000);
 			String taskClassName = log.getTaskTrigger().getTaskClass();
@@ -64,7 +61,7 @@ public class RedoThread extends EnhanceThread {
 			job.setScheduledFireTime(log.getBussDate());
 			job.execute(null);
 		} catch (Exception e) {
-			logger.error("重做[" + threadName + "]异常", e);
+			logger.error("重做调度日志异常", e);
 		}
 	}
 

@@ -92,7 +92,8 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             boolean b = budgetService.isBudgetLogExit(bussKey, userId, null, null);
             //判断是否超期,如果是新的
             if (!b) {
-                BudgetLog bl = budgetHandler.statAndSaveBudgetLog(usList, userId, bussDay, bussKey, isRedo, para.getPeriod(), false);
+                //月终、年终类型的需要使用最后一天来计算（useLastDay=true）
+                BudgetLog bl = budgetHandler.statAndSaveBudgetLog(usList, userId, bussDay, bussKey, isRedo, para.getPeriod(), true);
                 handleConsumeCheck(bl,bussDay);
             } else {
                 logger.debug("用户[" + userId + "]的bussKey=" + bussKey + "已经存在，无需再统计");
