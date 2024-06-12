@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.controller.log;
 
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -39,8 +40,13 @@ public class SysCodeController extends BaseController {
     public ResultBean list(SysCodeSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort sort = new Sort("code", Sort.ASC);
-        pr.addSort(sort);
+        if (StringUtil.isEmpty(sf.getSortField())) {
+            Sort s = new Sort("code", Sort.ASC);
+            pr.addSort(s);
+        } else {
+            Sort s = new Sort(sf.getSortField(), sf.getSortType());
+            pr.addSort(s);
+        }
         PageResult<SysCode> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }

@@ -125,6 +125,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
 
     /**
      * 更新次数
+     * todo 加分布式锁
      * @param code
      * @param addCount
      */

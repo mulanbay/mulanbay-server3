@@ -12,6 +12,10 @@ public class SysCodeSH extends PageSearch {
     @Query(fieldName = "code", op = Parameter.Operator.EQ)
     private Integer code;
 
+    private String sortField;
+
+    private String sortType;
+
     public String getName() {
         return name;
     }
@@ -26,5 +30,21 @@ public class SysCodeSH extends PageSearch {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(String sortType) {
+        this.sortType = sortType;
     }
 }

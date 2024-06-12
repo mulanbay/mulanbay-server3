@@ -92,8 +92,7 @@ public class TaskTriggerController extends BaseController {
                 tb.setText(pc.getTriggerName());
                 if (pc.getGroupName().equals(current)) {
                     typeTreeBean.addChild(tb);
-                }
-                if (!pc.getGroupName().equals(current)) {
+                } else {
                     current = pc.getGroupName();
                     result.add(typeTreeBean);
                     typeTreeBean = new TreeBean();
@@ -288,7 +287,7 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/editStatus", method = RequestMethod.POST)
     public ResultBean editStatus(@RequestBody @Valid EditTriggerStatusForm ets) {
         TaskTrigger bean = baseService.getObject(beanClass, ets.getTriggerId());
-        if(bean.getTriggerStatus()==ets.getTriggerStatus()){
+        if (bean.getTriggerStatus() == ets.getTriggerStatus()) {
             return callbackErrorInfo("状态未改变");
         }
         bean.setTriggerStatus(ets.getTriggerStatus());
@@ -406,8 +405,8 @@ public class TaskTriggerController extends BaseController {
     @RequestMapping(value = "/recentSchedules", method = RequestMethod.GET)
     public ResultBean recentSchedules(RecentSchedulesSH sf) {
         Date start = new Date();
-        Date end = new Date(start.getTime()+sf.getHours()*3600*1000L);
-        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules(start,end,sf.getPage(),sf.getPageSize(),sf.isPeriod());
+        Date end = new Date(start.getTime() + sf.getHours() * 3600 * 1000L);
+        List<TaskTrigger> list = pmsScheduleService.getRecentSchedules(start, end, sf.getPage(), sf.getPageSize(), sf.isPeriod());
         return callback(list);
     }
 
@@ -417,7 +416,7 @@ public class TaskTriggerController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/stat")
-    public ResultBean stat(TaskTriggerStatSH sf){
+    public ResultBean stat(TaskTriggerStatSH sf) {
         List<TaskTriggerStat> list = pmsScheduleService.getTaskTriggerStat(sf);
         ChartPieData chartPieData = new ChartPieData();
         chartPieData.setTitle("调度任务分析");
@@ -448,12 +447,12 @@ public class TaskTriggerController extends BaseController {
         }
         ChartData chartData = new ChartData();
         chartData.setTitle("调度监控");
-        chartData.setLegendData(new String[]{"调度任务数", "正在运行调度任务数","线程池活跃数","线程池已执行任务数"});
+        chartData.setLegendData(new String[]{"调度任务数", "正在运行调度任务数", "线程池活跃数", "线程池已执行任务数"});
         chartData.setUnit("个");
-        ChartYData yData1 = new ChartYData("调度任务数","个");
-        ChartYData yData2 = new ChartYData("正在运行调度任务数","个");
-        ChartYData yData3 = new ChartYData("线程池活跃数","个");
-        ChartYData yData4 = new ChartYData("线程池已执行任务数","个");
+        ChartYData yData1 = new ChartYData("调度任务数", "个");
+        ChartYData yData2 = new ChartYData("正在运行调度任务数", "个");
+        ChartYData yData3 = new ChartYData("线程池活跃数", "个");
+        ChartYData yData4 = new ChartYData("线程池已执行任务数", "个");
         int n = queue.size();
         for (int i = 0; i < n; i++) {
             ScheduleInfo si = queue.get(i);
