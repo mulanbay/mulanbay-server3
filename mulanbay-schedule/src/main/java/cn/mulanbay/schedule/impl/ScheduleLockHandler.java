@@ -23,6 +23,12 @@ public class ScheduleLockHandler extends BaseHandler implements ScheduleLocker {
     @Value("${mulanbay.namespace}")
     String namespace;
 
+    /**
+     * 分布式任务最小的花费时间(秒数)
+     */
+    @Value("${mulanbay.schedule.lock.retryTimes:3}")
+    int retryTimes;
+
     @Autowired
     private RedisDistributedLock redisDistributedLock;
 
@@ -35,18 +41,19 @@ public class ScheduleLockHandler extends BaseHandler implements ScheduleLocker {
      * 对于锁的获取与释放，RedisDistributedLock已经默认使用了uuid来实现
        如果想需要自己实现，则需要在接口中传入参数（其实也是使用uuid）
      * @param identityKey
-     * @param expiredSeconds
+     * @param expires 失效时间：毫秒
      * @return
      */
     @Override
-    public LockStatus lock(String identityKey, long expiredSeconds) {
+    public LockStatus lock(String identityKey, long expires) {
         String fullKey = getFullKey(identityKey);
         try {
-            boolean b = redisDistributedLock.lock(fullKey,expiredSeconds*1000,0);
+            boolean b = redisDistributedLock.lock(fullKey,expires,retryTimes);
             logger.debug(this.getHandlerName()+"获取锁["+fullKey+"]结果:"+b);
             if(b){
                 return LockStatus.SUCCESS;
             }else {
+                logger.warn(this.getHandlerName()+"获取锁["+fullKey+"]失败");
                 return LockStatus.EXITED;
             }
         } catch (Exception e) {

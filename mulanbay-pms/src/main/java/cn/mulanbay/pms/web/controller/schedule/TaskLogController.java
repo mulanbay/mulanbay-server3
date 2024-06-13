@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.web.controller.schedule;
 
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -49,8 +50,13 @@ public class TaskLogController extends BaseController {
     public ResultBean list(TaskLogSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort s1 = new Sort("startTime", Sort.DESC);
-        pr.addSort(s1);
+        if (StringUtil.isEmpty(sf.getSortField())) {
+            Sort s = new Sort("startTime", Sort.DESC);
+            pr.addSort(s);
+        } else {
+            Sort s = new Sort(sf.getSortField(), sf.getSortType());
+            pr.addSort(s);
+        }
         PageResult<TaskLog> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }

@@ -440,14 +440,6 @@ public abstract class AbstractBaseJob implements Job {
 			//不支持分布式的不需要上锁
 			return LockStatus.SUCCESS;
 		}
-		//取消distriTaskMinCost最小时间等待
-//		if(costTime<quartzSource.getDistriTaskMinCost()){
-//			try {
-//				Thread.sleep((quartzSource.getDistriTaskMinCost()-costTime));
-//			} catch (Exception e) {
-//				logger.error("unlock sleep error",e);
-//			}
-//		}
 		ScheduleLocker scheduleLocker = quartzSource.getScheduleLocker();
 		if(scheduleLocker==null){
 			return LockStatus.SUCCESS;
@@ -467,11 +459,23 @@ public abstract class AbstractBaseJob implements Job {
 	 * @return
 	 */
 	private String getLockKey(){
-		String prefix= (isRedo ? "redo":"new");
-		String key = "schedule:"+prefix+":"+taskTrigger.getGroupName()+":"+taskTrigger.getTriggerId();
+		String key = generateLockKeyPrefix(taskTrigger.getGroupName(),taskTrigger.getTriggerId(),isRedo);
 		if(isRedo){
 			key +=":"+this.generateScheduleId();
 		}
+		return key;
+	}
+
+	/**
+	 * 产生锁前缀
+	 * @param groupName
+	 * @param triggerId
+	 * @param rd
+	 * @return
+	 */
+	public static String generateLockKeyPrefix(String groupName,Long triggerId,boolean rd){
+		String type= (rd ? "redo":"new");
+		String key = "scheduleLock"+":"+groupName+":"+triggerId+":"+type;
 		return key;
 	}
 

@@ -3,7 +3,6 @@ package cn.mulanbay.pms.handler;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.pms.persistent.domain.OperLog;
 import cn.mulanbay.pms.persistent.domain.SysLog;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.thread.OperLogThread;
 import cn.mulanbay.pms.thread.SysLogThread;
 import org.springframework.beans.factory.annotation.Autowired;

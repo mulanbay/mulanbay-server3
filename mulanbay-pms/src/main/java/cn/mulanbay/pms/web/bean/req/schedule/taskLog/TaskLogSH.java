@@ -26,6 +26,10 @@ public class TaskLogSH extends PageSearch implements FullEndDateTime {
     @Query(fieldName = "executeResult", op = Parameter.Operator.EQ)
     private JobResult executeResult;
 
+    private String sortField;
+
+    private String sortType;
+
     public Date getStartDate() {
         return startDate;
     }
@@ -58,5 +62,21 @@ public class TaskLogSH extends PageSearch implements FullEndDateTime {
 
     public void setExecuteResult(JobResult executeResult) {
         this.executeResult = executeResult;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public String getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(String sortType) {
+        this.sortType = sortType;
     }
 }

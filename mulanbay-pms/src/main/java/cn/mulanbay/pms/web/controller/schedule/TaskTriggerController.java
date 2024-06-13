@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.controller.schedule;
 
+import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.queue.LimitQueue;
@@ -21,11 +22,13 @@ import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.schedule.taskTrigger.*;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.*;
+import cn.mulanbay.pms.web.bean.res.schedule.taskTrigger.CalcTimeoutVo;
 import cn.mulanbay.pms.web.bean.res.schedule.taskTrigger.TaskTriggerVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.ScheduleInfo;
 import cn.mulanbay.schedule.domain.TaskTrigger;
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
 import cn.mulanbay.schedule.para.ParaBuilder;
@@ -35,9 +38,13 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static cn.mulanbay.schedule.job.AbstractBaseJob.generateLockKeyPrefix;
 
 /**
  * 调度触发器
@@ -53,11 +60,23 @@ public class TaskTriggerController extends BaseController {
 
     private static Class<TaskTrigger> beanClass = TaskTrigger.class;
 
+    /**
+     * 花费时间计算天数
+     */
+    @Value("${mulanbay.schedule.costTimeDays:7}")
+    int costTimeDays;
+
     @Autowired
     PmsScheduleHandler pmsScheduleHandler;
 
     @Autowired
     PmsScheduleService pmsScheduleService;
+
+    @Autowired
+    CacheHandler cacheHandler;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 获取调度触发器列表
@@ -211,6 +230,36 @@ public class TaskTriggerController extends BaseController {
     }
 
     /**
+     * 获取锁
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getLockKeys", method = RequestMethod.GET)
+    public ResultBean getLockKeys(@RequestParam(name = "triggerId") Long triggerId) {
+        TaskTrigger taskTrigger = baseService.getObject(beanClass, triggerId);
+        String newKey = generateLockKeyPrefix(taskTrigger.getGroupName(),taskTrigger.getTriggerId(),false);
+        String redoKey = generateLockKeyPrefix(taskTrigger.getGroupName(),taskTrigger.getTriggerId(),true)+":*";
+        Set<String> newKeys = redisTemplate.keys(cacheHandler.getFullKey(newKey));
+        Set<String> redoKeys = redisTemplate.keys(cacheHandler.getFullKey(redoKey));
+        Map<String,Object> res =new HashMap<>();
+        res.put("taskTrigger",taskTrigger);
+        res.put("newKeys",newKeys);
+        res.put("redoKeys",redoKeys);
+        return callback(res);
+    }
+
+    /**
+     * 删除锁
+     *
+     * @return
+     */
+    @RequestMapping(value = "/deleteLockKey", method = RequestMethod.POST)
+    public ResultBean deleteLockKey(@RequestBody @Valid DeleteLockKeyForm form) {
+        cacheHandler.delete(form.getKey());
+        return callback(null);
+    }
+
+    /**
      * 修改
      *
      * @return
@@ -225,6 +274,7 @@ public class TaskTriggerController extends BaseController {
         bean.setExecTimePeriods(execTimePeriods);
         bean.setModifyTime(new Date());
         baseService.updateObject(bean);
+        pmsScheduleHandler.refreshTask(bean);
         return callback(null);
     }
 
@@ -467,6 +517,33 @@ public class TaskTriggerController extends BaseController {
         chartData.getYdata().add(yData3);
         chartData.getYdata().add(yData4);
         return callback(chartData);
+    }
+
+    /**
+     * 计算超时时间
+     *
+     * @return
+     */
+    @RequestMapping(value = "/calcTimeout", method = RequestMethod.GET)
+    public ResultBean calcTimeout(@Valid CalcTimeoutSH sf) {
+        Integer days = sf.getDays();
+        if(days==null){
+            //选择默认
+            days = costTimeDays;
+        }
+        TaskTrigger tt = pmsScheduleService.getTaskTrigger(sf.getTriggerId());
+        CalcTimeoutVo res = new CalcTimeoutVo();
+        res.setTrigger(tt);
+        res.setDays(days);
+        Long avg = pmsScheduleService.getCostTime(sf.getTriggerId(), days, CostTimeCalcType.AVG);
+        res.addTimeout(CostTimeCalcType.AVG.getName(),avg);
+        Long min = pmsScheduleService.getCostTime(sf.getTriggerId(), days, CostTimeCalcType.MIN);
+        res.addTimeout(CostTimeCalcType.MIN.getName(),min);
+        Long max = pmsScheduleService.getCostTime(sf.getTriggerId(), days, CostTimeCalcType.MAX);
+        res.addTimeout(CostTimeCalcType.MAX.getName(),max);
+        Long last = pmsScheduleService.getCostTime(sf.getTriggerId(), days, CostTimeCalcType.LAST);
+        res.addTimeout(CostTimeCalcType.LAST.getName(),last);
+        return callback(res);
     }
 
 

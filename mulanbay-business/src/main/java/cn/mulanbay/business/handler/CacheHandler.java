@@ -217,6 +217,9 @@ public class CacheHandler extends BaseHandler  {
      * @return
      */
     public String getFullKey(String key) {
+        if(key.startsWith(namespace)){
+            return key;
+        }
         return namespace + ":" + key;
     }
 

@@ -8,7 +8,13 @@ package cn.mulanbay.schedule.lock;
  **/
 public interface ScheduleLocker {
 
-    LockStatus lock(String identityKey, long expiredSeconds);
+    /**
+     * 上锁
+     * @param identityKey
+     * @param expires 毫秒
+     * @return
+     */
+    LockStatus lock(String identityKey, long expires);
 
     LockStatus unlock(String identityKey);
 

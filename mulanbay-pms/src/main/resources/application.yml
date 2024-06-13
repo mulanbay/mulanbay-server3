@@ -132,6 +132,10 @@ mulanbay:
     costTimeDays: 7
     #花费时间比例
     costTimeRate: 1.2
+    #锁
+    lock:
+      #重试次数
+      retryTimes: 3
     #线程池
     threadPool:
       corePoolSize: 20
