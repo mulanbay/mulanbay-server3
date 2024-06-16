@@ -11,7 +11,7 @@ public enum TreatTestResult {
     LOWER(0, "过低"),
     NORMAL(1, "正常"),
     HIGHER(2, "过高"),
-    DISEASE(3, "确诊疾病");
+    DISEASE(3, "疾病");
 
     private int value;
 

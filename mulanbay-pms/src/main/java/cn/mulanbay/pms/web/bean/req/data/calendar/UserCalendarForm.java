@@ -4,6 +4,7 @@ import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,8 @@ public class UserCalendarForm implements BindUser {
     //@NotNull(message = "{validate.userCalendar.expireTime.NotNull}")
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     private Date expireTime;
+
+    private UserCalendarFinishType finishType;
 
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     private Date finishTime;
@@ -105,6 +108,13 @@ public class UserCalendarForm implements BindUser {
         this.expireTime = expireTime;
     }
 
+    public UserCalendarFinishType getFinishType() {
+        return finishType;
+    }
+
+    public void setFinishType(UserCalendarFinishType finishType) {
+        this.finishType = finishType;
+    }
 
     public Date getFinishTime() {
         return finishTime;

@@ -3,6 +3,7 @@ package cn.mulanbay.pms.web.controller.health;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -58,9 +59,11 @@ public class TreatDrugController extends BaseController {
     public ResultBean tree(TreatDrugGroupSH sf) {
         try {
             Date endDate = new Date();
-            Date startDate = DateUtil.getDate(-categoryDays,endDate);
-            sf.setStartDate(startDate);
-            sf.setEndDate(endDate);
+            if(StringUtil.isEmpty(sf.getName())){
+                Date startDate = DateUtil.getDate(-categoryDays,endDate);
+                sf.setStartDate(startDate);
+                sf.setEndDate(endDate);
+            }
             List<String> categoryList = treatService.getDrugCateList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
             int i = 0;

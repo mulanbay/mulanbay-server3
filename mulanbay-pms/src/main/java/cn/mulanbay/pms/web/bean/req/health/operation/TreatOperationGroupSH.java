@@ -22,6 +22,13 @@ public class TreatOperationGroupSH extends PageSearch implements BindUser {
     @Query(fieldName = "treatDate", op = Parameter.Operator.LTE)
     private Date endDate;
 
+    /**
+     * 远程筛选
+     */
+    @Query(fieldName = "operationName", op = Parameter.Operator.LIKE, referFieldName = "groupField")
+    private String name;
+
+
     private Boolean needRoot;
 
     //分组的字段，对应数据库中的字段名
@@ -51,6 +58,14 @@ public class TreatOperationGroupSH extends PageSearch implements BindUser {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Boolean getNeedRoot() {

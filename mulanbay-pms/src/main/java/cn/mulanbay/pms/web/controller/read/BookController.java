@@ -257,8 +257,8 @@ public class BookController extends BaseController {
      */
     @RequestMapping(value = "/getCostTimes", method = RequestMethod.GET)
     public ResultBean getCostTimes(@RequestParam(name = "bookId") Long bookId) {
-        BigDecimal minutes = readService.getCostTimes(bookId);
-        return callback(minutes);
+        ReadDetailStat stat = readService.getCostTimes(bookId);
+        return callback(stat);
     }
 
     /**

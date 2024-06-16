@@ -166,13 +166,13 @@ public class ReadService extends BaseHibernateDao {
      * @param bookId
      * @return
      */
-    public BigDecimal getCostTimes(Long bookId) {
+    public ReadDetailStat getCostTimes(Long bookId) {
         try {
             String sql = """
-                    select sum(duration) as duration from read_detail where book_id =?1
+                    select count(0) as totalCount,sum(duration) as totalDuration from read_detail where book_id =?1
                     """;
-            BigDecimal dd = this.getEntitySQL(sql,BigDecimal.class,bookId);
-            return dd;
+            List<ReadDetailStat> dd = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,ReadDetailStat.class,bookId);
+            return dd.get(0);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "总阅读时间异常", e);
