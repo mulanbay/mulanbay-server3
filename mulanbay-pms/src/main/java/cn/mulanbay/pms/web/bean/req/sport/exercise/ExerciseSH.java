@@ -32,7 +32,7 @@ public class ExerciseSH extends PageSearch implements BindUser, FullEndDateTime 
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     public Long userId;
 
-    @Query(fieldName = "mileageBest,fastBest", op = Parameter.Operator.IN, crossType = CrossType.OR)
+    @Query(fieldName = "valueBest,fastBest", op = Parameter.Operator.IN, crossType = CrossType.OR)
     private List<BestType> bests;
 
     private Boolean containBest;

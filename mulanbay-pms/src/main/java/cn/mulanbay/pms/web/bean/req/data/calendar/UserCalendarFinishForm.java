@@ -14,6 +14,7 @@ public class UserCalendarFinishForm implements BindUser {
 
     private Long userId;
 
+    @NotNull(message = "完成时间不能为空")
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
     private Date finishTime;
 

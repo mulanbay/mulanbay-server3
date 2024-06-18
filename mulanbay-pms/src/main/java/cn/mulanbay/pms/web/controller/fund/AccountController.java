@@ -11,11 +11,9 @@ import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.persistent.domain.Account;
 import cn.mulanbay.pms.persistent.domain.AccountSnapshot;
 import cn.mulanbay.pms.persistent.domain.Budget;
-import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.dto.fund.AccountStat;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
-import cn.mulanbay.pms.persistent.service.AccountFlowService;
 import cn.mulanbay.pms.persistent.service.AccountService;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -55,9 +53,6 @@ public class AccountController extends BaseController {
 
     @Autowired
     BudgetHandler budgetHandler;
-
-    @Autowired
-     AccountFlowService accountFlowService;
 
     @Autowired
     BudgetService budgetService;
@@ -284,57 +279,7 @@ public class AccountController extends BaseController {
             bussKey = BussUtil.getBussKey(bean.getPeriod(), date);
         }
         accountService.createSnapshot(bean.getSnapshotName(), bussKey,bean.getPeriod(), bean.getRemark(), bean.getUserId());
-        //更新预算日志
-        this.updateBudgetLogAccountChange(bussKey , bean.getUserId());
         return callback(null);
-    }
-
-    /**
-     * 更新预算日志中的账户变化
-     * @param bussKey
-     */
-    private boolean updateBudgetLogAccountChange(String bussKey,Long userId){
-        BudgetLog bl = budgetService.selectBudgetLog(bussKey,userId);
-        if(bl==null){
-            //没有预算记录
-            return false;
-        }
-        BigDecimal afterAmount = accountFlowService.statAccountAmount(bussKey,userId);
-        if(afterAmount==null){
-            return false;
-        }
-        PeriodType periodType = bl.getStatPeriod();
-        //往前
-        Date date = BussUtil.getBussDay(periodType,bussKey);
-        String bussKey2=null;
-        if(periodType==PeriodType.YEARLY){
-            date = DateUtil.getDateYear(-1,date);
-        }else{
-            date = DateUtil.getDateMonth(-1,date);
-        }
-        bussKey2 = BussUtil.getBussKey(periodType,date);
-        BigDecimal beforeAmount = accountFlowService.statAccountAmount(bussKey2,userId);
-        if(beforeAmount==null){
-            return false;
-        }
-        //差值
-        BigDecimal v = afterAmount.subtract(beforeAmount);
-        //更新
-        bl.setAccountChangeAmount(v);
-        baseService.updateObject(bl);
-        return true;
-    }
-
-    /**
-     * 更新账户改变
-     *
-     * @return
-     */
-    @RequestMapping(value = "/updateBudgetLogAccountChange", method = RequestMethod.POST)
-    public ResultBean updateBudgetLogAccountChange(@RequestBody @Valid AccountUpdateBudgetLogForm bean) {
-        //更新预算日志
-        boolean b = this.updateBudgetLogAccountChange(bean.getBussKey() , bean.getUserId());
-        return callback(b);
     }
 
 }

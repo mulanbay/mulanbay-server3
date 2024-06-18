@@ -3,7 +3,7 @@ package cn.mulanbay.pms.web.bean.req.fund.budgetLog;
 import cn.mulanbay.common.aop.BindUser;
 import jakarta.validation.constraints.NotNull;
 
-public class BudgetLogReSaveForm implements BindUser {
+public class BudgetLogIdForm implements BindUser {
 
     @NotNull(message = "日志流水编号不能为空")
     private Long logId;

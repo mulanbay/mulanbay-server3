@@ -14,6 +14,7 @@ import cn.mulanbay.pms.persistent.domain.BudgetLog;
 import cn.mulanbay.pms.persistent.dto.fund.UserBudgetAndIncomeStat;
 import cn.mulanbay.pms.persistent.enums.BudgetLogSource;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
+import cn.mulanbay.pms.persistent.service.AccountFlowService;
 import cn.mulanbay.pms.persistent.service.BudgetService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.BussUtil;
@@ -48,6 +49,9 @@ public class BudgetLogController extends BaseController {
 
     @Autowired
     BudgetService budgetService;
+
+    @Autowired
+    AccountFlowService accountFlowService;
 
     @Autowired
     BudgetHandler budgetHandler;
@@ -275,7 +279,7 @@ public class BudgetLogController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/reSave", method = RequestMethod.POST)
-    public ResultBean reSave(@RequestBody @Valid BudgetLogReSaveForm form) {
+    public ResultBean reSave(@RequestBody @Valid BudgetLogIdForm form) {
         BudgetLog budgetLog = baseService.getObject(beanClass, form.getLogId());
         Date bussDay = budgetLog.getBussDay();
         List<Budget> list = budgetService.getActiveUserBudget(form.getUserId(), null);
@@ -288,5 +292,54 @@ public class BudgetLogController extends BaseController {
         budgetHandler.statAndSaveBudgetLog(list, form.getUserId(), bussDay, budgetLog.getBussKey(), true, budgetLog.getStatPeriod(), useLastDay);
         return callback(null);
     }
+
+    /**
+     * 更新预算日志中的账户变化
+     *
+     * @return
+     */
+    @RequestMapping(value = "/updateAccountChange", method = RequestMethod.POST)
+    public ResultBean updateAccountChange(@RequestBody @Valid BudgetLogIdForm form) {
+        boolean b = this.updateAccountChange(form.getLogId());
+        return callback(b);
+    }
+
+    /**
+     * 更新预算日志中的账户变化
+     * @param logId
+     */
+    private boolean updateAccountChange(Long logId){
+        BudgetLog bl = baseService.getObject(beanClass, logId);
+        if(bl==null){
+            //没有预算记录
+            return false;
+        }
+        String bussKey = bl.getBussKey();
+        BigDecimal afterAmount = accountFlowService.statAccountAmount(bussKey,bl.getUserId());
+        if(afterAmount==null){
+            return false;
+        }
+        PeriodType periodType = bl.getStatPeriod();
+        //往前
+        Date date = BussUtil.getBussDay(periodType,bussKey);
+        String bussKey2=null;
+        if(periodType==PeriodType.YEARLY){
+            date = DateUtil.getDateYear(-1,date);
+        }else{
+            date = DateUtil.getDateMonth(-1,date);
+        }
+        bussKey2 = BussUtil.getBussKey(periodType,date);
+        BigDecimal beforeAmount = accountFlowService.statAccountAmount(bussKey2,bl.getUserId());
+        if(beforeAmount==null){
+            return false;
+        }
+        //差值
+        BigDecimal v = afterAmount.subtract(beforeAmount);
+        //更新
+        bl.setAccountChangeAmount(v);
+        baseService.updateObject(bl);
+        return true;
+    }
+
 
 }

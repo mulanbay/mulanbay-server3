@@ -89,7 +89,7 @@ public class BaseReportService extends BaseHibernateDao {
             sql.append(" and "+condition+" ?"+(++index));
             if(condition.contains("like")){
                 //模糊匹配类型由后端添加%匹配符，前端用户只需要输入关键字
-                bv = "'%"+bv+"%'";
+                bv = "%"+bv+"%";
             }
             dto.addArg(bv);
         }

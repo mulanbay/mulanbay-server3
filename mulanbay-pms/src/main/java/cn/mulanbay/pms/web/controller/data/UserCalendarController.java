@@ -290,8 +290,7 @@ public class UserCalendarController extends BaseController {
         if (bean.getFinishTime() != null) {
             return callbackErrorInfo("日程无法被重复完成。");
         }
-        Date date = new Date();
-        bean.setFinishTime(date);
+        bean.setFinishTime(form.getFinishTime());
         bean.setFinishType(UserCalendarFinishType.MANUAL);
         baseService.updateObject(bean);
         //删除缓存ß
