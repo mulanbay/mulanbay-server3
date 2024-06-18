@@ -168,10 +168,8 @@ public class Parameter {
 			StringBuffer sb = new StringBuffer();
 			sb.append(" (");
 			for(int i=0;i<n;i++){
-				int valueCount =1;
 				//对于in () 这种类型，下标索引值需要在这里添加，根据值的个数添加
 				String os = this.getOperateSymbol(firstIndex);
-				firstIndex = firstIndex+valueCount;
 				sb.append(ss[i] +" "+ os);
 				if(i<n-1){
 					sb.append(" "+crossType.getSymbol()+" ");
@@ -181,10 +179,14 @@ public class Parameter {
 					if(value instanceof List || value instanceof Set ){
 						Collection vv = (Collection) value;
 						newValues.addAll(vv);
-						valueCount = vv.size();
+						//如果是集合类型，下标索引值要右移个数 = 集合元素的个数
+						firstIndex += vv.size();
 					}else{
 						newValues.add(value);
+						firstIndex += 1;
 					}
+				}else{
+					firstIndex += 1;
 				}
 			}
 			sb.append(")");
