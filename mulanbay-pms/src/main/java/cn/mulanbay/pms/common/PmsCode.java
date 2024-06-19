@@ -10,6 +10,11 @@ package cn.mulanbay.pms.common;
 public class PmsCode {
 
     /**
+     * 限流停止
+     */
+    public final static int SERVER_LIMIT_STOP = 9997;
+
+    /**
      * 自动停止
      */
     public final static int SERVER_AUTO_STOP = 9998;

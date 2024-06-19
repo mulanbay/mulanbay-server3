@@ -12,10 +12,8 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.SysCode;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.persistent.enums.MessageType;
-import cn.mulanbay.pms.persistent.service.LogService;
 import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +44,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     String defaultExpectSendTime;
 
     /**
-     * 系统代码次数批量更新
-     */
-    @Value("${mulanbay.notify.code.batchUpdates}")
-    long codeBatchUpdates;
-
-    /**
      * 是否需要提醒表单验证类的系统代码
      */
     @Value("${mulanbay.notify.message.validateError}")
@@ -59,12 +51,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
 
     @Autowired
     BaseService baseService;
-
-    @Autowired
-    LogService logService;
-
-    @Autowired
-    SystemConfigHandler systemConfigHandler;
 
     @Autowired
     RedisDelayQueueHandler redisDelayQueueHandler;
@@ -77,6 +63,9 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
 
     @Autowired
     UserHandler userHandler;
+
+    @Autowired
+    SysCodeHandler sysCodeHandler;
 
     public NotifyHandler() {
         super("提醒处理");
@@ -104,13 +93,13 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param notifyTime
      */
     public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
-        SysCode ec = systemConfigHandler.getSysCode(code);
+        SysCode ec = sysCodeHandler.getSysCode(code);
         if (ec == null) {
             logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置",
                     PmsCode.ERROR_CODE_NOT_DEFINED);
             return null;
         }
-        this.updateSysCodeCount(code, 1L);
+        sysCodeHandler.updateCount(code);
         //获取发送时间
         Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
         if (expectSendTime == null) {
@@ -123,24 +112,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         return message.getMsgId();
     }
 
-    /**
-     * 更新次数
-     * todo 加分布式锁
-     * @param code
-     * @param addCount
-     */
-    private void updateSysCodeCount(Integer code, long addCount) {
-        try {
-            String key = CacheKey.getKey(CacheKey.SYS_CODE_COUNTS,code.toString());
-            long cv = cacheHandler.incre(key,addCount);
-            if(cv>=codeBatchUpdates){
-                cacheHandler.incre(key,-cv);
-                logService.updateSysCodeCount(code,cv);
-            }
-        } catch (Exception e) {
-            logger.error("更新系统代码次数异常", e);
-        }
-    }
+
 
     public void addMessageToNotifier(int code, String title, String content, Date notifyTime) {
         this.addMessageToNotifier(code, title, content, notifyTime, null, null);
@@ -164,13 +136,13 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             if (!notifyValidateError && code == FORM_VALID_ERROR) {
                 return;
             }
-            SysCode ec = systemConfigHandler.getSysCode(code);
+            SysCode ec = sysCodeHandler.getSysCode(code);
             if (ec == null) {
                 logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
                         PmsCode.ERROR_CODE_NOT_DEFINED);
-                ec = systemConfigHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
+                ec = sysCodeHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
-            this.updateSysCodeCount(code, 1L);
+            sysCodeHandler.updateCount(code);
             //获取发送时间
             Date expectSendTime = this.getExpectSendTime(ec, notifyTime);
             if (expectSendTime == null) {
@@ -184,7 +156,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             title += "(code=" + code + ")";
             for (MonitorUser smu : userList) {
                 //限流判断
-                boolean check = this.checkErrorCodeLimit(ec, smu.getUserId());
+                boolean check = this.checkCodeLimit(ec, smu.getUserId());
                 if (check) {
                     Message ssm = this.createUserMessage(ec, smu.getUserId(), expectSendTime, title, content, url, remark);
                     this.addNotifyMessage(ssm);
@@ -204,14 +176,14 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param userId
      * @return
      */
-    private boolean checkErrorCodeLimit(SysCode ec, Long userId) {
-        if (ec.getLimitPeriod() <= 0) {
+    private boolean checkCodeLimit(SysCode ec, Long userId) {
+        if (ec.getUserPeriod() <= 0) {
             return true;
         } else {
             String key = CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, userId.toString(), ec.getCode().toString());
             Integer n = cacheHandler.get(key, Integer.class);
             if (n == null) {
-                cacheHandler.set(key, 0, ec.getLimitPeriod());
+                cacheHandler.set(key, 0, ec.getUserPeriod());
                 return true;
             } else {
                 //不通过，不用再发

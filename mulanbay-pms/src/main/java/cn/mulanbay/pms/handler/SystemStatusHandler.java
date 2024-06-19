@@ -8,7 +8,6 @@ import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -47,9 +46,6 @@ public class SystemStatusHandler extends BaseHandler {
      * 消息
      */
     private String message;
-
-    @Autowired
-    NotifyHandler notifyHandler;
 
     /**
      * 解锁码
@@ -111,6 +107,7 @@ public class SystemStatusHandler extends BaseHandler {
         }
         this.unlockCode = ulc;
         logger.warn("系统解锁码:" + unlockCode);
+        NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         notifyHandler.addMessageToNotifier(SYSTEM_LOCK, "系统解锁码", "系统解锁码为" + unlockCode, new Date());
     }
 

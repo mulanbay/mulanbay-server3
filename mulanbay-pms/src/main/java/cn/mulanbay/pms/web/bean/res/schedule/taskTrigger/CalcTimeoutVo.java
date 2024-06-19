@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.bean.res.schedule.taskTrigger;
 
-import cn.mulanbay.pms.persistent.dto.life.NameCountDTO;
 import cn.mulanbay.pms.web.bean.res.NameValueVo;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 

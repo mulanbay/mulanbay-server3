@@ -73,8 +73,15 @@ public class SysCode implements Serializable {
     /**
      * 周期(秒数)，默认是0，如果大于0表示一段时间内只会对一个用户只发送一次通知
      */
-    @Column(name = "limit_period")
-    private Integer limitPeriod;
+    @Column(name = "user_period")
+    private Integer userPeriod;
+
+    /**
+     * 系统限制次数
+     */
+    @Column(name = "sys_limit")
+    private Integer sysLimit;
+
     /**
      * pc端连接
      */
@@ -182,12 +189,20 @@ public class SysCode implements Serializable {
         this.count = count;
     }
 
-    public Integer getLimitPeriod() {
-        return limitPeriod;
+    public Integer getUserPeriod() {
+        return userPeriod;
     }
 
-    public void setLimitPeriod(Integer limitPeriod) {
-        this.limitPeriod = limitPeriod;
+    public void setUserPeriod(Integer userPeriod) {
+        this.userPeriod = userPeriod;
+    }
+
+    public Integer getSysLimit() {
+        return sysLimit;
+    }
+
+    public void setSysLimit(Integer sysLimit) {
+        this.sysLimit = sysLimit;
     }
 
     public String getUrl() {

@@ -10,7 +10,6 @@ import cn.mulanbay.pms.persistent.domain.Role;
 import cn.mulanbay.pms.persistent.dto.auth.RoleFunctionDTO;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.role.RoleForm;
 import cn.mulanbay.pms.web.bean.req.auth.role.RoleFunctionForm;

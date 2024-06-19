@@ -9,7 +9,6 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.persistent.domain.RoleFunction;
-import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +50,6 @@ public class SystemConfigHandler extends BaseHandler {
 
     @Autowired
     CacheHandler cacheHandler;
-
-    @Autowired
-    CommonCacheHandler commonCacheHandler;
 
     /**
      * key:urlAddress_supportMethod,例如：/buyRecord/edit_POST
@@ -240,24 +236,6 @@ public class SystemConfigHandler extends BaseHandler {
         hi.addDetail("functionMap size", String.valueOf(functionMap.size()));
         hi.addDetail("roleFunctionMap size", String.valueOf(roleFunctionMap.size()));
         return hi;
-    }
-
-    /**
-     * 获取错误代码定义
-     *
-     * @param code
-     * @return
-     */
-    public SysCode getSysCode(int code) {
-        return commonCacheHandler.getBean(SysCode.class, code);
-    }
-
-    /**
-     * 移除
-     * @param code
-     */
-    public void refreshSysCode(int code) {
-        commonCacheHandler.removeBean(SysCode.class, code);
     }
 
 }

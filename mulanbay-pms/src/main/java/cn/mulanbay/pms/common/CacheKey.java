@@ -186,7 +186,21 @@ public class CacheKey {
      */
     public static String ROLE_FUNC ="role_function";
 
+    /**
+     * 系统代码更新
+     */
     public static String SYS_CODE_COUNTS ="sys_code_counts:{0}";
+
+    /**
+     * 系统代码更新锁
+     */
+    public static String SYS_CODE_COUNTS_LOCK ="sys_code_counts:lock:{0}";
+
+    /**
+     * 系统代码限流
+     * 代码,时间
+     */
+    public static String SYS_CODE_COUNTS_LIMIT ="sys_code_counts:limit:{0}:{1}";
 
     /**
      * 请求限制

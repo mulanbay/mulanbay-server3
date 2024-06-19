@@ -5,7 +5,6 @@ import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.SqlType;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

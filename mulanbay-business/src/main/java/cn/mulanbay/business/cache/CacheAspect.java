@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @Description: 缓存
@@ -21,6 +22,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CacheAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(CacheAspect.class);
+
+    /**
+     * 分布式锁重试次数
+     */
+    @Value("${mulanbay.lock.retryTimes:3}")
+    int retryTimes;
+
+    /**
+     * 分布式锁超时时间(毫秒)
+     */
+    @Value("${mulanbay.lock.expire:3000}")
+    long expire;
 
     @Autowired
     CacheHandler cacheHandler;
@@ -67,7 +80,7 @@ public class CacheAspect {
             logger.debug("缓存未找到，执行具体逻辑业务");
             if (cache.lock()) {
                 lockKey = "lock:" + key;
-                lock = distributedLock.lock(lockKey, 3000L, 3);
+                lock = distributedLock.lock(lockKey, expire, retryTimes);
                 if (lock) {
                     //此时应该需要重新再去查一下缓存，有可能其他线程获取设置了
                     object = cacheHandler.get(key);

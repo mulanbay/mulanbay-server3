@@ -175,4 +175,9 @@ INSERT INTO `stat_template` (`template_id`, `template_name`, `title`, `sql_type`
 INSERT INTO `stat_template` (`template_id`, `template_name`, `title`, `sql_type`, `sql_content`, `result_type`, `value_type`, `order_index`, `paras`, `status`, `buss_type`, `level`, `rewards`, `source`, `calendar_title`, `url`, `remark`, `created_time`, `modify_time`) VALUES (43,'统计使用时间最短的商品','使用时间最短的商品',0,'select datediff(invalid_time,buy_time) as value,goods_name as nameValue FROM consume where invalid_time is not null and user_id = ?1\n order by value asc limit 1',3,0,40,1,1,0,3,0,7,'注意商品使用周期','Consume','','2019-07-02 22:01:38','2024-03-08 17:23:53');
 INSERT INTO `stat_template` (`template_id`, `template_name`, `title`, `sql_type`, `sql_content`, `result_type`, `value_type`, `order_index`, `paras`, `status`, `buss_type`, `level`, `rewards`, `source`, `calendar_title`, `url`, `remark`, `created_time`, `modify_time`) VALUES (45,'统计最后一次某个关键字的消费记录','距离上一次{某个关键字消费}已过去',0,'select max(buy_time) as value,null as nameValue from consume where user_id=?1',0,0,4,1,1,0,3,10,7,'注意检查','Consume','','2024-02-28 14:34:17','2024-05-30 12:07:11');
 
+#系统代码
+ALTER TABLE `sys_code`
+ADD COLUMN `sys_limit` INT NOT NULL DEFAULT 0 AFTER `user_period`,
+CHANGE COLUMN `limit_period` `user_period` INT NULL DEFAULT '0' ;
+
 

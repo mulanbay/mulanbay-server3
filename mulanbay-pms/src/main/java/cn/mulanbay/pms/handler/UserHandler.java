@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.handler;
 
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserSet;

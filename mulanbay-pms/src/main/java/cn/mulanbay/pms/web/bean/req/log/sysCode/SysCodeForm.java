@@ -2,6 +2,7 @@ package cn.mulanbay.pms.web.bean.req.log.sysCode;
 
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.enums.MonitorBussType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -33,7 +34,13 @@ public class SysCodeForm {
     @NotNull(message = "业务类型不能为空")
     private MonitorBussType bussType;
 
-    private Integer limitPeriod;
+    @NotNull(message = "用户限制周期不能为空")
+    @Min(value = 0)
+    private Integer userPeriod;
+
+    @NotNull(message = "系统限制次数不能为空")
+    @Min(value = 0)
+    private Integer sysLimit;
 
     /**
      * pc端连接
@@ -118,12 +125,20 @@ public class SysCodeForm {
         this.bussType = bussType;
     }
 
-    public Integer getLimitPeriod() {
-        return limitPeriod;
+    public Integer getUserPeriod() {
+        return userPeriod;
     }
 
-    public void setLimitPeriod(Integer limitPeriod) {
-        this.limitPeriod = limitPeriod;
+    public void setUserPeriod(Integer userPeriod) {
+        this.userPeriod = userPeriod;
+    }
+
+    public Integer getSysLimit() {
+        return sysLimit;
+    }
+
+    public void setSysLimit(Integer sysLimit) {
+        this.sysLimit = sysLimit;
     }
 
     public String getUrl() {

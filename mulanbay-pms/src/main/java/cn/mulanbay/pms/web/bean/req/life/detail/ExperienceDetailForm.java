@@ -5,7 +5,6 @@ import cn.mulanbay.pms.common.Constant;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class ExperienceDetailForm implements BindUser {

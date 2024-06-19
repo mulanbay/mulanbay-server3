@@ -10,15 +10,12 @@ import cn.mulanbay.pms.persistent.dto.calendar.CalendarLogDTO;
 import cn.mulanbay.pms.persistent.dto.report.StatSQLDTO;
 import cn.mulanbay.pms.persistent.enums.SqlType;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
-import cn.mulanbay.pms.persistent.enums.StatValueClass;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static cn.mulanbay.pms.common.Constant.EXTRA_SQL_RPC;
 
 @Service
 @Transactional

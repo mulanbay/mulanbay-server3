@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.res.behavior;
 
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.BussType;
-import jakarta.persistence.Transient;
 
 import java.util.Date;
 

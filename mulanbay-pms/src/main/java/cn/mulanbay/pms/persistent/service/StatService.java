@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static cn.mulanbay.pms.common.Constant.EXTRA_SQL_RPC;
-
 @Service
 @Transactional
 public class StatService extends BaseReportService {

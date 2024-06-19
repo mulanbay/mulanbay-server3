@@ -1,10 +1,12 @@
 package cn.mulanbay.pms.web.controller.log;
 
+import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.handler.SystemConfigHandler;
+import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.handler.SysCodeHandler;
 import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
@@ -15,6 +17,9 @@ import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 系统代码
@@ -29,7 +34,10 @@ public class SysCodeController extends BaseController {
     private static Class<SysCode> beanClass = SysCode.class;
 
     @Autowired
-    SystemConfigHandler systemConfigHandler;
+    SysCodeHandler sysCodeHandler;
+
+    @Autowired
+    CacheHandler cacheHandler;
 
     /**
      * 获取列表数据
@@ -91,7 +99,7 @@ public class SysCodeController extends BaseController {
         SysCode bean = baseService.getObject(beanClass, formRequest.getCode());
         BeanCopy.copy(formRequest, bean);
         baseService.updateObject(bean);
-        systemConfigHandler.refreshSysCode(bean.getCode());
+        sysCodeHandler.refreshSysCode(bean.getCode());
         return callback(null);
     }
 
@@ -106,7 +114,7 @@ public class SysCodeController extends BaseController {
         for (String s : ids) {
             Integer code =  Integer.parseInt(s);
             baseService.deleteObject(beanClass,code);
-            systemConfigHandler.refreshSysCode(code);
+            sysCodeHandler.refreshSysCode(code);
         }
         return callback(null);
     }
@@ -120,8 +128,24 @@ public class SysCodeController extends BaseController {
     public ResultBean refreshCache(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ids = deleteRequest.getIds().split(",");
         for (String s : ids) {
-            systemConfigHandler.refreshSysCode(Integer.parseInt(s));
+            sysCodeHandler.refreshSysCode(Integer.parseInt(s));
         }
         return callback(null);
     }
+
+    /**
+     * 获取缓存详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/cacheInfo", method = RequestMethod.GET)
+    public ResultBean cacheInfo(@Valid @RequestParam(name = "code") Integer code) {
+        Map map = new HashMap<>();
+        String key1 = CacheKey.getKey(CacheKey.SYS_CODE_COUNTS,code.toString());
+        map.put("batchCounts",cacheHandler.incre(key1,0));
+        String key2 = sysCodeHandler.getLimitKey(code);
+        map.put("limitCounts",cacheHandler.get(key2,Integer.class));
+        return callback(map);
+    }
+
 }

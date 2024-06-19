@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.persistent.domain;
 
 
-import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -5,6 +5,12 @@ mulanbay:
   version: 5.0.0
   #命名空间，主要是缓存使用
   namespace: mulanbay
+  #锁
+  lock:
+    #超时时间(毫秒)
+    expire: 3000
+    #重试次数
+    retryTimes: 3
   score:
     #用户默认评分
     default: 60
@@ -55,6 +61,8 @@ mulanbay:
   #安全相关
   security:
     lock:
+      #系统代码限流停止服务时间(秒)
+      lockTime: 300
       #系统状态解锁码位数
       unlockRandoms: 6
       #白名单

@@ -4,7 +4,6 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

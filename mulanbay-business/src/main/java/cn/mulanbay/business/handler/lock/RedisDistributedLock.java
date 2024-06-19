@@ -144,7 +144,7 @@ public class RedisDistributedLock extends AbstractDistributedLock {
             List<String> args = new ArrayList<String>();
             String lf =  lockFlag.get();
             if(lf==null){
-                logger.warn("releaseLock key flag is null");
+                logger.warn("releaseLock key:{} flag is null",key);
                 return false;
             }
             args.add(lf);

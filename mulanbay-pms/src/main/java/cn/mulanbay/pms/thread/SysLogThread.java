@@ -3,6 +3,7 @@ package cn.mulanbay.pms.thread;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.persistent.service.BaseService;
+import cn.mulanbay.pms.handler.SysCodeHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
@@ -42,8 +43,8 @@ public class SysLogThread extends BaseLogThread {
      */
     private void handleLog(SysLog log) {
         try {
-            SystemConfigHandler systemConfigHandler = getSystemConfigHandler();
-            SysCode ec = systemConfigHandler.getSysCode(log.getErrorCode());
+            SysCodeHandler sysCodeHandler =  BeanFactoryUtil.getBean(SysCodeHandler.class);
+            SysCode ec = sysCodeHandler.getSysCode(log.getErrorCode());
             if (ec != null && ec.getLoggable()) {
                 SysFunc sf = log.getSysFunc();
                 if (sf != null) {
@@ -53,6 +54,7 @@ public class SysLogThread extends BaseLogThread {
                 log.setLogLevel(ec.getLevel());
                 Date now = new Date();
                 log.setStoreTime(now);
+                SystemConfigHandler systemConfigHandler =  BeanFactoryUtil.getBean(SystemConfigHandler.class);
                 //会比较慢
                 log.setHostIpAddress(systemConfigHandler.getHostIpAddress());
                 log.setCreatedTime(now);
@@ -77,10 +79,6 @@ public class SysLogThread extends BaseLogThread {
             String msg = "增加系统日志异常，log=" + log.getContent();
             logger.error(msg, e);
         }
-    }
-
-    private SystemConfigHandler getSystemConfigHandler() {
-        return BeanFactoryUtil.getBean(SystemConfigHandler.class);
     }
 
 }

@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.ai;
 
 import cn.mulanbay.pms.persistent.enums.MLAlgorithm;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

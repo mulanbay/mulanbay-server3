@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.bean.req.report.stat;
 
 import cn.mulanbay.pms.persistent.enums.*;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

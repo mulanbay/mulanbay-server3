@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.bean.req.schedule.taskTrigger;
 
-import cn.mulanbay.web.bean.request.PageSearch;
 import jakarta.validation.constraints.NotNull;
 
 /**

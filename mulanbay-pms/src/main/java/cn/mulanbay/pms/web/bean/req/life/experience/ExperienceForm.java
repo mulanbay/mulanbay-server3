@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class ExperienceForm implements BindUser {
