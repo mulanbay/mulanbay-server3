@@ -123,7 +123,7 @@ public class SysLog implements java.io.Serializable {
      * 需要在field上打上标签，否则映射异常
      */
     @Transient
-    private Map paraMap;
+    private Map<String,String> paraMap;
 
     public Long getId() {
         return id;
@@ -310,11 +310,11 @@ public class SysLog implements java.io.Serializable {
     }
 
     @Transient
-    public Map getParaMap() {
+    public Map<String,String> getParaMap() {
         return paraMap;
     }
 
-    public void setParaMap(Map paraMap) {
+    public void setParaMap(Map<String,String> paraMap) {
         this.paraMap = paraMap;
     }
 

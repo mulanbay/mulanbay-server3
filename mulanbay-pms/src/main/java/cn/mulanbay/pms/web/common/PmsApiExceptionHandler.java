@@ -42,12 +42,12 @@ public class  PmsApiExceptionHandler extends ApiExceptionHandler {
     SystemConfigHandler systemConfigHandler;
 
     @Override
-    protected boolean doSystemLog() {
+    protected boolean doSysLog() {
         return enableSysLog;
     }
 
     @Override
-    protected void addSystemLog(HttpServletRequest request, Class exceptionClass, String title, String msg, int errorCode) {
+    protected void addSysLog(HttpServletRequest request, Class exceptionClass, String title, String msg, int errorCode) {
         try {
             SysLog log = new SysLog();
             log.setLogLevel(LogLevel.ERROR);

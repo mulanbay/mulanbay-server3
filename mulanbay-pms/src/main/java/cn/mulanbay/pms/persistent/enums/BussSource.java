@@ -31,7 +31,7 @@ public enum BussSource {
     WORK_OVERTIME(19, "加班", WorkOvertime.class),
     SLEEP(20, "睡眠", Sleep.class),
     BUSINESS_TRIP(21, "出差", BusinessTrip.class),
-    OPER_LOG(21, "操作日志", OperLog.class);
+    OPER_LOG(22, "操作日志", OperLog.class);
 
     private int value;
 
@@ -75,7 +75,7 @@ public enum BussSource {
     }
 
 
-    public static BussSource getType(int ordinal) {
+    public static BussSource getSource(int ordinal) {
         for (BussSource bt : BussSource.values()) {
             if (bt.ordinal() == ordinal) {
                 return bt;

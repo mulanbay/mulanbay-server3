@@ -163,10 +163,7 @@ public class TaskTriggerController extends BaseController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResultBean list(TaskTriggerSH sf) {
-        boolean isSchedule = pmsScheduleHandler.isEnableSchedule();
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("isSchedule", isSchedule);
-        data.put("scheduleStatus", pmsScheduleHandler.getScheduleStatus());
         PageResult<TaskTrigger> pr = getTaskTrigger(sf);
         List<TaskTrigger> beanList = pr.getBeanList();
         List<TaskTriggerVo> newList = new ArrayList<>();
@@ -181,9 +178,6 @@ public class TaskTriggerController extends BaseController {
         }
         data.put("total", pr.getMaxRow());
         data.put("rows", newList);
-        data.put("currentlyExecutingJobsCount",
-                pmsScheduleHandler.getCurrentlyExecutingJobsCount());
-        data.put("scheduleJobsCount", pmsScheduleHandler.getScheduleJobsCount());
         return callback(data);
     }
 

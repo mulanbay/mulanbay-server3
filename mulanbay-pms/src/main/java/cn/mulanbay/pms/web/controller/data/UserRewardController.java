@@ -131,10 +131,10 @@ public class UserRewardController extends BaseController {
 
     private String getSeriesName(Short source,Number id){
         if(source==null){
-            BussSource bs = BussSource.getType(id.intValue());
+            BussSource bs = BussSource.getSource(id.intValue());
             return bs==null? "未知":bs.getName();
         }else{
-            BussSource bs = BussSource.getType(source.intValue());
+            BussSource bs = BussSource.getSource(source.intValue());
             CommonDataBean bean = dataHandler.getSourceData(bs,id.longValue());
             return bean.getTitle();
         }

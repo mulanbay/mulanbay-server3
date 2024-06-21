@@ -61,7 +61,7 @@ public class SysLogThread extends BaseLogThread {
                 Map map = log.getParaMap();
                 if (map != null && !map.isEmpty()) {
                     //序列化比较耗时间
-                    log.setParas(JsonUtil.beanToJson(changeToNormalMap(map)));
+                    log.setParas(JsonUtil.beanToJson(map));
                 }
                 log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurTime().getTime());
                 String content = log.getContent();

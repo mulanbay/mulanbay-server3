@@ -2,7 +2,6 @@ package cn.mulanbay.pms.thread;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.MapUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.handler.UserHandler;
@@ -25,16 +24,6 @@ public class BaseLogThread extends Thread {
 
     public BaseLogThread(String name) {
         super(name);
-    }
-
-    /**
-     * request默认拿到的是数组类型，这里转换为通用的原始参数
-     *
-     * @param paraMap
-     * @return
-     */
-    protected Map changeToNormalMap(Map paraMap) {
-        return MapUtil.changeRequestMapToNormalMap(paraMap);
     }
 
     /**
