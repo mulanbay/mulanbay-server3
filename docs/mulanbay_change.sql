@@ -180,4 +180,12 @@ ALTER TABLE `sys_code`
 ADD COLUMN `sys_limit` INT NOT NULL DEFAULT 0 AFTER `user_period`,
 CHANGE COLUMN `limit_period` `user_period` INT NULL DEFAULT '0' ;
 
+#系统功能点表
+ALTER TABLE `mulanbay_db`.`sys_func`
+DROP COLUMN `request_limit`,
+DROP COLUMN `url_type`,
+CHANGE COLUMN `request_limit_period` `user_period` INT NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `day_limit` `sys_limit` INT NOT NULL DEFAULT '0' ;
 
+#更新日历
+UPDATE user_calendar SET buss_identity_key = replace (`buss_identity_key`,'null','') WHERE calendar_id>0;
