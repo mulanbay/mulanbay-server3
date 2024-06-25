@@ -9,6 +9,7 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
+import cn.mulanbay.pms.handler.ReportHandler;
 import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.enums.BussSource;
@@ -50,6 +51,8 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
 
     RewardHandler rewardHandler = null;
 
+    ReportHandler reportHandler = null;
+
     UserCalendarService userCalendarService = null;
 
     BaseService baseService = null;
@@ -65,6 +68,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         cacheHandler = BeanFactoryUtil.getBean(CacheHandler.class);
         rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
+        reportHandler = BeanFactoryUtil.getBean(ReportHandler.class);
         userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
         baseService = BeanFactoryUtil.getBean(BaseService.class);
         List<UserPlan> list = planService.getNeedRemindUserPlan(para.getPlanType());
@@ -226,7 +230,8 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
             if (isComplete) {
                 //删除日历
                 PlanTemplate template = userPlan.getTemplate();
-                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),userPlan.getBindValues());
+                String bindKey = reportHandler.createBindValueKey(userPlan.getBindValues());
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
                 userCalendarService.updateUserCalendarForFinish(userPlan.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,userPlan.getPlanId(), BussSource.PLAN, messageId);
             } else {
                 //添加到用户日历
@@ -245,7 +250,8 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
     private void addToUserCalendar(UserPlan userPlan, Long messageId) {
         try {
             PlanTemplate template = userPlan.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),userPlan.getBindValues());
+            String bindKey = reportHandler.createBindValueKey(userPlan.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
             UserCalendar uc = userCalendarService.getUserCalendar(userPlan.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);

@@ -17,6 +17,7 @@ import cn.mulanbay.pms.persistent.domain.UserPlan;
 import cn.mulanbay.pms.persistent.enums.PlanType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.report.plan.PlanReportSH;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanForm;
@@ -287,6 +288,20 @@ public class UserPlanController extends BaseController {
             planService.deleteUsePlan(Long.valueOf(s));
         }
         return callback(null);
+    }
+
+    /**
+     * 业务标识key
+     * @param planId
+     * @return
+     */
+    @RequestMapping(value = "/getBussIdentityKey", method = RequestMethod.GET)
+    public ResultBean getBussIdentityKey(@RequestParam(name = "planId") Long planId) {
+        UserPlan userPlan = baseService.getObject(beanClass,planId);
+        PlanTemplate template = userPlan.getTemplate();
+        String bindKey = reportHandler.createBindValueKey(userPlan.getBindValues());
+        String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
+        return callback(bussIdentityKey);
     }
 
 }

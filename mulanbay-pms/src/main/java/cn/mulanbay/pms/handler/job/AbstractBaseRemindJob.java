@@ -65,7 +65,6 @@ public abstract class AbstractBaseRemindJob extends AbstractBaseJob {
         return bean;
     }
 
-
     public class RemindTimeBean {
         private int days;
 

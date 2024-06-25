@@ -7,14 +7,18 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.ReportHandler;
 import cn.mulanbay.pms.handler.UserStatHandler;
 import cn.mulanbay.pms.persistent.domain.StatTemplate;
+import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.domain.UserStat;
 import cn.mulanbay.pms.persistent.dto.report.StatResultDTO;
 import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.service.StatService;
 import cn.mulanbay.pms.util.BeanCopy;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
+import cn.mulanbay.pms.web.bean.req.data.calendar.UserCalendarSH;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;
@@ -50,6 +54,9 @@ public class UserStatController extends BaseController {
 
     @Autowired
     UserStatHandler userStatHandler;
+
+    @Autowired
+    ReportHandler reportHandler;
 
     /**
      * 获取用户提醒列表树
@@ -227,6 +234,20 @@ public class UserStatController extends BaseController {
             userStatHandler.deleteCache(ucf.getUserId(),statId);
         }
         return callback(null);
+    }
+
+    /**
+     * 业务标识key
+     * @param statId
+     * @return
+     */
+    @RequestMapping(value = "/getBussIdentityKey", method = RequestMethod.GET)
+    public ResultBean getBussIdentityKey(@RequestParam(name = "statId") Long statId) {
+        UserStat us = baseService.getObject(beanClass,statId);
+        StatTemplate template = us.getTemplate();
+        String bindKey = reportHandler.createBindValueKey(us.getBindValues());
+        String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
+        return callback(bussIdentityKey);
     }
 
 }

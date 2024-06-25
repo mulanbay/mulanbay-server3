@@ -254,7 +254,7 @@ public class BussUtil {
      */
     public static String getCalendarBussIdentityKey(BussSource source, String bussValue){
         if(StringUtil.isEmpty(bussValue)){
-            return source.name();
+            return source.name()+"_";
         }else{
             return source.name()+"_"+bussValue;
         }

@@ -8,6 +8,7 @@ import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
+import cn.mulanbay.pms.handler.ReportHandler;
 import cn.mulanbay.pms.handler.RewardHandler;
 import cn.mulanbay.pms.handler.UserStatHandler;
 import cn.mulanbay.pms.persistent.domain.*;
@@ -55,6 +56,8 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
 
     UserStatHandler userStatHandler = null;
 
+    ReportHandler reportHandler = null;
+
     UserCalendarService userCalendarService = null;
 
     BaseService baseService = null;
@@ -68,6 +71,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
         rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
         userStatHandler = BeanFactoryUtil.getBean(UserStatHandler.class);
+        reportHandler = BeanFactoryUtil.getBean(ReportHandler.class);
         userCalendarService = BeanFactoryUtil.getBean(UserCalendarService.class);
         baseService = BeanFactoryUtil.getBean(BaseService.class);
         if (list.isEmpty()) {
@@ -225,7 +229,8 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             rewardHandler.reward(us.getUserId(), rewards, us.getStatId(), BussSource.STAT, remark, messageId);
             if (isComplete) {
                 StatTemplate template = us.getTemplate();
-                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),us.getBindValues());
+                String bindKey = reportHandler.createBindValueKey(us.getBindValues());
+                String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
                 userCalendarService.updateUserCalendarForFinish(us.getUserId(), bussIdentityKey, new Date(), UserCalendarFinishType.AUTO,us.getStatId(), BussSource.STAT, messageId);
             }
         } catch (Exception e) {
@@ -242,7 +247,8 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         try {
             UserStat us = remind.getStat();
             StatTemplate template = us.getTemplate();
-            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),us.getBindValues());
+            String bindKey = reportHandler.createBindValueKey(us.getBindValues());
+            String bussIdentityKey = BussUtil.getCalendarBussIdentityKey(template.getSource(),bindKey);
             UserCalendar uc = userCalendarService.getUserCalendar(us.getUserId(), bussIdentityKey, new Date());
             if (uc != null) {
                 userCalendarService.updateUserCalendarToDate(uc, new Date(), messageId);
