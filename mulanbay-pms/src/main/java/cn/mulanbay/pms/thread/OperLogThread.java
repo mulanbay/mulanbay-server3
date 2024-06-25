@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.Map;
 
+import static cn.mulanbay.pms.common.Constant.ADMIN_USER_ID;
+
 /**
  * 操作记录记录线程
  *
@@ -52,7 +54,7 @@ public class OperLogThread extends BaseLogThread {
             SysFunc sf = log.getSysFunc();
             int code = 0;
             String msgContent = "";
-            if (log.getUrlAddress() != null) {
+            if (StringUtil.isNotEmpty(log.getUrlAddress())) {
                 msgContent = log.getUrlAddress();
             }
             if (sf == null) {
@@ -96,7 +98,7 @@ public class OperLogThread extends BaseLogThread {
      */
     private void handleReward(SysFunc sf, OperLog log) {
         try {
-            if (sf != null && sf.getRewardPoint() != 0 && log.getUserId() > 0) {
+            if (sf != null && sf.getRewardPoint() != 0 && log.getUserId() > ADMIN_USER_ID) {
                 //积分奖励(操作类的积分记录管理的messageId为操作记录的编号)
                 RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);
                 rewardHandler.reward(log.getUserId(), sf.getRewardPoint(), log.getId(),

@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.controller.auth;
 
+import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.NumberUtil;
@@ -7,6 +8,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.dto.auth.SysFuncDTO;
@@ -16,17 +18,22 @@ import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncForm;
+import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncRefreshForm;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncSH;
 import cn.mulanbay.pms.web.bean.req.auth.sysFunc.SysFuncTreeReq;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.auth.sysFunc.SysFuncCacheInfoVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 系统功能点
@@ -48,6 +55,12 @@ public class SysFuncController extends BaseController {
 
     @Autowired
     SystemConfigHandler systemConfigHandler;
+
+    @Autowired
+    CacheHandler cacheHandler;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -131,11 +144,9 @@ public class SysFuncController extends BaseController {
      */
     @RequestMapping(value = "/treeList", method = RequestMethod.GET)
     public ResultBean treeList(SysFuncSH sf) {
-        if(sf.getPid()==null){
-            sf.setPid(0L);
-        }
         PageRequest pr = sf.buildQuery();
-        pr.setPage(PageRequest.NO_PAGE);
+        pr.setPage(sf.getPage());
+        pr.setPageSize(sf.getPageSize());
         pr.setBeanClass(beanClass);
         Sort sort1 = new Sort("parent.funcId", Sort.ASC);
         pr.addSort(sort1);
@@ -163,15 +174,15 @@ public class SysFuncController extends BaseController {
     /**
      * 检查表单属性
      *
-     * @param formRequest
+     * @param form
      */
-    private void checkFormBean(SysFuncForm formRequest) {
-        if (true == formRequest.getRouter()) {
-            if (StringUtil.isEmpty(formRequest.getPath())) {
+    private void checkFormBean(SysFuncForm form) {
+        if (form.getRouter()) {
+            if (StringUtil.isEmpty(form.getPath())) {
                 throw new ApplicationException(ErrorCode.DO_BUSS_ERROR, "路由地址不能为空");
             }
-            if (false == formRequest.getFrame()) {
-                if (StringUtil.isEmpty(formRequest.getComponent())) {
+            if (!form.getFrame()) {
+                if (StringUtil.isEmpty(form.getComponent())) {
                     throw new ApplicationException(ErrorCode.DO_BUSS_ERROR, "组件路径不能为空");
                 }
             }
@@ -238,6 +249,7 @@ public class SysFuncController extends BaseController {
         for(Long id : ids){
             sysFuncService.deleteFunctions(id);
         }
+        systemConfigHandler.reloadFunctions();
         return callback(null);
     }
 
@@ -247,9 +259,43 @@ public class SysFuncController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/refreshCache", method = RequestMethod.POST)
-    public ResultBean refreshCache() {
-        systemConfigHandler.reloadFunctions();
+    public ResultBean refreshCache(SysFuncRefreshForm form) {
+        systemConfigHandler.reloadFunction(form.getFuncId());
         return callback(null);
     }
+
+    /**
+     * 获取缓存详情
+     *
+     * @return
+     */
+    @RequestMapping(value = "/cacheInfo", method = RequestMethod.GET)
+    public ResultBean cacheInfo(@RequestParam(name = "funcId") Long funcId) {
+        SysFunc sf = baseService.getObject(beanClass, funcId);
+        SysFuncCacheInfoVo vo = new SysFuncCacheInfoVo();
+        vo.setDbData(sf);
+        SysFunc cacheData = systemConfigHandler.getFunction(sf.getUrlAddress(),sf.getSupportMethods());
+        vo.setCacheData(cacheData);
+        //用户限流
+        String userLimitKey = CacheKey.getKey(CacheKey.REQUEST_USER_LIMIT,sf.getUrlAddress(),"*");
+        Set<String> userLimitKeys = redisTemplate.keys(cacheHandler.getFullKey(userLimitKey));
+        if(StringUtil.isNotEmpty(userLimitKeys)){
+            for(String key: userLimitKeys){
+                Date v = cacheHandler.get(key,Date.class);
+                vo.addUserLimit(key,v);
+            }
+        }
+        //系统限流
+        String sysLimitKey = CacheKey.getKey(CacheKey.REQUEST_SYS_LIMIT,sf.getUrlAddress(),"*");
+        Set<String> sysLimitKeys = redisTemplate.keys(cacheHandler.getFullKey(sysLimitKey));
+        if(StringUtil.isNotEmpty(sysLimitKeys)){
+            for(String key: sysLimitKeys){
+                Integer v = cacheHandler.get(key, Integer.class);
+                vo.addSysLimit(key,v);
+            }
+        }
+        return callback(vo);
+    }
+
 
 }

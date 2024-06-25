@@ -4,7 +4,9 @@ import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.NotifyHandler;
+import cn.mulanbay.pms.handler.SysCodeHandler;
 import cn.mulanbay.pms.handler.UserHandler;
+import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.domain.User;
 import org.slf4j.Logger;
@@ -53,16 +55,36 @@ public class BaseLogThread extends Thread {
      * @param message
      */
     protected void notifyError(Long userId,  int code, String message) {
+        if (code == ErrorCode.SUCCESS) {
+            //正常的代码不做处理
+            return;
+        }
+        SysCodeHandler sysCodeHandler =  BeanFactoryUtil.getBean(SysCodeHandler.class);
+        SysCode ec = sysCodeHandler.getSysCode(code);
+        if(ec==null){
+            logger.warn("系统代码{}未配置",code);
+            return;
+        }
+        this.notifyError(userId,ec,message);
+    }
+
+    /**
+     * 消息提醒
+     * @param userId
+     * @param ec
+     * @param message
+     */
+    protected void notifyError(Long userId, SysCode ec, String message) {
         try {
-            if (code == ErrorCode.SUCCESS) {
+            if (ec.getCode() == ErrorCode.SUCCESS) {
                 return;
             }
             //通知
             NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
-            notifyHandler.addMessageToNotifier(code, "错误代码通知", message + "," + getUserInfo(userId),
+            notifyHandler.addMessageToNotifier(ec.getCode(), "系统代码["+ec.getName()+"]通知", message + "," + getUserInfo(userId),
                     null, null);
         } catch (Exception e) {
-            logger.error("处理错误代码异常", e);
+            logger.error("处理系统代码通知异常", e);
         }
     }
 

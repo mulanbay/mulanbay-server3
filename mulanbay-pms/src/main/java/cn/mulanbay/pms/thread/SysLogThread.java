@@ -71,7 +71,7 @@ public class SysLogThread extends BaseLogThread {
                 }
                 BaseService baseService = BeanFactoryUtil.getBean(BaseService.class);
                 baseService.saveObject(log);
-                this.notifyError(log.getUserId(), ec.getCode(), log.getContent());
+                this.notifyError(log.getUserId(), ec, log.getContent());
             }else{
                 logger.warn("系统代码{}找不到配置",log.getErrorCode());
             }

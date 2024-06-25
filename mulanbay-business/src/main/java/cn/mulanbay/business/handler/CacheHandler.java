@@ -98,6 +98,16 @@ public class CacheHandler extends BaseHandler  {
     }
 
     /**
+     * 设置超时
+     * @param key
+     * @param value         需要实现序列化接口
+     * @param expires 毫秒
+     */
+    public void setMS(String key, Object value, long expires) {
+        redisTemplate.opsForValue().set(getFullKey(key), value, expires, TimeUnit.MILLISECONDS);
+    }
+
+    /**
      * 相当于SETNX
      * @param key
      * @param value         需要实现序列化接口
@@ -141,8 +151,26 @@ public class CacheHandler extends BaseHandler  {
         redisTemplate.opsForHash().put(getFullKey(key),hashKey, value);
     }
 
+    /**
+     * 获取hash key值
+     * @param key
+     * @param hashKey
+     * @param cls
+     * @return
+     * @param <T>
+     */
     public <T> T getHash(String key, String hashKey, Class<T> cls) {
         return (T) redisTemplate.opsForHash().get(getFullKey(key), hashKey);
+    }
+
+    /**
+     * 删除Hash key
+     * @param key
+     * @param hashKey
+     * @return
+     */
+    public Long deleteHash(String key, String hashKey) {
+        return redisTemplate.opsForHash().delete(getFullKey(key), hashKey);
     }
 
     /**

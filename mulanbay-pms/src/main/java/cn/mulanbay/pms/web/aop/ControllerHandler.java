@@ -27,6 +27,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Date;
 
+import static cn.mulanbay.pms.common.Constant.DAY_MILLS_SECONDS;
+import static cn.mulanbay.pms.common.Constant.DAY_SECONDS;
+
 /**
  * 全局Aop
  * 登录、权限验证及用户信息的自动注入
@@ -92,9 +95,9 @@ public class ControllerHandler {
                 tokenHandler.verifyToken(loginUser);
                 Long userId = loginUser.getUserId();
                 //请求限制检查
-                checkRequestLimit(userId,sf);
+                checkUserLimit(userId,sf);
                 //每日限制检查
-                checkDayLimit(userId,sf);
+                checkSysLimit(userId,sf);
                 //权限认证
                 Long roleId = loginUser.getRoleId();
                 checkPermission(roleId,sf);
@@ -114,15 +117,16 @@ public class ControllerHandler {
      * @param userId
      * @param sf
      */
-    private void checkRequestLimit(Long userId,SysFunc sf){
-        if (sf.getRequestLimit()) {
-            String key = CacheKey.REQUEST_LIMIT + ":" + userId + ":" + sf.getFuncId();
+    private void checkUserLimit(Long userId, SysFunc sf){
+        if (sf.getUserPeriod()>0) {
+            String key = CacheKey.getKey(CacheKey.REQUEST_USER_LIMIT,sf.getUrlAddress(),userId.toString());
             //请求限制
-            String s = cacheHandler.getForString(key);
-            if (s != null) {
+            Date date = cacheHandler.get(key,Date.class);
+            if (date != null) {
+                logger.warn("用户ID={},请求{}过于频繁",userId,sf.getUrlAddress());
                 throw new ApplicationException(PmsCode.USER_REQUEST_TOO_FREQ);
             } else {
-                cacheHandler.set(key, "123", sf.getRequestLimitPeriod());
+                cacheHandler.setMS(key, new Date(), sf.getUserPeriod().longValue());
             }
         }
     }
@@ -132,20 +136,21 @@ public class ControllerHandler {
      * @param userId
      * @param sf
      */
-    private void checkDayLimit(Long userId,SysFunc sf){
-        if (sf.getDayLimit() > 0) {
-            String key = CacheKey.REQUEST_DAY_LIMIT + ":" + DateUtil.getToday(DateUtil.FormatDay1) + ":" + userId + ":" + sf.getFuncId();
+    private void checkSysLimit(Long userId, SysFunc sf){
+        if (sf.getSysLimit() > 0) {
+            String key = CacheKey.getKey(CacheKey.REQUEST_SYS_LIMIT,sf.getUrlAddress(),DateUtil.getToday(DateUtil.FormatDay1));
             //请求限制
             Integer s = cacheHandler.get(key, Integer.class);
             if (s != null) {
-                if (s.intValue() < sf.getDayLimit()) {
+                if (s.intValue() < sf.getSysLimit()) {
                     s = s + 1;
-                    cacheHandler.set(key, s, 24 * 3600);
+                    cacheHandler.set(key, s, (int) DAY_SECONDS);
                 } else {
+                    logger.warn("用户ID={},在当天请求{}过于频繁",userId,sf.getUrlAddress());
                     throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
                 }
             } else {
-                cacheHandler.set(key, 1, 24 * 3600);
+                cacheHandler.set(key, 1, (int) DAY_SECONDS);
             }
         }
     }

@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.util;
 
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.enums.BussSource;
@@ -252,7 +253,11 @@ public class BussUtil {
      * @return
      */
     public static String getCalendarBussIdentityKey(BussSource source, String bussValue){
-        return source.name()+"_"+bussValue;
+        if(StringUtil.isEmpty(bussValue)){
+            return source.name();
+        }else{
+            return source.name()+"_"+bussValue;
+        }
     }
 
     /**

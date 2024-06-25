@@ -163,7 +163,7 @@ public class ChartUtil {
             max = Constant.MAX_WEEK;
         }else if(dateGroupType==DateGroupType.DAYOFWEEK){
             min = 1;
-            max = Constant.DAYS_WEEK;
+            max = Constant.WEEK_DAY;
         }else if(dateGroupType==DateGroupType.YEAR){
             min = Integer.valueOf(DateUtil.getFormatDate(startDate,"yyyy"));
             max = Integer.valueOf(DateUtil.getFormatDate(endDate,"yyyy"));

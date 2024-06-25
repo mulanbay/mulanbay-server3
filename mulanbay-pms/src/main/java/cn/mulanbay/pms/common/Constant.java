@@ -78,6 +78,11 @@ public class Constant {
     public static final int MAX_MONTH_DAY = 31;
 
     /**
+     * 一个月天数
+     */
+    public static final int MONTH_DAY = 30;
+
+    /**
      * 最大周数
      */
     public static final int MAX_WEEK = 53;
@@ -105,7 +110,7 @@ public class Constant {
     /**
      * 每周天数
      */
-    public static final int DAYS_WEEK = 7;
+    public static final int WEEK_DAY = 7;
 
     /**
      * 小时
@@ -117,4 +122,13 @@ public class Constant {
      */
     public static final String EXTRA_SQL_RPC = "{extra_sql}";
 
+    /**
+     * 一天的秒数
+     */
+    public static final long DAY_SECONDS = 24*3600;
+
+    /**
+     * 一天的毫秒数
+     */
+    public static final long DAY_MILLS_SECONDS = DAY_SECONDS*1000;
 }

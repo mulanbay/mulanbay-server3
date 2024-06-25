@@ -277,7 +277,7 @@ public class MusicPracticeController extends BaseController {
                 chartData.getXdata().add(bean.getDateIndexValue() + "年");
             } else if (sf.getDateGroupType() == DateGroupType.WEEK) {
                 chartData.getXdata().add("第" + bean.getDateIndexValue() + "周");
-                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(Constant.DAYS_WEEK), ROUNDING_MODE)));
+                yData3.getData().add(minutesToHours(bean.getTotalMinutes().divide(new BigDecimal(Constant.WEEK_DAY), ROUNDING_MODE)));
             } else {
                 chartData.getXdata().add(bean.getDateIndexValue().toString());
             }

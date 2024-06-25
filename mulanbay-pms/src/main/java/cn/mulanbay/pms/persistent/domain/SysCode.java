@@ -77,7 +77,7 @@ public class SysCode implements Serializable {
     private Integer userPeriod;
 
     /**
-     * 系统限制次数
+     * 系统限制次数（每天次数）
      */
     @Column(name = "sys_limit")
     private Integer sysLimit;

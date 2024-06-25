@@ -6,6 +6,8 @@ import cn.mulanbay.schedule.job.AbstractBaseJob;
 
 import java.util.Date;
 
+import static cn.mulanbay.pms.common.Constant.*;
+
 /**
  * 基础提醒类
  *
@@ -26,10 +28,10 @@ public abstract class AbstractBaseRemindJob extends AbstractBaseJob {
         if (triggerType == TriggerType.DAY) {
             days = interval;
         } else if (triggerType == TriggerType.WEEK) {
-            days = 7 * interval;
+            days = WEEK_DAY * interval;
         } else {
             //默认月
-            days = 30 * interval;
+            days = MONTH_DAY * interval;
         }
         return days;
     }
@@ -53,7 +55,7 @@ public abstract class AbstractBaseRemindJob extends AbstractBaseJob {
             Date next = DateUtil.addHourMin(null, remindTime);
             bean.setNextRemindTime(next);
         } else {
-            Date fromLastTime = new Date(lastRemindTime.getTime() + days * 24 * 3600 * 1000);
+            Date fromLastTime = new Date(lastRemindTime.getTime() + days * DAY_MILLS_SECONDS);
             String ss = DateUtil.getFormatDate(fromLastTime, DateUtil.FormatDay1);
             //算上用户设置的时间:比如上次提醒2017-11-03 03:00:00,用户设置为08：30，设置为3天提醒一次，那么提醒时间=2017-11-06 08:30:00
             Date next = DateUtil.getDate(ss + " " + remindTime + ":00", DateUtil.Format24Datetime);

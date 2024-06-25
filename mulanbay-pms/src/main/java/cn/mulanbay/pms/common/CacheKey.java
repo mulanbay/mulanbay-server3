@@ -57,9 +57,9 @@ public class CacheKey {
     public static final String USER_CONTINUE_OP = "user:continue:op:{0}:{1}";
 
     /**
-     * 用户提醒统计（用户编号：USER_NOTIFY_ID）
+     * 用户提醒统计（用户编号：USER_STAT_ID）
      */
-    public static final String USER_NOTIFY_STAT = "userNotifyStat:{0}:{1}";
+    public static final String USER_STAT = "userStat:{0}:{1}";
 
     /**
      * 用户登录失败次数（用户名称/手机号）
@@ -204,10 +204,14 @@ public class CacheKey {
 
     /**
      * 请求限制
+     * 参数：URL,用户ID
      */
-    public static String REQUEST_LIMIT ="request_limit";
+    public static String REQUEST_USER_LIMIT ="request_user_limit:{0}:{1}";
 
-    public static String REQUEST_DAY_LIMIT ="request_day_limit";
+    /**
+     * 参数：URL,时间
+     */
+    public static String REQUEST_SYS_LIMIT ="request_sys_limit:{0}:{1}";
 
 
     /**

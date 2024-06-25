@@ -49,9 +49,6 @@ public class SysFunc implements java.io.Serializable {
     @Column(name = "url_address", nullable = false, length = 100)
     private String urlAddress;
 
-    @Column(name = "url_type", nullable = false)
-    private UrlType urlType;
-
     @Column(name = "func_type", nullable = false)
     private FunctionType funcType;
 
@@ -131,22 +128,16 @@ public class SysFunc implements java.io.Serializable {
     private Boolean alwaysShow;
 
     /**
-     * 是否请求限制
+     * 周期(毫秒)，默认是0，如果大于0表示一段时间内只允许请求一次
      */
-    @Column(name = "request_limit")
-    private Boolean requestLimit;
+    @Column(name = "user_period")
+    private Integer userPeriod;
 
     /**
-     * 限制周期
+     * 系统限制次数（每天次数）
      */
-    @Column(name = "request_limit_period")
-    private Integer requestLimitPeriod;
-
-    /**
-     * 是否每天限制操作数(大于0说明要限制)
-     */
-    @Column(name = "day_limit")
-    private Integer dayLimit;
+    @Column(name = "sys_limit")
+    private Integer sysLimit;
 
     /**
      * 记录返回数据
@@ -269,14 +260,6 @@ public class SysFunc implements java.io.Serializable {
 
     public void setUrlAddress(String urlAddress) {
         this.urlAddress = urlAddress;
-    }
-
-    public UrlType getUrlType() {
-        return urlType;
-    }
-
-    public void setUrlType(UrlType urlType) {
-        this.urlType = urlType;
     }
 
     public FunctionType getFuncType() {
@@ -407,28 +390,20 @@ public class SysFunc implements java.io.Serializable {
         this.alwaysShow = alwaysShow;
     }
 
-    public Boolean getRequestLimit() {
-        return requestLimit;
+    public Integer getUserPeriod() {
+        return userPeriod;
     }
 
-    public void setRequestLimit(Boolean requestLimit) {
-        this.requestLimit = requestLimit;
+    public void setUserPeriod(Integer userPeriod) {
+        this.userPeriod = userPeriod;
     }
 
-    public Integer getRequestLimitPeriod() {
-        return requestLimitPeriod;
+    public Integer getSysLimit() {
+        return sysLimit;
     }
 
-    public void setRequestLimitPeriod(Integer requestLimitPeriod) {
-        this.requestLimitPeriod = requestLimitPeriod;
-    }
-
-    public Integer getDayLimit() {
-        return dayLimit;
-    }
-
-    public void setDayLimit(Integer dayLimit) {
-        this.dayLimit = dayLimit;
+    public void setSysLimit(Integer sysLimit) {
+        this.sysLimit = sysLimit;
     }
 
     public Boolean getLogRes() {
@@ -558,15 +533,6 @@ public class SysFunc implements java.io.Serializable {
 
     public void setChildren(List<SysFunc> children) {
         this.children = children;
-    }
-
-    @Transient
-    public String getUrlTypeName() {
-        if (urlType != null) {
-            return urlType.getName();
-        } else {
-            return null;
-        }
     }
 
     @Transient

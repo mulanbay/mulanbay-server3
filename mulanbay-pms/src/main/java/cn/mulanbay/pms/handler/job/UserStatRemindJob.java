@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 
+import static cn.mulanbay.pms.common.Constant.*;
+
 /**
  * 统计用户提醒的调度
  * 如果达到警告、告警值，往消息表写一条待发送记录
@@ -198,7 +200,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
          */
         String key = CacheKey.getKey(CacheKey.USER_STAT_NOTIFY, remind.getUserId().toString(), remind.getStat().getStatId().toString());
         //失效时间为通知周期的秒数，-5为了保证第二次通知时间点job能执行
-        cacheHandler.set(key, "123", bean.getDays() * 24 * 3600 - 5);
+        cacheHandler.set(key, "123", (int) (bean.getDays() * DAY_SECONDS - 5));
         //Step 4: 更新积分
         rewardPoint(remind.getStat(), false, messageId,content);
         //Step 5: 加入用户日历
@@ -261,9 +263,9 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
                 }
                 int rate = 1;
                 if (remind.getTriggerType() == TriggerType.MONTH) {
-                    rate = 30;
+                    rate = MONTH_DAY;
                 } else if (remind.getTriggerType() == TriggerType.WEEK) {
-                    rate = 7;
+                    rate = WEEK_DAY;
                 }
                 uc.setExpireTime(DateUtil.getDate(remind.getTriggerInterval() * rate));
                 uc.setBussIdentityKey(bussIdentityKey);

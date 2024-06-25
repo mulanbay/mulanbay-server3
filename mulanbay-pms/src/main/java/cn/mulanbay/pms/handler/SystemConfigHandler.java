@@ -96,7 +96,16 @@ public class SystemConfigHandler extends BaseHandler {
         logger.debug("初始化了" + urlMapSize + "条功能点记录");
     }
 
+    /**
+     * 单个刷新
+     * @param funcId
+     */
     public void reloadFunction(Long funcId){
+        if(funcId==null){
+            //全部刷新
+            this.reloadFunctions();
+            return;
+        }
         SysFunc func = baseService.getObject(SysFunc.class,funcId);
         if(func==null){
             logger.warn("找不到编号为{}的系统功能点",funcId);

@@ -47,7 +47,7 @@ public class UserStatHandler extends BaseHandler {
             return statService.getStatResult(un);
         }
         Long userId = un.getUserId();
-        String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), un.getStatId().toString());
+        String cacheKey = CacheKey.getKey(CacheKey.USER_STAT, userId.toString(), un.getStatId().toString());
         StatResultDTO nr = cacheHandler.get(cacheKey, StatResultDTO.class);
         if (nr == null) {
             nr = statService.getStatResult(un);
@@ -64,7 +64,7 @@ public class UserStatHandler extends BaseHandler {
      */
     public void cacheStatResult(StatResultDTO nr, int expireSeconds) {
         Long userId = nr.getUserStat().getUserId();
-        String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), nr.getUserStat().getStatId().toString());
+        String cacheKey = CacheKey.getKey(CacheKey.USER_STAT, userId.toString(), nr.getUserStat().getStatId().toString());
         cacheHandler.set(cacheKey, nr, expireSeconds);
     }
 
@@ -75,7 +75,7 @@ public class UserStatHandler extends BaseHandler {
      * @return
      */
     public Long deleteCache(Long userId) {
-        String cacheKeys = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), "*");
+        String cacheKeys = CacheKey.getKey(CacheKey.USER_STAT, userId.toString(), "*");
         return cacheHandler.deleteByPattern(cacheKeys);
     }
 
@@ -87,7 +87,7 @@ public class UserStatHandler extends BaseHandler {
      * @return
      */
     public boolean deleteCache(Long userId,Long statId) {
-        String cacheKey = CacheKey.getKey(CacheKey.USER_NOTIFY_STAT, userId.toString(), statId.toString());
+        String cacheKey = CacheKey.getKey(CacheKey.USER_STAT, userId.toString(), statId.toString());
         return cacheHandler.delete(cacheKey);
     }
 }

@@ -1,56 +1,92 @@
 package cn.mulanbay.pms.web.bean.req.auth.sysFunc;
 
 import cn.mulanbay.pms.persistent.enums.*;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class SysFuncForm {
     private Long funcId;
 
     @NotEmpty(message = "名称不能为空")
     private String funcName;
+
+    @NotEmpty(message = "请求方法不能为空")
     private String supportMethods;
 
     @NotEmpty(message = "URL地址不能为空")
     private String urlAddress;
-    private UrlType urlType;
+
+    @NotNull(message = "功能类型不能为空")
     private FunctionType funcType;
+
+    @NotNull(message = "菜单类型不能为空")
     private FunctionDataType funcDataType;
+
     private String imageName;
+
+    @NotNull(message = "父级节点不能为空")
     private Long parentId;
+
+    @NotNull(message = "状态不能为空")
     private CommonStatus status;
-    //针对什么类,查询使用
+
+    @NotEmpty(message = "绑定的类不能为空")
     private String beanName;
+
     //主键的域,查询使用
     private String idField;
     private IdFieldType idFieldType;
+
+    @NotNull(message = "排序号不能为空")
     private Integer orderIndex;
+
+    @NotNull(message = "是否记录日志不能为空")
     private Boolean doLog;
     //是否计入触发统计（因为有些是筛选条件，这些并不需要统计）
+    @NotNull(message = "是否计入触发统计不能为空")
     private Boolean triggerStat;
     //区分用户,有些公共的功能点不需要区分用户
+    @NotNull(message = "是否区分用户不能为空")
     private Boolean diffUser;
     //是否登录验证
+    @NotNull(message = "是否登录验证不能为空")
     private Boolean loginAuth;
     //是否授权认证
+    @NotNull(message = "是否授权认证不能为空")
     private Boolean permissionAuth;
     //是否IP认证
+    @NotNull(message = "是否IP认证不能为空")
     private Boolean ipAuth;
-    //是否自动登陆
+
+    @NotNull(message = "是否始终显示不能为空")
     private Boolean alwaysShow;
-    //是否请求限制
-    private Boolean requestLimit;
-    //限制周期
-    private Integer requestLimitPeriod;
-    //是否每天限制操作数(大于0说明要限制)
-    private Integer dayLimit;
+
+    @NotNull(message = "用户限流不能为空")
+    @Min(value = 0)
+    private Integer userPeriod;
+
+    /**
+     * 系统限制次数（每天次数）
+     */
+    @NotNull(message = "系统限流不能为空")
+    @Min(value = 0)
+    private Integer sysLimit;
     //记录返回数据
+    @NotNull(message = "是否记录返回数据不能为空")
     private Boolean logRes;
     //奖励积分(正为加，负为减)
+    @NotNull(message = "奖励积分不能为空")
     private Integer rewardPoint;
-    //错误代码定义，方便日志监控
+    //系统代码定义，方便日志监控
+    @NotNull(message = "系统代码定义不能为空")
     private Integer code;
     //是否树形统计
+    @NotNull(message = "是否树形统计不能为空")
     private Boolean treeStat;
+
+    @NotNull(message = "是否二次认证不能为空")
     private Boolean secAuth;
     //权限标识
     private String perms;
@@ -98,14 +134,6 @@ public class SysFuncForm {
 
     public void setUrlAddress(String urlAddress) {
         this.urlAddress = urlAddress;
-    }
-
-    public UrlType getUrlType() {
-        return urlType;
-    }
-
-    public void setUrlType(UrlType urlType) {
-        this.urlType = urlType;
     }
 
     public FunctionType getFuncType() {
@@ -236,28 +264,20 @@ public class SysFuncForm {
         this.alwaysShow = alwaysShow;
     }
 
-    public Boolean getRequestLimit() {
-        return requestLimit;
+    public Integer getUserPeriod() {
+        return userPeriod;
     }
 
-    public void setRequestLimit(Boolean requestLimit) {
-        this.requestLimit = requestLimit;
+    public void setUserPeriod(Integer userPeriod) {
+        this.userPeriod = userPeriod;
     }
 
-    public Integer getRequestLimitPeriod() {
-        return requestLimitPeriod;
+    public Integer getSysLimit() {
+        return sysLimit;
     }
 
-    public void setRequestLimitPeriod(Integer requestLimitPeriod) {
-        this.requestLimitPeriod = requestLimitPeriod;
-    }
-
-    public Integer getDayLimit() {
-        return dayLimit;
-    }
-
-    public void setDayLimit(Integer dayLimit) {
-        this.dayLimit = dayLimit;
+    public void setSysLimit(Integer sysLimit) {
+        this.sysLimit = sysLimit;
     }
 
     public Boolean getLogRes() {

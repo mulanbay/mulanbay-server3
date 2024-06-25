@@ -20,12 +20,15 @@ public class DBCleanJob extends AbstractBaseJob {
 
     @Override
     public TaskResult doTask() {
+        TaskResult tr = new TaskResult();
         DBCleanService dbCleanService = BeanFactoryUtil.getBean(DBCleanService.class);
         List<DBClean> list = dbCleanService.getActiveList();
         for (DBClean dc : list) {
             dbCleanService.exeClean(dc);
         }
-        return new TaskResult(JobResult.SUCCESS);
+        tr.setResult(JobResult.SUCCESS);
+        tr.setComment("共执行"+list.size()+"条数据库清理");
+        return tr;
     }
 
     @Override
