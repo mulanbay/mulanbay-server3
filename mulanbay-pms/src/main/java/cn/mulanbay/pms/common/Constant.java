@@ -125,7 +125,7 @@ public class Constant {
     /**
      * 一天的秒数
      */
-    public static final long DAY_SECONDS = 24*3600;
+    public static final int DAY_SECONDS = 24*3600;
 
     /**
      * 一天的毫秒数

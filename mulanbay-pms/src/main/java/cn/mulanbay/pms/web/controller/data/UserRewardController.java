@@ -84,7 +84,7 @@ public class UserRewardController extends BaseController {
         Long userId = deleteRequest.getUserId();
         for (String s : ss) {
             UserReward bean = baseService.getObject(beanClass,Long.parseLong(s));
-            String key = CacheKey.getKey(CacheKey.REWARD_POINT_LOCK, userId.toString());
+            String key = CacheKey.getKey(CacheKey.REWARD_LOCK, userId.toString());
             try {
                 boolean b = redisDistributedLock.lock(key, 5000L, 3, 20);
                 if (!b) {

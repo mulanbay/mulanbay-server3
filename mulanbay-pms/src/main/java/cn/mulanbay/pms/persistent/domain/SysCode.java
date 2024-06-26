@@ -71,7 +71,7 @@ public class SysCode implements Serializable {
     private Integer count;
 
     /**
-     * 周期(秒数)，默认是0，如果大于0表示一段时间内只会对一个用户只发送一次通知
+     * 周期(毫秒)，默认是0，如果大于0表示一段时间内只会对一个用户只发送一次通知
      */
     @Column(name = "user_period")
     private Integer userPeriod;

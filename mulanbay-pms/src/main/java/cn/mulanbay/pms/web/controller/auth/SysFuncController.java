@@ -59,9 +59,6 @@ public class SysFuncController extends BaseController {
     @Autowired
     CacheHandler cacheHandler;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
-
 
     /**
      * 功能点菜单树
@@ -278,21 +275,17 @@ public class SysFuncController extends BaseController {
         vo.setCacheData(cacheData);
         //用户限流
         String userLimitKey = CacheKey.getKey(CacheKey.REQUEST_USER_LIMIT,sf.getUrlAddress(),"*");
-        Set<String> userLimitKeys = redisTemplate.keys(cacheHandler.getFullKey(userLimitKey));
-        if(StringUtil.isNotEmpty(userLimitKeys)){
-            for(String key: userLimitKeys){
-                Date v = cacheHandler.get(key,Date.class);
-                vo.addUserLimit(key,v);
-            }
+        Set<String> userLimitKeys = cacheHandler.keys(userLimitKey);
+        for(String key: userLimitKeys){
+            Date v = cacheHandler.get(key,Date.class);
+            vo.addUserLimit(key,v);
         }
         //系统限流
         String sysLimitKey = CacheKey.getKey(CacheKey.REQUEST_SYS_LIMIT,sf.getUrlAddress(),"*");
-        Set<String> sysLimitKeys = redisTemplate.keys(cacheHandler.getFullKey(sysLimitKey));
-        if(StringUtil.isNotEmpty(sysLimitKeys)){
-            for(String key: sysLimitKeys){
-                Integer v = cacheHandler.get(key, Integer.class);
-                vo.addSysLimit(key,v);
-            }
+        Set<String> sysLimitKeys = cacheHandler.keys(sysLimitKey);
+        for(String key: sysLimitKeys){
+            Integer v = cacheHandler.get(key, Integer.class);
+            vo.addSysLimit(key,v);
         }
         return callback(vo);
     }

@@ -54,7 +54,7 @@ public class CacheController extends BaseController {
         caches = new ArrayList<CacheVo>();
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.LOGIN_TOKEN_KEY, "*")), "用户信息"));
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_LOGIN_FAIL, "*")), "用户登录失败"));
-        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, "*","*")), "系统代码限流"));
+        caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.USER_CODE_LIMIT, "*","*")), "系统代码限流"));
         //caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.SYS_FUNC), "功能点"));
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.ROLE_FUNC), "角色功能"));
         caches.add(new CacheVo(cacheHandler.getFullKey(CacheKey.getKey(CacheKey.SYS_CODE_COUNTS, "*")), "系统代码计数"));

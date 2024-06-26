@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,9 +20,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class CacheHandler extends BaseHandler  {
 
-    public static final int DEFAULT_EXPIRE_SECONDS = 300;
+    private static final int DEFAULT_EXPIRE_SECONDS = 300;
 
-    public static final int NO_EXPIRE = 0;
+    private static final int NO_EXPIRE = 0;
+
+    private  static final Set<String> EMPTY_SET = new HashSet<>(0);
 
     @Value("${mulanbay.namespace}")
     String namespace;
@@ -238,6 +241,15 @@ public class CacheHandler extends BaseHandler  {
         return redisTemplate.opsForValue().increment(getFullKey(key), n);
     }
 
+    /**
+     * 获取键集合
+     * @param pattern
+     * @return
+     */
+    public Set<String> keys(String pattern){
+        Set<String> keys = redisTemplate.keys(this.getFullKey(pattern));
+        return keys==null ? EMPTY_SET : keys;
+    }
     /**
      * 获取key的全路径
      *

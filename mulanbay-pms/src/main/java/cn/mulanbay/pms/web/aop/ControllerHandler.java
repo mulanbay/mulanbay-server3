@@ -27,7 +27,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Date;
 
-import static cn.mulanbay.pms.common.Constant.DAY_MILLS_SECONDS;
 import static cn.mulanbay.pms.common.Constant.DAY_SECONDS;
 
 /**
@@ -144,13 +143,13 @@ public class ControllerHandler {
             if (s != null) {
                 if (s.intValue() < sf.getSysLimit()) {
                     s = s + 1;
-                    cacheHandler.set(key, s, (int) DAY_SECONDS);
+                    cacheHandler.set(key, s,  DAY_SECONDS);
                 } else {
                     logger.warn("用户ID={},在当天请求{}过于频繁",userId,sf.getUrlAddress());
                     throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
                 }
             } else {
-                cacheHandler.set(key, 1, (int) DAY_SECONDS);
+                cacheHandler.set(key, 1, DAY_SECONDS);
             }
         }
     }

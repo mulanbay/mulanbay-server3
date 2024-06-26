@@ -113,10 +113,10 @@ public class MainController extends BaseController {
         //用户验证
         User user = authService.getUserByUsernameOrPhone(username);
         if (user == null) {
-            return callbackErrorCode(PmsCode.USER_NOTFOUND);
+            return callbackErrorCode(PmsCode.USER_NOT_FOUND);
         } else {
             if (user.getStatus() == UserStatus.DISABLE) {
-                return callbackErrorCode(PmsCode.USER_IS_STOP);
+                return callbackErrorCode(PmsCode.USER_DISABLE);
             }
             if (user.getExpireTime() != null && user.getExpireTime().before(new Date())) {
                 return callbackErrorCode(PmsCode.USER_EXPIRED);

@@ -63,7 +63,7 @@ public class RewardHandler extends BaseHandler {
      */
     public void reward(Long userId, int rewards, Long sourceId, BussSource bussSource, String remark, Long messageId) {
         threadPoolHandler.pushThread(() -> {
-            String key = CacheKey.getKey(CacheKey.REWARD_POINT_LOCK, String.valueOf(userId));
+            String key = CacheKey.getKey(CacheKey.REWARD_LOCK, String.valueOf(userId));
             boolean lock = false;
             try {
                 lock = distributedLock.lock(key, expire, retryTimes);

@@ -24,20 +24,39 @@ public class PmsCode {
      */
     public final static int SERVER_MANUAL_STOP = 9999;
 
-    public final static int FIELD_VALIDATE_ERROR = 10000;
+    /**
+     * 用户未找到
+     */
+    public final static int USER_NOT_FOUND = 10001;
 
-    public final static int USER_NOTFOUND = 10001;
+    /**
+     * 用户被禁用
+     */
+    public final static int USER_DISABLE = 10002;
 
-    public final static int USER_IS_STOP = 10002;
-
+    /**
+     * 用户过期
+     */
     public final static int USER_EXPIRED = 10003;
 
+    /**
+     * 用户未登录
+     */
     public final static int USER_NOT_LOGIN = 10004;
 
+    /**
+     * 用户的登录token异常
+     */
     public final static int USER_TOKEN_ERROR = 10005;
 
+    /**
+     * 用户密码错误
+     */
     public final static int USER_PASSWORD_ERROR = 10006;
 
+    /**
+     * 未授权操作
+     */
     public final static int USER_NOT_AUTH = 10007;
 
     public final static int EXECUTE_CMD_ERROR = 10008;
@@ -60,6 +79,9 @@ public class PmsCode {
 
     public final static int USER_SEC_AUTH_FAIL=10019;
 
+    /**
+     * 验证码错误
+     */
     public final static int USER_VERIFY_CODE_ERROR =10022;
 
     public final static int USER_LOGIN_FAMILY_FAIL =10023;
@@ -72,8 +94,14 @@ public class PmsCode {
 
     public final static int BEAN_GET_CACHE_ERROR =10027;
 
+    /**
+     * 系统锁定
+     */
     public final static int SYSTEM_LOCK =10028;
 
+    /**
+     * 系统解锁
+     */
     public final static int SYSTEM_UNLOCK =10029;
 
     /**
@@ -127,20 +155,17 @@ public class PmsCode {
     /**
      * 用户类 start
      **/
-
-    public static final int USER_SEC_AUTH_PHONE_NULL_ = 1010101;
-    public static final int USER_SEC_AUTH_EMAIL_NULL_ = 1010102;
-    public static final int USER_SEC_AUTH_WECHAT_NULL_ = 1010103;
+    public static final int USER_SEC_AUTH_PHONE_NULL = 1010101;
+    public static final int USER_SEC_AUTH_EMAIL_NULL = 1010102;
+    public static final int USER_SEC_AUTH_WECHAT_NULL = 1010103;
     public static final int USER_SEC_AUTH_CODE_NULL = 1010105;
     public static final int USER_SEC_AUTH_CODE_ERROR = 1010106;
-
 
     /** 用户 end **/
 
     /**
      * 用户行为类 start
      **/
-
     public static final int USER_BEHAVIOR_CONFIG_WITH_LEVEL_NOT_FOUND = 1010201;
     public static final int USER_BEHAVIOR_CONFIG_CHECK_ERROR = 1010202;
     public static final int USER_BEHAVIOR_CONFIG_NULL = 1010203;
@@ -157,20 +182,20 @@ public class PmsCode {
     /**
      * 消费类 start
      **/
-    public static final int UNSUPPORT_BUY_RECORD_GROUP_TYPE = 1030101;
+    public static final int UNSUPPORT_CONSUME_GROUP_TYPE = 1030101;
 
-    public static final int BUY_RECORD_GOODS_TYPE_NULL = 1030102;
+    public static final int CONSUME_GOODS_TYPE_NULL = 1030102;
 
     /** 消费类 end **/
 
     /**
      * 运动类 start
      **/
-    public static final int SPROT_MILESTONE_KM_MN_NULL = 1040101;
+    public static final int SPORT_MILESTONE_KM_MN_NULL = 1040101;
 
-    public static final int SPROT_MILESTONE_KM_NULL = 1040102;
+    public static final int SPORT_MILESTONE_KM_NULL = 1040102;
 
-    public static final int SPROT_MILESTONE_ORDER_INDEX_ERROR = 1040103;
+    public static final int SPORT_MILESTONE_ORDER_INDEX_ERROR = 1040103;
 
     /** 运动类 end **/
 
@@ -208,7 +233,7 @@ public class PmsCode {
 
     public static final int OPERATION_LOG_COMPARE_ID_VALUE_NULL = 1070102;
 
-    public static final int ERROR_CODE_NOT_DEFINED = 1070103;
+    public static final int SYS_CODE_NOT_DEFINED = 1070103;
 
     /** 日志类 end **/
 
@@ -264,7 +289,7 @@ public class PmsCode {
      **/
     public static final int DREAM_PLAN_VALUE_NULL = 1100101;
 
-    public static final int DREAM_FININSH_DATE_NULL = 1100102;
+    public static final int DREAM_FINISH_DATE_NULL = 1100102;
 
     /** 梦想类 end **/
 
@@ -308,9 +333,9 @@ public class PmsCode {
     public static final int REWARD_POINTS_DAILY_STAT = 1140101;
 
     /**
-     * 用户提醒类统计
+     * 用户统计
      */
-    public static final int USER_NOTIFY_STAT = 1140102;
+    public static final int USER_STAT = 1140102;
 
     /**
      * 用户计划统计(未完成)

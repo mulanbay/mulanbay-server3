@@ -11,6 +11,18 @@ public class CommonResult {
 
     private String info;
 
+    public CommonResult() {
+    }
+
+    public CommonResult(String info) {
+        this.info = info;
+    }
+
+    public CommonResult(int code, String info) {
+        this.code = code;
+        this.info = info;
+    }
+
     public int getCode() {
         return code;
     }

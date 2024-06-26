@@ -117,9 +117,9 @@ public class SportMilestoneController extends BaseController {
     private void checkSportMilestone(SportMilestone bean) {
         //1： 判断里程和时间
         if (bean.getValue() == null && bean.getDuration() == null) {
-            throw new ApplicationException(PmsCode.SPROT_MILESTONE_KM_MN_NULL);
+            throw new ApplicationException(PmsCode.SPORT_MILESTONE_KM_MN_NULL);
         } else if (bean.getValue() == null && bean.getDuration() != null) {
-            throw new ApplicationException(PmsCode.SPROT_MILESTONE_KM_NULL);
+            throw new ApplicationException(PmsCode.SPORT_MILESTONE_KM_NULL);
         }
     }
 

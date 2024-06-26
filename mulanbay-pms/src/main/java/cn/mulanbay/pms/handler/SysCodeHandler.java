@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+import static cn.mulanbay.pms.common.Constant.DAY_SECONDS;
+
 /**
  * 系统代码处理
  *
@@ -149,7 +151,7 @@ public class SysCodeHandler extends BaseHandler {
             //重新归零
             count = 0;
         }
-        cacheHandler.set(key,count,24*3600);
+        cacheHandler.set(key,count,DAY_SECONDS);
     }
 
     /**

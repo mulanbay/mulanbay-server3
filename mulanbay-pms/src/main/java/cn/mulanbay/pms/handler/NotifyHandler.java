@@ -96,7 +96,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         SysCode ec = sysCodeHandler.getSysCode(code);
         if (ec == null) {
             logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置",
-                    PmsCode.ERROR_CODE_NOT_DEFINED);
+                    PmsCode.SYS_CODE_NOT_DEFINED);
             return null;
         }
         sysCodeHandler.updateCount(code);
@@ -139,7 +139,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             SysCode ec = sysCodeHandler.getSysCode(code);
             if (ec == null) {
                 logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
-                        PmsCode.ERROR_CODE_NOT_DEFINED);
+                        PmsCode.SYS_CODE_NOT_DEFINED);
                 ec = sysCodeHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
             sysCodeHandler.updateCount(code);
@@ -180,10 +180,10 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         if (ec.getUserPeriod() <= 0) {
             return true;
         } else {
-            String key = CacheKey.getKey(CacheKey.USER_ERROR_CODE_LIMIT, userId.toString(), ec.getCode().toString());
+            String key = CacheKey.getKey(CacheKey.USER_CODE_LIMIT, ec.getCode().toString(),userId.toString());
             Integer n = cacheHandler.get(key, Integer.class);
             if (n == null) {
-                cacheHandler.set(key, 0, ec.getUserPeriod());
+                cacheHandler.setMS(key, 0, ec.getUserPeriod());
                 return true;
             } else {
                 //不通过，不用再发

@@ -95,7 +95,7 @@ public class DreamController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid DreamForm form) {
         if (form.getStatus() == DreamStatus.FINISHED && form.getFinishDate() == null) {
-            return callbackErrorCode(PmsCode.DREAM_FININSH_DATE_NULL);
+            return callbackErrorCode(PmsCode.DREAM_FINISH_DATE_NULL);
         }
         Dream dbData = baseService.getObject(beanClass,form.getDreamId());
         DreamDelay delay = null;

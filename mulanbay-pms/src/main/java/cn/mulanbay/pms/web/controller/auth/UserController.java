@@ -317,10 +317,10 @@ public class UserController extends BaseController {
             return callbackErrorCode(PmsCode.USER_PASSWORD_ERROR);
         }
         if (eui.getSecAuthType() == AuthType.SMS && StringUtil.isEmpty(eui.getPhone())) {
-            return callbackErrorCode(PmsCode.USER_SEC_AUTH_PHONE_NULL_);
+            return callbackErrorCode(PmsCode.USER_SEC_AUTH_PHONE_NULL);
         }
         if (eui.getSecAuthType() == AuthType.EMAIL && StringUtil.isEmpty(eui.getEmail())) {
-            return callbackErrorCode(PmsCode.USER_SEC_AUTH_EMAIL_NULL_);
+            return callbackErrorCode(PmsCode.USER_SEC_AUTH_EMAIL_NULL);
         }
         UserSet us = baseService.getObject(UserSet.class,eui.getUserId());
         user.setUsername(eui.getUsername());
@@ -378,11 +378,8 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/initUserData", method = RequestMethod.POST)
     public ResultBean initUserData(@RequestBody @Valid UserDataForm ucr) {
-        threadPoolHandler.pushThread(new Runnable() {
-            @Override
-            public void run() {
-                //dataService.initUserData(ucr.getUserId());
-            }
+        threadPoolHandler.pushThread(() -> {
+            //dataService.initUserData(ucr.getUserId());
         });
         return callback(null);
     }

@@ -189,3 +189,6 @@ CHANGE COLUMN `day_limit` `sys_limit` INT NOT NULL DEFAULT '0' ;
 
 #更新日历
 UPDATE user_calendar SET buss_identity_key = replace (`buss_identity_key`,'null','') WHERE calendar_id>0;
+
+#更新系统代码表
+update sys_code set user_period=user_period*1000 where user_period>0 and user_period<1000 and code>0;

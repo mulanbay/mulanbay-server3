@@ -12,14 +12,14 @@ import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.log.sysCode.SysCodeForm;
 import cn.mulanbay.pms.web.bean.req.log.sysCode.SysCodeSH;
+import cn.mulanbay.pms.web.bean.res.log.sysCode.SysCodeCacheInfoVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * 系统代码
@@ -140,12 +140,18 @@ public class SysCodeController extends BaseController {
      */
     @RequestMapping(value = "/cacheInfo", method = RequestMethod.GET)
     public ResultBean cacheInfo(@Valid @RequestParam(name = "code") Integer code) {
-        Map map = new HashMap<>();
+        SysCodeCacheInfoVo vo = new SysCodeCacheInfoVo();
         String key1 = CacheKey.getKey(CacheKey.SYS_CODE_COUNTS,code.toString());
-        map.put("batchCounts",cacheHandler.incre(key1,0));
+        vo.setBatchCounts(cacheHandler.incre(key1,0));
         String key2 = sysCodeHandler.getLimitKey(code);
-        map.put("limitCounts",cacheHandler.get(key2,Integer.class));
-        return callback(map);
+        vo.setLimitCounts(cacheHandler.get(key2,Integer.class));
+        String limitKey = CacheKey.getKey(CacheKey.USER_CODE_LIMIT, code.toString(),"*");
+        Set<String> userLimitKeys = cacheHandler.keys(limitKey);
+        for(String key: userLimitKeys){
+            Integer v = cacheHandler.get(key,Integer.class);
+            vo.addUserLimit(key,v);
+        }
+        return callback(vo);
     }
 
 }

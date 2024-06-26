@@ -280,7 +280,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(PmsCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOT_FOUND);
             }
             sf.setUserId(user.getUserId());
         }
@@ -318,7 +318,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(PmsCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOT_FOUND);
             }
             sf.setUserId(user.getUserId());
         }
@@ -346,7 +346,7 @@ public class OperLogController extends BaseController {
         if(StringUtil.isNotEmpty(sf.getUsername())){
             User user = authService.getUserByUsernameOrPhone(sf.getUsername());
             if (user == null) {
-                return callbackErrorCode(PmsCode.USER_NOTFOUND);
+                return callbackErrorCode(PmsCode.USER_NOT_FOUND);
             }
             sf.setUserId(user.getUserId());
         }
