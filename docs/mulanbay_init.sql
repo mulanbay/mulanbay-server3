@@ -1812,6 +1812,25 @@ LOCK TABLES `music_practice_detail` WRITE;
 /*!40000 ALTER TABLE `music_practice_detail` DISABLE KEYS */;
 /*!40000 ALTER TABLE `music_practice_detail` ENABLE KEYS */;
 UNLOCK TABLES;
+--
+-- Table structure for table `note`
+--
+
+DROP TABLE IF EXISTS `note`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `note` (
+  `note_id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `content` varchar(1000) COLLATE utf8mb4_general_ci NOT NULL,
+  `notify_date` datetime DEFAULT NULL,
+  `remark` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_time` datetime NOT NULL,
+  `modify_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`note_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `oper_log`
