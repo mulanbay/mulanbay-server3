@@ -31,7 +31,8 @@ public enum BussSource {
     WORK_OVERTIME(19, "加班", WorkOvertime.class),
     SLEEP(20, "睡眠", Sleep.class),
     BUSINESS_TRIP(21, "出差", BusinessTrip.class),
-    OPER_LOG(22, "操作日志", OperLog.class);
+    OPER_LOG(22, "操作日志", OperLog.class),
+    NOTE(23, "便签", Note.class);
 
     private int value;
 

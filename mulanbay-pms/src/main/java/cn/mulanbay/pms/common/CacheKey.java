@@ -21,7 +21,7 @@ public class CacheKey {
     public static final String USER_PLAN_NOTIFY = "user:planNotify:{0}:{1}";
 
     /**
-     * 用户提醒配置（用户编号：statId）
+     * 用户统计提醒配置（用户编号：statId）
      */
     public static final String USER_STAT_NOTIFY = "user:statNotify:{0}:{1}";
 

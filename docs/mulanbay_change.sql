@@ -192,3 +192,16 @@ UPDATE user_calendar SET buss_identity_key = replace (`buss_identity_key`,'null'
 
 #更新系统代码表
 update sys_code set user_period=user_period*1000 where user_period>0 and user_period<1000 and code>0;
+
+#便签
+CREATE TABLE `mulanbay_db`.`note` (
+`note_id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+`user_id` BIGINT(20) NOT NULL,
+`title` VARCHAR(100) NULL,
+`content` VARCHAR(1000) NOT NULL,
+`notify_date` DATETIME NULL,
+`remark` VARCHAR(200) NULL,
+`created_time` DATETIME NOT NULL,
+`modify_time` DATETIME NULL,
+PRIMARY KEY (`note_id`));
+

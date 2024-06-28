@@ -22,6 +22,11 @@ public class CacheVo {
     private Object cacheValue = "";
 
     /**
+     * 超时时间
+     */
+    private Long expire;
+
+    /**
      * 备注
      */
     private String remark = "";
@@ -63,6 +68,14 @@ public class CacheVo {
 
     public void setCacheValue(Object cacheValue) {
         this.cacheValue = cacheValue;
+    }
+
+    public Long getExpire() {
+        return expire;
+    }
+
+    public void setExpire(Long expire) {
+        this.expire = expire;
     }
 
     public String getRemark() {

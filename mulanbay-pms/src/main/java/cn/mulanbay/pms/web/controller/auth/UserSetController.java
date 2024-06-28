@@ -4,7 +4,7 @@ import cn.mulanbay.pms.persistent.domain.UserSet;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.auth.user.UserSetForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ public class UserSetController extends BaseController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public ResultBean get(UserCommonFrom ucf) {
+    public ResultBean get(UserCommonForm ucf) {
         UserSet bean = baseService.getObject(beanClass,ucf.getUserId());
         return callback(bean);
     }

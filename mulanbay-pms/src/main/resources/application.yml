@@ -223,6 +223,9 @@ mulanbay:
     tag:
       #词语统计时的分词数
       num: 5
+  note:
+    #便签日历失效天数
+    expireDays: 7
   user:
     level:
       #用户级别评定统计间隔区间天数

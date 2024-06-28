@@ -7,7 +7,7 @@ import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.FastMenuService;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.auth.fastMenu.FastMenuForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
@@ -47,7 +47,7 @@ public class FastMenuController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultBean list(UserCommonFrom ucr) {
+    public ResultBean list(UserCommonForm ucr) {
         List<FastMenuDTO> list = fastMenuService.selectFastMenuList(ucr.getUserId());
         return callback(list);
     }

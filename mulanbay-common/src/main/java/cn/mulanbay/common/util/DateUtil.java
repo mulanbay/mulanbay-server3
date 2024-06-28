@@ -511,4 +511,17 @@ public class DateUtil {
 		return dd;
 	}
 
+	/**
+	 * 是否同一天
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static boolean isSame(Date date1, Date date2) {
+		if(date1==null||date2==null){
+			return false;
+		}
+		long n = date1.getTime()-date2.getTime();
+		return n==0L;
+	}
 }

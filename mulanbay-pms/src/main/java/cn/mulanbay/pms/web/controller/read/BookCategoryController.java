@@ -9,7 +9,7 @@ import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.BookCategory;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.req.read.category.BookCategoryForm;
 import cn.mulanbay.pms.web.bean.req.read.category.BookCategorySH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
@@ -39,7 +39,7 @@ public class BookCategoryController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(UserCommonFrom scts) {
+    public ResultBean tree(UserCommonForm scts) {
         try {
             BookCategorySH sf = new BookCategorySH();
             sf.setUserId(scts.getUserId());

@@ -13,7 +13,7 @@ import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.commonData.CommonDataTypeForm;
 import cn.mulanbay.pms.web.bean.req.commonData.CommonDataTypeSH;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
@@ -96,7 +96,7 @@ public class CommonDataTypeController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/groupNameTree", method = RequestMethod.GET)
-    public ResultBean groupNameTree(UserCommonFrom ucm) {
+    public ResultBean groupNameTree(UserCommonForm ucm) {
         List<String> gtList = commonDataService.getTypeGroupNameList(ucm.getUserId());
         List<TreeBean> list = new ArrayList<TreeBean>();
         for (String ng : gtList) {

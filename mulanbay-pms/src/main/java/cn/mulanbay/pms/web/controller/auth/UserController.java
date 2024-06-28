@@ -23,7 +23,7 @@ import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.auth.user.*;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.auth.user.UserProfileVo;
 import cn.mulanbay.pms.web.controller.BaseController;
@@ -390,7 +390,7 @@ public class UserController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/getResidentCity", method = RequestMethod.GET)
-    public ResultBean getResidentCity(UserCommonFrom ucr) {
+    public ResultBean getResidentCity(UserCommonForm ucr) {
         UserSet us = baseService.getObject(UserSet.class,ucr.getUserId());
         return callback(us.getResidentCity());
     }

@@ -26,7 +26,7 @@ import cn.mulanbay.pms.util.IPUtil;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.req.main.LoginForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.req.main.UserGeneralStatSH;
 import cn.mulanbay.pms.web.bean.res.main.GeneralStatVo;
 import cn.mulanbay.pms.web.bean.res.main.MyInfoVo;
@@ -175,7 +175,7 @@ public class MainController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ResultBean logout(UserCommonFrom uc) {
+    public ResultBean logout(UserCommonForm uc) {
         tokenHandler.deleteLoginUser(request);
         if (uc.getUserId() != null) {
             authService.deleteLastLoginToken(uc.getUserId());

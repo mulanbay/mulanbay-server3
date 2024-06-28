@@ -8,7 +8,7 @@ import cn.mulanbay.common.aop.BindUser;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-public class UserCommonFrom implements BindUser {
+public class UserCommonForm implements BindUser {
 
     private Long userId;
 

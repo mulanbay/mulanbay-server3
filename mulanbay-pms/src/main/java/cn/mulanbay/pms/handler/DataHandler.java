@@ -51,6 +51,7 @@ public class DataHandler extends BaseHandler {
             case OPERATION -> this.setOperationData(bean, (OperLog) o);
             case EXERCISE -> this.setExerciseData(bean, (Exercise) o);
             case EXPERIENCE -> this.setExperienceData(bean, (Experience) o);
+            case NOTE -> this.setNoteData(bean, (Note) o);
         }
         return bean;
     }
@@ -140,5 +141,18 @@ public class DataHandler extends BaseHandler {
         bean.setBussDay(us.getStartDate());
         bean.setCreatedTime(us.getCreatedTime());
         bean.setModifyTime(us.getModifyTime());
+    }
+
+    /**
+     * 便签
+     * @param bean
+     * @param note
+     */
+    private void setNoteData(CommonDataBean bean, Note note){
+        bean.setTitle(note.getTitle());
+        bean.setContent(note.getContent());
+        bean.setBussDay(note.getNotifyDate());
+        bean.setCreatedTime(note.getCreatedTime());
+        bean.setModifyTime(note.getModifyTime());
     }
 }

@@ -2,7 +2,9 @@ package cn.mulanbay.pms.web.controller.system;
 
 import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.req.system.cache.DeleteCacheForm;
+import cn.mulanbay.pms.web.bean.res.NameValueVo;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieDetailData;
@@ -110,7 +112,7 @@ public class CacheController extends BaseController {
 
     @RequestMapping(value = "/getCacheKeys", method = RequestMethod.GET)
     public ResultBean getCacheKeys(@RequestParam(name = "cacheName") String cacheName) {
-        Set<String> cacheKeys = redisTemplate.keys(cacheName);
+        Set<String> cacheKeys = cacheHandler.keys(cacheName);
         return callback(cacheKeys);
     }
 
@@ -144,7 +146,7 @@ public class CacheController extends BaseController {
      */
     @RequestMapping(value = "/deleteCacheName", method = RequestMethod.POST)
     public ResultBean deleteCacheName(@RequestBody @Valid DeleteCacheForm dcf) {
-        Collection<String> cacheKeys = redisTemplate.keys(dcf.getCacheName());
+        Collection<String> cacheKeys = cacheHandler.keys(dcf.getCacheName());
         Long n = redisTemplate.delete(cacheKeys);
         return callback(n);
     }
@@ -155,9 +157,65 @@ public class CacheController extends BaseController {
      */
     @RequestMapping(value = "/deleteAll", method = RequestMethod.POST)
     public ResultBean deleteAll() {
-        Collection<String> cacheKeys = redisTemplate.keys("*");
+        Collection<String> cacheKeys = cacheHandler.keys("*");
         Long n = redisTemplate.delete(cacheKeys);
         return callback(n);
+    }
+
+    /**
+     * 我的所有key
+     * @return
+     */
+    @RequestMapping(value = "/myList", method = RequestMethod.GET)
+    public ResultBean myList(UserCommonForm form) {
+        Set<String> cacheKeys = this.getMyKeys(form.getUserId());
+        List<CacheVo> list = new ArrayList<>();
+        for(String key :cacheKeys){
+            Object v = redisTemplate.opsForValue().get(key);
+            CacheVo vo = new CacheVo();
+            vo.setCacheKey(key);
+            vo.setCacheValue(v);
+            Long expire = redisTemplate.getExpire(key);
+            vo.setExpire(expire);
+            list.add(vo);
+        }
+        return callback(list);
+    }
+
+    /**
+     * 清空我的所有key
+     * @return
+     */
+    @RequestMapping(value = "/clearMe", method = RequestMethod.POST)
+    public ResultBean clearMe(UserCommonForm form) {
+        Set<String> cacheKeys = this.getMyKeys(form.getUserId());
+        Long n = redisTemplate.delete(cacheKeys);
+        return callback(n);
+    }
+
+    /**
+     * 我的key列表
+     *
+     * @param userId
+     * @return
+     */
+    private Set<String> getMyKeys(Long userId){
+        String uid = userId.toString();
+        Set<String> cacheKeys = new HashSet<>();
+        cacheKeys.add(CacheKey.getKey(CacheKey.USER_TODAY_CALENDAR_COUNTS,uid));
+        cacheKeys.addAll(cacheHandler.keys(CacheKey.getKey(CacheKey.USER_PLAN_NOTIFY,uid,"*")));
+        cacheKeys.addAll(cacheHandler.keys(CacheKey.getKey(CacheKey.USER_STAT_NOTIFY,uid,"*")));
+        cacheKeys.add(CacheKey.getKey(CacheKey.REWARD_LOCK,uid));
+        cacheKeys.add(CacheKey.getKey(CacheKey.USER_CURRENT_POINTS,uid));
+        cacheKeys.addAll(cacheHandler.keys(CacheKey.getKey(CacheKey.USER_CONTINUE_OP,uid,"*")));
+        cacheKeys.addAll(cacheHandler.keys(CacheKey.getKey(CacheKey.USER_STAT,uid,"*")));
+        cacheKeys.add(CacheKey.getKey(CacheKey.USER_LOGIN_FAIL,uid));
+        cacheKeys.addAll(cacheHandler.keys(CacheKey.getKey(CacheKey.USER_CODE_LIMIT,"*",uid)));
+        cacheKeys.add(CacheKey.getKey(CacheKey.USER_LATEST_MESSAGE,uid));
+        cacheKeys.add(CacheKey.getKey(CacheKey.USER_LATEST_SCORE,uid));
+        cacheKeys.add(CacheKey.getKey(CacheKey.CONSUME_CACHE_QUEUE,uid));
+        cacheKeys.add(CacheKey.getKey(CacheKey.GOODS_TYPE_MATCH_LIST,uid));
+        return cacheKeys;
     }
 
 }

@@ -10,7 +10,7 @@ import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.Company;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.main.UserCommonFrom;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.req.work.company.CompanyForm;
 import cn.mulanbay.pms.web.bean.req.work.company.CompanySH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
@@ -38,7 +38,7 @@ public class CompanyController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/tree")
-    public ResultBean tree(UserCommonFrom cts) {
+    public ResultBean tree(UserCommonForm cts) {
         try {
             CompanySH sf = new CompanySH();
             sf.setPage(PageRequest.NO_PAGE);
