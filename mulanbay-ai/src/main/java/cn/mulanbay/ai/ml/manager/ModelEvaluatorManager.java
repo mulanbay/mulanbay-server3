@@ -31,6 +31,9 @@ public class ModelEvaluatorManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelEvaluatorManager.class);
 
+    /**
+     * 模型文件Map
+     */
     private static Map<String, Evaluator> evaluatorMap = new ConcurrentHashMap<String, Evaluator>();
 
     /**
@@ -63,8 +66,7 @@ public class ModelEvaluatorManager {
     public Evaluator createEvaluator(String folder,String moduleFile){
         try {
             if(StringUtil.isEmpty(folder)||StringUtil.isEmpty(moduleFile)){
-                logger.warn("{} 模型文件为空，无法进行初始化");
-                logger.warn("modulePath:{},moduleFile:{}",folder,moduleFile);
+                logger.warn("模型文件为空，无法进行初始化,modulePath:{},moduleFile:{}",folder,moduleFile);
                 return null;
             }
             logger.debug("init Evaluator with moduleFile:{}",moduleFile);
@@ -97,6 +99,10 @@ public class ModelEvaluatorManager {
         return mf.getFileName();
     }
 
+    /**
+     * 初始化
+     * 如果模型文件加载处理未配置则采用本地文件配置处理
+     */
     @PostConstruct
     public void initModuleFiles(){
         if(this.modelHandle==null){
@@ -115,7 +121,6 @@ public class ModelEvaluatorManager {
                 for(ModelFile mf : list){
                     if(!mf.getDu()){
                         //只有不区分用户的才会初始化
-
                     }
                 }
             }
@@ -143,8 +148,9 @@ public class ModelEvaluatorManager {
 
     /**
      * 初始化评估器
-     *
+     * @param code
      * @param modeFile
+     * @return
      */
     public synchronized boolean initEvaluator(String code,String modeFile){
         Evaluator evaluator = this.createEvaluator(modelPath,modeFile);

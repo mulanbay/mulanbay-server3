@@ -174,9 +174,9 @@ public class ConsumeHandler extends BaseHandler {
      */
     private String extractTags(String name){
         //获取关键字
-        List<String> keywords = nlpProcessor.extractKeyword(name,tagNum);
-        String tags= keywords.stream().map(String::valueOf).collect(Collectors.joining(","));
-        return tags;
+        //List<String> keywords = nlpProcessor.extractKeyword(name,tagNum);
+        List<String> keywords = nlpProcessor.nlpSegmentN(name);
+        return keywords.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
     /**

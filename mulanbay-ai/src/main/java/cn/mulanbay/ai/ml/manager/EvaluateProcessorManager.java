@@ -25,4 +25,5 @@ public class EvaluateProcessorManager {
     public void setProcessorList(List<AbstractEvaluateProcessor> processorList) {
         this.processorList = processorList;
     }
+
 }

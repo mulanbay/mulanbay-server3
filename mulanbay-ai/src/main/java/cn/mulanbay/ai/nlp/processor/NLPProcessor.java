@@ -3,12 +3,14 @@ package cn.mulanbay.ai.nlp.processor;
 import cn.mulanbay.business.handler.BaseHandler;
 import com.hankcs.hanlp.seg.common.Term;
 import me.xiaosheng.chnlp.AHANLP;
+import me.xiaosheng.chnlp.seg.POSFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -74,6 +76,24 @@ public class NLPProcessor extends BaseHandler {
     }
 
     /**
+     * 通过NLP分词获得名称列表
+     * @param content
+     * @return
+     */
+    public List<String> nlpSegmentN(String content) {
+        List<String> res = new ArrayList<>();
+        List<Term> nlpSegResult = this.nlpSegment(content);
+        // 过滤标点
+        POSFilter.removePunc(nlpSegResult);
+        // 保留名词
+        POSFilter.selectPOS(nlpSegResult, Arrays.asList("n", "ns", "nr", "nt", "nz"));
+        for(Term t : nlpSegResult){
+            res.add(t.word);
+        }
+        return res;
+    }
+
+    /**
      * TextRank 摘取关键词
      * extractKeyword 函数通过第二个参数设定返回的关键词个数。内部通过 TextRank 算法计算每个词语的 Rank 值，并按 Rank 值降序排列，提取出前面的几个作为关键词
      *
@@ -85,7 +105,7 @@ public class NLPProcessor extends BaseHandler {
             num = 5;
         }
         List<String> nlpSegResult = AHANLP.extractKeyword(content,num);
-        logger.debug("NLP分词结果：" + nlpSegResult.toString());
+        //logger.debug("NLP分词结果：" + nlpSegResult.toString());
         return nlpSegResult;
     }
 
