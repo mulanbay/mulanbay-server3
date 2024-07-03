@@ -39,6 +39,10 @@ mulanbay:
     bean:
       #通用bean的失效时间(秒)
       expires: 300
+      #修改类型是否同步
+      syncEdit: false
+      #删除类型是否同步
+      syncDelete: false
     config:
       #缓存配置是否采用内存(false表示用redis)
       byMemory: false

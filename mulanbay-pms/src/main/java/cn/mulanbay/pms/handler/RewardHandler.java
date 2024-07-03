@@ -3,7 +3,6 @@ package cn.mulanbay.pms.handler;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.pms.common.CacheKey;
-import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.service.UserRewardService;
 import org.slf4j.Logger;
@@ -42,9 +41,6 @@ public class RewardHandler extends BaseHandler {
     ThreadPoolHandler threadPoolHandler;
 
     @Autowired
-    LogHandler logHandler;
-
-    @Autowired
     DistributedLock distributedLock;
 
     public RewardHandler() {
@@ -75,7 +71,6 @@ public class RewardHandler extends BaseHandler {
                 userRewardService.updateUserPoint(userId, rewards, sourceId, bussSource, remark, messageId);
             } catch (Exception e) {
                 logger.error("更新用户ID=" + userId + "积分异常", e);
-                logHandler.addSysLog("更新用户积分锁异常", "更新用户积分锁异常,key=" + key, PmsCode.USER_REWARD_UPDATE_ERROR);
             } finally {
                 if (lock) {
                     distributedLock.releaseLock(key);
