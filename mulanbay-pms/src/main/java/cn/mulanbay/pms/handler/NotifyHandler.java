@@ -45,6 +45,12 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     String defaultExpectSendTime;
 
     /**
+     * 最后一个消息的失效时间（秒）
+     */
+    @Value("${mulanbay.notify.message.lastMsgExpires:7200}")
+    int lastMsgExpires;
+
+    /**
      * 是否需要提醒表单验证类的系统代码
      */
     @Value("${mulanbay.notify.message.validateError}")
@@ -77,14 +83,14 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     }
 
     /**
-     * 添加通知消息
+     * 推送消息
      *
      * @param message
      */
-    private void addNotifyMessage(Message message) {
+    private void pushMessage(Message message) {
         //加入到最新的一条消息(两小时有效)
         String key = CacheKey.getKey(CacheKey.USER_LATEST_MESSAGE, message.getUserId().toString());
-        cacheHandler.set(key, message, 7200);
+        cacheHandler.set(key, message, lastMsgExpires);
         redisDelayQueueHandler.addMessage(message);
     }
 
@@ -97,7 +103,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param userId
      * @param notifyTime
      */
-    public Long addNotifyMessage(int code, String title, String content, Long userId, Date notifyTime) {
+    public Long addMessage(int code, String title, String content, Long userId, Date notifyTime) {
         SysCode ec = sysCodeHandler.getSysCode(code);
         if (ec == null) {
             logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置",
@@ -110,15 +116,20 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         if (expectSendTime == null) {
             return null;
         }
-        Message message = this.createUserMessage(ec, userId, expectSendTime, title, content, ec.getMobileUrl(), null);
+        Message message = this.createMessage(ec, userId, expectSendTime, title, content, ec.getMobileUrl(), null);
         //因为用户日历和用户积分奖励都需要这个messageId，所以只能先保存。另外一种方法可以在UserMessage表中新增一个uuid字段来解决
         baseService.saveObject(message);
-        this.addNotifyMessage(message);
+        this.pushMessage(message);
         return message.getMsgId();
     }
 
-
-
+    /**
+     * 增加消息，并根据code配置通知用户
+     * @param code
+     * @param title
+     * @param content
+     * @param notifyTime
+     */
     public void addMessageToNotifier(int code, String title, String content, Date notifyTime) {
         this.addMessageToNotifier(code, title, content, notifyTime, null, null);
     }
@@ -135,7 +146,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
      * @param content
      * @param notifyTime
      */
-    public void addMessageToNotifier(int code, String title, String content, Date notifyTime, String url, String remark) {
+    private void addMessageToNotifier(int code, String title, String content, Date notifyTime, String url, String remark) {
         try {
             //表单验证类的跳过
             if (!notifyValidateError && code == FORM_VALID_ERROR) {
@@ -163,8 +174,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
                 //限流判断
                 boolean check = this.checkCodeLimit(ec, smu.getUserId());
                 if (check) {
-                    Message ssm = this.createUserMessage(ec, smu.getUserId(), expectSendTime, title, content, url, remark);
-                    this.addNotifyMessage(ssm);
+                    Message ssm = this.createMessage(ec, smu.getUserId(), expectSendTime, title, content, url, remark);
+                    this.pushMessage(ssm);
                 } else {
                     logger.debug("code[" + ec.getCode() + "],userId[" + smu.getUserId() + "]触发限流，不发送");
                 }
@@ -197,7 +208,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         }
     }
 
-    private Message createUserMessage(SysCode ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
+    private Message createMessage(SysCode ec, Long userId, Date expectSendTime, String title, String content, String url, String remark) {
         Message message = new Message();
         message.setExpectSendTime(expectSendTime);
         message.setUserId(userId);
@@ -212,9 +223,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
         message.setUrl(url);
         message.setRemark(remark);
         message.setSendStatus(MessageSendStatus.UN_SEND);
-        if (message.getNodeId() == null) {
-            message.setNodeId(nodeId);
-        }
+        message.setNodeId(nodeId);
         return message;
     }
 
@@ -245,13 +254,13 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     /**
      * 调度的消息通知
      *
-     * @param taskTriggerId
+     * @param triggerId
      * @param code          系统代码
      * @param title
      * @param message
      */
     @Override
-    public void notifyMessage(Long taskTriggerId, int code, String title, String message) {
+    public void notifyMessage(Long triggerId, int code, String title, String message) {
         //todo 后期可以通过taskTriggerId来选择通知给谁
         //发消息
         this.addMessageToNotifier(code, title, message, null, null, null);

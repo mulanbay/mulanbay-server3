@@ -87,7 +87,7 @@ public class DietVarietyStatJob extends AbstractBaseJob {
                 String title = dietTypeName + "多样性统计";
                 String ds = DateUtil.getFormatDate(startDate, DateUtil.FormatDay1) + "~" + DateUtil.getFormatDate(endDate, DateUtil.FormatDay1);
                 String content = ds + dietTypeName + "的重复度为:" + sv + "%";
-                notifyHandler.addNotifyMessage(PmsCode.DIET_VARIETY_STAT, title, content,
+                notifyHandler.addMessage(PmsCode.DIET_VARIETY_STAT, title, content,
                         userId, null);
             }
             //加入统计历史

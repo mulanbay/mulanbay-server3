@@ -64,14 +64,14 @@ public class TreadDrugRemindJob extends AbstractBaseRemindJob {
                 String title = "[" + DateUtil.getFormatDate(bussDay, DateUtil.FormatDay1 + "]用药次数没达到要求");
                 String content = "药品[" + treatDrug.getDrugName() + "]在[" + DateUtil.getFormatDate(bussDay, DateUtil.FormatDay1 + "]用药次数没达到要求," +
                         "应该要[" + treatDrug.getPerTimes().longValue() + "]次,实际只有[" + yesterdayCount + "]次");
-                notifyHandler.addNotifyMessage(PmsCode.USER_DRUG_REMIND_STAT, title, content,
+                notifyHandler.addMessage(PmsCode.USER_DRUG_REMIND_STAT, title, content,
                         treatDrug.getUserId(), remindNotifyTime);
             }
         }
         //今天需要用药
         String title = "药品[" + treatDrug.getDrugName() + "]用药提醒";
         String content = "药品[" + treatDrug.getDrugName() + "]今天需要用药[" + treatDrug.getPerTimes().longValue() + "]次";
-        notifyHandler.addNotifyMessage(PmsCode.USER_DRUG_REMIND_STAT, title, content,
+        notifyHandler.addMessage(PmsCode.USER_DRUG_REMIND_STAT, title, content,
                 treatDrug.getUserId(), remindNotifyTime);
 
     }

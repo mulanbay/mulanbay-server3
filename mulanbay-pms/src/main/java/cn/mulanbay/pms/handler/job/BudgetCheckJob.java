@@ -172,7 +172,7 @@ public class BudgetCheckJob extends AbstractBaseJob {
                 BigDecimal predictAmount = monthRate==null ? null : budgetAmount.multiply(new BigDecimal(monthRate));
                 content += "预计本月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
             }
-            notifyHandler.addNotifyMessage(PmsCode.BUDGET_CHECK, title, content,
+            notifyHandler.addMessage(PmsCode.BUDGET_CHECK, title, content,
                     bl.getUserId(), null);
         } catch (Exception e) {
             logger.error("处理bussDay=" + bussDay + "的预算异常", e);
@@ -225,7 +225,7 @@ public class BudgetCheckJob extends AbstractBaseJob {
                 BigDecimal predictAmount = yearRate==null ? null : budgetAmount.multiply(new BigDecimal(yearRate));
                 content += "预计年月总消费" + NumberUtil.getValue(predictAmount, SCALE) + "元。";
             }
-            notifyHandler.addNotifyMessage(PmsCode.BUDGET_CHECK, title, content,
+            notifyHandler.addMessage(PmsCode.BUDGET_CHECK, title, content,
                     bl.getUserId(), null);
         } catch (Exception e) {
             logger.error("处理bussDay=" + bussDay + "的预算异常", e);

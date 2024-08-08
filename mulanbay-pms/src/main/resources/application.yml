@@ -114,6 +114,8 @@ mulanbay:
       validateError: false
       #大于该天数的不再发送
       expiredDays: 3
+      #用户最后一个消息的失效时间（秒）
+      lastMsgExpires: 7200
       send:
         #消息最大发送失败次数
         maxFail: 3

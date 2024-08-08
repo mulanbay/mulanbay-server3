@@ -129,7 +129,7 @@ public class BudgetExecStatJob extends AbstractBaseJob {
             NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
             //发送消息
             String cc = content.toString();
-            Long messageId = notifyHandler.addNotifyMessage(code, title, cc,
+            Long messageId = notifyHandler.addMessage(code, title, cc,
                     bl.getUserId(), null);
             //增加积分
             rewardHandler.reward(bl.getUserId(), rewards, bl.getLogId(), BussSource.BUDGET_LOG, null, messageId);

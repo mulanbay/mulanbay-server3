@@ -85,7 +85,7 @@ public class BudgetRemindJob extends AbstractBaseJob {
             NotifyHandler notifyHandler = BeanFactoryUtil.getBean(NotifyHandler.class);
             //发送消息
             String cc = content.toString();
-            Long messageId = notifyHandler.addNotifyMessage(PmsCode.BUDGET_UN_COMPLETED, title, cc,
+            Long messageId = notifyHandler.addMessage(PmsCode.BUDGET_UN_COMPLETED, title, cc,
                     bd.getUserId(), null);
             //增加积分
             RewardHandler rewardHandler = BeanFactoryUtil.getBean(RewardHandler.class);

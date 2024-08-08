@@ -165,10 +165,10 @@ public class DreamRemindJob extends AbstractBaseRemindJob {
         RemindTimeBean bean = this.calcRemindExpectTime(remind.getTriggerInterval(), remind.getTriggerType(), remind.getLastRemindTime(), remind.getRemindTime());
         Long messageId;
         if (!isComplete) {
-            messageId = notifyHandler.addNotifyMessage(PmsCode.USER_DREAM_UN_COMPLETED_STAT, title, content,
+            messageId = notifyHandler.addMessage(PmsCode.USER_DREAM_UN_COMPLETED_STAT, title, content,
                     dream.getUserId(), bean.getNextRemindTime());
         } else {
-            messageId = notifyHandler.addNotifyMessage(PmsCode.USER_DREAM_COMPLETED_STAT, title, content,
+            messageId = notifyHandler.addMessage(PmsCode.USER_DREAM_COMPLETED_STAT, title, content,
                     dream.getUserId(), bean.getNextRemindTime());
         }
         // 更新最后的提醒时间

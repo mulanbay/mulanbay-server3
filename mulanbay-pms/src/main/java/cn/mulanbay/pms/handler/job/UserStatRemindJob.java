@@ -193,7 +193,7 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
         content = content + "统计日期:" + DateUtil.getFormatDate(this.getBussDay(), DateUtil.FormatDay1);
         RemindTimeBean bean = this.calcRemindExpectTime(remind.getTriggerInterval(), remind.getTriggerType(), remind.getLastRemindTime(), remind.getRemindTime());
         //Step 1: 发送消息通知
-        Long messageId = notifyHandler.addNotifyMessage(PmsCode.USER_STAT, title, content,
+        Long messageId = notifyHandler.addMessage(PmsCode.USER_STAT, title, content,
                 remind.getUserId(), bean.getNextRemindTime());
         //Step 2: 更新最后的提醒时间
         statService.updateLastRemindTime(remind.getRemindId(), new Date());

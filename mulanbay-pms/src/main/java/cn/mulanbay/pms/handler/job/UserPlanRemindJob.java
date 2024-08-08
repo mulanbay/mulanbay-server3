@@ -301,10 +301,10 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
         //Step 1: 发送消息通知
         Long messageId;
         if (!isComplete) {
-            messageId = notifyHandler.addNotifyMessage(PmsCode.USER_PLAN_UN_COMPLETED_STAT, title, content,
+            messageId = notifyHandler.addMessage(PmsCode.USER_PLAN_UN_COMPLETED_STAT, title, content,
                     userPlan.getUserId(), bean.getNextRemindTime());
         } else {
-            messageId = notifyHandler.addNotifyMessage(PmsCode.USER_PLAN_COMPLETED_STAT, title, content,
+            messageId = notifyHandler.addMessage(PmsCode.USER_PLAN_COMPLETED_STAT, title, content,
                     userPlan.getUserId(), bean.getNextRemindTime());
         }
         //Step 2: 更新最后的提醒时间

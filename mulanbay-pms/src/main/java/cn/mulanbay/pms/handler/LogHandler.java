@@ -297,11 +297,6 @@ public class LogHandler extends BaseHandler {
                         log.setParas(JsonUtil.beanToJson(map));
                     }
                     log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurTime().getTime());
-                    String content = log.getContent();
-                    if (content.length() >= 2000) {
-                        content = content.substring(0, 2000);
-                        log.setContent(content);
-                    }
                     baseService.saveObject(log);
                     this.notifyError(log.getUserId(), ec, log.getContent());
                 }else{
@@ -364,7 +359,6 @@ public class LogHandler extends BaseHandler {
             if (ec.getCode() == ErrorCode.SUCCESS) {
                 return;
             }
-
             //通知
             notifyHandler.addMessageToNotifier(ec.getCode(), "系统代码["+ec.getName()+"]通知", message + "," + getUserInfo(userId),
                     null, null);

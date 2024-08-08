@@ -66,6 +66,7 @@ public class CommonCacheHandler extends BaseHandler {
         String key = "beanCache:" + cls.getName() + ":" + id;
         return key;
     }
+
     /**
      * 移除缓存
      * @param cls
@@ -75,6 +76,7 @@ public class CommonCacheHandler extends BaseHandler {
         String key = this.createKey(cls,id);
         cacheHandler.delete(key);
     }
+
     /**
      * 获取缓存Bean
      *

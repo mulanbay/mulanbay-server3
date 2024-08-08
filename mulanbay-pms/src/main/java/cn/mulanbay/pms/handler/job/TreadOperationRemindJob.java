@@ -73,7 +73,7 @@ public class TreadOperationRemindJob extends AbstractBaseRemindJob {
             } else {
                 String title = "手术[" + to.getOperationName() + "]复查提醒";
                 String content = "手术[" + to.getOperationName() + "]需要复查,预定复查日期[" + DateUtil.getFormatDate(to.getReviewDate(), DateUtil.FormatDay1) + "].";
-                Long messageId = notifyHandler.addNotifyMessage(PmsCode.USER_OPERATION_REMIND_STAT, title, content,
+                Long messageId = notifyHandler.addMessage(PmsCode.USER_OPERATION_REMIND_STAT, title, content,
                         to.getUserId(), remindNotifyTime);
                 //写用户日历
                 this.addToUserCalendar(to, messageId, content);

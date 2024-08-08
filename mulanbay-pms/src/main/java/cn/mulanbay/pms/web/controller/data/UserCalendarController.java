@@ -168,7 +168,7 @@ public class UserCalendarController extends BaseController {
             sb.append("\n");
             if ((i + 1) % p == 0 || i == n - 1) {
                 //发送消息
-                notifyHandler.addNotifyMessage(PmsCode.CALENDAR_MESSAGE_NOTIFY, title, sb.toString(), form.getUserId(), now);
+                notifyHandler.addMessage(PmsCode.CALENDAR_MESSAGE_NOTIFY, title, sb.toString(), form.getUserId(), now);
                 sb = new StringBuffer();
             }
         }

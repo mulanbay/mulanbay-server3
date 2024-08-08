@@ -44,7 +44,7 @@ public class UserCalendarRemindJob extends AbstractBaseJob {
             for (int i = 0; i < n; i++) {
                 UserCalendar uc = list.get(i);
                 if (uc.getUserId() != currentUserId) {
-                    notifyHandler.addNotifyMessage(PmsCode.USER_DAILY_TASK_STAT, "今日任务", sb.toString(),
+                    notifyHandler.addMessage(PmsCode.USER_DAILY_TASK_STAT, "今日任务", sb.toString(),
                             currentUserId, null);
                     //setCacheCounts(currentUserId, tmpIndex);
                     aa++;
@@ -56,7 +56,7 @@ public class UserCalendarRemindJob extends AbstractBaseJob {
                     if (i == (n - 1)) {
                         //最后一次
                         sb.append((tmpIndex++) + "." + uc.getTitle() + "\n");
-                        notifyHandler.addNotifyMessage(PmsCode.USER_DAILY_TASK_STAT, "今日任务", sb.toString(),
+                        notifyHandler.addMessage(PmsCode.USER_DAILY_TASK_STAT, "今日任务", sb.toString(),
                                 currentUserId, null);
                         //setCacheCounts(currentUserId, tmpIndex);
                         aa++;

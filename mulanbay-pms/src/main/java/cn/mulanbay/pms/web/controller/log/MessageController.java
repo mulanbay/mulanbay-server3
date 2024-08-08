@@ -157,7 +157,7 @@ public class MessageController extends BaseController {
                 if (code == 0) {
                     code = PmsCode.MESSAGE_NOTIFY_COMMON_CODE;
                 }
-                notifyHandler.addNotifyMessage(code, um.getTitle(), um.getContent(),
+                notifyHandler.addMessage(code, um.getTitle(), um.getContent(),
                         user.getUserId(), um.getNotifyTime());
                 return callback(null);
             }

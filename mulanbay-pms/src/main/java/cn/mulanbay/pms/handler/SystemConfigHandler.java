@@ -202,7 +202,7 @@ public class SystemConfigHandler extends BaseHandler {
         } else {
             s = cacheHandler.getHash(CacheKey.ROLE_FUNC, rfKey, String.class);
         }
-        boolean b = (s == null ? false : true);
+        boolean b = (s != null);
         logger.debug("角色是否授权,key:" + rfKey + ",auth:" + b);
         return b;
     }

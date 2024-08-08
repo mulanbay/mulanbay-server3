@@ -145,7 +145,7 @@ public class MainController extends BaseController {
         try {
             // 发送系统通知
             notifyHandler.addMessageToNotifier(PmsCode.USER_LOGIN, "用户登录系统", "用户[" + username + "]登录系统", new Date(), null);
-            notifyHandler.addNotifyMessage(PmsCode.USER_LOGIN, "您的账户正在登录系统", "您的账户[" + username + "]登录系统", userId, new Date());
+            notifyHandler.addMessage(PmsCode.USER_LOGIN, "您的账户正在登录系统", "您的账户[" + username + "]登录系统", userId, new Date());
         } catch (Exception e) {
             logger.error("增加登录提醒日志异常", e);
         }
