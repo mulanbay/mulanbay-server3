@@ -74,7 +74,11 @@ public class BaseController {
         return rb;
     }
 
-
+    /**
+     * 返回结果
+     * @param o
+     * @return
+     */
     protected ResultBean callback(Object o) {
         if (o == null) {
             return defaultResultBean;

@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * 参数请求处理，目前用来记录日志
+ * 系统状态处理
  *
  * @author fenghong
  * @create 2017-07-10 21:44
@@ -42,7 +42,7 @@ public class SystemInterceptor extends BaseInterceptor {
                 return true;
             }
             logger.warn("系统停止服务,code={}",code);
-            this.handleFail(request,response,null,code, systemStatusHandler.getMessage(), null);
+            this.handleFail(response,code, systemStatusHandler.getMessage());
             return false;
         }
         return true;

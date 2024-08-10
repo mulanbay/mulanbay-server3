@@ -145,7 +145,7 @@ public class CommonController extends BaseController {
     }
 
     /**
-     * 映射实体
+     * 枚举实体列表
      *
      * @return
      */
@@ -164,25 +164,4 @@ public class CommonController extends BaseController {
         return callback(domainClassList);
     }
 
-    @RequestMapping(value = "/initGeo", method = RequestMethod.GET)
-    public ResultBean initGeo() throws Exception{
-//        FileInputStream file = new FileInputStream(new File("geo.xlsx"));
-//        Workbook workbook = WorkbookFactory.create(file);
-//        Sheet sheet = workbook.getSheet("adcode_lng_lat");
-//        Iterator<Row> rowIterator = sheet.iterator();
-//        while (rowIterator.hasNext()) {
-//            Row row = rowIterator.next();
-//            Cell id = row.getCell(0);
-//            Cell code = row.getCell(1);
-//            String s_code = String.valueOf((int)code.getNumericCellValue());
-//            Cell name = row.getCell(2);
-//            String s_name = name.getStringCellValue();
-//            Cell longitude = row.getCell(3);
-//            Cell latitude = row.getCell(4);
-//            String location = longitude.getNumericCellValue()+","+latitude.getNumericCellValue();
-//            System.out.println(s_name+" "+s_code+" "+location);
-//            geoService.updateGeo(s_name,s_code,location);
-//        }
-        return callback(null);
-    }
 }

@@ -1,7 +1,7 @@
 package cn.mulanbay.pms.handler;
 
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.handler.lock.RedisDistributedLock;
+import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.PmsCode;
@@ -50,7 +50,7 @@ public class MessageSendHandler extends BaseHandler {
     /**
      * 上锁重试次数
      */
-    @Value("${mulanbay.notify.message.send.lockRetryTimes:0}")
+    @Value("${mulanbay.notify.message.send.retryTimes:3}")
     int lockRetryTimes;
 
     /**
@@ -66,7 +66,7 @@ public class MessageSendHandler extends BaseHandler {
     private String mobileBaseUrl;
 
     @Autowired
-    RedisDistributedLock redisDistributedLock;
+    DistributedLock distributedLock;
 
     @Autowired
     LogHandler logHandler;
@@ -98,7 +98,7 @@ public class MessageSendHandler extends BaseHandler {
         String key = "messageSendLock:" + message.getMsgId();
         try {
             if (sendLock) {
-                boolean b = redisDistributedLock.lock(key, lockRetryTimes);
+                boolean b = distributedLock.lock(key, lockRetryTimes);
                 if (!b) {
                     logger.warn("消息ID=" + message.getMsgId() + "正在被发送，无法重复发送");
                     logHandler.addSysLog("消息重复发送", "消息ID=" + message.getMsgId() + "正在被发送，无法重复发送",
@@ -106,7 +106,6 @@ public class MessageSendHandler extends BaseHandler {
                     return true;
                 }
                 //取得锁后应该再查一次是否发送或者发送失败次数超过
-
             }
             UserSet us = userHandler.getUserSet(message.getUserId());
             if (us == null) {
@@ -143,7 +142,7 @@ public class MessageSendHandler extends BaseHandler {
             return false;
         } finally {
             if (sendLock) {
-                boolean b = redisDistributedLock.releaseLock(key);
+                boolean b = distributedLock.releaseLock(key);
                 if (!b) {
                     logger.warn("释放消息发送锁key=" + key + "失败");
                 }

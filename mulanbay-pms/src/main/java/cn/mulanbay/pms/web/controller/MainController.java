@@ -67,6 +67,9 @@ public class MainController extends BaseController {
     @Value("${mulanbay.security.login.maxFail}")
     private int loginMaxFail;
 
+    @Value("${mulanbay.security.login.failLockTime}")
+    private int failLockTime;
+
     @Autowired
     AuthService authService;
 
@@ -130,7 +133,7 @@ public class MainController extends BaseController {
                 } else {
                     fails++;
                 }
-                cacheHandler.set(failKey, fails, 300);
+                cacheHandler.set(failKey, fails, failLockTime);
                 return callbackErrorCode(PmsCode.USER_PASSWORD_ERROR);
             }
             String token = doLogin(user, login.getFamilyMode());
@@ -192,7 +195,6 @@ public class MainController extends BaseController {
     public ResultBean myInfo() {
         LoginUser loginUser = tokenHandler.getLoginUser(request);
         Long roleId = loginUser.getRoleId();
-        Long userId = loginUser.getUserId();
         MyInfoVo user = new MyInfoVo();
         user.setUsername(loginUser.getUser().getUsername());
         user.setNickname(loginUser.getUser().getNickname());

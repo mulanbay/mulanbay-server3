@@ -111,7 +111,7 @@ public class TokenHandler extends BaseHandler {
      *
      * @param request
      * @param autoLoad 是否自动从数据库加载
-     * @return
+     * @return 存在jwt中的uuid值
      */
     public LoginUser getLoginUser(HttpServletRequest request, boolean autoLoad) {
         String loginUserKey = this.getLoginUserKey(request);
@@ -296,17 +296,6 @@ public class TokenHandler extends BaseHandler {
                 .build()
                 .parseSignedClaims(token);
         return claimsJws.getPayload();
-    }
-
-    /**
-     * 从令牌中获取用户名
-     *
-     * @param token 令牌
-     * @return 用户名
-     */
-    public String getUsernameFromToken(String token) {
-        Claims claims = parseToken(token);
-        return claims.getSubject();
     }
 
     /**

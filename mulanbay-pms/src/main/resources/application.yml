@@ -73,6 +73,7 @@ mulanbay:
       whiteList:
         - /system/unlock
         - /captcha/captchaImage
+        #- /backup/download
     #图形验证码
     captcha:
       #类型
@@ -84,6 +85,8 @@ mulanbay:
       persist: true
       # 最大失败次数
       maxFail: 5
+      # 失败后锁定时间(秒)
+      failLockTime: 300
     password:
       #MD5密码的盐值
       salt: mysalt

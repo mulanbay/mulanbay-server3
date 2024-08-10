@@ -56,8 +56,7 @@ public class BaseInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    void handleFail(HttpServletRequest request, HttpServletResponse response,
-                    String redirectPath, int code, String failInfo, String reqUrl) {
+    void handleFail(HttpServletResponse response,int code, String failInfo) {
         try {
             String message = failInfo;
             if(StringUtil.isEmpty(message)){
@@ -68,19 +67,12 @@ public class BaseInterceptor implements HandlerInterceptor {
                     message = "未找到相关错误信息";
                 }
             }
-            if (StringUtil.isNotEmpty(reqUrl)&&(reqUrl.startsWith("/main") || reqUrl.endsWith("list"))) {
-                // 普通界面,直接界面，不走controller
-                response.sendRedirect(request.getContextPath() + redirectPath
-                        + "?code=" + code);
-            } else {
-                // ajax调用
-                ResultBean rb = new ResultBean();
-                rb.setCode(code);
-                rb.setMessage(message);
-                // Ajax调用
-                response.setContentType("text/html;charset = UTF-8");
-                response.getWriter().print(JsonUtil.beanToJson(rb));
-            }
+            ResultBean rb = new ResultBean();
+            rb.setCode(code);
+            rb.setMessage(message);
+            // Ajax调用
+            response.setContentType("text/html;charset = UTF-8");
+            response.getWriter().print(JsonUtil.beanToJson(rb));
         } catch (Exception e) {
             logger.error("处理拦截器拦截验证失败异常", e);
         }
