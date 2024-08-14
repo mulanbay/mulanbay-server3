@@ -1,5 +1,6 @@
 package cn.mulanbay.pms.web.config;
 
+import cn.mulanbay.persistent.cache.CacheBeanProperties;
 import cn.mulanbay.persistent.cache.PageCacheProcessor;
 import cn.mulanbay.persistent.service.BaseService;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,5 +57,15 @@ public class HibernateConfig {
     public PageCacheProcessor pageCacheProcessor() {
         PageCacheProcessor pcm =  new PageCacheProcessor();
         return pcm;
+    }
+
+    /**
+     * 缓存bean配置
+     * @return
+     */
+    @Bean
+    public CacheBeanProperties cacheBeanProperties(){
+        CacheBeanProperties cbp = new CacheBeanProperties();
+        return cbp;
     }
 }

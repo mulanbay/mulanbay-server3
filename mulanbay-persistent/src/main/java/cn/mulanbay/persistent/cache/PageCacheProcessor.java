@@ -1,7 +1,6 @@
 package cn.mulanbay.persistent.cache;
 
 import cn.mulanbay.common.util.DigestUtil;
-import cn.mulanbay.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,24 +22,6 @@ public class PageCacheProcessor {
     private String keyPrefix;
 
     /**
-     * 列表数据数据是否缓存
-     */
-    @Value("${mulanbay.persistent.page.cache.list:false}")
-    private boolean listCache;
-
-    /**
-     * 总页数是否缓存
-     */
-    @Value("${mulanbay.persistent.page.cache.total:false}")
-    private boolean totalCache;
-
-    /**
-     * 需要缓存的bean
-     */
-    @Value("${mulanbay.persistent.page.cache.beans:}")
-    private String cacheBeans;
-
-    /**
      * 缓存失效时间
      */
     @Value("${mulanbay.persistent.page.cache.expireSeconds:10}")
@@ -49,14 +30,8 @@ public class PageCacheProcessor {
     @Autowired
     CacheProcessor cacheProcessor;
 
-    /**
-     * 是否启用缓存
-     * @return
-     */
-    public boolean enableCache(){
-        return listCache || totalCache;
-    }
-
+    @Autowired
+    CacheBeanProperties cacheBeanProperties;
 
     /**
      * 判断列表数据是否要缓存
@@ -64,10 +39,7 @@ public class PageCacheProcessor {
      * @return
      */
     public boolean isListCache(Class beanClass){
-        if(!listCache) {
-            return false;
-        }
-        return this.isBeanCache(beanClass);
+        return cacheBeanProperties.isListCache(beanClass);
     }
 
     /**
@@ -76,32 +48,7 @@ public class PageCacheProcessor {
      * @return
      */
     public boolean isTotalCache(Class beanClass){
-        if(!totalCache) {
-            return false;
-        }
-        return this.isBeanCache(beanClass);
-    }
-
-    /**
-     * 判断bean是否要缓存
-     * @param beanClass
-     * @return
-     */
-    private boolean isBeanCache(Class beanClass){
-        if(StringUtil.isEmpty(cacheBeans)) {
-            return false;
-        }
-        String beanName = this.getBeanClassName(beanClass);
-        if("*".equals(cacheBeans)) {
-            return true;
-        }
-        String[] ss = cacheBeans.split(",");
-        for(String s : ss){
-            if(s.equals(beanName)) {
-                return true;
-            }
-        }
-        return false;
+        return cacheBeanProperties.isTotalCache(beanClass);
     }
 
     /**

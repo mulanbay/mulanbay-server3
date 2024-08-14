@@ -4,7 +4,6 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.req.system.cache.DeleteCacheForm;
-import cn.mulanbay.pms.web.bean.res.NameValueVo;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieDetailData;

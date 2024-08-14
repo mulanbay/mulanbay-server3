@@ -76,7 +76,7 @@ mulanbay:
         #- /backup/download
     #图形验证码
     captcha:
-      #类型
+      #类型(math/char)
       type: math
       #失效时间(秒)
       expires: 300

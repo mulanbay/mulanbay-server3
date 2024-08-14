@@ -11,7 +11,10 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.common.PmsCode;
-import cn.mulanbay.pms.handler.*;
+import cn.mulanbay.pms.handler.SystemConfigHandler;
+import cn.mulanbay.pms.handler.ThreadPoolHandler;
+import cn.mulanbay.pms.handler.UserHandler;
+import cn.mulanbay.pms.handler.WXHandler;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import cn.mulanbay.pms.persistent.enums.AuthType;
@@ -58,9 +61,6 @@ public class UserController extends BaseController {
 
     @Autowired
     AuthService authService;
-
-    @Autowired
-    TokenHandler tokenHandler;
 
     @Autowired
     FamilyService familyService;
@@ -168,7 +168,7 @@ public class UserController extends BaseController {
     private PageResult<User> getUserResult(UserSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort sort = new Sort("createdTime", Sort.ASC);
+        Sort sort = new Sort("userId", Sort.ASC);
         pr.addSort(sort);
         PageResult<User> qr = baseService.getBeanResult(pr);
         return qr;
@@ -372,19 +372,6 @@ public class UserController extends BaseController {
     }
 
     /**
-     * 初始化用户数据
-     *
-     * @return
-     */
-    @RequestMapping(value = "/initUserData", method = RequestMethod.POST)
-    public ResultBean initUserData(@RequestBody @Valid UserDataForm ucr) {
-        threadPoolHandler.pushThread(() -> {
-            //dataService.initUserData(ucr.getUserId());
-        });
-        return callback(null);
-    }
-
-    /**
      * 获取默认城市
      *
      * @return
@@ -421,7 +408,7 @@ public class UserController extends BaseController {
     /**
      * 编码文件名
      */
-    private final String extractFilename(MultipartFile file) {
+    private String extractFilename(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String extension = getExtension(file);
         fileName = DateUtil.getFormatDate(new Date(), "yyyyMMdd") + "/" + StringUtil.genUUID() + "." + extension;
@@ -434,7 +421,7 @@ public class UserController extends BaseController {
      * @param file 表单文件
      * @return 后缀名
      */
-    public static final String getExtension(MultipartFile file) {
+    private String getExtension(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         if (StringUtil.isEmpty(extension)) {
             extension = MimeTypeUtils.getExtension(file.getContentType());

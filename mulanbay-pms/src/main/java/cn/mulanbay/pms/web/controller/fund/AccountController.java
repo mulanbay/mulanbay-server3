@@ -21,6 +21,7 @@ import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.fund.account.*;
 import cn.mulanbay.pms.web.bean.req.fund.budget.BudgetSH;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieData;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieSerieData;
@@ -233,8 +234,8 @@ public class AccountController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/currentInfo", method = RequestMethod.GET)
-    public ResultBean currentInfo() {
-        Long userId = this.getCurrentUserId();
+    public ResultBean currentInfo(UserCommonForm ucf) {
+        Long userId = ucf.getUserId();
         BigDecimal currentAccountAmount = accountService.selectAccountAmount(userId);
         Map res = new HashMap<>();
         res.put("currentAccountAmount", currentAccountAmount);

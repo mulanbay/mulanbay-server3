@@ -40,17 +40,25 @@ public class BaseController {
     protected TokenHandler tokenHandler;
 
     @Autowired
-    CacheHandler cacheHandler;
+    protected CacheHandler cacheHandler;
 
-    private static ResultBean defaultResultBean = new ResultBean();
+    /**
+     * 默认的返回结果
+     * 针对正常的无具体返回数据的
+     * 不能修改该对象
+     */
+    private static final ResultBean defaultResultBean = new ResultBean();
 
-    private static List emptyList = new ArrayList<>();
+    /**
+     * 避免列表数据接口返回null
+     * 不能修改该对象
+     */
+    private static final List emptyList = new ArrayList<>();
 
     /**
      * 获取当前用户的编号
      * 一般来说，当前用户编号都是在类ControllerHandler里设置，无需再各个controller手动获取
      * @see cn.mulanbay.pms.web.aop.ControllerHandler
-     * todo 如果在jwt中保存当前用户编号，就可以不用再一次去redis里获取LoginUser再拿用户编号
      * @return
      */
     protected Long getCurrentUserId() {

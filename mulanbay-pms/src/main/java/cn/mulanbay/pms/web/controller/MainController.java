@@ -1,13 +1,11 @@
 package cn.mulanbay.pms.web.controller;
 
-import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.BudgetHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
-import cn.mulanbay.pms.handler.TokenHandler;
 import cn.mulanbay.pms.handler.bean.fund.BudgetAmountBean;
 import cn.mulanbay.pms.handler.bean.fund.FundStatBean;
 import cn.mulanbay.pms.persistent.domain.Budget;
@@ -81,12 +79,6 @@ public class MainController extends BaseController {
 
     @Autowired
     BudgetService budgetService;
-
-    @Autowired
-    CacheHandler cacheHandler;
-
-    @Autowired
-    TokenHandler tokenHandler;
 
     @Autowired
     NotifyHandler notifyHandler;

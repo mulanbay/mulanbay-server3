@@ -27,6 +27,7 @@ import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.data.calendar.*;
+import cn.mulanbay.pms.web.bean.req.main.UserCommonForm;
 import cn.mulanbay.pms.web.bean.res.data.calendar.UserCalendarSourceVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
@@ -274,8 +275,8 @@ public class UserCalendarController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/todayCalendarList")
-    public ResultBean todayCalendarList() {
-        List<UserCalendar> list = userCalendarService.getCurrentUserCalendarList(this.getCurrentUserId());
+    public ResultBean todayCalendarList(UserCommonForm ucf) {
+        List<UserCalendar> list = userCalendarService.getCurrentUserCalendarList(ucf.getUserId());
         return callback(list);
     }
 

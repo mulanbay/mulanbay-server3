@@ -88,8 +88,8 @@ public class AuthService extends BaseHibernateDao {
             User user = this.getEntity(hql,User.class, token);
             return user;
         } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "获取用户信息异常", e);
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "通过最后一次登录token获取用户异常", e);
         }
     }
 
