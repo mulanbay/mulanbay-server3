@@ -77,8 +77,9 @@ public class SendRedisDelayMessageJob extends AbstractBaseJob {
             //需要拷贝一个新的，因为sendMessage会修改message内容，导致redisDelayQueueHandler无法删除
             //todo 如果持久化产生msgId，应该不需要在拷贝了
             BeanCopy.copy(message, mm);
-            boolean res = messageSendHandler.sendMessage(mm);
+            //先移出队列,再发送，发送失败后再添加到队列中
             redisDelayQueueHandler.removeMessage(message);
+            boolean res = messageSendHandler.sendMessage(mm);
             if (!res && mm.getFailCount() < para.getMaxFails()) {
                 //发送失败延迟1分钟重新发送
                 Date newDate = new Date(message.getExpectSendTime().getTime() + para.getDelaySeconds() * 1000);

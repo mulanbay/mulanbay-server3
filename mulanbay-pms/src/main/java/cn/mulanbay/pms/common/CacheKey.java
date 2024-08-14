@@ -179,6 +179,10 @@ public class CacheKey {
      */
     public static String REQUEST_SYS_LIMIT ="buss:request:sysLimit:{0}:{1}";
 
+    /**
+     * 参数：消息ID
+     */
+    public static String MESSAGE_SEND_LOCK ="buss:message:sendLock:{0}";
 
     /**
      * @param pattern

@@ -147,7 +147,7 @@ public class LogHandler extends BaseHandler {
                 baseService.saveObject(log);
                 this.handleReward(sf, log);
                 this.notifyError(log.getUserId(), code, msgContent);
-                //同步缓存
+                //同步缓存（如果需要同步bean的缓存，则日志操作无法进行异步存储）
                 this.syncCache(sf,log.getIdValue());
             } catch (Exception e) {
                 logger.error("增加操作日志异常", e);

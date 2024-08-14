@@ -101,25 +101,13 @@ public class WXHandler extends BaseHandler {
     @Value("${mulanbay.wx.accessAuthRedirectUrl}")
     String accessAuthRedirectUrl;
 
-    public String getAccessAuthRedirectUrl() {
-        return accessAuthRedirectUrl;
-    }
-
-    public String getOaUrl() {
-        return oaUrl;
-    }
-
-    public String getQrUrl() {
-        return systemConfigHandler.getPictureFullUrl(oaPicUrl);
-    }
-
     /**
      * 获取微信信息
      *
      * @param userId
      * @return
      */
-    public WxAccount geAccount(Long userId) {
+    public WxAccount getAccount(Long userId) {
         WxAccount uw = wxAccountService.getAccount(userId, appId);
         return uw;
     }
@@ -137,7 +125,7 @@ public class WXHandler extends BaseHandler {
      */
     public boolean sendTemplateMessage(Long msgId,Long userId, String title, String content, Date time, LogLevel level, String url) {
         try {
-            WxAccount uw = this.geAccount(userId);
+            WxAccount uw = this.getAccount(userId);
             if (uw == null) {
                 logger.warn("无法获取到userId=" + userId + "的用户微信信息");
                 return false;

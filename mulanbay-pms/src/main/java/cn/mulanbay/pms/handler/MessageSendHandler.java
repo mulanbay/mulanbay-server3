@@ -4,6 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.service.BaseService;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.User;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.concurrent.Future;
 
 /**
  * 消息发送处理
@@ -81,10 +83,32 @@ public class MessageSendHandler extends BaseHandler {
     MailHandler mailHandler;
 
     @Autowired
+    ThreadPoolHandler threadPoolHandler;
+
+    @Autowired
     BaseService baseService;
 
     public MessageSendHandler() {
         super("消息发送");
+    }
+
+    /**
+     * 消息发送
+     * @param message
+     * @return
+     */
+    public boolean sendMessage(Message message) {
+        if(sync){
+            return this.handleSend(message);
+        }else{
+            try {
+                Future<Boolean> future = threadPoolHandler.submit(() -> this.handleSend(message));
+                return future.get();
+            } catch (Exception e) {
+                logger.error("threadPool exe Callable sendMessage error",e);
+                return false;
+            }
+        }
     }
 
     /**
@@ -93,9 +117,9 @@ public class MessageSendHandler extends BaseHandler {
      * @param message
      * @return
      */
-    public boolean sendMessage(Message message) {
+    private boolean handleSend(Message message) {
         //这个message有可能在其他地方被设置了id
-        String key = "messageSendLock:" + message.getMsgId();
+        String key = CacheKey.getKey(CacheKey.MESSAGE_SEND_LOCK,message.getMsgId().toString());
         try {
             if (sendLock) {
                 boolean b = distributedLock.lock(key, lockRetryTimes);
@@ -115,12 +139,12 @@ public class MessageSendHandler extends BaseHandler {
                 message.setLastSendTime(new Date());
                 message.setNodeId(nodeId);
                 message.setRemark("没有用户相关设置信息,无法发送消息");
-                baseService.saveOrUpdateObject(message);
+                this.saveMessage(message);
                 return true;
             }
             boolean res;
             if (message.getFailCount() < sendMaxFail) {
-                res = this.sendUserMessage(us, message);
+                res = this.send(us, message);
                 if (res) {
                     message.setSendStatus(MessageSendStatus.SUCCESS);
                 } else {
@@ -151,7 +175,6 @@ public class MessageSendHandler extends BaseHandler {
     }
 
     /**
-     * 直接扔掉
      *
      * @param message
      */
@@ -170,7 +193,7 @@ public class MessageSendHandler extends BaseHandler {
      * @param message
      * @return
      */
-    private boolean sendUserMessage(UserSet us, Message message) {
+    private boolean send(UserSet us, Message message) {
         User user = userHandler.getUser(message.getUserId());
         boolean b1 = true;
         if (us.getSendEmail() && StringUtil.isNotEmpty(user.getEmail())) {

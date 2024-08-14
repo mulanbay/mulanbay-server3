@@ -46,6 +46,12 @@ public class RedisDelayQueueHandler extends BaseHandler {
     @Value("${mulanbay.notify.message.clearAfterRestart}")
     boolean clearAfterRestart;
 
+    /**
+     * 最大发送失败次数
+     */
+    @Value("${mulanbay.notify.message.send.maxFail:3}")
+    int sendMaxFail;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -87,7 +93,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
             redisTemplate.delete(this.getQueueName());
             logger.info("开始加载未发送消息队列");
             Date compareDate= DateUtil.getDate(-expiredDays);
-            List<Message> list = userMessageService.getNeedSendMessage(1, 1000, 3, compareDate);
+            List<Message> list = userMessageService.getNeedSendMessage(1, 1000, sendMaxFail, compareDate);
             if (list.isEmpty()) {
                 logger.debug("没有需要加载的未发送消息队列");
             } else {

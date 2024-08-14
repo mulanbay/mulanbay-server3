@@ -12,6 +12,7 @@ public class MessageForm {
     @NotEmpty(message = "用户名不能为空")
     private String username;
 
+    @NotNull(message = "代码不能为空")
     private Integer code;
 
     @NotEmpty(message = "标题不能为空")

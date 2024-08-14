@@ -149,18 +149,12 @@ public class MessageController extends BaseController {
             return callbackErrorInfo("未找到相关用户");
         } else {
             Integer code = um.getCode();
-            if (code == null) {
-                //直接发送
-                boolean b = wxHandler.sendTemplateMessage(null,user.getUserId(), um.getTitle(), um.getContent(), um.getNotifyTime(), LogLevel.NORMAL, null);
-                return callback(b);
-            } else {
-                if (code == 0) {
-                    code = PmsCode.MESSAGE_NOTIFY_COMMON_CODE;
-                }
-                notifyHandler.addMessage(code, um.getTitle(), um.getContent(),
-                        user.getUserId(), um.getNotifyTime());
-                return callback(null);
+            if (code == 0) {
+                code = PmsCode.MESSAGE_NOTIFY_COMMON_CODE;
             }
+            notifyHandler.addMessage(code, um.getTitle(), um.getContent(),
+                    user.getUserId(), um.getNotifyTime());
+            return callback(null);
         }
     }
 
