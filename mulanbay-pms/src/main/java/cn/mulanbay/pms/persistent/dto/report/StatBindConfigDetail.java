@@ -1,14 +1,21 @@
 package cn.mulanbay.pms.persistent.dto.report;
 
-import java.util.List;
-
 public class StatBindConfigDetail {
 
+    /**
+     * 选中的ID值
+     */
     private String id;
 
+    /**
+     * 名称
+     */
     private String text;
 
-    private List<StatBindConfigDetail> children;
+    /**
+     * 父级ID
+     */
+    private String pid;
 
     public String getId() {
         return id;
@@ -26,11 +33,11 @@ public class StatBindConfigDetail {
         this.text = text;
     }
 
-    public List<StatBindConfigDetail> getChildren() {
-        return children;
+    public String getPid() {
+        return pid;
     }
 
-    public void setChildren(List<StatBindConfigDetail> children) {
-        this.children = children;
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 }

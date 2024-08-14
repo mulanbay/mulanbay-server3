@@ -143,18 +143,23 @@ public class StatBindConfigService extends BaseHibernateDao {
                 args.add(userId);
             }
             List<StatBindConfigDetail> res = new ArrayList<>();
+            /**
+             * sql：返回结果一共有2-3列
+             * 0:ID
+             * 1:名称
+             * 2:父级ID(树形结构有效)
+             */
             List<Object[]> vcs = this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,Object[].class,args.toArray());
             if(StringUtil.isEmpty(vcs)){
                 return res;
-            }
-            if(svc.getTree()){
-                //树形结构
-                return this.createTree(vcs);
             }
             for (Object[] o : vcs) {
                 StatBindConfigDetail detail = new StatBindConfigDetail();
                 detail.setId(o[0].toString());
                 detail.setText(o[1].toString());
+                if(o.length > 2){
+                    detail.setPid(o[2].toString());
+                }
                 res.add(detail);
             }
             return res;
@@ -162,34 +167,6 @@ public class StatBindConfigService extends BaseHibernateDao {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "查询配置加载项异常", e);
         }
-    }
-
-    /**
-     * 创建树
-     *
-     * @param vcs
-     * @return
-     */
-    private List<StatBindConfigDetail> createTree(List<Object[]> vcs){
-        return this.getChildren("0",vcs);
-    }
-
-    private List<StatBindConfigDetail> getChildren(String pid,List<Object[]> vcs){
-        List<StatBindConfigDetail> children = new ArrayList<>();
-        for (Object[] o : vcs) {
-            String myPid = o[2].toString();
-            if(myPid.equals(pid)){
-                StatBindConfigDetail child = new StatBindConfigDetail();
-                child.setId(o[0].toString());
-                child.setText(o[1].toString());
-                //寻找下一个子列表
-                List<StatBindConfigDetail> c2 = getChildren(child.getId(), vcs);
-                child.setChildren(c2);
-                //加入到结果集
-                children.add(child);
-            }
-        }
-        return children;
     }
 
     /**
