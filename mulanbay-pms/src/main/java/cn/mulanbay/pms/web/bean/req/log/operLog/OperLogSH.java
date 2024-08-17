@@ -53,7 +53,7 @@ public class OperLogSH extends PageSearch implements FullEndDateTime {
     /**
      * 直接用sql模式
      */
-    @Query(fieldName = "", op = Parameter.Operator.SQL)
+    @Query(fieldName = "sysFunc.funcId in (select funcId from SysFunc where beanName=?"+Parameter.SQL_BI+" )", op = Parameter.Operator.SQL)
     private String beanName;
 
     public String getName() {

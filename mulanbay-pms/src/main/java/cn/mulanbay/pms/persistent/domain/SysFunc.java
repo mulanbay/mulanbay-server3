@@ -571,6 +571,10 @@ public class SysFunc implements java.io.Serializable {
         }
     }
 
+    /**
+     * 是否包含下一级
+     * @return
+     */
     @Transient
     public Boolean getHasChildren() {
         if (funcDataType == FunctionDataType.M || funcDataType == FunctionDataType.C) {

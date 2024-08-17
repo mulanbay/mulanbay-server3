@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.controller.log;
 
-import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
@@ -35,9 +34,6 @@ public class SysCodeController extends BaseController {
 
     @Autowired
     SysCodeHandler sysCodeHandler;
-
-    @Autowired
-    CacheHandler cacheHandler;
 
     /**
      * 获取列表数据

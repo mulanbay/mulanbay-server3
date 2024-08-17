@@ -3,7 +3,6 @@ package cn.mulanbay.pms.web.controller.schedule;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.NumberUtil;
-import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
@@ -42,7 +41,7 @@ public class TaskServerController extends BaseController {
     public ResultBean tree() {
         try {
             List<TreeBean> list = new ArrayList<TreeBean>();
-            List<TaskServer> gtList = baseService.getBeanList(beanClass, BaseHibernateDao.NO_PAGE, BaseHibernateDao.NO_PAGE_SIZE, null);
+            List<TaskServer> gtList = baseService.getBeanList(beanClass, null);
             for (TaskServer gt : gtList) {
                 TreeBean tb = new TreeBean();
                 tb.setId(gt.getDeployId());

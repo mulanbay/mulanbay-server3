@@ -65,11 +65,6 @@ public class OperLogController extends BaseController {
     }
 
     private PageResult<OperLog> getOperLogResult(OperLogSH sf) {
-        String beanName = sf.getBeanName();
-        if (StringUtil.isNotEmpty(beanName)) {
-            String beanNameSql = "sysFunc.id in (select id from SysFunc where beanName='" + beanName + "' )";
-            sf.setBeanName(beanNameSql);
-        }
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         Sort sort = new Sort("occurEndTime", Sort.DESC);

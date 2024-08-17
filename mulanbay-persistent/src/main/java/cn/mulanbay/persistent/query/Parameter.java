@@ -16,7 +16,15 @@ import java.util.Set;
  */
 public class Parameter {
 
+	/**
+	 * 空值，表示不加入到查询绑定值中
+	 */
 	public final static Object NULL_VALUE = new Object();
+
+	/**
+	 * SQL语句类型时sql中的变量序号占位符
+	 */
+	public final static String SQL_BI = "{bind_index}";
 
 	/**
 	 * 如果是REFER类型，表示运算符是另外一个域来决定，且其类型为Operator
@@ -74,6 +82,7 @@ public class Parameter {
 	private boolean valueChanged=false;
 
 	/**
+	 * 默认为一个
 	 * cross类型的有多个参数
 	 */
 	private int paras=1;
@@ -139,21 +148,20 @@ public class Parameter {
 
 	/**
 	 * 获取查询参数，不过该方法做了很多逻辑操作，不能调用两次以上
+	 * @param paraIndex 绑定参数索引
 	 * @return
 	 */
-	public String getParameterString(int firstIndex) {
+	public String getParameterString(int paraIndex) {
+		//如果已经计算过则直接返回
 		if(StringUtil.isNotEmpty(paraStr)){
 			return paraStr;
 		}
 		if(condition== Operator.SQL){
-			//如果是SQL类型则直接返回，目前没做变量绑定支持
-			String s = value.toString();
-			value=NULL_VALUE;
-			paraStr = s;
+			paraStr = fieldName.replace(SQL_BI,String.valueOf(paraIndex));
 			return paraStr;
 		}else if(crossType== CrossType.NULL){
 			//普通类型，不需要多个域以前查询
-			paraStr =  fieldName + " "+this.getOperateSymbol(firstIndex);
+			paraStr =  fieldName + " "+this.getOperateSymbol(paraIndex);
 			return paraStr;
 		}else{
 			//跨多个域
@@ -161,7 +169,7 @@ public class Parameter {
 			int n =ss.length;
 			if(n==1){
 				//还是普通类型
-				paraStr = fieldName + this.getOperateSymbol(firstIndex);
+				paraStr = fieldName + this.getOperateSymbol(paraIndex);
 				return paraStr;
 			}
 			List newValues = new ArrayList();
@@ -169,7 +177,7 @@ public class Parameter {
 			sb.append(" (");
 			for(int i=0;i<n;i++){
 				//对于in () 这种类型，下标索引值需要在这里添加，根据值的个数添加
-				String os = this.getOperateSymbol(firstIndex);
+				String os = this.getOperateSymbol(paraIndex);
 				sb.append(ss[i] +" "+ os);
 				if(i<n-1){
 					sb.append(" "+crossType.getSymbol()+" ");
@@ -180,13 +188,13 @@ public class Parameter {
 						Collection vv = (Collection) value;
 						newValues.addAll(vv);
 						//如果是集合类型，下标索引值要右移个数 = 集合元素的个数
-						firstIndex += vv.size();
+						paraIndex += vv.size();
 					}else{
 						newValues.add(value);
-						firstIndex += 1;
+						paraIndex += 1;
 					}
 				}else{
-					firstIndex += 1;
+					paraIndex += 1;
 				}
 			}
 			sb.append(")");
@@ -201,9 +209,10 @@ public class Parameter {
 
 	/**
 	 * sql的操作运算符
+	 * @param paraIndex 绑定参数索引
 	 * @return
 	 */
-	private String getOperateSymbol(int index){
+	private String getOperateSymbol(int paraIndex){
 		if(condition== Operator.IN||condition== Operator.NOTIN){
 			if(value instanceof String){
 				String s = condition.getSymbol()+" (" + value.toString() + ") ";
@@ -219,7 +228,7 @@ public class Parameter {
 				sb.append(condition.getSymbol()+" (" );
 				for(int i=0;i<n;i++){
 					//此时index没有改变上层的firstIndex序号
-					sb.append("?"+(index++));
+					sb.append("?"+(paraIndex++));
 					if(i<n-1){
 						sb.append(",");
 					}
@@ -237,7 +246,7 @@ public class Parameter {
 				valueChanged=true;
 			}
 			paras=1;
-			return condition.getSymbol()+" ?" +(index++)+" ";
+			return condition.getSymbol()+" ?" +(paraIndex++)+" ";
 		}else if(condition== Operator.NULL_NOTNULL){
 			String s;
 			if(value==null){
@@ -253,7 +262,7 @@ public class Parameter {
 			return s;
 		}else{
 			paras=1;
-			return condition.getSymbol()+" ?"+(index++)+" ";
+			return condition.getSymbol()+" ?"+(paraIndex++)+" ";
 		}
 	}
 }

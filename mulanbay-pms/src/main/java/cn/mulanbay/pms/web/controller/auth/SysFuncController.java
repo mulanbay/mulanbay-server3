@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.controller.auth;
 
-import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.NumberUtil;
@@ -9,6 +8,7 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.CacheKey;
+import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.dto.auth.SysFuncDTO;
@@ -27,7 +27,6 @@ import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -55,10 +54,6 @@ public class SysFuncController extends BaseController {
 
     @Autowired
     SystemConfigHandler systemConfigHandler;
-
-    @Autowired
-    CacheHandler cacheHandler;
-
 
     /**
      * 功能点菜单树
@@ -102,9 +97,9 @@ public class SysFuncController extends BaseController {
             pr.setBeanClass(beanClass);
             List<SysFunc> gtList = baseService.getBeanList(pr);
             TreeBean root = new TreeBean();
-            root.setId(0L);
+            root.setId(Constant.ROOT_ID);
             root.setText("根");
-            root.setChildren(getFunctionTree2(root, gtList));
+            root.setChildren(createFunctionTree(root, gtList));
             list.add(root);
             return callback(list);
         } catch (Exception e) {
@@ -113,7 +108,7 @@ public class SysFuncController extends BaseController {
         }
     }
 
-    public List<TreeBean> getFunctionTree2(TreeBean tb, List<SysFunc> list) {
+    public List<TreeBean> createFunctionTree(TreeBean tb, List<SysFunc> list) {
         List<TreeBean> treeBeanList = new ArrayList<>();
         for (SysFunc sf : list) {
             SysFunc parent = sf.getParent();
@@ -127,7 +122,7 @@ public class SysFuncController extends BaseController {
                     child.setIconCls("icon-auth");
                 }
                 treeBeanList.add(child);
-                List<TreeBean> children = getFunctionTree2(child, list);
+                List<TreeBean> children = createFunctionTree(child, list);
                 child.setChildren(children);
             }
         }
@@ -136,7 +131,8 @@ public class SysFuncController extends BaseController {
 
     /**
      * 获取列表（树形结构页面使用）
-     *
+     * 实际上返回数据是扁平结构
+     * 页面采用懒加载模式，通过hasChildren属性判断是否需要加载下一级
      * @return
      */
     @RequestMapping(value = "/treeList", method = RequestMethod.GET)

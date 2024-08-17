@@ -49,6 +49,9 @@ public class PageRequest {
 	 */
 	private boolean needWhere=true;
 
+	/**
+	 * 是否需要总树
+	 */
 	private boolean needTotal;
 
 	public int getPage() {
@@ -105,8 +108,14 @@ public class PageRequest {
 		this.needTotal = needTotal;
 	}
 
+	/**
+	 * 排序列表
+	 */
 	List<Sort> sortList;
 
+	/**
+	 * 参数列表
+	 */
 	List<Parameter> parameterList;
 
 	public PageRequest() {
@@ -140,6 +149,10 @@ public class PageRequest {
 		parameterList.add(index,p);
 	}
 
+	/**
+	 * 获取排序字符串
+	 * @return
+	 */
 	public String getSortString() {
 		if (sortList == null || sortList.isEmpty()) {
 			return "";
@@ -157,6 +170,10 @@ public class PageRequest {
 		}
 	}
 
+	/**
+	 * 是否包含查询参数
+	 * @return
+	 */
 	public boolean hasParameter() {
 		if (parameterList == null || parameterList.isEmpty()) {
 			return false;
@@ -165,6 +182,10 @@ public class PageRequest {
 		}
 	}
 
+	/**
+	 * 获取查询参数
+	 * @return
+	 */
 	public String getParameterString() {
 		boolean hasPara = this.hasParameter();
 		if(!hasPara){
@@ -199,10 +220,18 @@ public class PageRequest {
 		}
 	}
 
+	/**
+	 * 获取绑定参数值列表
+	 * @return
+	 */
 	public Object[] getParameterValue() {
 		return this.getParameterValueList().toArray();
 	}
 
+	/**
+	 * 获取绑定参数值列表
+	 * @return
+	 */
 	public List getParameterValueList() {
 		if (!hasParameter()) {
 			return new ArrayList();

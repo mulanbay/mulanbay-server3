@@ -7,7 +7,6 @@ import cn.mulanbay.common.queue.LimitQueue;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.handler.bean.consume.ConsumeCompareBean;
@@ -341,7 +340,7 @@ public class ConsumeHandler extends BaseHandler {
         List<GoodsLifetime> list = cacheHandler.get(key,List.class);
         if(StringUtil.isEmpty(list)){
             //从数据库加载
-            list = baseService.getBeanList(GoodsLifetime.class, PageRequest.NO_PAGE,0,null);
+            list = baseService.getBeanList(GoodsLifetime.class,null);
             if(list.size()>0){
                 cacheHandler.set(key, list, goodsTypeExpireTime);
             }

@@ -52,7 +52,7 @@ public class SystemConfigHandler extends BaseHandler {
     CacheHandler cacheHandler;
 
     /**
-     * key:urlAddress_supportMethod,例如：/buyRecord/edit_POST
+     * key:urlAddress_supportMethod,例如：/consume/edit_POST
      */
     private static Map<String, SysFunc> functionMap = new HashMap<>();
 
@@ -71,19 +71,18 @@ public class SystemConfigHandler extends BaseHandler {
     @HandlerMethod(desc = "重载功能点")
     public void reloadFunctions() {
         //获取所有的功能点
-        List<SysFunc> list = baseService.getBeanList(SysFunc.class, 0, 0, null);
+        List<SysFunc> list = baseService.getBeanList(SysFunc.class,null);
         functionMap.clear();
         int urlMapSize = 0;
         //封装
         for (SysFunc sf : list) {
-            if (sf.getUrlAddress() == null || sf.getSupportMethods() == null) {
-                continue;
-            } else {
-                String methods = sf.getSupportMethods();
+            String url = sf.getUrlAddress();
+            String methods = sf.getSupportMethods();
+            if (StringUtil.isNotEmpty(url)&&StringUtil.isNotEmpty(methods)) {
                 String[] ss = methods.split(",");
                 for (String s : ss) {
                     // 数据库中功能点路径不需要设置项目名，因为项目名称在实际过程中会被修改过
-                    String hashKey = getUrlMethodKey(sf.getUrlAddress(), s);
+                    String hashKey = getUrlMethodKey(url, s);
                     functionMap.put(hashKey, sf);
                     urlMapSize++;
                 }
@@ -130,7 +129,7 @@ public class SystemConfigHandler extends BaseHandler {
     @HandlerMethod(desc = "重载角色功能点")
     public void reloadRoleFunctions() {
         //获取所有的功能点
-        List<RoleFunction> list = baseService.getBeanList(RoleFunction.class, 0, 0, null);
+        List<RoleFunction> list = baseService.getBeanList(RoleFunction.class, null);
         roleFunctionMap.clear();
         //封装
         for (RoleFunction rf : list) {
@@ -217,10 +216,6 @@ public class SystemConfigHandler extends BaseHandler {
 
     public String getNodeId() {
         return nodeId;
-    }
-
-    public BaseService getBaseService() {
-        return baseService;
     }
 
     /**

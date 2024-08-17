@@ -311,7 +311,6 @@ public class BaseService extends BaseHibernateDao {
 
 	}
 
-
 	/**
 	 * 获取列表数据
 	 * @param pr
@@ -392,6 +391,18 @@ public class BaseService extends BaseHibernateDao {
 		} catch (BaseException e) {
 			throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取列表异常", e);
 		}
+	}
+
+	/**
+	 * 获取列表数据(不分页，全部)
+	 * @param c
+	 * @param sort
+	 * @return
+	 * @param <T>
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getBeanList(Class<T> c, Sort sort) {
+		return this.getBeanList(c,NO_PAGE,NO_PAGE_SIZE,sort);
 	}
 
 	/**
