@@ -526,7 +526,7 @@ public abstract class AbstractBaseJob implements Job {
 
 	private void notifyMessage(Long taskTriggerId,int code, String title, String message){
 		if(quartzSource.getNotifiableProcessor()!=null){
-			quartzSource.getNotifiableProcessor().notifyMessage(taskTriggerId,code,title,message);
+			quartzSource.getNotifiableProcessor().handleScheduleMessage(taskTriggerId,code,title,message);
 		}else {
 			logger.warn("系统没有配置提醒处理器，无法发送消息");
 		}

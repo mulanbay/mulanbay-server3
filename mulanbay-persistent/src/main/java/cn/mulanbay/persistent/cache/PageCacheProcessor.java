@@ -124,7 +124,8 @@ public class PageCacheProcessor {
     }
 
     /**
-     * 获取参数key,会产生hash碰撞
+     * 获取参数key
+     * todo 会产生hash碰撞
      * @param hql
      * @param iObjects
      * @return

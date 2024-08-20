@@ -3,7 +3,7 @@ package cn.mulanbay.pms.handler;
 import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.HandlerInfo;
 import cn.mulanbay.business.handler.HandlerMethod;
-import cn.mulanbay.business.handler.lock.RedisDistributedLock;
+import cn.mulanbay.business.handler.lock.DistributedLock;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.persistent.domain.Message;
@@ -52,19 +52,20 @@ public class RedisDelayQueueHandler extends BaseHandler {
     @Value("${mulanbay.notify.message.send.maxFail:3}")
     int sendMaxFail;
 
+    @Value("${mulanbay.notify.message.queueName:userMessage}")
+    String messageQueue;
+
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
-    RedisDistributedLock redisDistributedLock;
+    DistributedLock distributedLock;
 
     @Autowired
-    MessageService userMessageService;
+    MessageService messageService;
 
     @Autowired
     BaseService baseService;
-
-    private String messageQueue = "userMessage";
 
     public RedisDelayQueueHandler() {
         super("Redis延迟消息队列");
@@ -84,7 +85,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
     private void loadUnSendMessage() {
         String key = "loadUnSendMessage";
         try {
-            boolean b = redisDistributedLock.lock(key, 0);
+            boolean b = distributedLock.lock(key, 0);
             if (!b) {
                 logger.warn("未发送消息队列已经被其他进程加载");
                 return;
@@ -93,7 +94,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
             redisTemplate.delete(this.getQueueName());
             logger.info("开始加载未发送消息队列");
             Date compareDate= DateUtil.getDate(-expiredDays);
-            List<Message> list = userMessageService.getNeedSendMessage(1, 1000, sendMaxFail, compareDate);
+            List<Message> list = messageService.getNeedSendMessage(1, 1000, sendMaxFail, compareDate);
             if (list.isEmpty()) {
                 logger.debug("没有需要加载的未发送消息队列");
             } else {
@@ -106,7 +107,7 @@ public class RedisDelayQueueHandler extends BaseHandler {
         } catch (Exception e) {
             logger.error("加载未发送消息队列异常", e);
         } finally {
-            boolean b = redisDistributedLock.releaseLock(key);
+            boolean b = distributedLock.releaseLock(key);
             if (!b) {
                 logger.warn("释放加载未发送消息队列锁key=" + key + "失败");
             }

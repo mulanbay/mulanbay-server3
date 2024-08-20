@@ -53,7 +53,7 @@ public class DictService extends BaseHibernateDao {
     }
 
     /**
-     * 保持字典数据
+     * 复制字典数据
      *
      * @param group
      * @param itemList
@@ -69,7 +69,7 @@ public class DictService extends BaseHibernateDao {
             }
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "删除数据字典组数据异常", e);
+                    "复制字典数据异常", e);
         }
     }
 

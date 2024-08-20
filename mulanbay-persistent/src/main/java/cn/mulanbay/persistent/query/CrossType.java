@@ -9,7 +9,9 @@ package cn.mulanbay.persistent.query;
  */
 public enum CrossType {
 
-    NULL(null),AND("and"),OR("or");
+    NULL(null),//默认值，不跨字段
+    AND("and"),
+    OR("or");
 
     private String symbol;
 

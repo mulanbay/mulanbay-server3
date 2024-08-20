@@ -15,7 +15,7 @@ public class LogNotifiableProcessor implements NotifiableProcessor {
     private static final Logger logger = LoggerFactory.getLogger(LogNotifiableProcessor.class);
 
     @Override
-    public void notifyMessage(Long taskTriggerId, int code, String title, String message) {
+    public void handleScheduleMessage(Long taskTriggerId, int code, String title, String message) {
         logger.info("taskTriggerId="+taskTriggerId+",提醒消息,code="+code+",title="+title+",message="+message);
     }
 }

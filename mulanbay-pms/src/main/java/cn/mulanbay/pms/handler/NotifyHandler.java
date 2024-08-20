@@ -14,12 +14,10 @@ import cn.mulanbay.pms.persistent.domain.MonitorUser;
 import cn.mulanbay.pms.persistent.domain.SysCode;
 import cn.mulanbay.pms.persistent.enums.MessageSendStatus;
 import cn.mulanbay.pms.persistent.enums.MessageType;
-import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -33,8 +31,8 @@ import static cn.mulanbay.common.exception.ErrorCode.FORM_VALID_ERROR;
  * @author fenghong
  * @create 2017-07-10 21:44
  */
-@Component(value="notifiableProcessor")
-public class NotifyHandler extends BaseHandler implements NotifiableProcessor, MessageNotify {
+@Component
+public class NotifyHandler extends BaseHandler implements MessageNotify {
 
     private static final Logger logger = LoggerFactory.getLogger(NotifyHandler.class);
 
@@ -61,13 +59,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
 
     @Autowired
     RedisDelayQueueHandler redisDelayQueueHandler;
-
-    /**
-     * 解决依赖循环
-     */
-    @Lazy
-    @Autowired
-    LogHandler logHandler;
 
     @Autowired
     CacheHandler cacheHandler;
@@ -106,8 +97,7 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
     public Long addMessage(int code, String title, String content, Long userId, Date notifyTime) {
         SysCode ec = sysCodeHandler.getSysCode(code);
         if (ec == null) {
-            logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置",
-                    PmsCode.SYS_CODE_NOT_DEFINED);
+            logger.warn("代码[" + code + "]没有配置");
             return null;
         }
         sysCodeHandler.updateCount(code);
@@ -154,8 +144,8 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             }
             SysCode ec = sysCodeHandler.getSysCode(code);
             if (ec == null) {
-                logHandler.addSysLog("系统代码未配置", "代码[" + code + "]没有配置,系统采用通用提醒代码配置",
-                        PmsCode.SYS_CODE_NOT_DEFINED);
+                //不能再写日志，因为日志里又有发送消息提醒逻辑，可能产生循环
+                logger.warn("代码[" + code + "]没有配置,系统采用通用提醒代码配置");
                 ec = sysCodeHandler.getSysCode(PmsCode.MESSAGE_NOTIFY_COMMON_CODE);
             }
             sysCodeHandler.updateCount(code);
@@ -249,23 +239,6 @@ public class NotifyHandler extends BaseHandler implements NotifiableProcessor, M
             }
         }
         return notifyTime;
-    }
-
-    /**
-     * 调度的消息通知
-     *
-     * @param triggerId
-     * @param code          系统代码
-     * @param title
-     * @param message
-     */
-    @Override
-    public void notifyMessage(Long triggerId, int code, String title, String message) {
-        //todo 后期可以通过taskTriggerId来选择通知给谁
-        //发消息
-        this.addMessageToNotifier(code, title, message, null, null, null);
-        //记录系统日志
-        logHandler.addSysLog(title,message,code);
     }
 
     @HandlerMethod(desc = "清除所有未发送消息")

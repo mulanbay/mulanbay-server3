@@ -12,7 +12,9 @@ import cn.mulanbay.pms.handler.bean.data.UserOpBean;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.FunctionType;
+import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.util.ClazzUtils;
+import cn.mulanbay.schedule.NotifiableProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ import static cn.mulanbay.pms.common.Constant.ADMIN_USER_ID;
  * @create 2017-07-10 21:44
  */
 @Component
-public class LogHandler extends BaseHandler {
+public class LogHandler extends BaseHandler implements NotifiableProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(LogHandler.class);
 
@@ -279,29 +281,30 @@ public class LogHandler extends BaseHandler {
         threadPoolHandler.pushThread(() -> {
             try {
                 SysCode ec = sysCodeHandler.getSysCode(log.getErrorCode());
-                if (ec != null && ec.getLoggable()) {
-                    SysFunc sf = log.getSysFunc();
-                    if (sf != null) {
-                        log.setSysFunc(sf);
-                        log.setIdValue(this.getParaIdValue(sf, log.getParaMap()));
-                    }
-                    log.setLogLevel(ec.getLevel());
-                    Date now = new Date();
-                    log.setStoreTime(now);
-                    //会比较慢
-                    log.setHostIpAddress(systemConfigHandler.getHostIpAddress());
-                    log.setCreatedTime(now);
-                    Map map = log.getParaMap();
-                    if (map != null && !map.isEmpty()) {
-                        //序列化比较耗时间
-                        log.setParas(JsonUtil.beanToJson(map));
-                    }
-                    log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurTime().getTime());
-                    baseService.saveObject(log);
-                    this.notifyError(log.getUserId(), ec, log.getContent());
-                }else{
-                    logger.warn("系统代码{}找不到配置",log.getErrorCode());
+                if(ec!=null&&!ec.getLoggable()){
+                    //默认需要记录日志
+                    return;
                 }
+                SysFunc sf = log.getSysFunc();
+                if (sf != null) {
+                    log.setSysFunc(sf);
+                    log.setIdValue(this.getParaIdValue(sf, log.getParaMap()));
+                }
+                LogLevel logLevel = ec==null? LogLevel.NORMAL:ec.getLevel();
+                log.setLogLevel(logLevel);
+                Date now = new Date();
+                log.setStoreTime(now);
+                //会比较慢
+                log.setHostIpAddress(systemConfigHandler.getHostIpAddress());
+                log.setCreatedTime(now);
+                Map map = log.getParaMap();
+                if (map != null && !map.isEmpty()) {
+                    //序列化比较耗时间
+                    log.setParas(JsonUtil.beanToJson(map));
+                }
+                log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurTime().getTime());
+                baseService.saveObject(log);
+                this.notifyError(log.getUserId(), ec, log.getContent());
             } catch (Exception e) {
                 String msg = "增加系统日志异常，log=" + log.getContent();
                 logger.error(msg, e);
@@ -341,10 +344,6 @@ public class LogHandler extends BaseHandler {
             return;
         }
         SysCode ec = sysCodeHandler.getSysCode(code);
-        if(ec==null){
-            logger.warn("系统代码{}未配置",code);
-            return;
-        }
         this.notifyError(userId,ec,message);
     }
 
@@ -356,7 +355,7 @@ public class LogHandler extends BaseHandler {
      */
     protected void notifyError(Long userId, SysCode ec, String message) {
         try {
-            if (ec.getCode() == ErrorCode.SUCCESS) {
+            if (ec==null||ec.getCode() == ErrorCode.SUCCESS) {
                 return;
             }
             //通知
@@ -378,6 +377,21 @@ public class LogHandler extends BaseHandler {
             }
             return s;
         }
+    }
+
+    /**
+     * 调度的消息通知
+     *
+     * @param triggerId
+     * @param code          系统代码
+     * @param title
+     * @param message
+     */
+    @Override
+    public void handleScheduleMessage(Long triggerId, int code, String title, String message) {
+        //todo 后期可以通过taskTriggerId来选择通知给谁
+        //记录系统日志
+        this.addSysLog(title,message,code);
     }
 
 }

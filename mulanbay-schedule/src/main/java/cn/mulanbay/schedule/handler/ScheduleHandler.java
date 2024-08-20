@@ -24,7 +24,10 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 调度维护总入口
@@ -129,7 +132,7 @@ public class ScheduleHandler extends BaseHandler {
     @Resource(name = "scheduleLocker")
     ScheduleLocker scheduleLocker;
 
-    @Resource(name = "notifiableProcessor")
+    @Autowired
     NotifiableProcessor notifiableProcessor;
 
     public ScheduleHandler() {

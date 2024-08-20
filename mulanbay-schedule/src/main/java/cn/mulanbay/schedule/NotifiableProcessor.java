@@ -7,5 +7,5 @@ package cn.mulanbay.schedule;
  **/
 public interface NotifiableProcessor {
 
-    void notifyMessage(Long taskTriggerId,int code, String title, String message);
+    void handleScheduleMessage(Long taskTriggerId, int code, String title, String message);
 }

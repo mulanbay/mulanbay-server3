@@ -20,24 +20,19 @@ public class MysqlUtil {
      * @return
      */
     public static String dateTypeMethod(String field, DateGroupType dateGroupType) {
-        String method = null;
         switch (dateGroupType){
             case HOUR:
-                method = "hour";
-                break;
+                return " hour(" + field + ") ";
             case DAYOFMONTH:
                 //在这个月中的那一天
-                method = "day";
-                break;
+                return " day(" + field + ") ";
             case DAYOFWEEK:
                 //星期索引，周一=1，周二=2，周日=7
                 return " WEEKDAY(" + field + ")+1 ";
             case WEEK:
-                method = "weekofyear";
-                break;
+                return " weekofyear(" + field + ") ";
             case MONTH:
-                method = "month";
-                break;
+                return " month(" + field + ") ";
             case YEAR:
                 return " CAST(DATE_FORMAT(" + field + ",'%Y') AS signed) ";
             case DAY,DAYCALENDAR:
@@ -50,6 +45,5 @@ public class MysqlUtil {
             default:
                 throw new ApplicationException(PmsCode.UN_SUPPORT_DATE_GROUP_TYPE);
         }
-        return " " + method + "(" + field + ") ";
     }
 }

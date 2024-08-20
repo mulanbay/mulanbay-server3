@@ -119,6 +119,8 @@ mulanbay:
       expiredDays: 3
       #用户最后一个消息的失效时间（秒）
       lastMsgExpires: 7200
+      #消息队列名称
+      queueName: userMessage
       send:
         #消息最大发送失败次数
         maxFail: 3
