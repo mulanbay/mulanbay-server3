@@ -3,6 +3,9 @@ package cn.mulanbay.schedule;
 
 import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
+import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 调度的资源
@@ -13,49 +16,50 @@ import cn.mulanbay.schedule.lock.ScheduleLocker;
 public class QuartzSource {
 
     /**
-     * 花费时间计算方式
+     * 花费时间计算天数
      */
-    private CostTimeCalcType costTimeCalcType = CostTimeCalcType.MAX;
+    @Value("${mulanbay.schedule.costTimeDays:7}")
+    int costTimeDays;
 
     /**
      * 花费时间计算天数
      */
-    private int costTimeDays = 7 ;
+    @Value("${mulanbay.schedule.costTimeRate:1.2}")
+    double costTimeRate;
 
     /**
-     * 花费时间比例
+     * 分布式任务最小的花费时间(毫秒)
      */
-    private double costTimeRate = 1.2;
+    @Value("${mulanbay.schedule.distriTaskMinCost:2000}")
+    long distriTaskMinCost;
 
     /**
-     *  分布式任务最小的花费时间(毫秒)
+     * 部署点（针对不支持分布式的任务）
      */
-    private long distriTaskMinCost=2000;
-
-    /**
-     * 部署点
-     */
+    @Value("${mulanbay.nodeId:mulanbay}")
     private String deployId;
 
     /**
-     * 是否支持分布式
+     * 调度系统是否支持分布式
      */
-    private boolean distriable=false;
+    @Value("${mulanbay.schedule.distriable:false}")
+    boolean distriable;
 
     /**
-     * 分布式锁
+     * 花费时间计算方式
      */
-    private ScheduleLocker scheduleLocker;
+    @Value("${mulanbay.schedule.costTimeCalcType:MAX}")
+    CostTimeCalcType costTimeCalcType;
 
-    /**
-     * 持久层操作
-     */
-    private SchedulePersistentProcessor schedulePersistentProcessor;
+    @Autowired
+    SchedulePersistentProcessor schedulePersistentProcessor;
 
-    /**
-     * 通知类（调度执行失败的时候传入）
-     */
-    private NotifiableProcessor notifiableProcessor;
+    @Resource(name = "scheduleLocker")
+    ScheduleLocker scheduleLocker;
+
+    @Autowired(required = false)
+    NotifiableProcessor notifiableProcessor;
+
 
     public CostTimeCalcType getCostTimeCalcType() {
         return costTimeCalcType;

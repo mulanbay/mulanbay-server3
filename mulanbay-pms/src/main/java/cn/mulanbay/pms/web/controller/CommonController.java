@@ -13,6 +13,7 @@ import cn.mulanbay.pms.web.bean.req.common.EnumDictSH;
 import cn.mulanbay.pms.web.bean.req.common.YearListSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.schedule.domain.TaskTrigger;
+import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -46,6 +47,10 @@ public class CommonController extends BaseController {
     @Autowired
     GeoService geoService;
 
+    /**
+     * 初始化
+     * 调度模块的类独立，需要单独添加
+     */
     @PostConstruct
     public void init(){
         logger.info("init domainClassList");
@@ -70,6 +75,9 @@ public class CommonController extends BaseController {
         //根据指定的一个枚举类
         String enumPackageName1 = AccountType.class.getPackage().getName();
         List<String> enumList = ClazzUtils.getClazzName(enumPackageName1, false);
+        String enumPackageName2 = CostTimeCalcType.class.getPackage().getName();
+        List<String> enumList2 = ClazzUtils.getClazzName(enumPackageName2, false);
+        enumList.addAll(enumList2);
         Collections.sort(enumList);
         for (String s : enumList) {
             TreeBean treeBean = new TreeBean();

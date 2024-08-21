@@ -1,5 +1,6 @@
 package cn.mulanbay.schedule.thread;
 
+import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.thread.EnhanceThread;
 import cn.mulanbay.common.thread.ThreadBean;
 import cn.mulanbay.common.util.IPAddressUtil;
@@ -24,30 +25,21 @@ public class QuartzMonitorThread extends EnhanceThread {
 
 	private static final Logger logger = LoggerFactory.getLogger(QuartzMonitorThread.class);
 
-	ScheduleHandler scheduleHandler;
-
 	private boolean isCheck = true;
 
-	private long interval=60;
-
-	public QuartzMonitorThread(ScheduleHandler scheduleHandler) {
+	public QuartzMonitorThread() {
 		super("调度监控线程");
-		this.scheduleHandler =scheduleHandler;
-		// 默认60秒
-		this.setInterval(interval);
 	}
 
-	public QuartzMonitorThread(ScheduleHandler scheduleHandler,long interval) {
+	public QuartzMonitorThread(long interval) {
 		super("调度监控线程");
-		this.scheduleHandler =scheduleHandler;
 		this.interval=interval;
-		// 默认60秒
-		this.setInterval(interval);
 	}
 
 	@Override
 	public void doTask() {
 		if (isCheck) {
+			ScheduleHandler scheduleHandler = this.getScheduleHandler();
 			scheduleHandler.checkAndRefreshSchedule(false);
 		} else {
 			logger.debug("当前设置为不检查调度");
@@ -61,6 +53,7 @@ public class QuartzMonitorThread extends EnhanceThread {
 	 */
 	private void updateTaskServer(){
 		try {
+			ScheduleHandler scheduleHandler = this.getScheduleHandler();
 			QuartzSource quartzSource = scheduleHandler.getQuartzSource();
 			SchedulePersistentProcessor persistentProcessor = quartzSource.getSchedulePersistentProcessor();
 			TaskServer taskServer = persistentProcessor.getTaskServer(quartzSource.getDeployId());
@@ -90,9 +83,8 @@ public class QuartzMonitorThread extends EnhanceThread {
 		return isCheck;
 	}
 
-	@Override
-	public long getInterval() {
-		return interval;
+	private ScheduleHandler getScheduleHandler(){
+		return BeanFactoryUtil.getBean(ScheduleHandler.class);
 	}
 
 	@Override

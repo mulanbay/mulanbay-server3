@@ -237,13 +237,13 @@ public class MainController extends BaseController {
         List<RouterVo> routers = new LinkedList<>();
         for (SysFunc sf : menus) {
             RouterVo router = new RouterVo();
-            router.setHidden(sf.getVisible().booleanValue() == true ? false : true);
+            router.setHidden(!sf.getVisible());
             router.setName(getRouteName(sf));
             router.setPath(getRouterPath(sf));
             router.setComponent(getComponent(sf));
             router.setMeta(new RouterMetaVo(sf.getFuncName(), sf.getImageName(),!sf.getCache()));
             List<SysFunc> cMenus = sf.getChildren();
-            if (!cMenus.isEmpty() && cMenus.size() > 0 && FunctionDataType.M.equals(sf.getFuncDataType())) {
+            if (!cMenus.isEmpty() && FunctionDataType.M.equals(sf.getFuncDataType())) {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));

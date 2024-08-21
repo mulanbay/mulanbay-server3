@@ -12,6 +12,7 @@ import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
+import cn.mulanbay.schedule.impl.LogNotifiableProcessor;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
 import cn.mulanbay.schedule.thread.QuartzMonitorThread;
 import cn.mulanbay.schedule.thread.RedoThread;
@@ -66,6 +67,7 @@ public class ScheduleHandler extends BaseHandler {
     /**
      * 调度资源
      */
+    @Autowired
     private QuartzSource quartzSource;
 
     /**
@@ -73,18 +75,6 @@ public class ScheduleHandler extends BaseHandler {
      */
     @Value("${mulanbay.nodeId:mulanbay}")
     private String deployId;
-
-    /**
-     * 调度系统是否支持分布式
-     */
-    @Value("${mulanbay.schedule.distriable:true}")
-    boolean distriable;
-
-    /**
-     * 分布式任务最小的花费时间(秒数)
-     */
-    @Value("${mulanbay.schedule.distriTaskMinCost:2}")
-    long distriTaskMinCost;
 
     @Value("${mulanbay.schedule.threadPool.corePoolSize:20}")
     int corePoolSize;
@@ -102,38 +92,10 @@ public class ScheduleHandler extends BaseHandler {
     long monitorInterval;
 
     /**
-     * 花费时间计算方式
-     */
-    @Value("${mulanbay.schedule.costTimeCalcType:MAX}")
-    CostTimeCalcType costTimeCalcType;
-
-    /**
-     * 花费时间计算天数
-     */
-    @Value("${mulanbay.schedule.costTimeDays:7}")
-    int costTimeDays;
-
-    /**
-     * 花费时间计算天数
-     */
-    @Value("${mulanbay.schedule.costTimeRate:1.2}")
-    double costTimeRate;
-
-    /**
      * 调度服务器关闭时停止等待时间
      */
     @Value("${mulanbay.schedule.shutDownWaitSeconds:5}")
     long shutDownWaitSeconds;
-
-
-    @Autowired
-    SchedulePersistentProcessor schedulePersistentProcessor;
-
-    @Resource(name = "scheduleLocker")
-    ScheduleLocker scheduleLocker;
-
-    @Autowired
-    NotifiableProcessor notifiableProcessor;
 
     public ScheduleHandler() {
         super("调度处理");
@@ -143,17 +105,6 @@ public class ScheduleHandler extends BaseHandler {
     public void init() {
         super.init();
         if(this.isEnableSchedule()){
-            quartzSource = new QuartzSource();
-            quartzSource.setDeployId(deployId);
-            quartzSource.setSchedulePersistentProcessor(schedulePersistentProcessor);
-            quartzSource.setDistriable(distriable);
-            quartzSource.setScheduleLocker(scheduleLocker);
-            quartzSource.setDistriTaskMinCost(distriTaskMinCost);
-            quartzSource.setNotifiableProcessor(notifiableProcessor);
-            quartzSource.setCostTimeCalcType(costTimeCalcType);
-            quartzSource.setCostTimeDays(costTimeDays);
-            quartzSource.setCostTimeRate(costTimeRate);
-
             //判断分布式支持
             if(quartzSource.getDistriable()&&quartzSource.getScheduleLocker()==null){
                 throw new ApplicationException(ScheduleCode.DISTRIBUTE_LOCK_NOT_FOUND);
@@ -162,7 +113,7 @@ public class ScheduleHandler extends BaseHandler {
             quartzServer.setQuartzSource(quartzSource);
             logger.debug("初始化调度服务");
             if(monitorInterval>0){
-                quartzMonitorThread = new QuartzMonitorThread(this,monitorInterval);
+                quartzMonitorThread = new QuartzMonitorThread(monitorInterval);
                 quartzMonitorThread.start();
                 logger.debug("启动调度监控服务");
             }
@@ -172,7 +123,7 @@ public class ScheduleHandler extends BaseHandler {
                     TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>(queueSize),
                     threadFactory,new ThreadPoolExecutor.AbortPolicy());
             //添加启动信息
-            //updateTaskServerStart();
+            updateTaskServerStart();
         }else {
             logger.debug("该应用设置为不启动调度服务");
         }
@@ -268,9 +219,9 @@ public class ScheduleHandler extends BaseHandler {
     /**
      * 根据 Job 调度日志来自动重做
      * @param logId
-     * @param isSync 是否同步
+     * @param sync 是否同步
      */
-    public void manualRedo(long logId,boolean isSync) {
+    public void manualRedo(long logId,boolean sync) {
         if(!this.isEnableSchedule()){
             throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
         }
@@ -278,7 +229,7 @@ public class ScheduleHandler extends BaseHandler {
         if(taskLog.getTaskTrigger().getRedoType()== RedoType.CANNOT){
             throw new ApplicationException(ScheduleCode.TRIGGER_CANNOT_REDO);
         }
-        startRedoJob(taskLog,isSync,null);
+        startRedoJob(taskLog,sync,null);
     }
 
     /**
@@ -311,15 +262,15 @@ public class ScheduleHandler extends BaseHandler {
      * todo 多用户并发操作下会导致被重复执行
      * 解决方式：1.该方法增加锁机制，2. AbstractBaseJob中对于redo类型增加锁机制（第二种更好些）
      * @param taskLog 重做的调度日志
-     * @param isSync  是否同步执行
+     * @param sync  是否同步执行
      * @param extraPara 额外参数
      */
-    private void startRedoJob(TaskLog taskLog,boolean isSync,Object extraPara){
+    private void startRedoJob(TaskLog taskLog,boolean sync,Object extraPara){
         //如果更新TaskTrigger会有问题，因为最新的TaskTrigger数据在正常调度里面，这样会导致正常的调度更新TaskTrigger时异常
         RedoThread redoThread = new RedoThread(taskLog,false);
         redoThread.setExtraPara(extraPara);
         redoThread.setQuartzSource(quartzSource);
-        if(!isSync){
+        if(!sync){
             scheduledThreadPool.execute(redoThread);
             logger.debug("启动一个调度日志重做线程任务");
         }else{
@@ -371,14 +322,14 @@ public class ScheduleHandler extends BaseHandler {
 
     /**
      * 触发器是否正在被调度执行
-     * @param taskTriggerId
+     * @param triggerId
      * @return
      */
-    public boolean isExecuting(Long taskTriggerId) {
+    public boolean isExecuting(Long triggerId) {
         if(!enableSchedule){
             return false;
         }
-        return quartzServer.isExecuting(taskTriggerId);
+        return quartzServer.isExecuting(triggerId);
     }
 
     public int getScheduleJobsCount(){
@@ -392,31 +343,31 @@ public class ScheduleHandler extends BaseHandler {
     /**
      * 是否已经被调度
      *
-     * @param taskTriggerId
+     * @param triggerId
      * @return
      */
-    public boolean isTaskTriggerExecuting(long taskTriggerId) {
-        return quartzServer.isTaskTriggerExecuting(taskTriggerId);
+    public boolean isTaskTriggerExecuting(long triggerId) {
+        return quartzServer.isTaskTriggerExecuting(triggerId);
     }
 
     /**
      * 获取触发器被添加的时间
      *
-     * @param taskTriggerId
+     * @param triggerId
      * @return
      */
-    public Date getAddTime(Long taskTriggerId, String groupName) {
-        return quartzServer.getAddTime(taskTriggerId,groupName);
+    public Date getAddTime(Long triggerId, String groupName) {
+        return quartzServer.getAddTime(triggerId,groupName);
     }
 
     /**
      * 获取调度系统里的触发器信息
      *
-     * @param taskTriggerId
+     * @param triggerId
      * @return
      */
-    public TaskTrigger getScheduledTaskTrigger(Long taskTriggerId,String groupName) {
-        return quartzServer.getScheduledTaskTrigger(taskTriggerId,groupName);
+    public TaskTrigger getScheduledTaskTrigger(Long triggerId,String groupName) {
+        return quartzServer.getScheduledTaskTrigger(triggerId,groupName);
     }
 
     /**
@@ -461,7 +412,7 @@ public class ScheduleHandler extends BaseHandler {
             si.setThreadPoolActiveCount(scheduledThreadPool.getActiveCount());
             si.setThreadPoolCompletedTaskCount(scheduledThreadPool.getCompletedTaskCount());
         }
-        si.setDistriable(distriable);
+        si.setDistriable(quartzSource.getDistriable());
         return si;
     }
 
@@ -497,10 +448,10 @@ public class ScheduleHandler extends BaseHandler {
 
     /**
      * 刷新调度
-     * @param taskTriggerId
+     * @param triggerId
      */
-    public boolean refreshTask(Long taskTriggerId) {
-        TaskTrigger tt = quartzSource.getSchedulePersistentProcessor().getTaskTrigger(taskTriggerId);
+    public boolean refreshTask(Long triggerId) {
+        TaskTrigger tt = quartzSource.getSchedulePersistentProcessor().getTaskTrigger(triggerId);
         return this.refreshTask(tt);
     }
 

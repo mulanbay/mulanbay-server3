@@ -30,6 +30,9 @@ public class EnhanceThread extends Thread {
 	// 如果是周期性线程，设置是先sleep再做业务还是先业务再sleep
 	protected boolean beforeSleep = false;
 
+	/**
+	 * 循环周期,秒
+	 */
 	protected long interval;
 
 	protected Date createdTime;

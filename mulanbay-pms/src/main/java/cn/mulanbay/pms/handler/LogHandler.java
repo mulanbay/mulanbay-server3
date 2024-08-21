@@ -117,38 +117,23 @@ public class LogHandler extends BaseHandler implements NotifiableProcessor {
         threadPoolHandler.pushThread(() -> {
             try {
                 SysFunc sf = log.getSysFunc();
-                int code = 0;
-                String msgContent = "";
-                if (StringUtil.isNotEmpty(log.getUrlAddress())) {
-                    msgContent = log.getUrlAddress();
+                if (StringUtil.isNotEmpty(sf.getIdField())&&StringUtil.isEmpty(log.getIdValue())) {
+                    Map<String, String> paraMap = (Map<String, String>) JsonUtil.jsonToBean(log.getParas(), Map.class);
+                    log.setIdValue(this.getParaIdValue(sf, paraMap));
                 }
-                if (sf == null) {
-                    logger.warn("找不到请求地址[" + log.getUrlAddress() + "],method[" + log.getMethod() + "]功能点配置信息");
-                } else {
-                    code = sf.getCode();
-                    msgContent += "(" + sf.getFuncName() + ")";
-                    log.setSysFunc(sf);
-                    if (StringUtil.isNotEmpty(sf.getIdField())&&StringUtil.isEmpty(log.getIdValue())) {
-                        Map<String, String> paraMap = (Map<String, String>) JsonUtil.jsonToBean(log.getParas(), Map.class);
-                        log.setIdValue(this.getParaIdValue(sf, paraMap));
-                    }
-                }
-                Date now = new Date();
-                log.setStoreTime(now);
-                //会比较慢
+                log.setStoreTime(new Date());
                 log.setHostIpAddress(systemConfigHandler.getHostIpAddress());
-                log.setCreatedTime(now);
                 //序列化比较耗时间
                 //log.setParas(JsonUtil.beanToJson(changeToNormalMap(log.getParaMap())));
                 log.setHandleDuration(log.getOccurEndTime().getTime() - log.getOccurStartTime().getTime());
                 log.setStoreDuration(log.getStoreTime().getTime() - log.getOccurEndTime().getTime());
                 if (log.getUserId() == null) {
-                    log.setUserId(0L);
+                    log.setUserId(ADMIN_USER_ID);
                     log.setUsername("未知");
                 }
                 baseService.saveObject(log);
                 this.handleReward(sf, log);
-                this.notifyError(log.getUserId(), code, msgContent);
+                this.notifyError(log.getUserId(), sf.getCode(), sf.getFuncName());
                 //同步缓存（如果需要同步bean的缓存，则日志操作无法进行异步存储）
                 this.syncCache(sf,log.getIdValue());
             } catch (Exception e) {
@@ -165,7 +150,7 @@ public class LogHandler extends BaseHandler implements NotifiableProcessor {
      */
     private void handleReward(SysFunc sf, OperLog log) {
         try {
-            if (sf != null && sf.getRewardPoint() != 0 && log.getUserId() > ADMIN_USER_ID) {
+            if (sf.getRewardPoint() != 0 && log.getUserId() > ADMIN_USER_ID) {
                 //积分奖励(操作类的积分记录管理的messageId为操作记录的编号)
                 rewardHandler.reward(log.getUserId(), sf.getRewardPoint(), log.getId(),
                         BussSource.OPERATION, "功能操作奖励", log.getId());
@@ -214,9 +199,6 @@ public class LogHandler extends BaseHandler implements NotifiableProcessor {
      */
     private void syncCache(SysFunc sf,String id){
         try {
-            if(sf==null){
-                return;
-            }
             if(StringUtil.isEmpty(id)){
                 return;
             }
@@ -287,7 +269,6 @@ public class LogHandler extends BaseHandler implements NotifiableProcessor {
                 }
                 SysFunc sf = log.getSysFunc();
                 if (sf != null) {
-                    log.setSysFunc(sf);
                     log.setIdValue(this.getParaIdValue(sf, log.getParaMap()));
                 }
                 LogLevel logLevel = ec==null? LogLevel.NORMAL:ec.getLevel();

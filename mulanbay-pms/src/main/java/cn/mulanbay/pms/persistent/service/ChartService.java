@@ -7,7 +7,6 @@ import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.pms.persistent.domain.ChartTemplate;
 import cn.mulanbay.pms.persistent.domain.StatBindConfig;
-import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.StatBussType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,38 +67,6 @@ public class ChartService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除图表模版异常", e);
-        }
-    }
-
-
-    /**
-     * 获取图表配置
-     * 需要根据用户级别判断
-     *
-     * @return
-     */
-    public ChartTemplate getChartTemplate(Long templateId, Integer userLevel) {
-        try {
-            String hql = "from ChartConfig where templateId=?1 and level<=?2 ";
-            return this.getEntity(hql,ChartTemplate.class, templateId, userLevel);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
-                    "获取图表配置异常", e);
-        }
-    }
-
-    /**
-     * 获取图表置列表
-     *
-     * @return
-     */
-    public List<ChartTemplate> getChartTemplateList(Integer minLevel) {
-        try {
-            String hql = "from ChartConfig where status=?1 and level<=?2 ";
-            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,ChartTemplate.class, CommonStatus.ENABLE, minLevel);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "获取图表置列表异常", e);
         }
     }
 

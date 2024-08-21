@@ -5,6 +5,7 @@ import cn.mulanbay.business.handler.HandlerManager;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.business.handler.lock.RedisDistributedLock;
 import cn.mulanbay.business.processor.ConfigPropertiesProcessor;
+import cn.mulanbay.schedule.QuartzSource;
 import cn.mulanbay.schedule.impl.ScheduleLockHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
@@ -106,6 +107,15 @@ public class WebConfig {
     @Bean(name = "scheduleLocker")
     public ScheduleLockHandler scheduleLockHandler() {
         return new ScheduleLockHandler();
+    }
+
+    /**
+     * 调度资源
+     * @return
+     */
+    @Bean
+    public QuartzSource quartzSource() {
+        return new QuartzSource();
     }
 
     /**
