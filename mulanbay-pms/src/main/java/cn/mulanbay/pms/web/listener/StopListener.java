@@ -4,6 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.HandlerManager;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.thread.ThreadManager;
+import cn.mulanbay.pms.common.PmsCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -28,7 +29,7 @@ public class StopListener extends BaseListener implements ApplicationListener<Co
             logger.warn(bh.getHandlerName() + " Handler begin to destroy...");
             bh.destroy();
             if (bh.isDoLog()) {
-                doLog(null, bh.getHandlerName() + "关闭", bh.getHandlerName() + "关闭成功");
+                doLog(PmsCode.HANDLER_STOP, bh.getHandlerName() + "关闭", bh.getHandlerName() + "关闭成功");
             }
             logger.warn(bh.getHandlerName() + " Handler destroyed。");
         }

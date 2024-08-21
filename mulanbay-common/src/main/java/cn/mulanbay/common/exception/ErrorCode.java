@@ -36,7 +36,7 @@ public class ErrorCode {
 
 	public final static int DO_BUSS_ERROR =12;
 
-	public final static int SYSTEM_STARTED =13;
+	public final static int SYSTEM_START =13;
 
 	public final static int NULL_POINT_EXCEPTION =14;
 

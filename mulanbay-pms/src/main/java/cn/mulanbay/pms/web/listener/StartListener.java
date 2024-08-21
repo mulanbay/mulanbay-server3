@@ -4,6 +4,7 @@ import cn.mulanbay.business.handler.BaseHandler;
 import cn.mulanbay.business.handler.HandlerManager;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.pms.common.PmsCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -37,12 +38,12 @@ public class StartListener extends BaseListener implements ApplicationListener<C
                 }
             }
             if (bh.isDoLog()) {
-                doLog(null, bh.getHandlerName() + "初始化", bh.getHandlerName() + "初始化成功");
+                doLog(PmsCode.HANDLER_START, bh.getHandlerName() + "初始化", bh.getHandlerName() + "初始化成功");
             }
             logger.info(bh.getHandlerName() + " Handler init end");
         }
         logger.info("初始化了" + hm.getHandlerList().size() + "个Handler");
-        doLog(ErrorCode.SYSTEM_STARTED, "系统启动", "系统启动成功");
+        doLog(ErrorCode.SYSTEM_START, "系统启动", "系统启动成功");
     }
 
 }

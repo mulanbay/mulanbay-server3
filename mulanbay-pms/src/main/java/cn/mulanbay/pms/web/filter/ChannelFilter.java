@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
+ * 支持post方式请求参数数据多次读写
  *
  * @author fenghong
  * @create 2017-09-28 21:38

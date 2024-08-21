@@ -19,20 +19,17 @@ public class BaseListener {
 
     /**
      * 记录日志
-     * @param errorCode
+     * @param code
      * @param title
      * @param msg
      */
-    protected void doLog(Integer errorCode, String title, String msg) {
+    protected void doLog(int code, String title, String msg) {
         try {
-            if (errorCode == null) {
-                errorCode = ErrorCode.SUCCESS;
-            }
             LogHandler logHandler = BeanFactoryUtil.getBean(LogHandler.class);
             //增加IP地址和节点
             SystemConfigHandler systemConfigHandler = BeanFactoryUtil.getBean(SystemConfigHandler.class);
             msg = msg + ",IP地址:" + systemConfigHandler.getHostIpAddress() + "，节点编号:" + systemConfigHandler.getNodeId() + ".";
-            logHandler.addSysLog(title, msg, errorCode);
+            logHandler.addSysLog(title, msg, code);
         } catch (Exception e) {
             logger.error("doLog 异常", e);
         }

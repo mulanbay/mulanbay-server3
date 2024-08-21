@@ -56,11 +56,6 @@ public class CacheKey {
     public static final String USER_LOGIN_FAIL = "user:loginFail:{0}";
 
     /**
-     * 用户新增操作（sessionId:URL）
-     */
-    public static final String USER_OPERATE_OP = "user:operateOp:{0}:{1}";
-
-    /**
      * 用户代码发送限流
      * 错误代码，用户编号
      */

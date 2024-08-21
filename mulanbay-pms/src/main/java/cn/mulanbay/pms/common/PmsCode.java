@@ -266,10 +266,9 @@ public class PmsCode {
 
     public static final int SYSTEM_ALERT_AUTO_JOB = 1080113;
 
-    /**
-     * 命令消息通知
-     */
-    public static final int CMD_NOTIFY = 1080112;
+    public static final int HANDLER_START = 1080114;
+
+    public static final int HANDLER_STOP = 1080114;
 
     /** 系统类 end **/
 
@@ -302,14 +301,9 @@ public class PmsCode {
     /** 饮食类 end **/
 
 
-    /**
-     * 提醒类 start
-     **/
-    public static final int NOTIFY_WARNING_VALUE_LESS_ALERT = 1120101;
+    /** 统计类 start **/
 
-    public static final int NOTIFY_WARNING_VALUE_MORE_ALERT = 1120102;
-
-    /** 提醒类 end **/
+    /** 统计类 end **/
 
     /**
      * 资金类 start
@@ -418,12 +412,4 @@ public class PmsCode {
 
     /** 用户评分类 end **/
 
-    /**
-     * 家庭类 start
-     **/
-
-    public static final int FAMILY_JOINED = 1180100;
-
-
-    /** 家庭类 end **/
 }
