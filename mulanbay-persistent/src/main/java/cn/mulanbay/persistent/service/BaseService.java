@@ -96,31 +96,6 @@ public class BaseService extends BaseHibernateDao {
 		}
 	}
 
-
-	/**
-	 * 动态更新一个对象，需要该类打@DynamicUpdate
-	 *
-	 * @param object
-	 * @param cls
-	 * @param id
-	 */
-	public void updateObjectDynamic(Object object, Class<?> cls, Serializable id) {
-		try {
-			Object dbo = this.getObject(cls, id);
-			if (dbo == null) {
-				throw new PersistentException(
-						ErrorCode.OBJECT_GET_ERROR, "获取对象["
-								+ cls.getSimpleName() + "],id[" + id + "]失败！");
-			} else {
-				BeanUtils.copyProperties(object, dbo);
-				this.updateEntity(dbo);
-			}
-		} catch (BaseException e) {
-			throw new PersistentException(
-					ErrorCode.OBJECT_UPDATE_ERROR, "更新对象失败！", e);
-		}
-	}
-
 	/**
 	 * 获取对象
 	 *
@@ -167,7 +142,7 @@ public class BaseService extends BaseHibernateDao {
 	 */
 	public <T> T getObjectWithUser(Class<T> c, Serializable id,Long userId) {
 		try {
-			String hql="from "+c.getSimpleName()+" where id=?0 and userId=?1 ";
+			String hql="from "+c.getSimpleName()+" where id=?1 and userId=?2 ";
 			return this.getEntity(hql,c,id,userId);
 		} catch (BaseException e) {
 			throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取对象["+c.getSimpleName()+"],id["+id+"],userId["+userId+"]失败！",e);
@@ -189,7 +164,7 @@ public class BaseService extends BaseHibernateDao {
 	public void deleteObject(Class c, String fieldName, Serializable id) {
 		try {
 			String hql = "delete from " + c.getSimpleName() + " t where t."
-					+ fieldName + "=?0 ";
+					+ fieldName + "=?1 ";
 			this.updateEntities(hql, id);
 		} catch (BaseException e) {
 			throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,"删除对象失败！",e);
@@ -242,36 +217,8 @@ public class BaseService extends BaseHibernateDao {
 	public void deleteObjectsWithUser(Class c, Serializable[] ids,Long userId) {
 		try {
 			for(Serializable id:ids){
-				String hql="delete from "+c.getSimpleName()+" where id=?0 and userId=?1 ";
+				String hql="delete from "+c.getSimpleName()+" where id=?1 and userId=?2 ";
 				this.updateEntities(hql,id,userId);
-			}
-		} catch (Exception e) {
-			throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,"删除对象失败！",e);
-		}
-	}
-
-	/**
-	 * 删除对象
-	 * @param c
-	 * @param strIds
-	 * @param userId
-	 */
-	public void deleteObjectsWithUser(Class c, String strIds,Class idClass,Long userId) {
-		try {
-			String[] ids = strIds.split(",");
-			for(String id:ids){
-				Serializable serId=null;
-				if(idClass==Long.class){
-					serId = Long.valueOf(id);
-				}else if(idClass==Integer.class){
-					serId = Integer.valueOf(id);
-				}else if(idClass==Short.class){
-					serId = Short.valueOf(id);
-				}else{
-					serId =id;
-				}
-				String hql="delete from "+c.getSimpleName()+" where id=?0 and userId=?1 ";
-				this.updateEntities(hql,serId,userId);
 			}
 		} catch (Exception e) {
 			throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,"删除对象失败！",e);
@@ -353,7 +300,7 @@ public class BaseService extends BaseHibernateDao {
 			PageResult<T> qb = new PageResult<T>();
 			StringBuffer hql = new StringBuffer();
 			hql.append("from " + c.getName());
-			if (page >= 0) {
+			if (page >= NO_PAGE) {
 				long maxRow = this.getCount("select count(*) " + hql.toString(),c);
 				qb.setMaxRow(maxRow);
 			}
@@ -365,7 +312,7 @@ public class BaseService extends BaseHibernateDao {
 			qb.setBeanList(list);
 			return qb;
 		} catch (BaseException e) {
-			throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,"获取列表异常", e);
+			throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,"获取列表异常", e);
 		}
 	}
 

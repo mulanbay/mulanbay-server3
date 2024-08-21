@@ -17,6 +17,7 @@ import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.LogCompareType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.LogService;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.util.ChartUtil;
 import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.operLog.*;
@@ -35,6 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
 
 /**
  * 操作日志
@@ -139,7 +142,7 @@ public class OperLogController extends BaseController {
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);
             response.setBeanName(br.getSysFunc().getBeanName());
-            Serializable bussId = formatIdValue(br.getSysFunc().getIdFieldType(), idValue);
+            Serializable bussId = BussUtil.formatIdValue(br.getSysFunc().getIdFieldType(), idValue);
             String idFiled = this.formatIdField(br.getSysFunc().getIdField());
             Class clz = ClazzUtils.getClass(br.getSysFunc().getBeanName());
             Object o = baseService.getObject(clz, bussId, idFiled);
@@ -166,7 +169,7 @@ public class OperLogController extends BaseController {
         String idValue = getAndUpdateIdValue(log);
         if (sf != null) {
             //获取业务表最新的数据
-            Serializable bussId = formatIdValue(sf.getIdFieldType(), idValue);
+            Serializable bussId = BussUtil.formatIdValue(sf.getIdFieldType(), idValue);
             String idFiled = this.formatIdField(sf.getIdField());
             Class clz = ClazzUtils.getClass(sf.getBeanName());
             Object o = baseService.getObject(clz, bussId, idFiled);
@@ -193,7 +196,7 @@ public class OperLogController extends BaseController {
             throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_NOT_DEFINE, gr.getBeanName() + "修改类功能点没有定义");
         }
         //获取业务表最新的数据
-        Serializable bussId = formatIdValue(sf.getIdFieldType(), gr.getId());
+        Serializable bussId = BussUtil.formatIdValue(sf.getIdFieldType(), gr.getId());
         vo.setBussId(gr.getId());
         String idFiled = this.formatIdField(sf.getIdField());
         Class clz = ClazzUtils.getClass(sf.getBeanName());
@@ -280,7 +283,7 @@ public class OperLogController extends BaseController {
             sf.setUserId(user.getUserId());
         }
         List<OperLogTreeStat> list = logService.treeStatOperLog(sf);
-        ChartTreeDetailData data = new ChartTreeDetailData(0, "根");
+        ChartTreeDetailData data = new ChartTreeDetailData(ROOT_ID, "根");
         for (OperLogTreeStat sl : list) {
             String parentName = sl.getPname();
             if (StringUtil.isEmpty(parentName)) {

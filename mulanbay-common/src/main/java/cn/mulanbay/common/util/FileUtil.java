@@ -1,13 +1,9 @@
 package cn.mulanbay.common.util;
 
-import cn.hutool.core.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.List;
@@ -998,24 +994,6 @@ public class FileUtil {
         if (!path.exists()) {
             path.mkdirs();
         }
-    }
-
-    /**
-     * 将图片转换成base64格式进行存储
-     *
-     * @param imagePath
-     * @return
-     */
-    public static String encodeImageTOBase64(String imagePath) throws IOException {
-        int index = imagePath.lastIndexOf(".");
-        String type = imagePath.substring(index + 1);
-        BufferedImage image = ImageIO.read(new File(imagePath));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(image, type, bos);
-        byte[] imageBytes = bos.toByteArray();
-        String imageString = Base64.encode(imageBytes);
-        bos.close();
-        return imageString;
     }
 
     /**

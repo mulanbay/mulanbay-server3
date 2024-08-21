@@ -4,18 +4,15 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.ValidateError;
-import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,29 +118,6 @@ public class BaseController {
         rb.setCode(ErrorCode.DO_BUSS_ERROR);
         rb.setMessage(msg);
         return rb;
-    }
-
-    /**
-     * 获取ID值
-     * @param idFieldType
-     * @param idValue
-     * @return
-     */
-    protected Serializable formatIdValue(IdFieldType idFieldType, String idValue) {
-        if(StringUtil.isEmpty(idValue)||idValue.equalsIgnoreCase("null")){
-            return null;
-        }
-        Serializable bussId = null;
-        if (idFieldType == IdFieldType.LONG) {
-            bussId = Long.parseLong(idValue);
-        } else if (idFieldType == IdFieldType.INTEGER) {
-            bussId = Integer.parseInt(idValue);
-        } else if (idFieldType == IdFieldType.SHORT) {
-            bussId = Short.parseShort(idValue);
-        } else {
-            bussId = idValue;
-        }
-        return bussId;
     }
 
 }

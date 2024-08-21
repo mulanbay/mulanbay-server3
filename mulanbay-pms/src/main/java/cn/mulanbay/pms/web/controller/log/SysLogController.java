@@ -9,6 +9,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.SysLog;
 import cn.mulanbay.pms.persistent.dto.log.SysLogAnalyseStat;
 import cn.mulanbay.pms.persistent.service.LogService;
+import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.sysLog.SysLogAnalyseStatSH;
 import cn.mulanbay.pms.web.bean.req.log.sysLog.SysLogSH;
@@ -100,7 +101,7 @@ public class SysLogController extends BaseController {
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);
             response.setBeanName(log.getSysFunc().getBeanName());
-            Serializable bussId = formatIdValue(log.getSysFunc().getIdFieldType(), idValue);
+            Serializable bussId = BussUtil.formatIdValue(log.getSysFunc().getIdFieldType(), idValue);
             Class clz = ClazzUtils.getClass(log.getSysFunc().getBeanName());
             Object o = baseService.getObject(clz, bussId, log.getSysFunc().getIdField());
             response.setBeanData(o);

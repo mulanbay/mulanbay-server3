@@ -5,6 +5,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.persistent.domain.Budget;
 import cn.mulanbay.pms.persistent.enums.BussSource;
+import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.StatValueClass;
 import cn.mulanbay.pms.util.bean.PeriodDateBean;
@@ -290,6 +291,31 @@ public class BussUtil {
             }
         }
         return v;
+    }
+
+    /**
+     * 根据ID的数据类型获取ID值
+     *
+     * @param idFieldType
+     * @param idValue
+     * @return
+     */
+    public static Serializable formatIdValue(IdFieldType idFieldType, String idValue) {
+        if(StringUtil.isEmpty(idValue)||idValue.equalsIgnoreCase("null")){
+            return null;
+        }
+        switch (idFieldType){
+            case LONG -> {
+                return Long.parseLong(idValue);
+            }
+            case INTEGER -> {
+                return Integer.parseInt(idValue);
+            }
+            case SHORT -> {
+                return Short.parseShort(idValue);
+            }
+        }
+        return idValue;
     }
 
 }
