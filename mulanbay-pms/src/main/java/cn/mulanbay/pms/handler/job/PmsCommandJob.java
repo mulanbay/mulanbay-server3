@@ -9,7 +9,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.CommandHandler;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.Command;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -57,7 +57,7 @@ public class PmsCommandJob extends AbstractBaseJob {
         ParaCheckResult rb = new ParaCheckResult();
         para = this.getTriggerParaBean();
         if (para == null) {
-            rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
+            rb.setCode(ScheduleCode.TRIGGER_PARA_NULL);
         }
         return rb;
     }

@@ -12,7 +12,7 @@ import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.BussUtil;
 import cn.mulanbay.pms.web.bean.req.report.plan.UserPlanSH;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

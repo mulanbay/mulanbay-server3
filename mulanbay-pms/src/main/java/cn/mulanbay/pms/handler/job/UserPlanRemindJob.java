@@ -19,7 +19,7 @@ import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BussUtil;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -344,7 +344,7 @@ public class UserPlanRemindJob extends AbstractBaseRemindJob {
         ParaCheckResult result = new ParaCheckResult();
         para = this.getTriggerParaBean();
         if (para == null) {
-            result.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
+            result.setCode(ScheduleCode.TRIGGER_PARA_NULL);
             result.setMessage("调度参数检查失败，参数为空");
         }
         return result;

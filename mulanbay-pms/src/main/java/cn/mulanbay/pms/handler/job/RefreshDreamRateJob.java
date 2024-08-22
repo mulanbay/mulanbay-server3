@@ -10,7 +10,7 @@ import cn.mulanbay.pms.persistent.enums.DreamStatus;
 import cn.mulanbay.pms.persistent.service.DreamService;
 import cn.mulanbay.pms.persistent.service.PlanService;
 import cn.mulanbay.pms.util.BussUtil;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

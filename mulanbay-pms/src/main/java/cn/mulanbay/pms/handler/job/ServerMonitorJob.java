@@ -14,7 +14,7 @@ import cn.mulanbay.pms.server.Cpu;
 import cn.mulanbay.pms.server.Mem;
 import cn.mulanbay.pms.server.ServerDetail;
 import cn.mulanbay.pms.server.SysFile;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

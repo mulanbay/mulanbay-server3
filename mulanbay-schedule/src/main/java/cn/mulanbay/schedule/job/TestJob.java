@@ -1,7 +1,7 @@
 package cn.mulanbay.schedule.job;
 
 import cn.mulanbay.common.util.NumberUtil;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -49,10 +49,9 @@ public class TestJob extends AbstractBaseJob {
     @Override
     public ParaCheckResult checkTriggerPara() {
         ParaCheckResult rb = new ParaCheckResult();
-        rb.setMessage("参数格式为：1. 存储过程名称 ,2. 时间参数类型（0不需要,1只需要单天,2一天的时间段,3一个月的时间段）");
         para = this.getTriggerParaBean();
         if(para==null){
-            rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
+            rb.setCode(ScheduleCode.TRIGGER_PARA_NULL);
         }
         return rb;
     }

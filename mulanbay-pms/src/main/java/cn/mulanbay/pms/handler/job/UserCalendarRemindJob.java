@@ -5,7 +5,7 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.NotifyHandler;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

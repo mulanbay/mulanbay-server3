@@ -3,7 +3,7 @@ package cn.mulanbay.pms.handler.job;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.queue.LimitQueue;
 import cn.mulanbay.pms.handler.PmsScheduleHandler;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleInfo;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

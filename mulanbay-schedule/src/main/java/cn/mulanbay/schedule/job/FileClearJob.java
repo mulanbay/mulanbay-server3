@@ -4,7 +4,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.FileUtil;
 import cn.mulanbay.common.util.ZipUtil;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
@@ -104,12 +104,12 @@ public class FileClearJob extends AbstractBaseJob {
 		ParaCheckResult rb = new ParaCheckResult();
 		para = this.getTriggerParaBean();
 		if(para==null){
-			rb.setErrorCode(ScheduleCode.TRIGGER_PARA_NULL);
+			rb.setCode(ScheduleCode.TRIGGER_PARA_NULL);
 			return rb;
 		}else{
 			File sf = new File(para.getSourcePath());
 			if (!sf.exists()) {
-				rb.setErrorCode(ErrorCode.FILE_PATH_NOT_EXIT);
+				rb.setCode(ErrorCode.FILE_PATH_NOT_EXIT);
 				return rb;
 			}
 		}

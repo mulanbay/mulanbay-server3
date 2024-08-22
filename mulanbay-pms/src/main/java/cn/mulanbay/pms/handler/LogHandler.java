@@ -14,7 +14,7 @@ import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.FunctionType;
 import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.util.ClazzUtils;
-import cn.mulanbay.schedule.NotifiableProcessor;
+import cn.mulanbay.schedule.MessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import static cn.mulanbay.pms.common.Constant.ADMIN_USER_ID;
  * @create 2017-07-10 21:44
  */
 @Component
-public class LogHandler extends BaseHandler implements NotifiableProcessor {
+public class LogHandler extends BaseHandler implements MessageProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(LogHandler.class);
 

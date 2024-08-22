@@ -6,7 +6,7 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.handler.PmsScheduleHandler;
 import cn.mulanbay.pms.persistent.dto.schedule.CheckLogDTO;
 import cn.mulanbay.pms.persistent.service.PmsScheduleService;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.JobResult;

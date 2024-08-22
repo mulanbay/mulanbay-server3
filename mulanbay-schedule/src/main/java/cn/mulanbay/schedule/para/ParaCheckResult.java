@@ -1,4 +1,4 @@
-package cn.mulanbay.schedule;
+package cn.mulanbay.schedule.para;
 
 /**
  * 调度触发器的参数检查结果
@@ -8,16 +8,16 @@ package cn.mulanbay.schedule;
  */
 public class ParaCheckResult {
 
-	private int errorCode;
+	private int code;
 	
 	private String message;
 
-	public int getErrorCode() {
-		return errorCode;
+	public int getCode() {
+		return code;
 	}
 
-	public void setErrorCode(int errorCode) {
-		this.errorCode = errorCode;
+	public void setCode(int code) {
+		this.code = code;
 	}
 
 	public String getMessage() {

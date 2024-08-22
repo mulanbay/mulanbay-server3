@@ -9,14 +9,10 @@ import cn.mulanbay.schedule.*;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.domain.TaskServer;
 import cn.mulanbay.schedule.domain.TaskTrigger;
-import cn.mulanbay.schedule.enums.CostTimeCalcType;
 import cn.mulanbay.schedule.enums.RedoType;
 import cn.mulanbay.schedule.enums.TriggerStatus;
-import cn.mulanbay.schedule.impl.LogNotifiableProcessor;
-import cn.mulanbay.schedule.lock.ScheduleLocker;
 import cn.mulanbay.schedule.thread.QuartzMonitorThread;
 import cn.mulanbay.schedule.thread.RedoThread;
-import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +123,6 @@ public class ScheduleHandler extends BaseHandler {
         }else {
             logger.debug("该应用设置为不启动调度服务");
         }
-
     }
 
     /**
@@ -222,9 +217,6 @@ public class ScheduleHandler extends BaseHandler {
      * @param sync 是否同步
      */
     public void manualRedo(long logId,boolean sync) {
-        if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
-        }
         TaskLog taskLog=quartzSource.getSchedulePersistentProcessor().getTaskLog(logId);
         if(taskLog.getTaskTrigger().getRedoType()== RedoType.CANNOT){
             throw new ApplicationException(ScheduleCode.TRIGGER_CANNOT_REDO);
@@ -240,9 +232,6 @@ public class ScheduleHandler extends BaseHandler {
      * @param extraPara 额外参数
      */
     public void manualStart(long triggerId, Date bussDay, boolean isSync, Object extraPara, String remark) {
-        if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
-        }
         TaskTrigger taskTrigger = quartzSource.getSchedulePersistentProcessor().getTaskTrigger(triggerId);
         if(taskTrigger.getCheckUnique()){
             boolean b =quartzSource.getSchedulePersistentProcessor().isTaskLogExit(triggerId,bussDay);
@@ -301,11 +290,7 @@ public class ScheduleHandler extends BaseHandler {
      * @return
      */
     public int getCurrentlyExecutingJobsCount(){
-        if(enableSchedule){
-            return quartzServer.getCurrentlyExecutingJobsCount();
-        }else {
-            return 0;
-        }
+        return quartzServer.getCurrentlyExecutingJobsCount();
     }
 
     /**
@@ -314,9 +299,6 @@ public class ScheduleHandler extends BaseHandler {
      * @return
      */
     public List<TaskTrigger> getCurrentlyExecutingJobs() {
-        if(!isEnableSchedule()){
-            return null;
-        }
         return quartzServer.getCurrentlyExecutingJobs();
     }
 
@@ -326,18 +308,11 @@ public class ScheduleHandler extends BaseHandler {
      * @return
      */
     public boolean isExecuting(Long triggerId) {
-        if(!enableSchedule){
-            return false;
-        }
         return quartzServer.isExecuting(triggerId);
     }
 
     public int getScheduleJobsCount(){
-        if(enableSchedule){
-            return quartzServer.getScheduleJobsCount();
-        }else {
-            return 0;
-        }
+        return quartzServer.getScheduleJobsCount();
     }
 
     /**
@@ -378,9 +353,6 @@ public class ScheduleHandler extends BaseHandler {
      * @param b
      */
     public void setScheduleStatus(boolean b){
-        if(!this.isEnableSchedule()){
-            throw new ApplicationException(ScheduleCode.SCHEDULE_NOT_ENABLED);
-        }
         quartzServer.setScheduleStatus(b);
     }
 
@@ -389,9 +361,6 @@ public class ScheduleHandler extends BaseHandler {
      * @return
      */
     public boolean getScheduleStatus(){
-        if(!enableSchedule){
-            return false;
-        }
         return quartzServer.getScheduleStatus();
     }
 
@@ -423,12 +392,8 @@ public class ScheduleHandler extends BaseHandler {
     @HandlerMethod(desc = "刷新调度")
     public boolean checkAndRefreshSchedule(boolean isForce) {
         try {
-            if (enableSchedule) {
-                synchronized (quartzServer) {
-                    quartzServer.refreshSchedule(isForce);
-                }
-            } else {
-                logger.warn("调度服务没有开启");
+            synchronized (quartzServer) {
+                quartzServer.refreshSchedule(isForce);
             }
             return true;
         } catch (Exception e) {

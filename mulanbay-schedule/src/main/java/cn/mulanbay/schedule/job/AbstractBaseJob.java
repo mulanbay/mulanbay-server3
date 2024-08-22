@@ -12,6 +12,7 @@ import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.*;
 import cn.mulanbay.schedule.lock.LockStatus;
 import cn.mulanbay.schedule.lock.ScheduleLocker;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.para.TriggerExecTimePeriods;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -511,7 +512,7 @@ public abstract class AbstractBaseJob implements Job {
 	 * 针对执行失败操作
 	 */
 	private void notifyMessage(){
-		if(quartzSource.getNotifiableProcessor()!=null){
+		if(quartzSource.getMessageProcessor()!=null){
 			JobResult jer = taskLog.getExecuteResult();
 			if(jer== JobResult.FAIL||jer== JobResult.DUPLICATE){
 				Long taskTriggerId = taskTrigger.getTriggerId();
@@ -525,8 +526,8 @@ public abstract class AbstractBaseJob implements Job {
 	}
 
 	private void notifyMessage(Long taskTriggerId,int code, String title, String message){
-		if(quartzSource.getNotifiableProcessor()!=null){
-			quartzSource.getNotifiableProcessor().handleScheduleMessage(taskTriggerId,code,title,message);
+		if(quartzSource.getMessageProcessor()!=null){
+			quartzSource.getMessageProcessor().handleScheduleMessage(taskTriggerId,code,title,message);
 		}else {
 			logger.warn("系统没有配置提醒处理器，无法发送消息");
 		}
@@ -572,10 +573,10 @@ public abstract class AbstractBaseJob implements Job {
 			logger.debug("检查[" + getTaskTrigger().getTriggerName() + "]的参数:"
 					+ getTaskTrigger().getTriggerParas());
 			ParaCheckResult pcr = checkTriggerPara();
-			if (pcr.getErrorCode() != ErrorCode.SUCCESS) {
+			if (pcr.getCode() != ErrorCode.SUCCESS) {
 				TaskResult tr = new TaskResult();
 				tr.setResult(JobResult.FAIL);
-				tr.setComment("检查参数异常，错误代码：" + pcr.getErrorCode() + ","
+				tr.setComment("检查参数异常，错误代码：" + pcr.getCode() + ","
 						+ pcr.getMessage());
 				return tr;
 			} else {

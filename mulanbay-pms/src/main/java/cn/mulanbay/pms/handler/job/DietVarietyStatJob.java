@@ -12,7 +12,7 @@ import cn.mulanbay.pms.persistent.domain.DietVarietyLog;
 import cn.mulanbay.pms.persistent.enums.DietType;
 import cn.mulanbay.pms.persistent.service.DietService;
 import cn.mulanbay.pms.web.bean.req.food.diet.DietVarietySH;
-import cn.mulanbay.schedule.ParaCheckResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;

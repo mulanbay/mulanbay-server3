@@ -5,7 +5,7 @@ package cn.mulanbay.schedule;
  * @author fenghong
  * @create 2017-11-15 21:33
  **/
-public interface NotifiableProcessor {
+public interface MessageProcessor {
 
     void handleScheduleMessage(Long taskTriggerId, int code, String title, String message);
 }

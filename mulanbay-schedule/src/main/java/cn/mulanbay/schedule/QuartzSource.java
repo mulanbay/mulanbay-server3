@@ -51,14 +51,23 @@ public class QuartzSource {
     @Value("${mulanbay.schedule.costTimeCalcType:MAX}")
     CostTimeCalcType costTimeCalcType;
 
+    /**
+     * 调度持久化处理
+     */
     @Autowired
     SchedulePersistentProcessor schedulePersistentProcessor;
 
+    /**
+     * 调度锁处理
+     */
     @Resource(name = "scheduleLocker")
     ScheduleLocker scheduleLocker;
 
+    /**
+     * 消息处理
+     */
     @Autowired(required = false)
-    NotifiableProcessor notifiableProcessor;
+    MessageProcessor messageProcessor;
 
 
     public CostTimeCalcType getCostTimeCalcType() {
@@ -125,12 +134,12 @@ public class QuartzSource {
         this.schedulePersistentProcessor = schedulePersistentProcessor;
     }
 
-    public NotifiableProcessor getNotifiableProcessor() {
-        return notifiableProcessor;
+    public MessageProcessor getMessageProcessor() {
+        return messageProcessor;
     }
 
-    public void setNotifiableProcessor(NotifiableProcessor notifiableProcessor) {
-        this.notifiableProcessor = notifiableProcessor;
+    public void setMessageProcessor(MessageProcessor messageProcessor) {
+        this.messageProcessor = messageProcessor;
     }
 
 }

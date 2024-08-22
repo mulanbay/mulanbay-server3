@@ -1,6 +1,6 @@
 package cn.mulanbay.schedule.impl;
 
-import cn.mulanbay.schedule.NotifiableProcessor;
+import cn.mulanbay.schedule.MessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
  * @author fenghong
  * @create 2018-01-20 21:44
  */
-public class LogNotifiableProcessor implements NotifiableProcessor {
+public class LogMessageProcessor implements MessageProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogNotifiableProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogMessageProcessor.class);
 
     @Override
     public void handleScheduleMessage(Long taskTriggerId, int code, String title, String message) {
