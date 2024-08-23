@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+
 /**
  * 快捷菜单
  *
@@ -63,7 +65,7 @@ public class FastMenuController extends BaseController {
         Long userId = loginUser.getUserId();
         Long roleId = loginUser.getRoleId();
         List<SysFunc> sfList = authService.selectRoleFunctionMenuList(roleId, true);
-        List<TreeBean> funcTree = this.getFunctionTree(sfList, 0L);
+        List<TreeBean> funcTree = this.getFunctionTree(sfList, ROOT_ID);
         Map map = new HashMap<>();
         map.put("treeData", funcTree);
         List checkedKeys = new ArrayList();

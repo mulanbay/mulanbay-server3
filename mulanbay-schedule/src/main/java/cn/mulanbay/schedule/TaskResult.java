@@ -10,8 +10,14 @@ import cn.mulanbay.schedule.enums.JobResult;
  */
 public class TaskResult {
 
+	/**
+	 * 调度任务执行结果
+	 */
 	private JobResult result = JobResult.SKIP;
-	
+
+	/**
+	 * 子任务结果，目前没有使用
+	 */
 	private String subResults;
 	
 	private String comment;

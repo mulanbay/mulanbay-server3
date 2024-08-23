@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+import static cn.mulanbay.pms.common.Constant.ROOT_NAME;
 
 public class TreeBean {
 
@@ -40,7 +41,7 @@ public class TreeBean {
     public static TreeBean creatRoot(){
         TreeBean root = new TreeBean();
         root.setId(ROOT_ID);
-        root.setText("根");
+        root.setText(ROOT_NAME);
         return root;
     }
     public Object getId() {

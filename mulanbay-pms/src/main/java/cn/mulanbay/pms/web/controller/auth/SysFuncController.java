@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static cn.mulanbay.pms.common.Constant.ROOT_NAME;
+
 /**
  * 系统功能点
  *
@@ -98,7 +100,7 @@ public class SysFuncController extends BaseController {
             List<SysFunc> gtList = baseService.getBeanList(pr);
             TreeBean root = new TreeBean();
             root.setId(Constant.ROOT_ID);
-            root.setText("根");
+            root.setText(ROOT_NAME);
             root.setChildren(createFunctionTree(root, gtList));
             list.add(root);
             return callback(list);

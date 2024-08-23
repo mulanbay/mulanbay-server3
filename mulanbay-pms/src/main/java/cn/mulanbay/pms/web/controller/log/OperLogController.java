@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+import static cn.mulanbay.pms.common.Constant.ROOT_NAME;
 
 /**
  * 操作日志
@@ -283,7 +284,7 @@ public class OperLogController extends BaseController {
             sf.setUserId(user.getUserId());
         }
         List<OperLogTreeStat> list = logService.treeStatOperLog(sf);
-        ChartTreeDetailData data = new ChartTreeDetailData(ROOT_ID, "根");
+        ChartTreeDetailData data = new ChartTreeDetailData(ROOT_ID, ROOT_NAME);
         for (OperLogTreeStat sl : list) {
             String parentName = sl.getPname();
             if (StringUtil.isEmpty(parentName)) {

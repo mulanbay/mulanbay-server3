@@ -73,7 +73,6 @@ public class MusicPracticeController extends BaseController {
     public ResultBean create(@RequestBody @Valid MusicPracticeForm form) {
         MusicPractice bean = new MusicPractice();
         BeanCopy.copy(form, bean);
-        bean.setCreatedTime(new Date());
         bean.setPracticeDate(DateUtil.getDate(bean.getStartTime(), DateUtil.FormatDay1));
         Instrument instrument = baseService.getObject(Instrument.class, form.getInstrumentId());
         bean.setInstrument(instrument);
@@ -245,6 +244,7 @@ public class MusicPracticeController extends BaseController {
         List<Date> dateList = musicPracticeService.getPracticeDateList(sf);
         return ChartUtil.createHMChartData(dateList, "音乐练习分析", "练习时间点");
     }
+
     /**
      * 按时间属性统计
      *

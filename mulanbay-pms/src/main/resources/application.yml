@@ -223,6 +223,8 @@ mulanbay:
       field: arrive
       #明细统计时时间格式化
       dateFormat: yyyy
+      #地图中的中央城市(名称,经度,纬度)
+      center: 北京,116.413315,39.912142
   businessTrip:
     mapStat:
       #明细统计时时间格式化

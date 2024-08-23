@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+import static cn.mulanbay.pms.common.Constant.ROOT_NAME;
+
 /**
  * 角色
  *
@@ -173,8 +176,8 @@ public class RoleController extends BaseController {
             List<RoleFunctionDTO> rfList = authService.selectRoleFunctionList(roleId);
             List<TreeBean> list = new ArrayList<TreeBean>();
             TreeBean root = new TreeBean();
-            root.setId(0L);
-            root.setText("根");
+            root.setId(ROOT_ID);
+            root.setText(ROOT_NAME);
             root.setChildren(getFunctionTree(root, rfList));
             root.setChecked(false);
             list.add(root);

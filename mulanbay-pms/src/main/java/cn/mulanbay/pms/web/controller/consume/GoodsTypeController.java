@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
+
 /**
  * 商品类型
  *
@@ -74,7 +76,7 @@ public class GoodsTypeController extends BaseController {
     @RequestMapping(value = "/treeList", method = RequestMethod.GET)
     public ResultBean treeList(GoodsTypeSH sf) {
         if(sf.getPid()==null){
-            sf.setPid(0L);
+            sf.setPid(ROOT_ID);
         }
         sf.setPage(PageRequest.NO_PAGE);
         PageRequest pr = sf.buildQuery();
@@ -88,31 +90,6 @@ public class GoodsTypeController extends BaseController {
             return vo;
         }).collect(Collectors.toList());
         return callback(voList);
-    }
-
-    /**
-     * 获取子列表
-     * @param pid
-     * @param list
-     * @return
-     */
-    private List<GoodsTypeVo> getChildren(long pid,List<GoodsType> list){
-        List<GoodsTypeVo> children = new ArrayList<>();
-        for(GoodsType cc : list){
-            long myPid = cc.getPid();
-            if(myPid==pid){
-                GoodsTypeVo child = new GoodsTypeVo();
-                BeanCopy.copy(cc, child);
-                child.setPid(cc.getPid());
-                //child.setParentName();
-                //寻找下一个子列表
-                List<GoodsTypeVo> c2 = getChildren(cc.getTypeId(), list);
-                child.setChildren(c2);
-                //加入到结果集
-                children.add(child);
-            }
-        }
-        return children;
     }
 
     /**

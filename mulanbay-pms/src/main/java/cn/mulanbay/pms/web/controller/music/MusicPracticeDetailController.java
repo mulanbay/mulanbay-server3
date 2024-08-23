@@ -55,13 +55,11 @@ public class MusicPracticeDetailController extends BaseController {
         try {
             List<String> tuneList = musicPracticeService.getTuneList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
-            int i = 0;
             for (String ss : tuneList) {
                 TreeBean tb = new TreeBean();
                 tb.setId(ss);
                 tb.setText(ss);
                 list.add(tb);
-                i++;
             }
             return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
         } catch (Exception e) {

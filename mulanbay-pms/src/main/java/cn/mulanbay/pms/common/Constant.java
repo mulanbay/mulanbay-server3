@@ -33,6 +33,11 @@ public class Constant {
     public static long ROOT_ID=0L;
 
     /**
+     * 根节点名称
+     */
+    public static String ROOT_NAME="根";
+
+    /**
      * 预算周期前缀
      */
     public static final String BUDGET_PERIOD_PX = "p";// 24

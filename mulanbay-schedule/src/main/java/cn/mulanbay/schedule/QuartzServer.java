@@ -355,7 +355,7 @@ public class QuartzServer {
 	 * 关闭调度服务器
 	 * 如果应用不是被强行关闭，那么需要手动关闭调度服务
 	 *
-	 * @param waitForJobsToComplete
+	 * @param waitForJobsToComplete 是否等待调度执行完毕
 	 */
 	public void shutdown(boolean waitForJobsToComplete) {
 		try {

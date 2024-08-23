@@ -85,7 +85,7 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/tagsTree")
     public ResultBean tagsTree(ConsumeTagSH sf) {
-        if(sf.getStartDate()==null&&sf.getEndDate()==null){
+        if (sf.getStartDate() == null && sf.getEndDate() == null) {
             Date end = new Date();
             Date start = DateUtil.getDate(-tagDays);
             sf.setStartDate(start);
@@ -127,29 +127,30 @@ public class ConsumeController extends BaseController {
         Consume bean = new Consume();
         changeFormToBean(form, bean);
         consumeService.saveConsume(bean);
-        consumeHandler.afterCreate(bean,form.getTraceId());
+        consumeHandler.afterCreate(bean, form.getTraceId());
         return callback(null);
     }
 
     /**
      * 转换
+     *
      * @param form
      * @param bean
      */
     private void changeFormToBean(ConsumeForm form, Consume bean) {
         BeanCopy.copy(form, bean);
         bean.setTotalPrice(bean.getPrice().multiply(new BigDecimal(bean.getAmount()).add(bean.getShipment())));
-        ConsumeSource source = baseService.getObject(ConsumeSource.class,form.getSourceId());
+        ConsumeSource source = baseService.getObject(ConsumeSource.class, form.getSourceId());
         bean.setSource(source);
-        GoodsType goodsType = baseService.getObject(GoodsType.class,form.getGoodsTypeId());
+        GoodsType goodsType = baseService.getObject(GoodsType.class, form.getGoodsTypeId());
         bean.setGoodsType(goodsType);
         //消费日期默认为购买日期
         if (bean.getConsumeTime() == null) {
             bean.setConsumeTime(bean.getBuyTime());
         }
         //设置使用时长
-        if(bean.getInvalidTime()!=null){
-            long usedTime = bean.getInvalidTime().getTime()-bean.getBuyTime().getTime();
+        if (bean.getInvalidTime() != null) {
+            long usedTime = bean.getInvalidTime().getTime() - bean.getBuyTime().getTime();
             bean.setDuration(usedTime);
         }
     }
@@ -161,11 +162,11 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ConsumeForm form) {
-        Consume consume = baseService.getObject(beanClass,form.getConsumeId());
+        Consume consume = baseService.getObject(beanClass, form.getConsumeId());
         BigDecimal dbPrice = consume.getTotalPrice();
         changeFormToBean(form, consume);
         consumeService.updateConsume(consume);
-        if(!NumberUtil.priceEquals(dbPrice,consume.getTotalPrice())){
+        if (!NumberUtil.priceEquals(dbPrice, consume.getTotalPrice())) {
             //更新
             consumeHandler.afterEdit(consume);
         }
@@ -179,7 +180,7 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResultBean get(@RequestParam(name = "consumeId") Long consumeId) {
-        Consume consume = baseService.getObject(beanClass,consumeId);
+        Consume consume = baseService.getObject(beanClass, consumeId);
         return callback(consume);
     }
 
@@ -191,7 +192,7 @@ public class ConsumeController extends BaseController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
         String[] ss = deleteRequest.getIds().split(",");
-        for(String s : ss){
+        for (String s : ss) {
             Long consumeId = Long.parseLong(s);
             consumeService.deleteConsume(consumeId);
         }
@@ -205,7 +206,7 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/setParent", method = RequestMethod.POST)
     public ResultBean setParent(@RequestBody @Valid ConsumeParentForm spr) {
-        consumeService.setParent(spr.getConsumeId(),spr.getPid());
+        consumeService.setParent(spr.getConsumeId(), spr.getPid());
         return callback(null);
     }
 
@@ -234,14 +235,15 @@ public class ConsumeController extends BaseController {
     /**
      * 根据商品名智能分析出其分类及品牌等
      * 如果没有配置NLP直接返回空对象
+     *
      * @return
      */
     @RequestMapping(value = "/aiMatch", method = RequestMethod.POST)
     public ResultBean aiMatch(@RequestBody @Valid GoodsNameAiMatchForm mr) {
         ConsumeMatchBean bean = null;
         try {
-            bean = consumeHandler.match(mr.getUserId(),mr.getGoodsName());
-            if(bean.getCompareId()==null){
+            bean = consumeHandler.match(mr.getUserId(), mr.getGoodsName());
+            if (bean.getCompareId() == null) {
                 //说明没有匹配,设置默认的配置
                 UserSet us = userHandler.getUserSet(mr.getUserId());
                 bean.setSourceId(us.getTreatSourceId());
@@ -250,9 +252,9 @@ public class ConsumeController extends BaseController {
             //追踪匹配记录
             String traceId = StringUtil.genUUID();
             bean.setTraceId(traceId);
-            consumeHandler.traceMatch(traceId,bean);
+            consumeHandler.traceMatch(traceId, bean);
         } catch (Exception e) {
-            logger.error("根据商品名智能分析出其分类及品牌等异常",e);
+            logger.error("根据商品名智能分析出其分类及品牌等异常", e);
             return callback(null);
         }
         return callback(bean);
@@ -265,55 +267,55 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/costStat")
     public ResultBean costStat(ConsumeCostStatForm form) {
-        Consume consume = baseService.getObject(beanClass,form.getConsumeId());
+        Consume consume = baseService.getObject(beanClass, form.getConsumeId());
         ConsumeCostStatVo vo = new ConsumeCostStatVo();
-        BeanCopy.copy(consume,vo);
+        BeanCopy.copy(consume, vo);
         Date expDate = vo.getInvalidTime();
-        if(expDate==null){
+        if (expDate == null) {
             expDate = new Date();
-        }else{
-            long expMillSecs = expDate.getTime()-vo.getBuyTime().getTime();
+        } else {
+            long expMillSecs = expDate.getTime() - vo.getBuyTime().getTime();
             vo.setExpMillSecs(expMillSecs);
         }
-        long usedMillSecs = expDate.getTime()-vo.getBuyTime().getTime();
+        long usedMillSecs = expDate.getTime() - vo.getBuyTime().getTime();
         vo.setUsedMillSecs(usedMillSecs);
-        long usedDays = usedMillSecs / (24*3600*1000);
-        if(usedDays<=0){
-            usedDays=1;
+        long usedDays = usedMillSecs / (24 * 3600 * 1000);
+        if (usedDays <= 0) {
+            usedDays = 1;
         }
         //计算下一级
         boolean deepCost = form.getDeepCost();
         ConsumeChildrenCostStat cc = null;
-        if(deepCost){
+        if (deepCost) {
             cc = consumeService.getChildrenTotalDeepCost(form.getConsumeId());
-        }else{
+        } else {
             cc = consumeService.getChildrenTotalCost(form.getConsumeId());
         }
-        Long childrens = cc.getTotalCount()==null ? null: cc.getTotalCount().longValue();
+        Long childrens = cc.getTotalCount() == null ? null : cc.getTotalCount().longValue();
         vo.setChildrens(childrens);
-        if(cc.getSoldPrice()!=null){
+        if (cc.getSoldPrice() != null) {
             vo.setChildrenSoldPrice(cc.getSoldPrice());
         }
-        BigDecimal ctp = cc.getTotalPrice()==null ? new BigDecimal(0) : cc.getTotalPrice();
+        BigDecimal ctp = cc.getTotalPrice() == null ? new BigDecimal(0) : cc.getTotalPrice();
         vo.setChildrenPrice(ctp);
         //总成本=商品价格+下一级商品成本
         BigDecimal totalCost = ctp.add(vo.getTotalPrice());
         vo.setTotalCost(totalCost);
         //计算每天花费
-        BigDecimal vs = vo.getSoldPrice()==null ? new BigDecimal(0) : vo.getSoldPrice();
-        BigDecimal cts = cc.getSoldPrice()==null ? new BigDecimal(0) : cc.getSoldPrice();
+        BigDecimal vs = vo.getSoldPrice() == null ? new BigDecimal(0) : vo.getSoldPrice();
+        BigDecimal cts = cc.getSoldPrice() == null ? new BigDecimal(0) : cc.getSoldPrice();
         // (买入价格-出售价格)/使用天数
-        BigDecimal costPerDay = (vo.getTotalPrice().subtract(vs)).divide(new BigDecimal(usedDays),SCALE, ROUNDING_MODE);
+        BigDecimal costPerDay = (vo.getTotalPrice().subtract(vs)).divide(new BigDecimal(usedDays), SCALE, ROUNDING_MODE);
         // (买入价格-出售价格+下一级商品成本-下一级商品出售价格)/使用天数
-        BigDecimal totalCostPerDay = (vo.getTotalPrice().subtract(vs).add(ctp).subtract(cts)).divide(new BigDecimal(usedDays),SCALE, ROUNDING_MODE);
+        BigDecimal totalCostPerDay = (vo.getTotalPrice().subtract(vs).add(ctp).subtract(cts)).divide(new BigDecimal(usedDays), SCALE, ROUNDING_MODE);
         vo.setCostPerDay(costPerDay);
         vo.setTotalCostPerDay(totalCostPerDay);
-        if(vo.getSoldPrice()!=null){
+        if (vo.getSoldPrice() != null) {
             //折旧率
             // 买入价格/出售价格
-            BigDecimal depRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(vo.getTotalPrice(),SCALE, ROUNDING_MODE);
+            BigDecimal depRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(vo.getTotalPrice(), SCALE, ROUNDING_MODE);
             // 买入价格/(总成本-下一级商品出售价格)
-            BigDecimal totalDepRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(totalCost.subtract(cts),SCALE, ROUNDING_MODE);
+            BigDecimal totalDepRate = vo.getSoldPrice().multiply(new BigDecimal(10)).divide(totalCost.subtract(cts), SCALE, ROUNDING_MODE);
             vo.setDepRate(depRate);
             vo.setTotalDepRate(totalDepRate);
         }
@@ -329,47 +331,48 @@ public class ConsumeController extends BaseController {
     @RequestMapping(value = "/treeStat", method = RequestMethod.GET)
     public ResultBean treeStat(@RequestParam(name = "consumeId") Long consumeId) {
         Long rootId = consumeId;
-        Consume consume = baseService.getObject(beanClass,rootId);
+        Consume consume = baseService.getObject(beanClass, rootId);
         List<ConsumeCascadeDTO> children = consumeService.getChildrenDeepList(rootId);
         // 转换为Map
-        Map<Long,ConsumeCascadeDTO> map = new HashMap<>();
+        Map<Long, ConsumeCascadeDTO> map = new HashMap<>();
         // 添加根节点信息
         ConsumeCascadeDTO root = new ConsumeCascadeDTO();
         root.setGoodsName(consume.getGoodsName());
-        map.put(rootId,root);
+        map.put(rootId, root);
         BigDecimal totalCost = consume.getTotalPrice();
-        for (ConsumeCascadeDTO child : children){
-            map.put(child.getConsumeId().longValue(),child);
+        for (ConsumeCascadeDTO child : children) {
+            map.put(child.getConsumeId().longValue(), child);
             totalCost = totalCost.add(child.getTotalPrice());
         }
-        ChartTreeDetailData rootData = new ChartTreeDetailData(consume.getTotalPrice().doubleValue(), consume.getGoodsName(),false);
-        ChartTreeDetailData data = this.generateTree(rootData,map,children);
+        ChartTreeDetailData rootData = new ChartTreeDetailData(consume.getTotalPrice().doubleValue(), consume.getGoodsName(), false);
+        ChartTreeDetailData data = this.generateTree(rootData, map, children);
         ChartTreeData treeData = new ChartTreeData();
         treeData.setData(data);
         treeData.setUnit("元");
         treeData.setTitle("商品关系图");
-        treeData.setSubTitle("商品总价:"+NumberUtil.getValue(consume.getTotalPrice(),SCALE)+"元,总成本:"+NumberUtil.getValue(totalCost.doubleValue(),2)+"元");
+        treeData.setSubTitle("商品总价:" + NumberUtil.getValue(consume.getTotalPrice(), SCALE) + "元,总成本:" + NumberUtil.getValue(totalCost.doubleValue(), 2) + "元");
         return callback(treeData);
     }
 
     /**
      * 构建树
+     *
      * @param root
      * @param map
      * @param list
      * @return
      */
-    private ChartTreeDetailData generateTree(ChartTreeDetailData root,Map<Long,ConsumeCascadeDTO> map,List<ConsumeCascadeDTO> list){
+    private ChartTreeDetailData generateTree(ChartTreeDetailData root, Map<Long, ConsumeCascadeDTO> map, List<ConsumeCascadeDTO> list) {
         for (ConsumeCascadeDTO child : list) {
             ConsumeCascadeDTO parent = map.get(child.getPid());
             String parentName = parent.getGoodsName();
             if (root.getName().equals(parentName)) {
-                root.addChild(NumberUtil.getValue(child.getTotalPrice().doubleValue(),SCALE), child.getGoodsName(),false);
+                root.addChild(NumberUtil.getValue(child.getTotalPrice().doubleValue(), SCALE), child.getGoodsName(), false);
             }
         }
         if (root.getChildren() != null) {
             for (ChartTreeDetailData cc : root.getChildren()) {
-                generateTree(cc,map, list);
+                generateTree(cc, map, list);
             }
         }
         return root;
@@ -405,23 +408,23 @@ public class ConsumeController extends BaseController {
         List<ConsumeUseTimeStat> list = consumeService.getUseTimeStat(sf);
         Collections.sort(list, (o1, o2) -> {
             //按照平均使用时间排序
-            Long t1 = o1.getTotalDuration().longValue()/o1.getTotalCount();
-            Long t2 = o2.getTotalDuration().longValue()/o2.getTotalCount();
+            Long t1 = o1.getTotalDuration().longValue() / o1.getTotalCount();
+            Long t2 = o2.getTotalDuration().longValue() / o2.getTotalCount();
             return t2.compareTo(t1);
         });
 
         ChartData chartData = new ChartData();
         chartData.setTitle("商品使用时间分析");
         //混合图形下使用
-        chartData.addYAxis("天数","天");
-        chartData.addYAxis("次数","次");
-        chartData.setLegendData(new String[]{"平均寿命","次数"});
-        ChartYData yData1 = new ChartYData("平均寿命","天");
-        ChartYData yData2 = new ChartYData("次数","次");
+        chartData.addYAxis("天数", "天");
+        chartData.addYAxis("次数", "次");
+        chartData.setLegendData(new String[]{"平均寿命", "次数"});
+        ChartYData yData1 = new ChartYData("平均寿命", "天");
+        ChartYData yData2 = new ChartYData("次数", "次");
         for (ConsumeUseTimeStat bean : list) {
             chartData.getXdata().add(bean.getName().toString());
-            BigDecimal days = bean.getTotalDuration().divide(new BigDecimal(bean.getTotalCount()),SCALE, ROUNDING_MODE);
-            days = days.divide(new BigDecimal(24*3600*1000L),SCALE, ROUNDING_MODE);
+            BigDecimal days = bean.getTotalDuration().divide(new BigDecimal(bean.getTotalCount()), SCALE, ROUNDING_MODE);
+            days = days.divide(new BigDecimal(24 * 3600 * 1000L), SCALE, ROUNDING_MODE);
             yData1.getData().add(days);
             yData2.getData().add(bean.getTotalCount());
         }
@@ -478,15 +481,15 @@ public class ConsumeController extends BaseController {
             ChartTreeMapDetailData mdd = dataMap.get(bean.getParentGoodsTypeId());
             //只有两层结构
             if (mdd == null) {
-                mdd = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(),SCALE), bean.getGoodsName(), bean.getGoodsName());
+                mdd = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(), SCALE), bean.getGoodsName(), bean.getGoodsName());
                 dataMap.put(bean.getParentGoodsTypeId(), mdd);
             }
-            ChartTreeMapDetailData child = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(),SCALE),
+            ChartTreeMapDetailData child = new ChartTreeMapDetailData(NumberUtil.getValue(bean.getValue(), SCALE),
                     bean.getGoodsName(), bean.getParentGoodsTypeName() + "/" + bean.getGoodsName());
             mdd.addChild(child);
         }
         chartData.setData(new ArrayList<>(dataMap.values()));
-        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf, getSubTitlePostfix(sf.getType(), totalValue));
         chartData.setSubTitle(subTitle);
         return chartData;
 
@@ -515,7 +518,7 @@ public class ConsumeController extends BaseController {
             seriesData.getData().add(dataDetail);
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(), totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf, getSubTitlePostfix(sf.getType(), totalValue));
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(seriesData);
         return chartPieData;
@@ -542,7 +545,7 @@ public class ConsumeController extends BaseController {
             yData.getData().add(bean.getValue());
             totalValue = totalValue.add(bean.getValue());
         }
-        String subTitle = ChartUtil.getDateTitle(sf,getSubTitlePostfix(sf.getType(),totalValue));
+        String subTitle = ChartUtil.getDateTitle(sf, getSubTitlePostfix(sf.getType(), totalValue));
         chartData.setSubTitle(subTitle);
         chartData.getYdata().add(yData);
         return chartData;
@@ -559,9 +562,9 @@ public class ConsumeController extends BaseController {
      */
     private String getSubTitlePostfix(GroupType groupType, BigDecimal totalValue) {
         if (groupType == GroupType.COUNT) {
-            return NumberUtil.getValue(totalValue,0) + "次";
+            return NumberUtil.getValue(totalValue, 0) + "次";
         } else {
-            return NumberUtil.getValue(totalValue,SCALE) + "元";
+            return NumberUtil.getValue(totalValue, SCALE) + "元";
         }
     }
 
@@ -572,40 +575,40 @@ public class ConsumeController extends BaseController {
      */
     @RequestMapping(value = "/dateStat")
     public ResultBean dateStat(ConsumeDateStatSH sf) {
-        switch (sf.getDateGroupType()){
-            case DAYCALENDAR :
+        switch (sf.getDateGroupType()) {
+            case DAYCALENDAR:
                 return callback(createChartCalendarData(sf));
-            case HOURMINUTE :
+            case HOURMINUTE:
                 return callback(createScatterChartData(sf));
             default:
                 return callback(createDateStatChart(sf));
         }
     }
 
-    private ChartCalendarData createChartCalendarData(ConsumeDateStatSH sf){
+    private ChartCalendarData createChartCalendarData(ConsumeDateStatSH sf) {
         //日历
         List<ConsumeDateStat> list = consumeService.getDateStat(sf);
         return ChartUtil.createChartCalendarData("消费统计", "次数", "次", sf, list);
     }
 
-    private ScatterChartData createScatterChartData(ConsumeDateStatSH sf){
+    private ScatterChartData createScatterChartData(ConsumeDateStatSH sf) {
         //散点图
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         List<Date> dateList = consumeService.getDateList(sf);
-        return ChartUtil.createHMChartData(dateList,"消费分析","消费时间点");
+        return ChartUtil.createHMChartData(dateList, "消费分析", "消费时间点");
     }
 
-    private ChartData createDateStatChart(ConsumeDateStatSH sf){
+    private ChartData createDateStatChart(ConsumeDateStatSH sf) {
         ChartData chartData = new ChartData();
         chartData.setTitle("消费统计");
         chartData.setSubTitle(ChartUtil.getDateTitle(sf));
-        chartData.setLegendData(new String[]{"消费","次数"});
+        chartData.setLegendData(new String[]{"消费", "次数"});
         //混合图形下使用(最后一组数据默认为次数)
-        chartData.addYAxis("消费","元");
-        chartData.addYAxis("次数","次");
-        ChartYData yData1 = new ChartYData("次数","次");
-        ChartYData yData2 = new ChartYData("消费","元");
+        chartData.addYAxis("消费", "元");
+        chartData.addYAxis("次数", "次");
+        ChartYData yData1 = new ChartYData("次数", "次");
+        ChartYData yData2 = new ChartYData("消费", "元");
         //总的值
         BigDecimal totalValue = new BigDecimal(0);
         //总的值
@@ -620,11 +623,12 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = ChartUtil.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return chartData;
     }
+
     /**
      * 同期比对统计
      *
@@ -634,17 +638,18 @@ public class ConsumeController extends BaseController {
     public ResultBean yoyStat(@Valid ConsumeYoyStatSH sf) {
         if (sf.getDateGroupType() == DateGroupType.DAY) {
             return callback(createChartCalendarMultiData(sf));
-        }else {
+        } else {
             return callback(createYoyChartData(sf));
         }
     }
 
     /**
      * 同期对比数据
+     *
      * @param sf
      * @return
      */
-    private ChartData createYoyChartData(ConsumeYoyStatSH sf){
+    private ChartData createYoyChartData(ConsumeYoyStatSH sf) {
         String unit = sf.getGroupType().getUnit();
         ChartData chartData = ChartUtil.initYoyCharData(sf, "消费统计同期对比", null);
         chartData.setUnit(unit);
@@ -734,12 +739,12 @@ public class ConsumeController extends BaseController {
         ChartData chartData = new ChartData();
         chartData.setTitle("标签统计");
         chartData.setSubTitle(ChartUtil.getDateTitle(sf));
-        chartData.setLegendData(new String[]{"消费","次数"});
+        chartData.setLegendData(new String[]{"消费", "次数"});
         //混合图形下使用
-        chartData.addYAxis("消费","元");
-        chartData.addYAxis("次数","次");
-        ChartYData yData1 = new ChartYData("次数","次");
-        ChartYData yData2 = new ChartYData("消费","元");
+        chartData.addYAxis("消费", "元");
+        chartData.addYAxis("次数", "次");
+        ChartYData yData1 = new ChartYData("次数", "次");
+        ChartYData yData2 = new ChartYData("消费", "元");
         //总的值
         BigDecimal totalValue = new BigDecimal(0);
         //总的值
@@ -753,7 +758,7 @@ public class ConsumeController extends BaseController {
         }
         chartData.getYdata().add(yData2);
         chartData.getYdata().add(yData1);
-        String subTitle = ChartUtil.getDateTitle(sf,totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
+        String subTitle = ChartUtil.getDateTitle(sf, totalCount.longValue() + "次，" + totalValue.doubleValue() + "元");
         chartData.setSubTitle(subTitle);
         chartData = ChartUtil.completeDate(chartData, sf);
         return callback(chartData);
@@ -783,7 +788,7 @@ public class ConsumeController extends BaseController {
             serieData.getData().add(dataDetail);
             totalValue.add(bean.getValue());
         }
-        String subTitle = "花费总金额:" + NumberUtil.getValue( totalValue,SCALE) + "元";
+        String subTitle = "花费总金额:" + NumberUtil.getValue(totalValue, SCALE) + "元";
         chartPieData.setSubTitle(subTitle);
         chartPieData.getDetailData().add(serieData);
         return callback(chartPieData);
@@ -797,49 +802,34 @@ public class ConsumeController extends BaseController {
     @RequestMapping(value = "/wordCloudStat", method = RequestMethod.GET)
     public ResultBean wordCloudStat(@Valid ConsumeWordCloudSH sf) {
         List<String> list = consumeService.getWordCloudStat(sf);
-        Map<String,Integer> statData = new HashMap<>();
+        Map<String, Integer> statData = new HashMap<>();
         String field = sf.getField();
         for (String d : list) {
-            if("goodsName".equals(field)||"sku".equals(field)){
+            if ("goodsName".equals(field) || "sku".equals(field)) {
                 //先分词
-                List<String> keywords = nlpProcessor.extractKeyword(d,tagNum);
-                for(String s : keywords){
+                List<String> keywords = nlpProcessor.extractKeyword(d, tagNum);
+                for (String s : keywords) {
                     //忽略分词后为词长度为1的
-                    if(sf.getIgnoreShort()!=null&&sf.getIgnoreShort()){
-                        if(s.length()<2){
+                    if (sf.getIgnoreShort() != null && sf.getIgnoreShort()) {
+                        if (s.length() < 2) {
                             continue;
                         }
                     }
-                    Integer n = statData.get(s);
-                    if(n==null){
-                        statData.put(s,1);
-                    }else{
-                        statData.put(s,n+1);
-                    }
+                    statData.merge(s, 1, Integer::sum);
                 }
-            }else if("shopName".equals(field)||"brand".equals(field)){
-                Integer n = statData.get(d);
-                if(n==null){
-                    statData.put(d,1);
-                }else{
-                    statData.put(d,n+1);
-                }
-            }else if("tags".equals(field)){
+            } else if ("tags".equals(field)) {
                 String[] keywords = d.split(",");
-                for(String s : keywords){
-                    Integer n = statData.get(s);
-                    if(n==null){
-                        statData.put(s,1);
-                    }else{
-                        statData.put(s,n+1);
-                    }
+                for (String s : keywords) {
+                    statData.merge(s, 1, Integer::sum);
                 }
+            } else {
+                statData.merge(d, 1, Integer::sum);
             }
 
         }
 
         ChartWorldCloudData chartData = new ChartWorldCloudData();
-        for(String key : statData.keySet()){
+        for (String key : statData.keySet()) {
             ChartNameValueVo dd = new ChartNameValueVo();
             dd.setName(key);
             dd.setValue(statData.get(key));

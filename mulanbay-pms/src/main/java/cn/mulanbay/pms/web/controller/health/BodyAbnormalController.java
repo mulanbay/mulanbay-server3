@@ -67,13 +67,11 @@ public class BodyAbnormalController extends BaseController {
         try {
             List<String> categoryList = bodyService.getAbnormalCateList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
-            int i = 0;
             for (String ss : categoryList) {
                 TreeBean tb = new TreeBean();
                 tb.setId(ss);
                 tb.setText(ss);
                 list.add(tb);
-                i++;
             }
             return callback(TreeBeanUtil.addRoot(list, sf.getNeedRoot()));
         } catch (Exception e) {
@@ -111,7 +109,6 @@ public class BodyAbnormalController extends BaseController {
         BodyAbnormal bean = new BodyAbnormal();
         BeanCopy.copy(form, bean);
         calAndSetLastDays(bean);
-        bean.setCreatedTime(new Date());
         baseService.saveObject(bean);
         return callback(bean);
     }

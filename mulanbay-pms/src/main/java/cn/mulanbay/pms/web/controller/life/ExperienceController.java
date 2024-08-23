@@ -58,6 +58,12 @@ public class ExperienceController extends BaseController {
     @Value("${mulanbay.experience.mapStat.dateFormat}")
     String dateFormat;
 
+    /**
+     * 地图的中央城市
+     */
+    @Value("${mulanbay.experience.mapStat.center}")
+    String center;
+
     @Autowired
     ExperienceService experienceService;
 
@@ -525,7 +531,8 @@ public class ExperienceController extends BaseController {
         Map<String, double[]> geoMap = new HashMap<>();
         WorldTransferChartData chartData = new WorldTransferChartData();
         chartData.setTitle("人生经历线路统计");
-        String centerCity = "北京";
+        String[] centers = center.split(",");
+        String centerCity = centers[0];
         chartData.setCenterCity(centerCity);
         for(ExperienceDetail dd : list){
             ExperienceLocationVo lv = this.getLocationInfo(dd,sf.getField());
@@ -539,9 +546,7 @@ public class ExperienceController extends BaseController {
                 geoMap.put(lv.getArrive(),createGeo(lv.getArriveLocation()) );
             }
         }
-        if(geoMap.get(centerCity)==null){
-            geoMap.put(centerCity, new double[]{116.413315,39.912142});
-        }
+        geoMap.computeIfAbsent(centerCity, k -> new double[]{Double.parseDouble(centers[1]), Double.parseDouble(centers[2])});
         chartData.setGeoCoordMapData(geoMap);
         chartData.setUnit("次");
         return chartData;
@@ -719,12 +724,7 @@ public class ExperienceController extends BaseController {
         List<String> cityList = experienceService.statCityList(sf.getUserId(),sf.getStartDate(),sf.getEndDate());
         Map<String,Integer> statData = new HashMap<>();
         for(String s : cityList){
-            Integer n = statData.get(s);
-            if(n==null){
-                statData.put(s,1);
-            }else{
-                statData.put(s,n+1);
-            }
+            statData.merge(s, 1, Integer::sum);
         }
         ChartWorldCloudData chartData = new ChartWorldCloudData();
         for(String key : statData.keySet()){

@@ -106,6 +106,14 @@ public class TriggerFactory {
                             .withSchedule(calendarIntervalSchedule().withIntervalInMonths(interval))
                             .build();
                 }
+                case SEASON -> {
+                    return newTrigger()
+                            .withIdentity(tid,ts.getGroupName())
+                            .startAt(startTime)
+                            .endAt(endTime)
+                            .withSchedule(calendarIntervalSchedule().withIntervalInMonths(interval*3))
+                            .build();
+                }
                 case YEAR -> {
                     return newTrigger()
                             .withIdentity(tid,ts.getGroupName())

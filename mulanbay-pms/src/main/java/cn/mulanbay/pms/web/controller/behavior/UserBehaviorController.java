@@ -79,6 +79,7 @@ public class UserBehaviorController  extends BaseController {
                 bean.setSourceId(dto.getSourceId());
                 bean.setBussType(template.getBussType());
                 bean.setSource(template.getSource());
+                //calendarId需要唯一
                 bean.setId(StringUtil.genUUID());
                 bean.setTitle(dto.getName());
                 bean.setContent(dto.getContent());
@@ -132,19 +133,14 @@ public class UserBehaviorController  extends BaseController {
                         continue;
                     }
                 }
-                Integer n = statData.get(s);
-                if(n==null){
-                    statData.put(s,1);
-                }else{
-                    statData.put(s,n+1);
-                }
+                statData.merge(s,1, Integer::sum);
             }
         }
         ChartWorldCloudData chartData = new ChartWorldCloudData();
         for(String key : statData.keySet()){
             ChartNameValueVo dd = new ChartNameValueVo();
             dd.setName(key);
-            dd.setValue(statData.get(key).intValue());
+            dd.setValue(statData.get(key));
             chartData.addData(dd);
         }
         chartData.setTitle("我的词云");
