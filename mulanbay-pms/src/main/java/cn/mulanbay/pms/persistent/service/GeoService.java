@@ -31,7 +31,7 @@ public class GeoService extends BaseHibernateDao {
      */
     public List<Province> getProvinceList(Long countryId) {
         try {
-            String hql = "from Province where countryId=?1";
+            String hql = "from Province where countryId=?1 order by orderIndex";
             List<Province> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,Province.class,countryId);
             return list;
         } catch (BaseException e) {
@@ -79,7 +79,7 @@ public class GeoService extends BaseHibernateDao {
      */
     public List<District> getDistrictList(Long cityId) {
         try {
-            String hql = "from District where cityId=?1 ";
+            String hql = "from District where cityId=?1  order by orderIndex";
             List<District> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,District.class, cityId);
             return list;
         } catch (BaseException e) {

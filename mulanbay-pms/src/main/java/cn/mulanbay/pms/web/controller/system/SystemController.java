@@ -13,18 +13,26 @@ import cn.mulanbay.pms.persistent.service.PmsScheduleService;
 import cn.mulanbay.pms.web.bean.req.system.system.SystemAutoLockForm;
 import cn.mulanbay.pms.web.bean.req.system.system.SystemLockForm;
 import cn.mulanbay.pms.web.bean.req.system.system.SystemUnlockForm;
+import cn.mulanbay.pms.web.bean.res.system.system.PropertyVo;
 import cn.mulanbay.pms.web.bean.res.system.system.SystemAutoLockVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 系统
@@ -47,6 +55,9 @@ public class SystemController extends BaseController {
 
     @Autowired
     PmsScheduleHandler pmsScheduleHandler;
+
+    @Autowired
+    private Environment environment;
 
     /**
      * 锁定
@@ -119,5 +130,32 @@ public class SystemController extends BaseController {
             pmsScheduleHandler.refreshTask(trigger);
         }
         return callback(null);
+    }
+
+    /**
+     * 获取配置
+     *
+     * @return
+     */
+    @RequestMapping(value = "/getProperties", method = RequestMethod.GET)
+    public ResultBean getProperties() {
+        List<PropertyVo> list = new ArrayList<>();
+        for (PropertySource<?> propertySource : ((AbstractEnvironment) environment).getPropertySources()) {
+            if (propertySource instanceof EnumerablePropertySource) {
+                for (String name : ((EnumerablePropertySource<?>) propertySource).getPropertyNames()) {
+                    if (name != null) {
+                        PropertyVo vo = new PropertyVo();
+                        vo.setKey(name);
+                        vo.setValue(environment.getProperty(name));
+                        vo.setSource(propertySource.getName());
+                        list.add(vo);
+                    }
+                }
+            }
+        }
+
+        //使用List接口的方法排序
+        list.sort(Comparator.comparing(PropertyVo::getKey));
+        return callback(list);
     }
 }

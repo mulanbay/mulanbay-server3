@@ -41,9 +41,9 @@ public class CacheKey {
     public static final String USER_CURRENT_POINTS = "user:currentPoints:{0}";
 
     /**
-     * 用户当前积分（用户编号,功能点号）
+     * 功能连续操作（用户编号,功能点号）
      */
-    public static final String USER_CONTINUE_OP = "user:continue:op:{0}:{1}";
+    public static final String USER_CONTINUE_OP = "user:continueOp:{0}:{1}";
 
     /**
      * 用户提醒统计（用户编号：USER_STAT_ID）

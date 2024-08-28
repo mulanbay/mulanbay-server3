@@ -243,6 +243,10 @@ mulanbay:
     level:
       #用户级别评定统计间隔区间天数
       judgeDays: 30
+  reward:
+    ctsOP:
+      #连续操作积分奖励的最大天数
+      maxDays: 7
   nlp:
     model:
       #模型是否要初始化

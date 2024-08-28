@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.handler.bean.data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 用户持续操作的缓存类
@@ -12,10 +13,10 @@ public class UserOpBean implements Serializable {
     private static final long serialVersionUID = 2139963442875877148L;
 
     //第一次时间
-    private int fistDay;
+    private Date fistDay;
 
     //最近的时间
-    private int lastDay;
+    private Date lastDay;
 
     //持续天数
     private int days;
@@ -24,19 +25,19 @@ public class UserOpBean implements Serializable {
         days++;
     }
 
-    public int getFistDay() {
+    public Date getFistDay() {
         return fistDay;
     }
 
-    public void setFistDay(int fistDay) {
+    public void setFistDay(Date fistDay) {
         this.fistDay = fistDay;
     }
 
-    public int getLastDay() {
+    public Date getLastDay() {
         return lastDay;
     }
 
-    public void setLastDay(int lastDay) {
+    public void setLastDay(Date lastDay) {
         this.lastDay = lastDay;
     }
 

@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Map;
 
 import static cn.mulanbay.pms.common.Constant.ADMIN_USER_ID;
+import static cn.mulanbay.pms.common.Constant.DAY_MILLS_SECONDS;
 
 /**
  * 日志处理
@@ -56,6 +57,16 @@ public class LogHandler extends BaseHandler implements MessageProcessor {
     @Value("${mulanbay.cache.bean.syncDelete:false}")
     boolean syncDelete;
 
+    /**
+     * todo 加倍奖励的天数
+     * 规则：
+     * 1天：功能配置的原始值，例如5分
+     * 2天：5+1=6分
+     * 3天：5+2=7分
+     * 4天：5+3=8分
+     */
+    @Value("${mulanbay.reward.ctsOP.maxDays:7}")
+    int rewardMaxDays;
 
     @Autowired
     ThreadPoolHandler threadPoolHandler;
@@ -156,32 +167,36 @@ public class LogHandler extends BaseHandler implements MessageProcessor {
                         BussSource.OPERATION, "功能操作奖励", log.getId());
                 //连续操作奖励
                 String key = CacheKey.getKey(CacheKey.USER_CONTINUE_OP, log.getUserId().toString(), sf.getFuncId().toString());
-                String dayString = DateUtil.getFormatDate(log.getOccurStartTime(), "yyyyMMdd");
-                int day = Integer.parseInt(dayString);
+                Date ost = log.getOccurStartTime();
                 UserOpBean uco = cacheHandler.get(key, UserOpBean.class);
-                //缓存失效时间
-                Date now = new Date();
-                Date end = DateUtil.tillMiddleNight(now);
-                long leftExpired = end.getTime() - now.getTime();
+                //缓存失效时间两天，保证至少连续两天
+                long leftExpired = 2*DAY_MILLS_SECONDS;
                 if (uco == null) {
                     uco = new UserOpBean();
-                    uco.setFistDay(day);
-                    uco.setLastDay(day);
+                    uco.setFistDay(ost);
+                    uco.setLastDay(ost);
                     uco.setDays(1);
-                    cacheHandler.set(key, uco, (int) (leftExpired / 1000));
+                    cacheHandler.setMS(key, uco, leftExpired);
                 } else {
-                    if (day <= uco.getLastDay()) {
-                        //一样，不操作
-                        return;
-                    } else {
-                        uco.setLastDay(day);
+                    if (!isSameDay(uco.getLastDay(),ost)) {
+                        uco.setLastDay(ost);
+                        //添加的不是间隔天数，而是连续的次数
                         uco.addDay();
-                        cacheHandler.set(key, uco, (int) (leftExpired / 1000));
-                        if (uco.getDays() >= 3) {
-                            //奖励连续操作(相当于3天以上则双倍奖励，负分的也是一样)
-                            int rewards = sf.getRewardPoint() * uco.getDays();
+                        if (uco.getDays() <= rewardMaxDays) {
+                            //奖励连续操作
+                            int rewards = sf.getRewardPoint();
+                            if(sf.getRewardPoint()>0){
+                                rewards+= uco.getDays()-1;
+                            }else{
+                                //如果是负数，则负值更大
+                                rewards-= uco.getDays()+1;
+                            }
                             rewardHandler.reward(log.getUserId(), rewards, log.getId(),
                                     BussSource.OPERATION, "功能操作连续" + uco.getDays() + "天奖励", log.getId());
+                            cacheHandler.setMS(key, uco, leftExpired);
+                        }else{
+                            //清除,重新开始计算
+                            cacheHandler.delete(key);
                         }
                     }
                 }
@@ -189,6 +204,18 @@ public class LogHandler extends BaseHandler implements MessageProcessor {
         } catch (Exception e) {
             logger.error("操作日志积分奖励处理异常", e);
         }
+    }
+
+    /**
+     * 是否同一天
+     * @param d1
+     * @param d2
+     * @return
+     */
+    private boolean isSameDay(Date d1,Date d2){
+        String s1 = DateUtil.getFormatDate(d1,DateUtil.FormatDay1);
+        String s2 = DateUtil.getFormatDate(d2,DateUtil.FormatDay1);
+        return s1.equals(s2);
     }
 
     /**

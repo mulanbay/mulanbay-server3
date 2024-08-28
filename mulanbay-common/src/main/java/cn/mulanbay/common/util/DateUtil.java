@@ -31,16 +31,16 @@ public class DateUtil {
 	/**
 	 * 两个日期间的天数
 	 *
-	 * @param startday
-	 *            距离现在之后的天数
+	 * @param startDay 开始时间
+	 * @param endDay 结束时间
 	 * @return Date:距离现在之后的若干天的日期;
 	 */
-	public static int getIntervalDays(Date startday, Date endday) {
-		if(startday==null||endday==null){
+	public static int getIntervalDays(Date startDay, Date endDay) {
+		if(startDay==null||endDay==null){
 			return 0;
 		}
-		long sl = startday.getTime();
-		long el = endday.getTime();
+		long sl = startDay.getTime();
+		long el = endDay.getTime();
 		long ei = el - sl;
 		return (int) (ei / (1000 * 60 * 60 * 24));
 	}
@@ -512,7 +512,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 是否同一天
+	 * 时间是否相同
 	 * @param date1
 	 * @param date2
 	 * @return

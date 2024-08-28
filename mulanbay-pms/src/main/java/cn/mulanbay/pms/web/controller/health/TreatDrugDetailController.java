@@ -225,7 +225,7 @@ public class TreatDrugDetailController extends BaseController {
             } else {
                 int perTimes = treatDrug.getPerTimes();
                 if (perTimes == 1) {
-                    name = "吃药";
+                    name = "用药";
                 } else {
                     //获取小时数
                     int occurHours = Integer.valueOf(DateUtil.getFormatDate(stat.getOccurTime(), "HH"));
@@ -244,7 +244,7 @@ public class TreatDrugDetailController extends BaseController {
                             name = "晚";
                         }
                     } else {
-                        name = "吃药点" + occurHours / 4;
+                        name = "用药点" + occurHours / 4;
                     }
                 }
 

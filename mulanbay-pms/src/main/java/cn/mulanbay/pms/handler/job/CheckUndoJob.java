@@ -42,7 +42,7 @@ public class CheckUndoJob extends AbstractBaseJob {
         PmsScheduleHandler scheduleHandler = BeanFactoryUtil.getBean(PmsScheduleHandler.class);
         for(CheckLogDTO dto : list){
             TriggerType type = TriggerType.getType(dto.getTriggerType().intValue());
-            String key = dto.getTriggerId()+"_"+this.getBussKey(type,dto.getBussDate());
+            String key = this.getKey(dto.getTriggerId(),type,dto.getBussDate());
             logMap.put(key,dto.getLogId());
         }
         for(Long triggerId : triggerIdList){
@@ -50,7 +50,7 @@ public class CheckUndoJob extends AbstractBaseJob {
             TriggerType type = trigger.getTriggerType();
             Date dd = minDate;
             while (dd.before(bussDay)){
-                String key = triggerId+"_"+this.getBussKey(type,dd);
+                String key = this.getKey(triggerId,type,dd);
                 Long log = logMap.get(key);
                 if(log==null){
                     //手动执行
@@ -97,6 +97,17 @@ public class CheckUndoJob extends AbstractBaseJob {
             }
         }
         return c.getTime();
+    }
+
+    /**
+     * key
+     * @param triggerId
+     * @param triggerType
+     * @param date
+     * @return
+     */
+    private String getKey(Long triggerId,TriggerType triggerType,Date date){
+        return triggerId+"_"+this.getBussKey(triggerType,date);
     }
 
     /**

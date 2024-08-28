@@ -191,7 +191,7 @@ public class PmsScheduleService extends HibernatePersistentProcessor {
                     select tl.log_id as logId,tl.task_trigger_id as triggerId,tl.buss_date as bussDate,tt.trigger_type as triggerType
                     from task_log tl,task_trigger tt
                     where tl.task_trigger_id = tt.trigger_id
-                    and buss_date>=?1 and buss_date<=?2
+                    and tl.buss_date>=?1 and tl.buss_date<=?2
                     and tt.undo_check=1
                     """;
             return this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,CheckLogDTO.class,startDate,endDate);
