@@ -17,9 +17,8 @@ import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.LogCompareType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.LogService;
-import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.persistent.service.SysFuncService;
 import cn.mulanbay.pms.util.ChartUtil;
-import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.operLog.*;
 import cn.mulanbay.pms.web.bean.res.chart.*;
 import cn.mulanbay.pms.web.bean.res.log.operLog.OperLogCompareVo;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +55,9 @@ public class OperLogController extends BaseController {
 
     @Autowired
     LogService logService;
+
+    @Autowired
+    SysFuncService sysFuncService;
 
     /**
      * 获取列表数据
@@ -140,13 +141,11 @@ public class OperLogController extends BaseController {
         if (StringUtil.isEmpty(idValue)) {
             throw new ApplicationException(PmsCode.OPERATION_LOG_BEAN_ID_NULL);
         } else {
+            String beanName = br.getSysFunc().getBeanName();
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);
-            response.setBeanName(br.getSysFunc().getBeanName());
-            Serializable bussId = BussUtil.formatIdValue(br.getSysFunc().getIdFieldType(), idValue);
-            String idFiled = this.formatIdField(br.getSysFunc().getIdField());
-            Class clz = ClazzUtils.getClass(br.getSysFunc().getBeanName());
-            Object o = baseService.getObject(clz, bussId, idFiled);
+            response.setBeanName(beanName);
+            Object o = logService.getBeanData(beanName,idValue);
             response.setBeanData(o);
             return callback(response);
         }
@@ -163,20 +162,16 @@ public class OperLogController extends BaseController {
         OperLogCompareVo vo = new OperLogCompareVo();
         //获取当前日志记录的数据
         OperLog log = baseService.getObject(beanClass, operLogId);
+        String beanName = log.getSysFunc().getBeanName();
         vo.setCurrentData(log);
         vo.setBussId(log.getIdValue());
-        vo.setBeanName(log.getSysFunc().getBeanName());
+        vo.setBeanName(beanName);
         SysFunc sf = log.getSysFunc();
         String idValue = getAndUpdateIdValue(log);
         if (sf != null) {
             //获取业务表最新的数据
-            Serializable bussId = BussUtil.formatIdValue(sf.getIdFieldType(), idValue);
-            String idFiled = this.formatIdField(sf.getIdField());
-            Class clz = ClazzUtils.getClass(sf.getBeanName());
-            Object o = baseService.getObject(clz, bussId, idFiled);
-            if (o != null) {
-                vo.setLatestData(o);
-            }
+            Object o = logService.getBeanData(beanName,idValue);
+            vo.setLatestData(o);
         }
         OperLog nearest = logService.getNearestCompareLog(log, compareType);
         vo.setCompareData(nearest);
@@ -192,19 +187,14 @@ public class OperLogController extends BaseController {
     @RequestMapping(value = "/editLogData", method = RequestMethod.GET)
     public ResultBean editLogData(@Valid OperLogGetEditReq gr) {
         OperLogCompareVo vo = new OperLogCompareVo();
-        SysFunc sf = logService.getEditSysFunc(gr.getBeanName());
+        String beanName = gr.getBeanName();
+        SysFunc sf = logService.getEditSysFunc(beanName);
         if (sf == null) {
             throw new ApplicationException(PmsCode.SYSTEM_FUNCTION_NOT_DEFINE, gr.getBeanName() + "修改类功能点没有定义");
         }
         //获取业务表最新的数据
-        Serializable bussId = BussUtil.formatIdValue(sf.getIdFieldType(), gr.getId());
-        vo.setBussId(gr.getId());
-        String idFiled = this.formatIdField(sf.getIdField());
-        Class clz = ClazzUtils.getClass(sf.getBeanName());
-        Object o = baseService.getObject(clz, bussId, idFiled);
-        if (o != null) {
-            vo.setLatestData(o);
-        }
+        Object o = logService.getBeanData(beanName,gr.getId());
+        vo.setLatestData(o);
         //获取最近一次修改
         OperLog latest = logService.getLatestOperLog(gr.getId(), gr.getBeanName());
         if (latest != null) {
@@ -214,18 +204,6 @@ public class OperLogController extends BaseController {
             vo.setCompareData(nearest);
         }
         return callback(vo);
-    }
-
-    /**
-     * 删除操作因为支持多个，索引会多加了s，实际上字段是id
-     * @param idField
-     * @return
-     */
-    private String formatIdField(String idField) {
-        if("ids".equals(idField)){
-            return "id";
-        }
-        return idField;
     }
 
     private String getAndUpdateIdValue(OperLog br) {

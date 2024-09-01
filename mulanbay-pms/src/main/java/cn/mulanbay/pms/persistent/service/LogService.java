@@ -11,11 +11,10 @@ import cn.mulanbay.pms.persistent.dto.log.OperLogDateStat;
 import cn.mulanbay.pms.persistent.dto.log.OperLogStat;
 import cn.mulanbay.pms.persistent.dto.log.OperLogTreeStat;
 import cn.mulanbay.pms.persistent.dto.log.SysLogAnalyseStat;
-import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.enums.FunctionType;
-import cn.mulanbay.pms.persistent.enums.LogCompareType;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
+import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
+import cn.mulanbay.pms.util.BussUtil;
+import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.operLog.OperLogDateStatSH;
 import cn.mulanbay.pms.web.bean.req.log.operLog.OperLogStatSH;
 import cn.mulanbay.pms.web.bean.req.log.operLog.OperLogTreeStatSH;
@@ -25,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -265,6 +265,31 @@ public class LogService extends BaseHibernateDao {
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
                     "获取修改类的系统功能点异常", e);
+        }
+    }
+
+    /**
+     * 获取类名的对象数据
+     * @param beanName
+     * @param idValue
+     * @return
+     */
+    public Object getBeanData(String beanName,String idValue) {
+        try {
+            SysFunc es = this.getEditSysFunc(beanName);
+            if(es == null){
+                logger.warn("无法找到beanName为{}的修改类功能定义",beanName);
+                return null;
+            }
+            //获取业务表最新的数据
+            Serializable bussId = BussUtil.formatIdValue(es.getIdFieldType(), idValue);
+            String idField = es.getIdField();
+            Class clz = ClazzUtils.getClass(beanName);
+            String hql="from "+beanName+" where "+idField+"=?1 ";
+            return this.getEntity(hql,clz,bussId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取类名的对象数据异常", e);
         }
     }
 

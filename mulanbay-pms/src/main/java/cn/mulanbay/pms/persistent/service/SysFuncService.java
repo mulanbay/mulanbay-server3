@@ -49,4 +49,5 @@ public class SysFuncService extends BaseHibernateDao {
                     "删除功能点异常", e);
         }
     }
+
 }

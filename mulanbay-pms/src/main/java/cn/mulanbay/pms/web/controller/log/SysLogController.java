@@ -9,8 +9,6 @@ import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.SysLog;
 import cn.mulanbay.pms.persistent.dto.log.SysLogAnalyseStat;
 import cn.mulanbay.pms.persistent.service.LogService;
-import cn.mulanbay.pms.util.BussUtil;
-import cn.mulanbay.pms.util.ClazzUtils;
 import cn.mulanbay.pms.web.bean.req.log.sysLog.SysLogAnalyseStatSH;
 import cn.mulanbay.pms.web.bean.req.log.sysLog.SysLogSH;
 import cn.mulanbay.pms.web.bean.res.chart.ChartPieData;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -98,12 +95,11 @@ public class SysLogController extends BaseController {
         if (StringUtil.isEmpty(idValue)) {
             throw new ApplicationException(PmsCode.OPERATION_LOG_BEAN_ID_NULL);
         } else {
+            String beanName = log.getSysFunc().getBeanName();
             OperBeanDetailVo response = new OperBeanDetailVo();
             response.setIdValue(idValue);
-            response.setBeanName(log.getSysFunc().getBeanName());
-            Serializable bussId = BussUtil.formatIdValue(log.getSysFunc().getIdFieldType(), idValue);
-            Class clz = ClazzUtils.getClass(log.getSysFunc().getBeanName());
-            Object o = baseService.getObject(clz, bussId, log.getSysFunc().getIdField());
+            response.setBeanName(beanName);
+            Object o = logService.getBeanData(beanName,idValue);
             response.setBeanData(o);
             return callback(response);
         }
