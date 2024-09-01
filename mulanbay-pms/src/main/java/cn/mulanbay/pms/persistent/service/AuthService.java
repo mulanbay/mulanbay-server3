@@ -35,7 +35,7 @@ public class AuthService extends BaseHibernateDao {
             String hql = "delete from UserSet where userId = ?1  ";
             this.updateEntities(hql,userId);
 
-            String hql2 = "delete from User where id = ?1  ";
+            String hql2 = "delete from User where userId = ?1  ";
             this.updateEntities(hql2,userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
@@ -68,7 +68,7 @@ public class AuthService extends BaseHibernateDao {
      */
     public void deleteLastLoginToken(Long userId) {
         try {
-            String hql = "update User set lastLoginToken=null where id = ?1";
+            String hql = "update User set lastLoginToken=null where userId = ?1";
             this.updateEntities(hql, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,
@@ -101,7 +101,7 @@ public class AuthService extends BaseHibernateDao {
      */
     public Integer getUserPoint(Long userId) {
         try {
-            String hql = "select points from User where id=?1";
+            String hql = "select points from User where userId=?1";
             return this.getEntity(hql,Integer.class, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
@@ -117,7 +117,7 @@ public class AuthService extends BaseHibernateDao {
      */
     public void updateAvatar(Long userId, String avatar) {
         try {
-            String hql = "update User set avatar=?1 where id=?2";
+            String hql = "update User set avatar=?1 where userId=?2";
             this.updateEntities(hql, avatar, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,
@@ -158,7 +158,7 @@ public class AuthService extends BaseHibernateDao {
             this.updateEntities(hql2, roleId);
 
             //step 3 ：删除角色
-            String hql3 = "delete from Role where id=?1";
+            String hql3 = "delete from Role where roleId=?1";
             this.updateEntities(hql3, roleId);
 
         } catch (BaseException e) {
@@ -288,7 +288,7 @@ public class AuthService extends BaseHibernateDao {
         try {
             String hql = """
                     SELECT perms FROM SysFunc where perms is not null and
-                    (permissionAuth=false or (permissionAuth=true and id in (select functionId from RoleFunction where roleId =?1)) )
+                    (permissionAuth=false or (permissionAuth=true and funcId in (select functionId from RoleFunction where roleId =?1)) )
                     """;
             List<String> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,String.class, roleId);
             return list;
