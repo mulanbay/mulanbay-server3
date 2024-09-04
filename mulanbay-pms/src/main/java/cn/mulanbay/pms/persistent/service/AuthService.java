@@ -249,7 +249,7 @@ public class AuthService extends BaseHibernateDao {
             String hql= """
                     from SysFunc \n
                     where router =true and \n
-                    (permissionAuth=false or (permissionAuth=true and id in (select functionId from RoleFunction where roleId =?1)) or (permissionAuth=true and alwaysShow=true) ) \n
+                    (permissionAuth=false or (permissionAuth=true and funcId in (select functionId from RoleFunction where roleId =?1)) or (permissionAuth=true and alwaysShow=true) ) \n
                     """;
              if (visible != null) {
                 hql+="and visible=" + visible;
