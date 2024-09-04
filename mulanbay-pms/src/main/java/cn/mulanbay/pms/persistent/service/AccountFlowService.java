@@ -68,7 +68,7 @@ public class AccountFlowService extends BaseHibernateDao {
             if (list.isEmpty() || list.get(0) == null) {
                 return null;
             } else {
-                return (BigDecimal) list.get(0);
+                return list.get(0);
             }
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,

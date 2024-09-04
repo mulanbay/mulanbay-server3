@@ -34,6 +34,7 @@ public class ChartService extends BaseHibernateDao {
             this.saveEntity(bean);
             if (StringUtil.isNotEmpty(configList)) {
                 for (StatBindConfig c : configList) {
+                    c.setConfigId(null);
                     c.setFid(bean.getTemplateId());
                     c.setType(StatBussType.CHART);
                 }
@@ -57,13 +58,9 @@ public class ChartService extends BaseHibernateDao {
             String sql = "delete from stat_bind_config where type=?1 and fid=?2";
             this.execSqlUpdate(sql, StatBussType.CHART,templateId);
 
-            //删除用户计划
-            String sql2 = "delete from user_plan where template_id=?1 ";
-            //this.execSqlUpdate(sql2, templateId);
-
             //删除模版
-            String sql4 = "delete from chart_template where template_id=?1 ";
-            this.execSqlUpdate(sql4, templateId);
+            String sql2 = "delete from chart_template where template_id=?1 ";
+            this.execSqlUpdate(sql2, templateId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
                     "删除图表模版异常", e);

@@ -145,7 +145,7 @@ public class UserScoreService extends BaseHibernateDao {
             if (o == null) {
                 return 0;
             } else {
-                return Double.valueOf(o.toString());
+                return Double.parseDouble(o.toString());
             }
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,

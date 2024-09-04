@@ -221,7 +221,7 @@ public class AccountService extends BaseHibernateDao {
                 asi.setUserId(userId);
                 this.saveEntity(asi);
             }else{
-                this.updateEntities("delete from AccountFlow where snapshotId=?1 ",bussKey);
+                this.updateEntities("delete from AccountFlow where snapshot.snapshotId=?1 ",bussKey);
                 asi.setBussKey(bussKey);
                 asi.setPeriod(period);
                 asi.setSnapshotName(snapshotName);
@@ -250,12 +250,12 @@ public class AccountService extends BaseHibernateDao {
      *
      * @param userId
      */
-    public void deleteSnapshot(Long userId, Long id) {
+    public void deleteSnapshot(Long userId, Long snapshotId) {
         try {
-            String hql = "delete from AccountFlow where flowId=?1 and userId=?2";
-            this.updateEntities(hql, id, userId);
+            String hql = "delete from AccountFlow where snapshot.snapshotId=?1 and userId=?2";
+            this.updateEntities(hql, snapshotId, userId);
             String hql2 = "delete from AccountSnapshot where snapshotId=?1 and userId=?2";
-            this.updateEntities(hql2, id, userId);
+            this.updateEntities(hql2, snapshotId, userId);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,
                     "删除快照异常", e);
