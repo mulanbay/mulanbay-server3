@@ -243,32 +243,18 @@ public class UserScoreController extends BaseController {
         ChartData chartData = new ChartData();
         chartData.setTitle("用户评分与积分比较");
         chartData.setLegendData(new String[]{"评分", "积分"});
+        chartData.addYAxis("评分", "分");
+        chartData.addYAxis("积分", "分");
         ChartYData yData1 = new ChartYData("评分","分");
         ChartYData yData2 = new ChartYData("积分","分");
-        int maxPoints = this.getMaxPoints(list);
         for (UserScorePointsCompareDTO bean : list) {
             chartData.getXdata().add(bean.getDate().toString());
             yData1.getData().add(bean.getScore().intValue());
-            if (sf.getDataType() == UserScorePointsCompareSH.DataType.ABSOLUTE) {
-                yData2.getData().add(bean.getPoints().intValue());
-            } else {
-                //实际上是求与最大值的百分比值
-                int v = (int) (bean.getPoints().doubleValue() / maxPoints * 100);
-                yData2.getData().add(v);
-            }
+            yData2.getData().add(bean.getPoints().intValue());
         }
         chartData.getYdata().add(yData1);
         chartData.getYdata().add(yData2);
         return callback(chartData);
     }
 
-    private int getMaxPoints(List<UserScorePointsCompareDTO> list) {
-        int max = 0;
-        for (UserScorePointsCompareDTO bean : list) {
-            if (bean.getPoints().intValue() > max) {
-                max = bean.getPoints().intValue();
-            }
-        }
-        return max;
-    }
 }

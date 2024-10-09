@@ -98,9 +98,9 @@ mulanbay:
       header: Authorization
       # 令牌密钥
       secret: abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz
-      # 令牌有效期（默认30分钟）
+      # 令牌有效期（秒,默认30分钟）
       expireTime: 1800
-      # 验证令牌有效期（默认20分钟）
+      # 验证令牌有效期（秒,默认20分钟）
       verifyTime: 1200
   log:
     #是否记录系统日志
@@ -289,7 +289,7 @@ spring:
       host: 127.0.0.1
       port: 6379
       database: 1
-      #    password: 123456 #默认为空
+      #password: 123456 #默认为空
       timeout: 3000ms
       lettuce:
         pool:

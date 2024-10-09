@@ -20,8 +20,6 @@ public class UserScorePointsCompareSH extends PageSearch implements BindUser {
 
     private Long userId;
 
-    private DataType dataType;
-
     public Date getStartDate() {
         return startDate;
     }
@@ -48,16 +46,4 @@ public class UserScorePointsCompareSH extends PageSearch implements BindUser {
         this.userId = userId;
     }
 
-    public DataType getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
-    }
-
-    public enum DataType {
-        //相对和绝对
-        OPPOSITE, ABSOLUTE
-    }
 }
