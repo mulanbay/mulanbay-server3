@@ -29,6 +29,11 @@ public class ExperienceCostStatSH extends QueryBuilder implements FullEndDateTim
 
     private ExperienceCostStatType statType;
 
+    /**
+     * 以商品类型分组时，是否以顶层分组
+     */
+    private Boolean groupTop;
+
     public Long getExpId() {
         return expId;
     }
@@ -73,4 +78,11 @@ public class ExperienceCostStatSH extends QueryBuilder implements FullEndDateTim
         this.statType = statType;
     }
 
+    public Boolean getGroupTop() {
+        return groupTop;
+    }
+
+    public void setGroupTop(Boolean groupTop) {
+        this.groupTop = groupTop;
+    }
 }

@@ -9,19 +9,16 @@ import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.life.*;
-import cn.mulanbay.pms.persistent.enums.BussType;
-import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.enums.ExperienceType;
-import cn.mulanbay.pms.persistent.enums.MapField;
+import cn.mulanbay.pms.persistent.enums.*;
 import cn.mulanbay.pms.persistent.util.MysqlUtil;
 import cn.mulanbay.pms.web.bean.req.life.experience.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static cn.mulanbay.pms.common.Constant.ROOT_ID;
 
 @Service
 @Transactional
@@ -126,12 +123,83 @@ public class ExperienceService extends BaseHibernateDao {
                     """;
             statSql = statSql.replace("{query_para}",pr.getParameterString());
             List<ExperienceCostStat> list = this.getEntityListSI(statSql,NO_PAGE,NO_PAGE_SIZE, ExperienceCostStat.class, pr.getParameterValue());
-            return list;
+            if(sf.getGroupTop()!=null&&sf.getGroupTop()){
+                //按顶层大类统计
+                return this.groupGoodsType(list,sf.getUserId());
+            }else{
+                return list;
+            }
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "人生经历基于消费类型的花费统计异常", e);
         }
     }
+
+    private List<ExperienceCostStat> groupGoodsType(List<ExperienceCostStat> list, Long userId){
+        Map<Long,GoodsType> goodsTypeMap = this.getGoodsTypeMap(userId);
+        Map<String,ExperienceCostStat> resMap = new HashMap<>();
+        for(ExperienceCostStat oo : list){
+            Number goodsTypeId = oo.getIndexValue();
+            if (goodsTypeId == null) {
+                //防止为NULL
+                goodsTypeId = 0L;
+            }
+            String topTypeName = this.findTopType(goodsTypeMap,goodsTypeId.longValue());
+            ExperienceCostStat stat = resMap.get(topTypeName);
+            if(stat==null){
+                stat = new ExperienceCostStat();
+            }
+            stat.setName(topTypeName);
+            stat.add(oo.getTotalCost());
+            resMap.put(topTypeName,stat);
+        }
+        return resMap.values().stream().toList();
+    }
+
+    /**
+     * 查询顶层类型
+     *
+     * @param map
+     * @param typeId
+     * @return
+     */
+    private String findTopType(Map<Long,GoodsType> map,Long typeId){
+        GoodsType g = map.get(typeId);
+        if(g==null){
+            return "未知";
+        }else{
+            if(g.getPid()==ROOT_ID){
+                return g.getTypeName();
+            }else{
+                return findTopType(map,g.getPid());
+            }
+        }
+    }
+
+    private Map<Long,GoodsType> getGoodsTypeMap(Long userId){
+        Map<Long,GoodsType> map = new HashMap<>();
+        List<GoodsType> typeList = this.getGoodsTypeList(userId);
+        for(GoodsType g : typeList){
+            map.put(g.getTypeId(),g);
+        }
+        return map;
+    }
+
+    /**
+     * 商品类型列表
+     * @param userId
+     * @return
+     */
+    public List<GoodsType> getGoodsTypeList(Long userId) {
+        try {
+            String hql="from GoodsType where userId=?1 and status=?2 ";
+            return this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,GoodsType.class,userId, CommonStatus.ENABLE);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取商品类型列表异常", e);
+        }
+    }
+
 
     /**
      * 人生经历基于ID的花费统计

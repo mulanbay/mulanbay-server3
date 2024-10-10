@@ -8,6 +8,9 @@ public class ExperienceCostStat {
     private String name;
     private BigDecimal totalCost;
 
+    public ExperienceCostStat() {
+    }
+
     public ExperienceCostStat(Number indexValue, BigDecimal totalCost) {
         this.indexValue = indexValue;
         this.totalCost = totalCost;
@@ -17,6 +20,16 @@ public class ExperienceCostStat {
         this.indexValue = indexValue;
         this.name = name;
         this.totalCost = totalCost;
+    }
+
+    public void add(BigDecimal v){
+        if(v==null){
+            return;
+        }
+        if(totalCost ==null){
+            totalCost = new BigDecimal(0);
+        }
+        totalCost = totalCost.add(v);
     }
 
     public Number getIndexValue() {
