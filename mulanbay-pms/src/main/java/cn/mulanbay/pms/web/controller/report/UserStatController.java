@@ -6,6 +6,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
+import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.ReportHandler;
 import cn.mulanbay.pms.handler.UserStatHandler;
@@ -23,6 +24,7 @@ import cn.mulanbay.pms.web.bean.req.report.stat.UserStatDeleteCacheForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatForm;
 import cn.mulanbay.pms.web.bean.req.report.stat.UserStatSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
+import cn.mulanbay.pms.web.bean.res.report.UserStatCacheInfoVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -163,6 +165,28 @@ public class UserStatController extends BaseController {
         return callback(dto);
     }
 
+    /**
+     * 缓存信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "/cacheInfo", method = RequestMethod.GET)
+    public ResultBean cacheInfo(@RequestParam(name = "statId") Long statId) {
+        UserStat bean = baseService.getObject(beanClass,statId);
+        StatResultDTO dbData = statService.getStatResult(bean);
+        UserStatCacheInfoVo vo = new UserStatCacheInfoVo();
+        vo.setDbData(dbData);
+        String cacheKey = CacheKey.getKey(CacheKey.USER_STAT, bean.getUserId().toString(), statId.toString());
+        StatResultDTO cacheData = cacheHandler.get(cacheKey, StatResultDTO.class);
+        vo.setCacheData(cacheData);
+        Long cacheExpire = cacheHandler.getExpire(cacheKey);
+        vo.setCacheExpire(cacheExpire);
+        String lastNotifyExpireKey = CacheKey.getKey(CacheKey.USER_STAT_NOTIFY, bean.getUserId().toString(), statId.toString());
+        Long lastNotifyExpire = cacheHandler.getExpire(lastNotifyExpireKey);
+        vo.setLastNotifyExpire(lastNotifyExpire);
+        return callback(vo);
+    }
+
 
     /**
      * 获取列表数据
@@ -226,7 +250,7 @@ public class UserStatController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/deleteStatCache", method = RequestMethod.POST)
-    public ResultBean deleteStatCache(UserStatDeleteCacheForm ucf) {
+    public ResultBean deleteStatCache(@RequestBody @Valid UserStatDeleteCacheForm ucf) {
         Long statId = ucf.getStatId();
         if(statId==null){
             userStatHandler.deleteCache(ucf.getUserId());
@@ -235,6 +259,20 @@ public class UserStatController extends BaseController {
         }
         return callback(null);
     }
+
+
+    /**
+     * 清除通知缓存
+     *
+     * @return
+     */
+    @RequestMapping(value = "/deleteNotifyCache", method = RequestMethod.POST)
+    public ResultBean deleteNotifyCache(@RequestBody @Valid UserStatDeleteCacheForm ucf) {
+        String key = CacheKey.getKey(CacheKey.USER_STAT_NOTIFY, ucf.getUserId().toString(), ucf.getStatId().toString());
+        cacheHandler.delete(key);
+        return callback(null);
+    }
+
 
     /**
      * 业务标识key

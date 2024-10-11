@@ -130,14 +130,14 @@ public class UserStatRemindJob extends AbstractBaseRemindJob {
             StatTemplate template = userStat.getTemplate();
             String unit = template.getValueTypeName();
             String content = null;
+            String compareName = us.getCompareType().getName();
             if (template.getResultType() == ResultType.DATE_NAME || template.getResultType() == ResultType.NUMBER_NAME) {
-                content = "[" + userStat.getTitle() + "][" + resultDTO.getNameValue() + "]期望值[" + us.getExpectValue() + "],实际值为["
-                        + resultDTO.getStatValue() + "],计量单位:[" + unit + "]\n";
+                content = "[" + userStat.getTitle() + "][" + resultDTO.getNameValue() + "]期望值[" + compareName + us.getExpectValue() + unit + "],统计值为["
+                        + resultDTO.getStatValue() + unit + "].";
             } else {
-                content = "[" + userStat.getTitle() + "]期望值[" + us.getExpectValue() + "],实际值为["
-                        + resultDTO.getStatValue() + "],计量单位:[" + unit + "]\n";
+                content = "[" + userStat.getTitle() + "]期望值[" + compareName + us.getExpectValue() + unit + "],统计值为["
+                        + resultDTO.getStatValue() + unit + "].";
             }
-            content +=",期望类型:"+us.getCompareType().getName();
             boolean complete = true;
             if(us.getCompareType()==CompareType.MORE &&resultDTO.getStatValue()<us.getExpectValue()){
                 //需要大于且没有达到期望

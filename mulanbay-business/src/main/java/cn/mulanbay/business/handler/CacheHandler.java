@@ -242,6 +242,19 @@ public class CacheHandler extends BaseHandler  {
     }
 
     /**
+     * 根据key 获取过期时间
+     *
+     * @param key 键 不能为null
+     * @return 时间(毫秒)
+     *         0:代表为永久有效
+     *         -2:没有该值
+     *         -1：没有设置过期时间
+     */
+    public Long getExpire(String key) {
+        return redisTemplate.getExpire(getFullKey(key), TimeUnit.MILLISECONDS);
+    }
+
+    /**
      * 获取键集合
      * @param pattern
      * @return
