@@ -76,6 +76,13 @@ public class Exercise implements java.io.Serializable {
     //速度最佳状态
     @Column(name = "fast_best")
     private BestType fastBest;
+
+    /**
+     * 经历 ID
+     */
+    @Column(name = "exp_id")
+    private Long expId;
+
     @Column(name = "remark")
     private String remark;
 
@@ -201,6 +208,14 @@ public class Exercise implements java.io.Serializable {
 
     public void setFastBest(BestType fastBest) {
         this.fastBest = fastBest;
+    }
+
+    public Long getExpId() {
+        return expId;
+    }
+
+    public void setExpId(Long expId) {
+        this.expId = expId;
     }
 
     public String getRemark() {

@@ -35,6 +35,9 @@ public class ExerciseSH extends PageSearch implements BindUser, FullEndDateTime 
     @Query(fieldName = "valueBest,fastBest", op = Parameter.Operator.IN, crossType = CrossType.OR)
     private List<BestType> bests;
 
+    @Query(fieldName = "expId", op = Parameter.Operator.EQ)
+    private Long expId;
+
     private Boolean containBest;
 
     private GroupType sortField;
@@ -91,6 +94,14 @@ public class ExerciseSH extends PageSearch implements BindUser, FullEndDateTime 
 
     public void setContainBest(Boolean containBest) {
         this.containBest = containBest;
+    }
+
+    public Long getExpId() {
+        return expId;
+    }
+
+    public void setExpId(Long expId) {
+        this.expId = expId;
     }
 
     public GroupType getSortField() {

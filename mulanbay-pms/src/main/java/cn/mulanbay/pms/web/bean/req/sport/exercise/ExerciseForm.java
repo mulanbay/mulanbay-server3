@@ -30,6 +30,9 @@ public class ExerciseForm implements BindUser {
     private Double maxPace;
     private Integer maxHeartRate;
     private Integer avgHeartRate;
+
+    private Long expId;
+
     private String remark;
 
     public Long getExerciseId() {
@@ -128,6 +131,14 @@ public class ExerciseForm implements BindUser {
 
     public void setAvgHeartRate(Integer avgHeartRate) {
         this.avgHeartRate = avgHeartRate;
+    }
+
+    public Long getExpId() {
+        return expId;
+    }
+
+    public void setExpId(Long expId) {
+        this.expId = expId;
     }
 
     public String getRemark() {

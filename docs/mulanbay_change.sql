@@ -205,3 +205,6 @@ CREATE TABLE `mulanbay_db`.`note` (
 `modify_time` DATETIME NULL,
 PRIMARY KEY (`note_id`));
 
+#锻炼表增加人生经历外键
+ALTER TABLE `exercise`
+    ADD COLUMN `exp_id` BIGINT(20) NULL AFTER `fast_best`;
