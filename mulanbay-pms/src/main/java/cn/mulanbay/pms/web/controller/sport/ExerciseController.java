@@ -11,6 +11,7 @@ import cn.mulanbay.pms.persistent.domain.Sport;
 import cn.mulanbay.pms.persistent.domain.SportMilestone;
 import cn.mulanbay.pms.persistent.dto.sport.*;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
+import cn.mulanbay.pms.persistent.enums.ExerciseItemStatField;
 import cn.mulanbay.pms.persistent.enums.NextMilestoneType;
 import cn.mulanbay.pms.persistent.service.ExerciseService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -233,8 +234,38 @@ public class ExerciseController extends BaseController {
     }
 
     /**
+     * 具体某项指标统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/itemStat", method = RequestMethod.GET)
+    public ResultBean itemStat(@Valid ExerciseItemStatSH sf) {
+        List<ExerciseItemStat> list = exerciseService.getItemList(sf);
+        ExerciseItemStatField field = sf.getField();
+        ChartData chartData = new ChartData();
+        chartData.setTitle("锻炼统计");
+        String itemName = field.getName();
+        chartData.setLegendData(new String[]{ itemName});
+        String unit="";
+        if(field==ExerciseItemStatField.VALUE&&sf.getSportId()!=null){
+            Sport sport = baseService.getObject(Sport.class,sf.getSportId());
+            unit = sport.getUnit();
+        }else {
+            unit = field.getUnit();
+        }
+        chartData.setUnit(unit);
+        ChartYData yData1 = new ChartYData(itemName,unit);
+        for (ExerciseItemStat bean : list) {
+            String index = DateUtil.getFormatDate(bean.getExerciseTime(),DateUtil.FormatDay1);
+            chartData.getXdata().add(index);
+            yData1.getData().add(bean.getValue());
+        }
+        chartData.getYdata().add(yData1);
+        return callback(chartData);
+    }
+
+    /**
      * 锻炼管理的统计接口
-     * 界面上使用echarts展示图表，后端返回的是核心模块的数据，不再使用Echarts的第三方jar包封装（比较麻烦）
      *
      * @return
      */

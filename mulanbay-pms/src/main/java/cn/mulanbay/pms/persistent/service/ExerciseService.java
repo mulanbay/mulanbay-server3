@@ -62,6 +62,29 @@ public class ExerciseService extends BaseHibernateDao {
     }
 
     /**
+     * 获取具体某项指标列表
+     *
+     * @param sf
+     * @return
+     */
+    public List<ExerciseItemStat> getItemList(ExerciseItemStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String sql = """
+                    select exercise_time as exerciseTime,{field_name} as value from exercise
+                    {query_para} order by exercise_time
+                    """;
+            sql = sql.replace("{field_name}",sf.getField().getField())
+                    .replace("{query_para}",pr.getParameterString());
+            List<ExerciseItemStat> list = this.getEntityListSI(sql, NO_PAGE,NO_PAGE_SIZE, ExerciseItemStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取具体某项指标列表异常", e);
+        }
+    }
+
+    /**
      * 获取锻炼的总的统计
      *
      * @param sf
