@@ -12,6 +12,8 @@ import cn.mulanbay.schedule.domain.TaskTrigger;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.enums.TriggerType;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -21,6 +23,8 @@ import java.util.*;
  * @date 2024/2/21
  */
 public class CheckUndoJob extends AbstractBaseJob {
+
+    private static final Logger logger = LoggerFactory.getLogger(CheckUndoJob.class);
 
     CheckUndoJobPara para;
 
@@ -39,12 +43,13 @@ public class CheckUndoJob extends AbstractBaseJob {
         List<CheckLogDTO> list = service.getCheckLogList(minDate,bussDay);
         Map<String,Long> logMap = new HashMap<>();
         int counts =0;
-        PmsScheduleHandler scheduleHandler = BeanFactoryUtil.getBean(PmsScheduleHandler.class);
         for(CheckLogDTO dto : list){
             TriggerType type = TriggerType.getType(dto.getTriggerType().intValue());
             String key = this.getKey(dto.getTriggerId(),type,dto.getBussDate());
             logMap.put(key,dto.getLogId());
         }
+        int success = 0;
+        int fail = 0;
         for(Long triggerId : triggerIdList){
             TaskTrigger trigger = service.getTaskTrigger(triggerId);
             TriggerType type = trigger.getTriggerType();
@@ -54,7 +59,12 @@ public class CheckUndoJob extends AbstractBaseJob {
                 Long log = logMap.get(key);
                 if(log==null){
                     //手动执行
-                    scheduleHandler.manualStart(triggerId,dd,false,null,"调度任务自检Job发起");
+                    boolean b = this.startJob(triggerId,dd);
+                    if (b) {
+                        success++;
+                    } else {
+                        fail++;
+                    }
                     counts++;
                 }
                 //获取下一个时间
@@ -62,9 +72,27 @@ public class CheckUndoJob extends AbstractBaseJob {
             }
         }
         tr.setResult(JobResult.SUCCESS);
-        tr.setComment("一共补全了"+counts+"条调度任务");
+        tr.setComment("一共补全了" + counts + "条调度任务,成功:" + success + "个,失败" + fail + "个");
         return tr;
     }
+
+    /**
+     * 启动任务
+     * @param triggerId
+     * @param date
+     * @return
+     */
+    private boolean startJob(Long triggerId,Date date){
+        try {
+            PmsScheduleHandler scheduleHandler = BeanFactoryUtil.getBean(PmsScheduleHandler.class);
+            scheduleHandler.manualStart(triggerId,date,false,null,"调度任务自检Job发起");
+            return true;
+        } catch (Exception e) {
+            logger.error("启动调度任务异常,triggerId="+triggerId,e);
+            return false;
+        }
+    }
+
 
     private Date getNextDate(TriggerType triggerType,Date date){
         Calendar c = Calendar.getInstance();
