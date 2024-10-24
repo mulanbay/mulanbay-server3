@@ -1,5 +1,7 @@
 package cn.mulanbay.pms.handler.bean.data;
 
+import cn.mulanbay.pms.persistent.enums.BussSource;
+
 import java.util.Date;
 
 /**
@@ -7,6 +9,16 @@ import java.util.Date;
  * @date 2024/3/4
  */
 public class CommonDataBean {
+
+    /**
+     * 业务类型
+     */
+    private BussSource source;
+
+    /**
+     * 源id
+     */
+    private Long sourceId;
 
     /**
      * 业务名称
@@ -35,6 +47,30 @@ public class CommonDataBean {
      * 原始数据
      */
     private Object originData;
+
+    public CommonDataBean() {
+    }
+
+    public CommonDataBean(BussSource source, Long sourceId) {
+        this.source = source;
+        this.sourceId = sourceId;
+    }
+
+    public BussSource getSource() {
+        return source;
+    }
+
+    public void setSource(BussSource source) {
+        this.source = source;
+    }
+
+    public Long getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
+    }
 
     public String getBussName() {
         return bussName;

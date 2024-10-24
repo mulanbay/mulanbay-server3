@@ -25,7 +25,7 @@ public class DataHandler extends BaseHandler {
     }
 
     public CommonDataBean getSourceData(BussSource source, Long sourceId){
-        CommonDataBean bean = new CommonDataBean();
+        CommonDataBean bean = new CommonDataBean(source,sourceId);
         bean.setBussName(source.getName());
         if(source== BussSource.MANUAL){
             bean.setTitle("手动来源");
