@@ -450,6 +450,22 @@ public class BaseHibernateDao {
 	}
 
 	/**
+	 * 利用预编译SQL查询，不分页
+	 *
+	 * @param sql
+	 *            SQL语句
+	 * @param clazz
+	 *            指定类名
+	 * @param iObjects
+	 *            以索引变量绑定参数
+	 * @return Query 返回Query
+	 */
+	@SuppressWarnings("rawtypes")
+	protected <T> List<T>  getEntityListSINP(String sql, Class<T> clazz, Object... iObjects) throws BaseException {
+		return this.getEntityListSI(sql,NO_PAGE,NO_PAGE_SIZE,clazz,iObjects);
+	}
+
+	/**
 	 * 利用预编译SQL查询，如果查询不到，返回新的ArrayList，不返回NullPoint。
 	 *
 	 * @param sql

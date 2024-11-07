@@ -810,6 +810,123 @@ public class ConsumeService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 按时间来统计出售
+     *
+     * @param sf
+     * @return
+     */
+    public List<ConsumeSoldDateStat> getDateSoldStat(ConsumeSoldStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            pr.setNeedWhere(false);
+            DateGroupType dateGroupType = sf.getDateGroupType();
+            String sql = """
+                    select indexValue,count(0) as totalCount,sum(price) as totalPrice
+                    from ( select {date_group_field} as indexValue,
+                    sold_price as price
+                    from consume
+                    where sold_price is not null
+                    {query_para}
+                    ) tt group by indexValue
+                     order by indexValue
+                    """;
+            sql = sql.replace("{date_group_field}",MysqlUtil.dateTypeMethod("invalid_time", dateGroupType))
+                    .replace("{query_para}",pr.getParameterString());
+            List<ConsumeSoldDateStat> list = this.getEntityListSINP(sql, ConsumeSoldDateStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "按时间来统计出售异常", e);
+        }
+    }
+
+    /**
+     * 按是否二手来统计出售
+     *
+     * @param sf
+     * @return
+     */
+    public List<ConsumeSoldSecondhandStat> getSoldSecondhandStat(ConsumeSoldStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            pr.setNeedWhere(false);
+            String sql = """
+                    select secondhand,count(0) as totalCount,sum(sold_price) as totalPrice
+                    from consume
+                    where sold_price is not null
+                    {query_para}
+                    group by secondhand
+                    """;
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            List<ConsumeSoldSecondhandStat> list = this.getEntityListSINP(sql, ConsumeSoldSecondhandStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "按是否二手来统计出售异常", e);
+        }
+    }
+
+    /**
+     * 统计出售
+     *
+     * @param sf
+     * @return
+     */
+    public List<ConsumeSoldStat> getSoldStat(ConsumeSoldStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String sql = """
+                    select secondhand,sold,count(0) as totalCount
+                    from
+                    (select secondhand,
+                        CASE
+                           WHEN sold_price is null THEN 0
+                           WHEN sold_price is not null THEN 1
+                           ELSE 0
+                        END AS sold
+                   from consume
+                   {query_para}
+                   ) as res
+                   group by secondhand,sold
+                    """;
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            List<ConsumeSoldStat> list = this.getEntityListSINP(sql, ConsumeSoldStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "统计出售异常", e);
+        }
+    }
+
+    /**
+     * 统计出售的折扣比例
+     *
+     * @param sf
+     * @return
+     */
+    public List<ConsumeSoldRateStat> getSoldRateStat(ConsumeSoldStatSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            pr.setNeedWhere(false);
+            String sql = """
+                   select rate,count(0) as totalCount
+                   from (
+                   select ROUND(sold_price/total_price*10) as rate
+                   from consume
+                   where sold_price is not null
+                    {query_para}
+                    ) as res
+                    group by rate
+                    """;
+            sql = sql.replace("{query_para}",pr.getParameterString());
+            List<ConsumeSoldRateStat> list = this.getEntityListSINP(sql, ConsumeSoldRateStat.class, pr.getParameterValue());
+            return list;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "统计出售的折扣比例异常", e);
+        }
+    }
 
     /**
      * 获取商品名称列表，相识度比对使用

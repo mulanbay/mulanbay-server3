@@ -552,6 +552,157 @@ public class ConsumeController extends BaseController {
 
     }
 
+    /**
+     * 出售分析
+     *
+     * @return
+     */
+    @RequestMapping(value = "/soldStat")
+    public ResultBean soldStat(ConsumeSoldStatSH sf) {
+        ConsumeSoldStatSH.StatType statType = sf.getStatType();
+        switch (statType){
+            case DATE -> {
+                return callback(createSoldDateStatChart(sf));
+            }
+            case SECONDHAND -> {
+                return callback(createSoldSecondhandStatChart(sf));
+            }
+            case SOLD -> {
+                return callback(createSoldStatChart(sf));
+            }
+            case RATE -> {
+                return callback(createSoldRateStatChart(sf));
+            }
+        }
+        return callback(null);
+    }
+
+    /**
+     * 构建以是否是二手的售出统计
+     *
+     * @param sf
+     * @return
+     */
+    private ChartPieData createSoldRateStatChart(ConsumeSoldStatSH sf) {
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("商品出售折扣分析");
+        chartPieData.setUnit("次");
+        ChartPieSerieData seriesData = new ChartPieSerieData("折扣","次");
+        List<ConsumeSoldRateStat> list = consumeService.getSoldRateStat(sf);
+        for (ConsumeSoldRateStat bean : list) {
+            ChartPieSerieDetailData cd = new ChartPieSerieDetailData();
+            cd.setName(bean.getRate()+"折");
+            cd.setValue(bean.getTotalCount());
+            seriesData.getData().add(cd);
+        }
+        chartPieData.getDetailData().add(seriesData);
+        return chartPieData;
+    }
+
+    /**
+     * 构建以是否是二手的售出统计
+     *
+     * @param sf
+     * @return
+     */
+    private ChartPieData createSoldStatChart(ConsumeSoldStatSH sf) {
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("商品出售分析");
+        chartPieData.setUnit("次");
+        ChartPieSerieData totalSeriesData = new ChartPieSerieData("总计","次");
+        ChartPieSerieData shSeriesData = new ChartPieSerieData("二手商品","次");
+        ChartPieSerieData nshSeriesData = new ChartPieSerieData("非二手商品","次");
+        List<ConsumeSoldStat> list = consumeService.getSoldStat(sf);
+        Long sn =0L;
+        Long usn = 0L;
+        for (ConsumeSoldStat bean : list) {
+            String name = "";
+            if(bean.getSold().intValue()==1){
+                name =  "已出售";
+                sn+=bean.getTotalCount();
+            }else{
+                name =  "未出售";
+                usn+=bean.getTotalCount();
+            }
+            ChartPieSerieDetailData cd = new ChartPieSerieDetailData();
+            cd.setName(name);
+            cd.setValue(bean.getTotalCount());
+            if(bean.getSecondhand().intValue()==1){
+                shSeriesData.getData().add(cd);
+            }else{
+                nshSeriesData.getData().add(cd);
+            }
+        }
+        //添加总的
+        ChartPieSerieDetailData snDetail = new ChartPieSerieDetailData();
+        snDetail.setName("已出售");
+        snDetail.setValue(sn);
+        totalSeriesData.getData().add(snDetail);
+        ChartPieSerieDetailData usnDetail = new ChartPieSerieDetailData();
+        usnDetail.setName("未出售");
+        usnDetail.setValue(usn);
+        totalSeriesData.getData().add(usnDetail);
+
+        chartPieData.getDetailData().add(totalSeriesData);
+        chartPieData.getDetailData().add(shSeriesData);
+        chartPieData.getDetailData().add(nshSeriesData);
+        return chartPieData;
+    }
+
+    /**
+     * 构建以是否是二手的售出统计
+     *
+     * @param sf
+     * @return
+     */
+    private ChartPieData createSoldSecondhandStatChart(ConsumeSoldStatSH sf) {
+        ChartPieData chartPieData = new ChartPieData();
+        chartPieData.setTitle("商品类别出售分析");
+        ChartPieSerieData countSeriesData = new ChartPieSerieData("次数","次");
+        ChartPieSerieData priceSeriesData = new ChartPieSerieData("金额","元");
+        List<ConsumeSoldSecondhandStat> list = consumeService.getSoldSecondhandStat(sf);
+        for (ConsumeSoldSecondhandStat bean : list) {
+            String name = !bean.getSecondhand()? "非二手":"二手";
+            ChartPieSerieDetailData cd = new ChartPieSerieDetailData();
+            cd.setName(name);
+            cd.setValue(bean.getTotalCount());
+            countSeriesData.getData().add(cd);
+
+            ChartPieSerieDetailData pd = new ChartPieSerieDetailData();
+            pd.setName(name);
+            pd.setValue(NumberUtil.getValue(bean.getTotalPrice(),2));
+            priceSeriesData.getData().add(pd);
+        }
+        chartPieData.getDetailData().add(countSeriesData);
+        chartPieData.getDetailData().add(priceSeriesData);
+        return chartPieData;
+    }
+
+    /**
+     * 构建以时间为维度的售出统计
+     *
+     * @param sf
+     * @return
+     */
+    private ChartData createSoldDateStatChart(ConsumeSoldStatSH sf){
+        ChartData chartData = new ChartData();
+        chartData.setTitle("商品出售分析");
+        //混合图形下使用
+        chartData.addYAxis("金额", "元");
+        chartData.addYAxis("次数", "次");
+        chartData.setLegendData(new String[]{"金额", "次数"});
+        ChartYData yData1 = new ChartYData("金额", "元");
+        ChartYData yData2 = new ChartYData("次数", "次");
+        List<ConsumeSoldDateStat> list = consumeService.getDateSoldStat(sf);
+        for (ConsumeSoldDateStat bean : list) {
+            chartData.getXdata().add(bean.getIndexValue().toString());
+            yData1.getData().add(NumberUtil.getValue(bean.getTotalPrice(),2));
+            yData2.getData().add(bean.getTotalCount());
+        }
+        chartData.getYdata().add(yData1);
+        chartData.getYdata().add(yData2);
+        return chartData;
+    }
 
     /**
      * 获取子标题后缀

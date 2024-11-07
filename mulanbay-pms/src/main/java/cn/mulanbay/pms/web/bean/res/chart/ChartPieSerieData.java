@@ -17,6 +17,14 @@ public class ChartPieSerieData {
 
     private List<ChartPieSerieDetailData> data = new ArrayList<>();
 
+    public ChartPieSerieData() {
+    }
+
+    public ChartPieSerieData(String name, String unit) {
+        this.name = name;
+        this.unit = unit;
+    }
+
     public String getName() {
         return name;
     }
