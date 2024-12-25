@@ -153,7 +153,7 @@ source /xx/xx/xx/mulanbay_init.sql(数据库文件绝对路径)
 
 2. 正式环境
   * 进入到mulanbay-server3目录，运行mvn clean package
-  * 运行mulanbay-pms/target下的mulanbay-pms-5.0.jar文件
+  * 运行mulanbay-pms/target下的mulanbay-api.jar文件
 
 （2）如果您不是开发者，或者没有相关后端开发经验，您可以直接使用release出来的版本进行运行，不过配置文件还是需要根据上一个步骤里面的"修改配置文件"步骤进行本地化配置，配置完后需要替换掉压缩包里面的文件。
 

@@ -120,7 +120,7 @@ source /your_path/mulanbay_init.sql
 
 2. product enviroment
   * mvn clean package
-  * run:mulanbay-pms/target下/mulanbay-pms-5.0.jar
+  * run:mulanbay-pms/target下/mulanbay-api.jar
 
 （2）if you are not a backend developer, you can use the releases
 
