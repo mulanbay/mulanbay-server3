@@ -135,7 +135,7 @@ source /xx/xx/xx/mulanbay_init.sql(数据库文件绝对路径)
   * hanlp.properties文件中需要设置根路径，如：root=D:/ws/AHANLP_base-1.3
   * ahanlp.properties文件中需要设置里面的各个配置项
   * NLP所需要的ahanlpData文件包，请到百度网盘下载：（链接: https://pan.baidu.com/s/1demdX1GjhMiJqM58bJzriQ 提取码: gqcs ）
-    或者直接去原作者项目处下载：https://github.com/jsksxs360/AHANLP
+    或者直接去原作者项目处下载：https://github.com/jsksxs360/AHANLP/blob/master/github/w2v.md（V20210720版本）
     说明：
     【模型】Google_word2vec_zhwiki210720_300d.bin
     【语料】zhwiki_210720_preprocessed.simplied.zip
