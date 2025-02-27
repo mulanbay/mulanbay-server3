@@ -373,7 +373,7 @@ public class ScheduleHandler extends BaseHandler {
         si.setDeployId(deployId);
         si.setCheck(monitorInterval>0);
         si.setInterval(monitorInterval);
-        si.setSchedule(enableSchedule);
+        si.setEnabled(enableSchedule);
         if(isEnableSchedule()){
             si.setScheduleJobsCount(quartzServer.getScheduleJobsCount());
             si.setCurrentlyExecutingJobsCount(quartzServer

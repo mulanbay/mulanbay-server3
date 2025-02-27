@@ -13,11 +13,20 @@ public class ScheduleInfo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 部署点
+	 */
 	private String deployId;
-	
-	private boolean isCheck;
-	
-	private boolean isSchedule;
+
+	/**
+	 * 是否定期检测
+	 */
+	private boolean check;
+
+	/**
+	 * 调度是否开启
+	 */
+	private boolean enabled;
 	
 	private long interval;
 
@@ -41,20 +50,20 @@ public class ScheduleInfo implements Serializable {
 		this.deployId = deployId;
 	}
 
-	public boolean isCheck() {
-		return isCheck;
+	public boolean getCheck() {
+		return check;
 	}
 
-	public void setCheck(boolean isCheck) {
-		this.isCheck = isCheck;
+	public void setCheck(boolean check) {
+		this.check = check;
 	}
 
-	public boolean isSchedule() {
-		return isSchedule;
+	public boolean getEnabled() {
+		return enabled;
 	}
 
-	public void setSchedule(boolean isSchedule) {
-		this.isSchedule = isSchedule;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public long getInterval() {
