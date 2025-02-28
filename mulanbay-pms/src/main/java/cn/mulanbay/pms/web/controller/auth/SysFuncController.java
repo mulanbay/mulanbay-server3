@@ -181,6 +181,10 @@ public class SysFuncController extends BaseController {
                     throw new ApplicationException(ErrorCode.DO_BUSS_ERROR, "组件路径不能为空");
                 }
             }
+            boolean pathExit = sysFuncService.checkPathExit(form.getFuncId(),form.getPath());
+            if(pathExit){
+                throw new ApplicationException(ErrorCode.DO_BUSS_ERROR,"路径已经存在，请重新选择一个路径");
+            }
         }
     }
 

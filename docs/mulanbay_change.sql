@@ -208,3 +208,6 @@ PRIMARY KEY (`note_id`));
 #锻炼表增加人生经历外键
 ALTER TABLE `exercise`
     ADD COLUMN `exp_id` BIGINT(20) NULL AFTER `fast_best`;
+
+#解决路由路径重复问题
+UPDATE `sys_func` SET `path` = 'treatTop' WHERE (`func_id` = '674');

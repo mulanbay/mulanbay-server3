@@ -50,4 +50,27 @@ public class SysFuncService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 路径是否已经存在
+     * @param funcId
+     * @param path
+     * @return
+     */
+    public boolean checkPathExit(Long funcId,String path) {
+        try {
+            Long n =0L;
+            if(funcId==null){
+                String hql = "select count(0) from SysFunc where path=?1";
+                n = this.getCount(hql,path);
+            }else{
+                String hql = "select count(0) from SysFunc where path=?1 and funcId!=?2 ";
+                n = this.getCount(hql,path,funcId);
+            }
+            return n==0 ? false:true;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "检测路径是否已经存在异常", e);
+        }
+    }
+
 }
