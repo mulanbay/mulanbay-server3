@@ -107,6 +107,12 @@ public class CacheKey {
     public static final String FOOD_CATEGORY_LIST = "buss:diet:foodCategory";
 
     /**
+     * 食物能量
+     */
+    public static final String FOOD_ENERGY = "buss:diet:foodEnergy:{0}";
+
+
+    /**
      * 商品的寿命
      */
     public static final String GOODS_LIFETIME_LIST = "buss:goods:lifetimeList";

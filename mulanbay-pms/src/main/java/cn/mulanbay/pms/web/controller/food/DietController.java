@@ -12,6 +12,7 @@ import cn.mulanbay.pms.handler.DietHandler;
 import cn.mulanbay.pms.persistent.domain.Diet;
 import cn.mulanbay.pms.persistent.domain.DietVarietyLog;
 import cn.mulanbay.pms.persistent.domain.FoodCategory;
+import cn.mulanbay.pms.persistent.domain.FoodEnergy;
 import cn.mulanbay.pms.persistent.dto.food.*;
 import cn.mulanbay.pms.persistent.dto.life.NameCountDTO;
 import cn.mulanbay.pms.persistent.enums.*;
@@ -25,6 +26,7 @@ import cn.mulanbay.pms.util.bean.PeriodDateBean;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.food.diet.*;
 import cn.mulanbay.pms.web.bean.res.chart.*;
+import cn.mulanbay.pms.web.bean.res.food.DietEnergyVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -716,4 +718,66 @@ public class DietController extends BaseController {
         chartData.getYdata().add(yData1);
         return callback(chartData);
     }
+
+    /**
+     * 食物能量
+     *
+     * @return
+     */
+    @RequestMapping(value = "/energyList", method = RequestMethod.GET)
+    public ResultBean energyList(@Valid DietEnergySH desh) {
+        DietSH sf = new DietSH();
+        BeanCopy.copy(desh,sf);
+        //时间条件
+        if(desh.getDate()!=null){
+            sf.setStartDate(desh.getDate());
+            sf.setEndDate(DateUtil.tillMiddleNight(desh.getDate()));
+        }
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        Sort s = new Sort("occurTime", Sort.ASC);
+        pr.addSort(s);
+        List<Diet> list = baseService.getBeanList(pr);
+        List<DietEnergyVo> resList = new ArrayList<>();
+        for(Diet d :list){
+            String[] foods = d.getFoods().split(",");
+            for(String f : foods){
+                FoodEnergy e = dietHandler.getFoodEnergy(f);
+                if(e==null){
+                    List<FoodEnergy> feList = this.getUKEnergy(f);
+                    for(FoodEnergy uke : feList){
+                        DietEnergyVo vo = new DietEnergyVo(uke,d);
+                        resList.add(vo);
+                    }
+                }else{
+                    DietEnergyVo vo = new DietEnergyVo(e,d);
+                    resList.add(vo);
+                }
+            }
+        }
+        return callback(resList);
+    }
+
+    /**
+     * 对于未找到的，采用分词
+     * @param foodName
+     * @return
+     */
+    private List<FoodEnergy> getUKEnergy(String foodName){
+        List<FoodEnergy> list = new ArrayList<>();
+        List<String> ss = nlpProcessor.nlpSegmentN(foodName);
+        for(String f : ss){
+            FoodEnergy e = dietHandler.getFoodEnergy(f);
+            if(e==null){
+                FoodEnergy ne = new FoodEnergy();
+                ne.setFoodName(f);
+                ne.setRemark("未知");
+                list.add(ne);
+            }else{
+                list.add(e);
+            }
+        }
+        return list;
+    }
+
 }

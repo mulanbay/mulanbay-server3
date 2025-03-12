@@ -7,6 +7,7 @@ import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.pms.persistent.domain.Diet;
 import cn.mulanbay.pms.persistent.domain.FoodCategory;
+import cn.mulanbay.pms.persistent.domain.FoodEnergy;
 import cn.mulanbay.pms.persistent.dto.food.*;
 import cn.mulanbay.pms.persistent.dto.life.NameCountDTO;
 import cn.mulanbay.pms.persistent.enums.*;
@@ -415,4 +416,38 @@ public class DietService extends BaseHibernateDao {
                     "获取标签列表异常", e);
         }
     }
+
+    /**
+     * 获取饮食能量
+     * @param foodName
+     * @return
+     */
+    public FoodEnergy getFoodEnergy(String foodName) {
+        try {
+            String hql = "from FoodEnergy where foodName=?1";
+            FoodEnergy fe = this.getEntity(hql, FoodEnergy.class,foodName);
+            return fe;
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取饮食能量异常", e);
+        }
+    }
+
+    /**
+     * 获取饮食分类类别
+     *
+     * @return
+     */
+    public List<String> getCateClassList() {
+        try {
+            String statSql = """
+                    select distinct class_name from food_category
+                    """;
+            return this.getEntityListSINP(statSql,String.class);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取饮食分类异常", e);
+        }
+    }
+
 }

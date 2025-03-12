@@ -8,6 +8,7 @@ import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.common.CacheKey;
 import cn.mulanbay.pms.persistent.domain.FoodCategory;
+import cn.mulanbay.pms.persistent.domain.FoodEnergy;
 import cn.mulanbay.pms.persistent.dto.food.DietPriceAnalyseTypeStat;
 import cn.mulanbay.pms.persistent.dto.food.DietTypeFoodStat;
 import cn.mulanbay.pms.persistent.enums.DietSource;
@@ -187,6 +188,23 @@ public class DietHandler extends BaseHandler {
             return dietPriceEvaluateMProcessor.evaluate(month,smRate,rtRate,toRate,mkRate,otRate);
         }
         return 0;
+    }
+
+    /**
+     * 获取食物能量
+     * @param foodName
+     * @return
+     */
+    public FoodEnergy getFoodEnergy(String foodName){
+        String key = CacheKey.getKey(CacheKey.FOOD_ENERGY,foodName);
+        FoodEnergy fe = cacheHandler.get(key,FoodEnergy.class);
+        if(fe ==null){
+            fe = dietService.getFoodEnergy(foodName);
+            if(fe!=null){
+                cacheHandler.set(key,fe,foodCategoryExpireTime);
+            }
+        }
+        return fe;
     }
 
 }

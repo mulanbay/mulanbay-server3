@@ -349,6 +349,7 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/offline", method = RequestMethod.POST)
     public ResultBean offline(@RequestBody @Valid UserDataForm ucr) {
+        tokenHandler.deleteLoginUser(request);
         return callback(null);
     }
 

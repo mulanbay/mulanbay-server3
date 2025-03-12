@@ -16,6 +16,9 @@ import java.util.Date;
 
 public class DietSH extends PageSearch implements BindUser, FullEndDateTime {
 
+    @Query(fieldName = "dietId", op = Parameter.Operator.EQ)
+    private Long dietId;
+
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
     @Query(fieldName = "occurTime", op = Parameter.Operator.GTE)
     private Date startDate;
@@ -46,6 +49,14 @@ public class DietSH extends PageSearch implements BindUser, FullEndDateTime {
     public Long userId;
 
     private String orderByField;
+
+    public Long getDietId() {
+        return dietId;
+    }
+
+    public void setDietId(Long dietId) {
+        this.dietId = dietId;
+    }
 
     public Date getStartDate() {
         return startDate;

@@ -1,55 +1,30 @@
 package cn.mulanbay.pms.web.controller.food;
 
-import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
-import cn.mulanbay.pms.persistent.domain.FoodCategory;
-import cn.mulanbay.pms.persistent.service.DietService;
+import cn.mulanbay.pms.persistent.domain.FoodEnergy;
 import cn.mulanbay.pms.util.BeanCopy;
-import cn.mulanbay.pms.util.TreeBeanUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.food.category.FoodCategoryForm;
-import cn.mulanbay.pms.web.bean.req.food.category.FoodCategorySH;
-import cn.mulanbay.pms.web.bean.req.food.diet.DietCateSH;
+import cn.mulanbay.pms.web.bean.req.food.energy.FoodEnergyForm;
+import cn.mulanbay.pms.web.bean.req.food.energy.FoodEnergySH;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 /**
- * 食物分类
+ * 食物能量
  *
  * @author fenghong
  * @create 2017-07-10 21:44
  */
 @RestController
-@RequestMapping("/foodCategory")
-public class FoodCategoryController extends BaseController {
+@RequestMapping("/foodEnergy")
+public class FoodEnergyController extends BaseController {
 
-    private static Class<FoodCategory> beanClass = FoodCategory.class;
-
-    @Autowired
-    DietService dietService;
-
-    /**
-     * 获取饮食分类类别
-     *
-     * @return
-     */
-    @RequestMapping(value = "/classTree")
-    public ResultBean classTree() {
-        List<String> list = dietService.getCateClassList();
-        //去重
-        Set<String> foodsSet = TreeBeanUtil.deleteDuplicate(list);
-        return callback(TreeBeanUtil.creatTreeList(foodsSet, false));
-    }
+    private static Class<FoodEnergy> beanClass = FoodEnergy.class;
 
     /**
      * 获取任列表数据
@@ -57,12 +32,12 @@ public class FoodCategoryController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResultBean list(FoodCategorySH sf) {
+    public ResultBean list(FoodEnergySH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         Sort sort = new Sort("orderIndex", Sort.ASC);
         pr.addSort(sort);
-        PageResult<FoodCategory> qr = baseService.getBeanResult(pr);
+        PageResult<FoodEnergy> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
     }
 
@@ -72,8 +47,8 @@ public class FoodCategoryController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResultBean create(@RequestBody @Valid FoodCategoryForm form) {
-        FoodCategory bean = new FoodCategory();
+    public ResultBean create(@RequestBody @Valid FoodEnergyForm form) {
+        FoodEnergy bean = new FoodEnergy();
         BeanCopy.copy(form, bean);
         baseService.saveObject(bean);
         return callback(null);
@@ -85,8 +60,8 @@ public class FoodCategoryController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResultBean get(@RequestParam(name = "cateId") Long cateId) {
-        FoodCategory bean = baseService.getObject(beanClass, cateId);
+    public ResultBean get(@RequestParam(name = "foodId") Long foodId) {
+        FoodEnergy bean = baseService.getObject(beanClass, foodId);
         return callback(bean);
     }
 
@@ -96,8 +71,8 @@ public class FoodCategoryController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ResultBean edit(@RequestBody @Valid FoodCategoryForm form) {
-        FoodCategory bean = baseService.getObject(beanClass, form.getCateId());
+    public ResultBean edit(@RequestBody @Valid FoodEnergyForm form) {
+        FoodEnergy bean = baseService.getObject(beanClass, form.getFoodId());
         BeanCopy.copy(form, bean);
         baseService.updateObject(bean);
         return callback(null);

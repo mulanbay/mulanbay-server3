@@ -211,3 +211,19 @@ ALTER TABLE `exercise`
 
 #解决路由路径重复问题
 UPDATE `sys_func` SET `path` = 'treatTop' WHERE (`func_id` = '674');
+
+#增加食物能量
+CREATE TABLE `food_energy` (
+`food_id` bigint NOT NULL AUTO_INCREMENT,
+`food_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+`cal` int NOT NULL,
+`amount` int NOT NULL,
+`unit` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+`class_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+`status` smallint NOT NULL,
+`order_index` smallint NOT NULL,
+`remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+`created_time` datetime NOT NULL,
+`modify_time` datetime DEFAULT NULL,
+PRIMARY KEY (`food_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
