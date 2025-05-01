@@ -17,6 +17,7 @@ The project includes frontend and backend，mulanbay-server3 is the backend proj
 
 frontend
 * Based on Vue3(PC)[mulanbay-ui-vue3](https://github.com/mulanbay/mulanbay-ui-vue3)
+* Based on Uni-APP(APP)[mulanbay-app](https://gitee.com/mulanbay/mulanbay-app)
 
 Algorithm：
 * Based on scikit-learn(python)[mulanbay-sklearn](https://gitee.com/mulanbay/mulanbay-sklearn)
@@ -74,6 +75,9 @@ mysqldump -h 127.0.0.1 -u root -p --opt -R mulanbay_db > /your_path/mulanbay_db.
 Step 2：update database
 execute the v4_to_v5.sql from mulanbay-server3\docs：
 source /your_path/v4_to_v5.sql
+PS：you may set character in windows enviroment
+mysql -u root -p --default-character-set=utf8mb4
+
 ```
 
 #### 2. init database

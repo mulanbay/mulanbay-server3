@@ -18,6 +18,7 @@
 
 前端项目
 * 基于Vue3的前端(PC端)[mulanbay-ui-vue3](https://gitee.com/mulanbay/mulanbay-ui-vue3)
+* 基于Uni-APP的前端(APP端)[mulanbay-app](https://gitee.com/mulanbay/mulanbay-app)
 
 算法端项目：
 * 基于sklearn的机器学习(python)[mulanbay-sklearn](https://gitee.com/mulanbay/mulanbay-sklearn)
@@ -111,6 +112,8 @@ source /您的路径/v4_to_v5.sql
 附：数据库导入方法：
 1. 进入mysql终端
 mysql -u root -p
+注：如果是windows环境，则需要设置字符集，否则会出现 No connection. Trying to reconnect...
+mysql -u root -p --default-character-set=utf8mb4
 
 2. 创建数据库
 create database mulanbay_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
