@@ -12,6 +12,7 @@ import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.dto.auth.SysFuncDTO;
+import cn.mulanbay.pms.persistent.enums.FunctionDataType;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.SysFuncService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -172,7 +173,7 @@ public class SysFuncController extends BaseController {
      * @param form
      */
     private void checkFormBean(SysFuncForm form) {
-        if (form.getRouter()) {
+        if (form.getRouter()&&form.getFuncDataType()== FunctionDataType.C) {
             if (StringUtil.isEmpty(form.getPath())) {
                 throw new ApplicationException(ErrorCode.DO_BUSS_ERROR, "路由地址不能为空");
             }
