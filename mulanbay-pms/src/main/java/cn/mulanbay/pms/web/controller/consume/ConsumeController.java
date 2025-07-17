@@ -139,7 +139,8 @@ public class ConsumeController extends BaseController {
      */
     private void changeFormToBean(ConsumeForm form, Consume bean) {
         BeanCopy.copy(form, bean);
-        bean.setTotalPrice(bean.getPrice().multiply(new BigDecimal(bean.getAmount()).add(bean.getShipment())));
+        BigDecimal tp = (bean.getPrice().multiply(new BigDecimal(bean.getAmount()))).add(bean.getShipment());
+        bean.setTotalPrice(tp);
         ConsumeSource source = baseService.getObject(ConsumeSource.class, form.getSourceId());
         bean.setSource(source);
         GoodsType goodsType = baseService.getObject(GoodsType.class, form.getGoodsTypeId());
