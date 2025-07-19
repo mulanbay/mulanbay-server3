@@ -42,7 +42,7 @@ public class ExperienceConsumeController extends BaseController {
     public ResultBean list(ExperienceConsumeSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
-        Sort s = new Sort("createdTime", Sort.DESC);
+        Sort s = new Sort("buyTime", Sort.DESC);
         pr.addSort(s);
         PageResult<ExperienceConsume> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);

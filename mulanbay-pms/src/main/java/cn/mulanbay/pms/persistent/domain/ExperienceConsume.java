@@ -33,6 +33,13 @@ public class ExperienceConsume implements java.io.Serializable {
     @Column(name = "consume_name")
     private String consumeName;
 
+    /**
+     * 购买时间
+     */
+    @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
+    @Column(name = "buy_time")
+    private Date buyTime;
+
     @ManyToOne
     @JoinColumn(name = "detail_id", nullable = true)
     private ExperienceDetail detail;
@@ -86,6 +93,14 @@ public class ExperienceConsume implements java.io.Serializable {
 
     public void setConsumeName(String consumeName) {
         this.consumeName = consumeName;
+    }
+
+    public Date getBuyTime() {
+        return buyTime;
+    }
+
+    public void setBuyTime(Date buyTime) {
+        this.buyTime = buyTime;
     }
 
     public ExperienceDetail getDetail() {

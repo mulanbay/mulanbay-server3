@@ -1,5 +1,8 @@
 package cn.mulanbay.pms.web.controller.life;
 
+import cn.mulanbay.common.exception.ApplicationException;
+import cn.mulanbay.common.exception.ErrorCode;
+import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
@@ -10,6 +13,9 @@ import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.life.detail.ExperienceDetailForm;
 import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailSH;
+import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailTreeSH;
+import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceSH;
+import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
@@ -17,6 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static cn.mulanbay.persistent.query.PageRequest.NO_PAGE;
 
 /**
  * 人生经历明细
@@ -34,12 +44,66 @@ public class ExperienceDetailController extends BaseController {
     ExperienceService experienceService;
 
     /**
+     * 获取类型树列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/tree")
+    public ResultBean tree(ExperienceDetailTreeSH ts) {
+        try {
+            Experience exp = null;
+            if(ts.getExpId()!=null){
+                exp = baseService.getObject(Experience.class, ts.getExpId());
+            }else{
+                ExperienceDetail bean = baseService.getObject(beanClass,ts.getDetailId());
+                exp = bean.getExperience();
+            }
+            ExperienceDetailSH sf = new ExperienceDetailSH();
+            sf.setExpId(exp.getExpId());
+            sf.setNeedTotal(false);
+            sf.setPage(NO_PAGE);
+            PageResult<ExperienceDetail> qr = this.getResult(sf);
+            List<TreeBean> list = new ArrayList<TreeBean>();
+            for (ExperienceDetail le : qr.getBeanList()) {
+                TreeBean tb = new TreeBean();
+                tb.setId(le.getDetailId());
+                String cityInfo = ""+le.getStartCity().getCityName()+"-->"+le.getArriveCity().getCityName();
+                String text = DateUtil.getFormatDate(le.getOccurDate(),DateUtil.FormatDay1)+"("+cityInfo+")";
+                tb.setText(text);
+                list.add(tb);
+            }
+            Boolean needRoot = ts.getNeedRoot();
+            if(needRoot!=null && needRoot){
+                //添加根目录
+                TreeBean root = new TreeBean();
+                root.setId(null);
+                root.setText(exp.getExpName());
+                root.setChildren(list);
+                List<TreeBean> newList = new ArrayList<TreeBean>();
+                newList.add(root);
+                return callback(newList);
+            }else{
+                return callback(list);
+            }
+
+        } catch (Exception e) {
+            throw new ApplicationException(ErrorCode.SYSTEM_ERROR, "获取类型树列表异常",
+                    e);
+        }
+    }
+
+    /**
      * 获取列表数据
      *
      * @return
      */
     @RequestMapping(value = "/list")
     public ResultBean list(ExperienceDetailSH sf) {
+        PageResult<ExperienceDetail> qr = this.getResult(sf);
+        return callbackDataGrid(qr);
+    }
+
+    private PageResult<ExperienceDetail> getResult(ExperienceDetailSH sf) {
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         Sort s = new Sort("occurDate", Sort.ASC);
@@ -47,9 +111,8 @@ public class ExperienceDetailController extends BaseController {
         Sort s2 = new Sort("createdTime", Sort.ASC);
         pr.addSort(s2);
         PageResult<ExperienceDetail> qr = baseService.getBeanResult(pr);
-        return callbackDataGrid(qr);
+        return qr;
     }
-
     /**
      * 创建
      *

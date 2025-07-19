@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ExperienceConsumeForm implements BindUser {
 
@@ -13,6 +14,10 @@ public class ExperienceConsumeForm implements BindUser {
 
     @NotEmpty(message = "名称不能为空")
     private String consumeName;
+
+    // 购买日期
+    @NotNull(message = "购买日期不能为空")
+    private Date buyTime;
 
     @NotNull(message = "明细编号不能为空")
     private Long detailId;
@@ -56,6 +61,14 @@ public class ExperienceConsumeForm implements BindUser {
 
     public void setConsumeName(String consumeName) {
         this.consumeName = consumeName;
+    }
+
+    public Date getBuyTime() {
+        return buyTime;
+    }
+
+    public void setBuyTime(Date buyTime) {
+        this.buyTime = buyTime;
     }
 
     public Long getDetailId() {
