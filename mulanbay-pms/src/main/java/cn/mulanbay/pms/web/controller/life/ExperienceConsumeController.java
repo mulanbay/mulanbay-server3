@@ -1,9 +1,11 @@
 package cn.mulanbay.pms.web.controller.life;
 
+import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
+import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.persistent.domain.ExperienceConsume;
 import cn.mulanbay.pms.persistent.domain.ExperienceDetail;
 import cn.mulanbay.pms.persistent.domain.GoodsType;
@@ -56,15 +58,21 @@ public class ExperienceConsumeController extends BaseController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResultBean create(@RequestBody @Valid ExperienceConsumeForm form) {
         ExperienceConsume bean = new ExperienceConsume();
-        BeanCopy.copy(form, bean);
-        ExperienceDetail detail = baseService.getObject(ExperienceDetail.class,form.getDetailId());
-        bean.setDetail(detail);
-        GoodsType goodsType = baseService.getObject(GoodsType.class,form.getGoodsTypeId());
-        bean.setGoodsType(goodsType);
+        this.copyBean(form,bean);
         experienceService.saveOrUpdateConsume(bean, true);
         return callback(null);
     }
 
+    private void copyBean(ExperienceConsumeForm form, ExperienceConsume bean) {
+        BeanCopy.copy(form, bean);
+        ExperienceDetail detail = baseService.getObject(ExperienceDetail.class,form.getDetailId());
+        if(detail.getExperience().getExpId().longValue()!=form.getExpId().longValue()){
+            throw new ApplicationException(PmsCode.EXP_ID_NOT_EQUALS);
+        }
+        bean.setDetail(detail);
+        GoodsType goodsType = baseService.getObject(GoodsType.class,form.getGoodsTypeId());
+        bean.setGoodsType(goodsType);
+    }
 
     /**
      * 获取详情
@@ -85,11 +93,7 @@ public class ExperienceConsumeController extends BaseController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResultBean edit(@RequestBody @Valid ExperienceConsumeForm form) {
         ExperienceConsume bean = baseService.getObject(beanClass,form.getConsumeId());
-        BeanCopy.copy(form, bean);
-        ExperienceDetail detail = baseService.getObject(ExperienceDetail.class,form.getDetailId());
-        bean.setDetail(detail);
-        GoodsType goodsType = baseService.getObject(GoodsType.class,form.getGoodsTypeId());
-        bean.setGoodsType(goodsType);
+        this.copyBean(form,bean);
         experienceService.saveOrUpdateConsume(bean, true);
         return callback(null);
     }

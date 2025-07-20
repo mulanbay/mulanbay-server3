@@ -7,7 +7,7 @@ import cn.mulanbay.web.bean.request.PageSearch;
 
 public class ExperienceConsumeSH extends PageSearch implements BindUser {
 
-    @Query(fieldName = "detail.experience.expId", op = Parameter.Operator.EQ)
+    @Query(fieldName = "expId", op = Parameter.Operator.EQ)
     private Long expId;
 
     @Query(fieldName = "detail.detailId", op = Parameter.Operator.EQ)

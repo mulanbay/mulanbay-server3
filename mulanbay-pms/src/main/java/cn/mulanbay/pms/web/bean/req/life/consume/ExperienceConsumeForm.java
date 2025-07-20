@@ -19,6 +19,9 @@ public class ExperienceConsumeForm implements BindUser {
     @NotNull(message = "购买日期不能为空")
     private Date buyTime;
 
+    @NotNull(message = "经历编号不能为空")
+    private Long expId;
+
     @NotNull(message = "明细编号不能为空")
     private Long detailId;
 
@@ -69,6 +72,14 @@ public class ExperienceConsumeForm implements BindUser {
 
     public void setBuyTime(Date buyTime) {
         this.buyTime = buyTime;
+    }
+
+    public @NotNull(message = "经历编号不能为空") Long getExpId() {
+        return expId;
+    }
+
+    public void setExpId(@NotNull(message = "经历编号不能为空") Long expId) {
+        this.expId = expId;
     }
 
     public Long getDetailId() {

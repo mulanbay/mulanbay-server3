@@ -60,6 +60,7 @@ public class ExperienceDetailController extends BaseController {
             }
             ExperienceDetailSH sf = new ExperienceDetailSH();
             sf.setExpId(exp.getExpId());
+            sf.setUserId(ts.getUserId());
             sf.setNeedTotal(false);
             sf.setPage(NO_PAGE);
             PageResult<ExperienceDetail> qr = this.getResult(sf);

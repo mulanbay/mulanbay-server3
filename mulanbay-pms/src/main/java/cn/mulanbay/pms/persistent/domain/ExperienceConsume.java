@@ -40,6 +40,12 @@ public class ExperienceConsume implements java.io.Serializable {
     @Column(name = "buy_time")
     private Date buyTime;
 
+    /**
+     * 经历编号(冗余，且消费也可以直接绑定到经历)
+     */
+    @Column(name = "exp_id")
+    private Long expId;
+
     @ManyToOne
     @JoinColumn(name = "detail_id", nullable = true)
     private ExperienceDetail detail;
@@ -101,6 +107,14 @@ public class ExperienceConsume implements java.io.Serializable {
 
     public void setBuyTime(Date buyTime) {
         this.buyTime = buyTime;
+    }
+
+    public Long getExpId() {
+        return expId;
+    }
+
+    public void setExpId(Long expId) {
+        this.expId = expId;
     }
 
     public ExperienceDetail getDetail() {

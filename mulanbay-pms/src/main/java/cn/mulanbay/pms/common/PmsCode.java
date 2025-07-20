@@ -412,4 +412,11 @@ public class PmsCode {
 
     /** 用户评分类 end **/
 
+    /**
+     * 人生经历类 start
+     **/
+
+    public static final int EXP_ID_NOT_EQUALS = 1180100;
+
+    /** 人生经历类 end **/
 }
