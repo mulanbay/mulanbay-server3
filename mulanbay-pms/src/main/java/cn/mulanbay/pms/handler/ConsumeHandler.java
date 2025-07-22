@@ -122,9 +122,7 @@ public class ConsumeHandler extends BaseHandler {
      * @param consume
      */
     public void afterEdit(Consume consume){
-        threadPoolHandler.pushThread(() -> {
-            experienceService.updateCostByConsume(consume);
-        });
+
     }
 
     /**

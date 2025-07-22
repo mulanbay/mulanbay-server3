@@ -3,7 +3,6 @@ package cn.mulanbay.pms.persistent.service;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
 import cn.mulanbay.persistent.query.PageRequest;
@@ -265,152 +264,9 @@ public class ExperienceService extends BaseHibernateDao {
             } else {
                 saveOrUpdateExperience(bean, true);
             }
-            if (updateStat) {
-                updateExperienceCost(bean.getExperience().getExpId());
-            }
         } catch (PersistentException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "更新人生经历详情异常", e);
-        }
-    }
-
-    /**
-     * 更新人生经历花费
-     *
-     * @return
-     */
-    public void updateExperienceCost(Long expId) {
-        try {
-            String sql = "update Experience set cost =(select sum(cost) from ExperienceDetail where experience.expId =?1 ) where expId=?2 ";
-            this.updateEntities(sql, expId, expId);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "更新人生经历花费异常", e);
-        }
-    }
-
-    /**
-     * 更新人生经历明细花费
-     *
-     * @return
-     */
-    public void updateDetailStat(Long detailId) {
-        try {
-            String sql = "update ExperienceDetail set cost =(select sum(cost) from ExperienceConsume where detail.detailId =?1 ) where detailId=?2 ";
-            this.updateEntities(sql, detailId, detailId);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_UPDATE_ERROR,
-                    "更新人生经历明细花费异常", e);
-        }
-    }
-
-    /**
-     * 通过购买消费记录更新人生经历明细花费
-     *
-     * @return
-     */
-    public void updateCostByConsume(Consume consume) {
-        try {
-            String hql = "from ExperienceConsume where scId=?1 ";
-            List<ExperienceConsume> list = this.getEntityListHI(hql,NO_PAGE,NO_PAGE_SIZE,ExperienceConsume.class, consume.getConsumeId());
-            for (ExperienceConsume bean : list) {
-                bean.setConsumeName(consume.getGoodsName());
-                bean.setCost(consume.getTotalPrice());
-                this.saveOrUpdateConsume(bean, true);
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "更新人生经历明细花费异常", e);
-        }
-    }
-
-    /**
-     * 更新人生经历消费，附带更新人生经历详情的花费
-     *
-     * @return
-     */
-    public void saveOrUpdateConsume(ExperienceConsume bean, boolean updateStat) {
-        try {
-            if (bean.getConsumeId() == null) {
-                saveOrUpdateExperience(bean, false);
-            } else {
-                saveOrUpdateExperience(bean, true);
-            }
-            //还需要去更新Consume的关键字
-            if (bean.getScId() != null) {
-                Consume consume = this.getEntityById(Consume.class, bean.getScId());
-                ExperienceDetail detail = this.getEntityById(ExperienceDetail.class, bean.getDetail().getDetailId());
-                //更新关键字
-                String name = detail.getExperience().getExpName();
-                String tags = consume.getTags();
-                boolean needUpdate = false;
-                if (StringUtil.isEmpty(tags)) {
-                    tags = name;
-                    needUpdate = true;
-                } else {
-                    if (tags.contains(name)) {
-                        //已经包含就不更新
-                    } else {
-                        tags += "," + name;
-                        needUpdate = true;
-                    }
-                }
-                if (needUpdate) {
-                    consume.setTags(tags);
-                    this.updateEntity(consume);
-                }
-            }
-            if (updateStat) {
-                ExperienceDetail detail = this.getEntityById(ExperienceDetail.class, bean.getDetail().getDetailId());
-                //更新明细
-                updateDetailStat(bean.getDetail().getDetailId());
-                //此时detail没有完全加载，需要手动加载
-                //更新总的人生经历
-                updateExperienceCost(detail.getExperience().getExpId());
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "更新人生经历消费，附带更新人生经历详情的花费异常", e);
-        }
-    }
-
-
-    /**
-     * 删除人生经历消费
-     *
-     * @return
-     */
-    public void deleteExperienceConsume(Long consumeId, boolean updateStat) {
-        try {
-            ExperienceConsume bean = this.getEntityById(ExperienceConsume.class, consumeId);
-            Long detailId = bean.getDetail().getDetailId();
-            Long expId = bean.getDetail().getExperience().getExpId();
-            //删除
-            deleteExperienceConsume(bean);
-            if (updateStat) {
-                //更新明细
-                updateDetailStat(detailId);
-                //更新总的人生经历
-                updateExperienceCost(expId);
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "删除人生经历消费异常", e);
-        }
-    }
-
-    /**
-     * 独立事务删除人生经历消费信息
-     *
-     * @param bean
-     */
-    public void deleteExperienceConsume(ExperienceConsume bean) {
-        try {
-            //删除
-            this.removeEntity(bean);
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
-                    "独立事务删除人生经历消费信息异常", e);
         }
     }
 
@@ -444,10 +300,6 @@ public class ExperienceService extends BaseHibernateDao {
             Long expId = bean.getExperience().getExpId();
             deleteExperienceDetail(bean);
 
-            if (updateStat) {
-                //更新总的人生经历
-                updateExperienceCost(expId);
-            }
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
                     "删除人生经历消费异常", e);
@@ -505,7 +357,7 @@ public class ExperienceService extends BaseHibernateDao {
     public void reviseExperience(ExperienceReviseForm revise) {
         try {
             if (revise.getReviseCost() != null && revise.getReviseCost()) {
-                this.updateExperienceCost(revise.getExpId());
+                //this.updateExperienceCost(revise.getExpId());
             }
             if (revise.getReviseDays() != null && revise.getReviseDays()) {
                 String sql = "update experience set days =(select count(0) from (select distinct occur_date from experience_detail where exp_id =?1 ) as aa ) where exp_id=?2 ";

@@ -9,3 +9,5 @@ update experience_consume ex set ex.exp_id = (select cs.exp_id from experience_d
 
 # 2025-07-22 根据经历消费更新原始消费信息
 update consume c set c.tags = (SELECT ex.exp_name FROM experience_consume ec,experience ex where ec.exp_id = ex.exp_id and ec.sc_id = c.consume_id) where c.consume_id>0;
+# 删除人生经历消费，后期统一到原始消费信息中维护
+drop table experience_consume;
