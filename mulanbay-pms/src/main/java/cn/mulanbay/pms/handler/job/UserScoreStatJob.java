@@ -3,10 +3,10 @@ package cn.mulanbay.pms.handler.job;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.pms.handler.UserScoreHandler;
 import cn.mulanbay.pms.persistent.service.UserScoreService;
-import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

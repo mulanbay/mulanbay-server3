@@ -1,7 +1,10 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.*;
+import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.enums.FunctionDataType;
+import cn.mulanbay.pms.persistent.enums.FunctionType;
+import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

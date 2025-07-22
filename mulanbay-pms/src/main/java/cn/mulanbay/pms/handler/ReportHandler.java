@@ -4,7 +4,6 @@ import cn.mulanbay.ai.ml.processor.PlanReportMEvaluateProcessor;
 import cn.mulanbay.ai.ml.processor.PlanReportYEvaluateProcessor;
 import cn.mulanbay.ai.ml.processor.bean.PlanReportER;
 import cn.mulanbay.business.handler.BaseHandler;
-import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.StringUtil;

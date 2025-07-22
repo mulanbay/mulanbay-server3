@@ -3,10 +3,10 @@ package cn.mulanbay.pms.handler.job;
 import cn.mulanbay.business.util.BeanFactoryUtil;
 import cn.mulanbay.pms.persistent.domain.DBClean;
 import cn.mulanbay.pms.persistent.service.DBCleanService;
-import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 
 import java.util.List;
 

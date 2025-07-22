@@ -1,7 +1,9 @@
 package cn.mulanbay.pms.web.bean.req.auth.sysFunc;
 
-import cn.mulanbay.pms.persistent.enums.*;
-import jakarta.persistence.Column;
+import cn.mulanbay.pms.persistent.enums.CommonStatus;
+import cn.mulanbay.pms.persistent.enums.FunctionDataType;
+import cn.mulanbay.pms.persistent.enums.FunctionType;
+import cn.mulanbay.pms.persistent.enums.IdFieldType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

@@ -5,7 +5,6 @@ import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.enums.UserCalendarFinishType;
 import org.slf4j.Logger;

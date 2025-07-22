@@ -6,10 +6,10 @@ import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.pms.common.PmsCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemStatusHandler;
-import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
 import cn.mulanbay.schedule.job.AbstractBaseJob;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

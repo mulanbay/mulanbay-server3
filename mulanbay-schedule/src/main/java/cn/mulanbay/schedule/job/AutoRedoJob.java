@@ -2,11 +2,11 @@ package cn.mulanbay.schedule.job;
 
 import cn.mulanbay.common.util.DateUtil;
 import cn.mulanbay.common.util.StringUtil;
-import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.domain.TaskLog;
 import cn.mulanbay.schedule.enums.JobResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.thread.RedoThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

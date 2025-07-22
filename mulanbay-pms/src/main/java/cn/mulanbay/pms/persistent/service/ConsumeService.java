@@ -946,6 +946,22 @@ public class ConsumeService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 获取标签消费统计
+     * @param tag
+     * @param userId
+     * @return
+     */
+    public BigDecimal getTagPriceStat(String tag,Long userId) {
+        try {
+            String sql = "select sum(total_price) from consume where tags =?1 and user_id = ?2";
+            return this.getEntitySQL(sql, BigDecimal.class, tag,userId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取商品名称列表异常", e);
+        }
+    }
+
 
     public static class GroupField{
 

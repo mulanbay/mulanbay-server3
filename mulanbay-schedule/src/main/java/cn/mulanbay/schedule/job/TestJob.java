@@ -1,10 +1,10 @@
 package cn.mulanbay.schedule.job;
 
 import cn.mulanbay.common.util.NumberUtil;
-import cn.mulanbay.schedule.para.ParaCheckResult;
 import cn.mulanbay.schedule.ScheduleCode;
 import cn.mulanbay.schedule.TaskResult;
 import cn.mulanbay.schedule.enums.JobResult;
+import cn.mulanbay.schedule.para.ParaCheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -10,7 +10,6 @@ import cn.mulanbay.pms.handler.WXHandler;
 import cn.mulanbay.pms.persistent.domain.Message;
 import cn.mulanbay.pms.persistent.domain.User;
 import cn.mulanbay.pms.persistent.domain.UserSet;
-import cn.mulanbay.pms.persistent.enums.LogLevel;
 import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.MessageService;
 import cn.mulanbay.pms.util.BeanCopy;

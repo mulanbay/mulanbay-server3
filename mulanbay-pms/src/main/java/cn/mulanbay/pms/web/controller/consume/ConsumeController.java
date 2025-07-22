@@ -18,7 +18,6 @@ import cn.mulanbay.pms.persistent.domain.UserSet;
 import cn.mulanbay.pms.persistent.dto.consume.*;
 import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
-import cn.mulanbay.pms.persistent.service.AuthService;
 import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.ChartUtil;
@@ -65,9 +64,6 @@ public class ConsumeController extends BaseController {
 
     @Autowired
     ConsumeService consumeService;
-
-    @Autowired
-    AuthService authService;
 
     @Autowired
     ConsumeHandler consumeHandler;

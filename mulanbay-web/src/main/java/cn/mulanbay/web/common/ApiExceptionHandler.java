@@ -6,6 +6,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.common.exception.ValidateError;
 import cn.mulanbay.web.bean.response.ResultBean;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**

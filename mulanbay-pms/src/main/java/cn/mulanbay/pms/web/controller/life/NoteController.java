@@ -9,7 +9,6 @@ import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.Note;
 import cn.mulanbay.pms.persistent.domain.UserCalendar;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.BussType;
 import cn.mulanbay.pms.persistent.enums.PeriodType;
 import cn.mulanbay.pms.persistent.service.UserCalendarService;
 import cn.mulanbay.pms.util.BeanCopy;

@@ -667,4 +667,21 @@ public class ExperienceService extends BaseHibernateDao {
                     "统计城市列表异常", e);
         }
     }
+
+    /**
+     * 获取经历列表
+     *
+     * @return
+     */
+    public List<ExperienceIdName> getExpList(ExperienceSH sf) {
+        try {
+            PageRequest pr = sf.buildQuery();
+            String sql = "select expId,expName from Experience ";
+            sql += pr.getParameterString();
+            return this.getEntityListHI(sql,sf.getPage(),sf.getPageSize(),ExperienceIdName.class, pr.getParameterValue());
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
+                    "获取经历列表异常", e);
+        }
+    }
 }

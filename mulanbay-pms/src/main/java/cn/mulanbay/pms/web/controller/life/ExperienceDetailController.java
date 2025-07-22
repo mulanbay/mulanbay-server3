@@ -14,7 +14,6 @@ import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
 import cn.mulanbay.pms.web.bean.req.life.detail.ExperienceDetailForm;
 import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailSH;
 import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceDetailTreeSH;
-import cn.mulanbay.pms.web.bean.req.life.experience.ExperienceSH;
 import cn.mulanbay.pms.web.bean.res.TreeBean;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;

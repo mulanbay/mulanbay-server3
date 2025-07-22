@@ -1,7 +1,6 @@
 package cn.mulanbay.pms.web.listener;
 
 import cn.mulanbay.business.util.BeanFactoryUtil;
-import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.pms.handler.LogHandler;
 import cn.mulanbay.pms.handler.SystemConfigHandler;
 import org.slf4j.Logger;

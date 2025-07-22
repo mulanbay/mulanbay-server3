@@ -10,13 +10,11 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.persistent.domain.*;
-import cn.mulanbay.pms.persistent.dto.life.ExperienceCostStat;
-import cn.mulanbay.pms.persistent.dto.life.ExperienceDateStat;
-import cn.mulanbay.pms.persistent.dto.life.ExperienceMapStat;
-import cn.mulanbay.pms.persistent.dto.life.NameCountDTO;
+import cn.mulanbay.pms.persistent.dto.life.*;
 import cn.mulanbay.pms.persistent.enums.DateGroupType;
 import cn.mulanbay.pms.persistent.enums.ExperienceCostStatType;
 import cn.mulanbay.pms.persistent.enums.MapField;
+import cn.mulanbay.pms.persistent.service.ConsumeService;
 import cn.mulanbay.pms.persistent.service.ExperienceService;
 import cn.mulanbay.pms.util.BeanCopy;
 import cn.mulanbay.pms.util.ChartUtil;
@@ -36,10 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cn.mulanbay.pms.common.Constant.SCALE;
 
@@ -58,6 +53,9 @@ public class ExperienceController extends BaseController {
     @Value("${mulanbay.experience.mapStat.dateFormat}")
     String dateFormat;
 
+    @Value("${mulanbay.consume.tag.statDays:14}")
+    int tagDays;
+
     /**
      * 地图的中央城市
      */
@@ -68,7 +66,7 @@ public class ExperienceController extends BaseController {
     ExperienceService experienceService;
 
     @Autowired
-    NLPProcessor nlpProcessor;
+    ConsumeService consumeService;
 
     private static Class<Experience> beanClass = Experience.class;
 
@@ -80,9 +78,15 @@ public class ExperienceController extends BaseController {
     @RequestMapping(value = "/tree")
     public ResultBean tree(ExperienceSH ts) {
         try {
-            PageResult<Experience> qr = this.getResult(ts);
+            if (ts.getStartDate() == null && ts.getEndDate() == null) {
+                Date end = new Date();
+                Date start = DateUtil.getDate(-tagDays);
+                ts.setStartDate(start);
+                ts.setEndDate(end);
+            }
+            List<ExperienceIdName> edList = experienceService.getExpList(ts);
             List<TreeBean> list = new ArrayList<TreeBean>();
-            for (Experience le : qr.getBeanList()) {
+            for (ExperienceIdName le : edList) {
                 TreeBean tb = new TreeBean();
                 tb.setId(le.getExpId());
                 tb.setText(le.getExpName());
@@ -186,6 +190,20 @@ public class ExperienceController extends BaseController {
             experienceService.deleteExperience(Long.valueOf(s));
         }
         return callback(null);
+    }
+
+    /**
+     * 刷新消费统计
+     *
+     * @return
+     */
+    @RequestMapping(value = "/refreshCost", method = RequestMethod.POST)
+    public ResultBean refreshCost(@RequestBody @Valid ExperienceRefreshCostForm form) {
+        Experience bean = baseService.getObject(beanClass,form.getExpId());
+        BigDecimal cost = consumeService.getTagPriceStat(bean.getExpName(),form.getUserId());
+        bean.setCost(cost);
+        baseService.updateObject(bean);
+        return callback(cost);
     }
 
     /**

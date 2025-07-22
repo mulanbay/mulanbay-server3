@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.interceptor;
 
-import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.MapUtil;
 import cn.mulanbay.pms.handler.LogHandler;
