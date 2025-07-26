@@ -8,6 +8,6 @@ ALTER TABLE `experience_consume` ADD COLUMN `exp_id` BIGINT NULL AFTER `buy_time
 update experience_consume ex set ex.exp_id = (select cs.exp_id from experience_detail cs where cs.detail_id = ex.detail_id) where ex.consume_id>0;
 
 # 2025-07-22 根据经历消费更新原始消费信息
-update consume c set c.tags = (SELECT ex.exp_name FROM experience_consume ec,experience ex where ec.exp_id = ex.exp_id and ec.sc_id = c.consume_id) where c.consume_id>0;
+# update consume c set c.tags = (SELECT ex.exp_name FROM experience_consume ec,experience ex where ec.exp_id = ex.exp_id and ec.sc_id = c.consume_id) where c.consume_id>0 and c.consume_id in (SELECT ex2.sc_id FROM experience_consume ec2);
 # 删除人生经历消费，后期统一到原始消费信息中维护
 drop table experience_consume;
