@@ -203,7 +203,7 @@ public class SysFuncController extends BaseController {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);
         }
-        baseService.saveObject(bean);
+        sysFuncService.saveOrUpdateSysFunc(bean,formRequest.getAsc());
         systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);
     }
@@ -233,7 +233,7 @@ public class SysFuncController extends BaseController {
             SysFunc parent = baseService.getObject(beanClass, formRequest.getParentId());
             bean.setParent(parent);
         }
-        baseService.updateObject(bean);
+        sysFuncService.saveOrUpdateSysFunc(bean,formRequest.getAsc());
         systemConfigHandler.reloadFunction(bean.getFuncId());
         return callback(null);
     }

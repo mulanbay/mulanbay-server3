@@ -105,6 +105,10 @@ public class SysFuncForm {
     //是否缓存，keep-alive使用
     private Boolean cache;
     private String remark;
+    /**
+     * 权限设置是否同步到子级
+     */
+    private Boolean asc;
 
     public Long getFuncId() {
         return funcId;
@@ -386,4 +390,11 @@ public class SysFuncForm {
         this.remark = remark;
     }
 
+    public Boolean getAsc() {
+        return asc;
+    }
+
+    public void setAsc(Boolean asc) {
+        this.asc = asc;
+    }
 }

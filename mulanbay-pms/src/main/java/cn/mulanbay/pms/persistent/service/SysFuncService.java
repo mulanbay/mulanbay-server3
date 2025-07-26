@@ -4,6 +4,7 @@ import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.PersistentException;
 import cn.mulanbay.persistent.common.BaseException;
 import cn.mulanbay.persistent.dao.BaseHibernateDao;
+import cn.mulanbay.pms.persistent.domain.SysFunc;
 import cn.mulanbay.pms.persistent.dto.auth.SysFuncDTO;
 import cn.mulanbay.pms.persistent.enums.FunctionDataType;
 import org.springframework.stereotype.Service;
@@ -73,4 +74,31 @@ public class SysFuncService extends BaseHibernateDao {
         }
     }
 
+    /**
+     * 保存系统功能点
+     * @param sf
+     * @param asc
+     */
+    public void saveOrUpdateSysFunc(SysFunc sf, Boolean asc) {
+        try {
+            if(sf.getFuncId()==null) {
+                this.saveEntity(sf);
+            }else{
+                this.updateEntity(sf);
+            }
+            if(asc!=null&&asc){
+                Short la = sf.getLoginAuth()? (short) 1:(short)0;
+                Short pa = sf.getPermissionAuth()? (short) 1:(short)0;
+                StringBuffer sb = new StringBuffer();
+                sb.append("update sys_func set login_auth=?1,permission_auth=?2 WHERE func_id in ");
+                sb.append("(select func_id from ");
+                sb.append("(SELECT func_id FROM sys_func WHERE FIND_IN_SET(func_id, getFuncChildren("+sf.getFuncId()+"))) as aa ");
+                sb.append(") ");
+                this.execSqlUpdate(sb.toString(),la,pa);
+            }
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "保存系统功能点异常", e);
+        }
+    }
 }
