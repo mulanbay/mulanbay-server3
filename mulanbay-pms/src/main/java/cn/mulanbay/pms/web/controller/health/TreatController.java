@@ -80,10 +80,12 @@ public class TreatController extends BaseController {
     @RequestMapping(value = "/tree")
     public ResultBean tree(TreatGroupSH sf) {
         try {
-            Date endDate = new Date();
-            Date startDate = DateUtil.getDate(-categoryDays,endDate);
-            sf.setStartDate(startDate);
-            sf.setEndDate(endDate);
+            if (StringUtil.isNotEmpty(sf.getName())&&sf.getStartDate() == null && sf.getEndDate() == null) {
+                Date endDate = new Date();
+                Date startDate = DateUtil.getDate(-categoryDays,endDate);
+                sf.setStartDate(startDate);
+                sf.setEndDate(endDate);
+            }
             List<String> categoryList = treatService.getTreatCateList(sf);
             List<TreeBean> list = new ArrayList<TreeBean>();
             for (String cc : categoryList) {
