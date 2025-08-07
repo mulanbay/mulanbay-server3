@@ -129,7 +129,10 @@ public class IncomeController extends BaseController {
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public ResultBean delete(@RequestBody @Valid CommonDeleteForm deleteRequest) {
-        baseService.deleteObjects(beanClass, NumberUtil.stringToLongArray(deleteRequest.getIds()));
+        Long[] ids = NumberUtil.stringToLongArray(deleteRequest.getIds());
+        for(Long id : ids) {
+            incomeService.deleteIncome(id);
+        }
         return callback(null);
     }
 

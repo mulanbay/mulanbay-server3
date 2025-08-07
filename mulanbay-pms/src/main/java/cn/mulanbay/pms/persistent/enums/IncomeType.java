@@ -11,7 +11,7 @@ public enum IncomeType {
     SALARY(0, "工资"),
     FINANCE(1, "理财"),
     PART_TIME(2, "兼职"),
-    SECONDHAND_SOLD(3, "二手出售"),
+    SECONDHAND_SOLD(3, "出售"),
     REFUND(4, "退款"),
     OTHER(5, "其他");
 

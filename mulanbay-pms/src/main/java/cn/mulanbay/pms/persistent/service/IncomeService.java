@@ -111,6 +111,25 @@ public class IncomeService extends BaseHibernateDao {
     }
 
     /**
+     * 删除收入
+     *
+     * @param incomeId
+     * @return
+     */
+    public void deleteIncome(Long incomeId) {
+        try {
+            String hql = "delete from ConsumeRefer where referId=?1 and type=?2 ";
+            this.updateEntities(hql,incomeId, BussType.INCOME);
+
+            String hql2 = "delete from Income where incomeId = ?1  ";
+            this.updateEntities(hql2,incomeId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_DELETE_ERROR,
+                    "删除收入异常", e);
+        }
+    }
+
+    /**
      * 获取时间列表
      * @param sf
      * @return

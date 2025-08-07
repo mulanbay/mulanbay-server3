@@ -201,6 +201,9 @@ public class ExperienceController extends BaseController {
     public ResultBean refreshCost(@RequestBody @Valid ExperienceRefreshCostForm form) {
         Experience bean = baseService.getObject(beanClass,form.getExpId());
         BigDecimal cost = consumeService.getTagPriceStat(bean.getExpName(),form.getUserId());
+        if(cost==null){
+            cost = new BigDecimal(0);
+        }
         bean.setCost(cost);
         baseService.updateObject(bean);
         return callback(cost);
