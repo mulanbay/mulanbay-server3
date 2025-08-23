@@ -27,6 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Date;
 
+import static cn.mulanbay.persistent.dao.BaseHibernateDao.NO_PAGE;
 import static cn.mulanbay.pms.common.Constant.DAY_SECONDS;
 
 /**
@@ -220,6 +221,9 @@ public class ControllerHandler {
                 // 判断分页数据中的最大数
                 if (arg instanceof PageSearch) {
                     PageSearch bu = (PageSearch) arg;
+                    if(bu.np()&&bu.getPage()<=NO_PAGE){
+                        throw new ApplicationException(PmsCode.PAGE_LESS_MIN);
+                    }
                     if (bu.getPageSize() > maxPageSize) {
                         throw new ApplicationException(PmsCode.PAGE_SIZE_OVER_MAX);
                     }

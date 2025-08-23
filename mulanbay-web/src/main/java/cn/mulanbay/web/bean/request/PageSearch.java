@@ -60,6 +60,14 @@ public class PageSearch extends QueryBuilder {
 	}
 
 	/**
+	 * 是否需要分页
+	 * @return
+	 */
+	public boolean np(){
+		return true;
+	}
+
+	/**
 	 * 支持分页
 	 * @return
 	 */

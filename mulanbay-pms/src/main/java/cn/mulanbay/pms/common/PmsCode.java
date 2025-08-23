@@ -67,7 +67,7 @@ public class PmsCode {
 
     public final static int CREATE_CUSTOM_SSL_ERROR=10013;
 
-    public final static int FTP_ERROR=10014;
+    public final static int PAGE_LESS_MIN=10014;
 
     public final static int PAGE_SIZE_OVER_MAX=10015;
 
