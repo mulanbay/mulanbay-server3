@@ -1,6 +1,7 @@
 package cn.mulanbay.pms.persistent.domain;
 
 import cn.mulanbay.pms.common.Constant;
+import cn.mulanbay.pms.persistent.enums.ConsumeInvalidType;
 import cn.mulanbay.pms.persistent.enums.GoodsConsumeType;
 import cn.mulanbay.pms.persistent.enums.Payment;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -109,6 +110,12 @@ public class Consume implements java.io.Serializable {
      */
     @Column(name = "sold_price",precision = 9,scale = 2)
     private BigDecimal soldPrice;
+
+    /**
+     * 商品过期类型
+     */
+    @Column(name = "invalid_type")
+    private ConsumeInvalidType invalidType;
 
     /**
      * 过期时间/卖出时间
@@ -301,6 +308,14 @@ public class Consume implements java.io.Serializable {
         this.soldPrice = soldPrice;
     }
 
+    public ConsumeInvalidType getInvalidType() {
+        return invalidType;
+    }
+
+    public void setInvalidType(ConsumeInvalidType invalidType) {
+        this.invalidType = invalidType;
+    }
+
     public Date getInvalidTime() {
         return invalidTime;
     }
@@ -405,6 +420,11 @@ public class Consume implements java.io.Serializable {
     @Transient
     public String getPaymentName() {
         return payment == null ? null : payment.getName();
+    }
+
+    @Transient
+    public String getInvalidTypeName() {
+        return invalidType == null ? null : invalidType.getName();
     }
 
     @Override

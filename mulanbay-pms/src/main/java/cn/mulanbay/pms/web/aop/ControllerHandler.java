@@ -222,7 +222,8 @@ public class ControllerHandler {
                 if (arg instanceof PageSearch) {
                     PageSearch bu = (PageSearch) arg;
                     if(bu.np()&&bu.getPage()<=NO_PAGE){
-                        throw new ApplicationException(PmsCode.PAGE_LESS_MIN);
+                        //目前注释，需要改很多查询类
+                        //throw new ApplicationException(PmsCode.PAGE_LESS_MIN);
                     }
                     if (bu.getPageSize() > maxPageSize) {
                         throw new ApplicationException(PmsCode.PAGE_SIZE_OVER_MAX);

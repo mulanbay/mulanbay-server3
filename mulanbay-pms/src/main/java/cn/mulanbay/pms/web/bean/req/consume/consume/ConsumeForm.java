@@ -52,12 +52,6 @@ public class ConsumeForm implements BindUser {
     // 消费日期(比如音乐会门票购买日期和实际消费日期不一样)
     private Date consumeDate;
 
-    // 售出价格（单位：元）
-    private BigDecimal soldPrice;
-
-    // 作废日期
-    private Date invalidTime;
-
     private Date expectInvalidTime;
 
     //关键字，统计使用
@@ -181,22 +175,6 @@ public class ConsumeForm implements BindUser {
 
     public void setConsumeDate(Date consumeDate) {
         this.consumeDate = consumeDate;
-    }
-
-    public BigDecimal getSoldPrice() {
-        return soldPrice;
-    }
-
-    public void setSoldPrice(BigDecimal soldPrice) {
-        this.soldPrice = soldPrice;
-    }
-
-    public Date getInvalidTime() {
-        return invalidTime;
-    }
-
-    public void setInvalidTime(Date invalidTime) {
-        this.invalidTime = invalidTime;
     }
 
     public Date getExpectInvalidTime() {

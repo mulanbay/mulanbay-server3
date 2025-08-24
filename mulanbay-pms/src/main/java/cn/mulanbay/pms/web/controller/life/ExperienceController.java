@@ -1,6 +1,5 @@
 package cn.mulanbay.pms.web.controller.life;
 
-import cn.mulanbay.ai.nlp.processor.NLPProcessor;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;

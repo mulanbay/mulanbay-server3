@@ -122,7 +122,7 @@ public class ConsumeController extends BaseController {
     public ResultBean create(@RequestBody @Valid ConsumeForm form) {
         Consume bean = new Consume();
         changeFormToBean(form, bean);
-        consumeService.saveConsume(bean);
+        baseService.saveObject(bean);
         consumeHandler.afterCreate(bean, form.getTraceId());
         return callback(null);
     }
@@ -145,12 +145,24 @@ public class ConsumeController extends BaseController {
         if (bean.getConsumeTime() == null) {
             bean.setConsumeTime(bean.getBuyTime());
         }
-        //设置使用时长
-        if (bean.getInvalidTime() != null) {
-            long usedTime = bean.getInvalidTime().getTime() - bean.getBuyTime().getTime();
-            bean.setDuration(usedTime);
-        }
     }
+
+    /**
+     * 过期
+     *
+     * @return
+     */
+    @RequestMapping(value = "/invalid", method = RequestMethod.POST)
+    public ResultBean invalid(@RequestBody @Valid ConsumeInvalidForm form) {
+        Consume bean = baseService.getObject(beanClass, form.getConsumeId());
+        BeanCopy.copy(form, bean);
+        //设置使用时长
+        long usedTime = bean.getInvalidTime().getTime() - bean.getBuyTime().getTime();
+        bean.setDuration(usedTime);
+        consumeService.invalidConsume(bean);
+        return callback(null);
+    }
+
 
     /**
      * 修改
@@ -162,7 +174,7 @@ public class ConsumeController extends BaseController {
         Consume consume = baseService.getObject(beanClass, form.getConsumeId());
         BigDecimal dbPrice = consume.getTotalPrice();
         changeFormToBean(form, consume);
-        consumeService.updateConsume(consume);
+        baseService.updateObject(consume);
         if (!NumberUtil.priceEquals(dbPrice, consume.getTotalPrice())) {
             //更新
             consumeHandler.afterEdit(consume);

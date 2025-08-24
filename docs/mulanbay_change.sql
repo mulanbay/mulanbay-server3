@@ -11,3 +11,8 @@ update experience_consume ex set ex.exp_id = (select cs.exp_id from experience_d
 # update consume c set c.tags = (SELECT ex.exp_name FROM experience_consume ec,experience ex where ec.exp_id = ex.exp_id and ec.sc_id = c.consume_id) where c.consume_id>0 and c.consume_id in (SELECT ex2.sc_id FROM experience_consume ec2);
 # 删除人生经历消费，后期统一到原始消费信息中维护
 drop table experience_consume;
+
+# 2025-08-24 消费记录增加商品过期类型
+ALTER TABLE `consume` ADD COLUMN `invalid_type` SMALLINT NULL AFTER `sold_price`;
+update consume set invalid_type = 0 where invalid_time is not null and sold_price is null and consume_id>0;
+update consume set invalid_type = 1 where invalid_time is not null and sold_price is not null and consume_id>0;

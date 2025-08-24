@@ -39,31 +39,14 @@ public class ConsumeService extends BaseHibernateDao {
     boolean groupTop;
 
     /**
-     * 新增消费记录
-     *
-     * @param consume
-     */
-    public void saveConsume(Consume consume) {
-        try {
-            this.saveEntity(consume);
-            if (consume.getSoldPrice() != null) {
-                addNewIncome(consume);
-            }
-        } catch (BaseException e) {
-            throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
-                    "保存消费记录异常", e);
-        }
-    }
-
-    /**
      * 更新消费记录
      *
      * @param consume
      */
-    public void updateConsume(Consume consume) {
+    public void invalidConsume(Consume consume) {
         try {
-            this.updateEntity(consume);
-            if (consume.getSoldPrice() != null) {
+            ConsumeInvalidType invalidType = consume.getInvalidType();
+            if (invalidType==ConsumeInvalidType.SOLD||invalidType==ConsumeInvalidType.REFUND) {
                 //查询收入
                 String hql = "from ConsumeRefer where consumeId=?1 and type=?2";
                 ConsumeRefer refer = this.getEntity(hql,ConsumeRefer.class,consume.getConsumeId(), BussType.INCOME);
@@ -78,6 +61,7 @@ public class ConsumeService extends BaseHibernateDao {
                     }
                 }
             }
+            this.updateEntity(consume);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
                     "保存消费记录异常", e);
@@ -118,7 +102,10 @@ public class ConsumeService extends BaseHibernateDao {
             income.setOccurTime(consume.getInvalidTime());
             income.setRemark("保存消费记录时自动增加");
             income.setStatus(CommonStatus.ENABLE);
-            income.setType(IncomeType.SECONDHAND_SOLD);
+            switch (consume.getInvalidType()){
+                case SOLD ->  income.setType(IncomeType.SECONDHAND_SOLD);
+                case REFUND -> income.setType(IncomeType.REFUND);
+            }
             income.setUserId(consume.getUserId());
             this.saveEntity(income);
             //保存关联记录
