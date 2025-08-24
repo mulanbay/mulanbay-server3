@@ -779,6 +779,7 @@ CREATE TABLE `consume` (
   `buy_time` datetime DEFAULT NULL COMMENT '购买日期',
   `consume_time` datetime DEFAULT NULL,
   `sold_price` decimal(9,2) DEFAULT NULL,
+  `invalid_type` smallint DEFAULT NULL,
   `invalid_time` datetime DEFAULT NULL,
   `expert_invalid_time` datetime DEFAULT NULL,
   `duration` bigint DEFAULT NULL,
