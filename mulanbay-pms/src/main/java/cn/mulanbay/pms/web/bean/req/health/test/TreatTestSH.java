@@ -36,6 +36,8 @@ public class TreatTestSH extends PageSearch implements FullEndDateTime, BindUser
     @Query(fieldName = "result", op = Parameter.Operator.EQ)
     private TreatTestResult result;
 
+    private String sortField = "createdTime";
+
     private String sort = "desc";
 
     public String getTags() {
@@ -96,6 +98,14 @@ public class TreatTestSH extends PageSearch implements FullEndDateTime, BindUser
 
     public void setResult(TreatTestResult result) {
         this.result = result;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
     }
 
     public String getSort() {

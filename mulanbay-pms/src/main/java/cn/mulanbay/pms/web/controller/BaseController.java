@@ -4,11 +4,15 @@ import cn.mulanbay.business.handler.CacheHandler;
 import cn.mulanbay.business.handler.MessageHandler;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.exception.ValidateError;
+import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
+import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.TokenHandler;
+import cn.mulanbay.pms.persistent.domain.TreatTest;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
+import cn.mulanbay.web.bean.request.PageSearch;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +68,22 @@ public class BaseController {
     }
 
     /**
+     * 封装分页数据
+     * @param ps
+     * @param beanClass
+     * @param s
+     * @return
+     * @param <T>
+     */
+    protected <T> ResultBean queryDataGrid(PageSearch ps, Class<T> beanClass, Sort s) {
+        PageRequest pr = ps.buildQuery();
+        pr.setBeanClass(beanClass);
+        pr.addSort(s);
+        PageResult<T> qr = baseService.getBeanResult(pr);
+        return callbackDataGrid(qr);
+    }
+
+    /**
      * 分页数据
      *
      * @param pr
@@ -71,12 +91,22 @@ public class BaseController {
      */
     protected ResultBean callbackDataGrid(PageResult<?> pr) {
         ResultBean rb = new ResultBean();
+        DataGrid dg = this.createDataGrid(pr);
+        rb.setData(dg);
+        return rb;
+    }
+
+    /**
+     * 创建列表数据封装
+     * @param pr
+     * @return
+     */
+    private DataGrid createDataGrid(PageResult<?> pr) {
         DataGrid dg = new DataGrid();
         dg.setPage(pr.getPage());
         dg.setTotal(pr.getMaxRow());
         dg.setRows(pr.getBeanList() == null ? emptyList : pr.getBeanList());
-        rb.setData(dg);
-        return rb;
+        return dg;
     }
 
     /**

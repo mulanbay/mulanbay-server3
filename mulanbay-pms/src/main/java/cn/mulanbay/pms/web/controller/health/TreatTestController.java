@@ -3,6 +3,7 @@ package cn.mulanbay.pms.web.controller.health;
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
 import cn.mulanbay.common.util.DateUtil;
+import cn.mulanbay.common.util.JsonUtil;
 import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 看病的检测结果
@@ -87,12 +89,7 @@ public class TreatTestController extends BaseController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResultBean list(TreatTestSH sf) {
-        PageRequest pr = sf.buildQuery();
-        pr.setBeanClass(beanClass);
-        Sort s = new Sort("createdTime", sf.getSort());
-        pr.addSort(s);
-        PageResult<TreatTest> qr = baseService.getBeanResult(pr);
-        return callbackDataGrid(qr);
+        return queryDataGrid(sf,beanClass,new Sort(sf.getSortField(), sf.getSort()));
     }
 
     /**
@@ -106,12 +103,10 @@ public class TreatTestController extends BaseController {
         BeanCopy.copy(form, bean);
         TreatOperation operation = baseService.getObject(TreatOperation.class,form.getOperationId());
         bean.setOperation(operation);
-        if (bean.getResult() == null) {
-            if ((bean.getMinValue() == null || bean.getMaxValue() == null) && StringUtil.isEmpty(bean.getReferScope())) {
-                return callbackErrorInfo("没有参考范围值时，必须手动设置分析结果");
-            } else {
-                bean.setResult(getResult(bean));
-            }
+        if ((bean.getMinValue() == null || bean.getMaxValue() == null) && StringUtil.isEmpty(bean.getReferScope())) {
+            return callbackErrorInfo("没有参考范围值时，必须手动设置分析结果");
+        } else {
+            bean.setResult(getResult(bean));
         }
         checkTest(bean);
         baseService.saveObject(bean);
@@ -125,13 +120,16 @@ public class TreatTestController extends BaseController {
      * @return
      */
     private TreatTestResult getResult(TreatTest bean) {
+        if(bean.getResult()!=null) {
+            return bean.getResult();
+        }
         String v = bean.getValue();
         boolean isNum = NumberUtil.isNumber(v);
         if (isNum) {
             double b = Double.valueOf(v);
-            if (b < bean.getMinValue()) {
+            if (bean.getMinValue()!=null && b < bean.getMinValue()) {
                 return TreatTestResult.LOWER;
-            } else if (b > bean.getMaxValue()) {
+            } else if (bean.getMaxValue()!=null && b > bean.getMaxValue()) {
                 return TreatTestResult.HIGHER;
             } else {
                 return TreatTestResult.NORMAL;
@@ -158,6 +156,36 @@ public class TreatTestController extends BaseController {
         if(n>0){
             throw new ApplicationException(PmsCode.TREAT_TEST_NAME_DUPLICATE);
         }
+    }
+
+    /**
+     * 导入数据
+     *
+     * @return
+     */
+    @RequestMapping(value = "/importData", method = RequestMethod.POST)
+    public ResultBean importData(@RequestBody @Valid TreatTestImportForm form) {
+        List<TreatTestForm> dataList = JsonUtil.jsonToBeanList(form.getTestData(), TreatTestForm.class);
+        //检查名称重复
+        List<String> stringList = dataList.stream().map(TreatTestForm::getName).collect(Collectors.toList());
+        long count = stringList.stream().distinct().count();
+        if (stringList.size() != count) {
+            return callbackErrorInfo("检查项目有重复");
+        }
+        List<TreatTest> testList = new ArrayList<>();
+        TreatOperation operation = baseService.getObject(TreatOperation.class,form.getOperationId());
+        for(TreatTestForm tt : dataList){
+            TreatTest bean = new TreatTest();
+            BeanCopy.copy(tt, bean);
+            bean.setUserId(form.getUserId());
+            bean.setTestTime(form.getTestTime());
+            bean.setOperation(operation);
+            bean.setResult(getResult(bean));
+            checkTest(bean);
+            testList.add(bean);
+        }
+        baseService.saveObjects(testList);
+        return callback(null);
     }
 
     /**
