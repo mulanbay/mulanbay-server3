@@ -19,7 +19,7 @@
     </modules>
 
     <properties>
-        <mulanbay.version>5.1</mulanbay.version>
+        <mulanbay.version>5.2</mulanbay.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <slf4j-log4j12.version>2.0.7</slf4j-log4j12.version>
