@@ -127,7 +127,7 @@ public class BudgetService extends BaseHibernateDao {
      */
     public long countMonthBudgetSnapshot(Long budgetId, int year) {
         try {
-            String sql = " select count(0) from budget_snapshot where from_id=?1 and buss_key >=?2 and buss_key<=?3 ";
+            String sql = " select count(0) from budget_snapshot where budget_id=?1 and buss_key >=?2 and buss_key<=?3 ";
             return this.getCountSQL(sql,budgetId,year+"01",year+"12");
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_GET_LIST_ERROR,
