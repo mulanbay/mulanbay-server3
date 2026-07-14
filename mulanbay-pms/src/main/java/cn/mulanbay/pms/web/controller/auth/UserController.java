@@ -2,24 +2,17 @@ package cn.mulanbay.pms.web.controller.auth;
 
 import cn.mulanbay.common.exception.ApplicationException;
 import cn.mulanbay.common.exception.ErrorCode;
-import cn.mulanbay.common.util.DateUtil;
-import cn.mulanbay.common.util.FileUtil;
-import cn.mulanbay.common.util.MimeTypeUtils;
 import cn.mulanbay.common.util.StringUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.Constant;
 import cn.mulanbay.pms.common.PmsCode;
-import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.handler.ThreadPoolHandler;
-import cn.mulanbay.pms.handler.UserHandler;
-import cn.mulanbay.pms.handler.WXHandler;
+import cn.mulanbay.pms.handler.*;
 import cn.mulanbay.pms.persistent.domain.*;
 import cn.mulanbay.pms.persistent.dto.auth.UserRoleDTO;
 import cn.mulanbay.pms.persistent.enums.AuthType;
 import cn.mulanbay.pms.persistent.service.AuthService;
-import cn.mulanbay.pms.persistent.service.FamilyService;
 import cn.mulanbay.pms.persistent.service.UserLevelService;
 import cn.mulanbay.pms.persistent.service.WxAccountService;
 import cn.mulanbay.pms.util.BeanCopy;
@@ -32,15 +25,14 @@ import cn.mulanbay.pms.web.bean.res.auth.user.UserProfileVo;
 import cn.mulanbay.pms.web.controller.BaseController;
 import cn.mulanbay.web.bean.response.ResultBean;
 import jakarta.validation.Valid;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.mulanbay.pms.common.Constant.DEFAULT_SCORE_GROUP_ID;
 
@@ -56,14 +48,8 @@ public class UserController extends BaseController {
 
     private static Class<User> beanClass = User.class;
 
-    @Value("${mulanbay.picture.folder}")
-    String avatarFilePath;
-
     @Autowired
     AuthService authService;
-
-    @Autowired
-    FamilyService familyService;
 
     @Autowired
     ThreadPoolHandler threadPoolHandler;
@@ -82,6 +68,9 @@ public class UserController extends BaseController {
 
     @Autowired
     UserHandler userHandler;
+
+    @Autowired
+    ResourcesHandler resourcesHandler;
 
     /**
      * 用户树
@@ -387,48 +376,15 @@ public class UserController extends BaseController {
      * 头像上传
      */
     @RequestMapping(value = "/uploadAvatar", method = RequestMethod.POST)
-    public ResultBean uploadAvatar(@RequestParam("avatarfile") MultipartFile file) throws IOException {
-        if (!file.isEmpty()) {
-            // 获取文件存储路径（绝对路径）
-            String path = avatarFilePath;
-            // 获取原文件名
-            String extractFilename = this.extractFilename(file);
-            // 创建文件实例
-            File filePath = new File(path, extractFilename);
-            FileUtil.checkPathExits(filePath);
-            // 写入文件
-            file.transferTo(filePath);
-            //更新数据库
-            authService.updateAvatar(this.getCurrentUserId(), extractFilename);
-            return callback(extractFilename);
-        } else {
-            return callbackErrorInfo("文件为空");
-        }
+    public ResultBean uploadAvatar(@RequestParam("avatarfile") MultipartFile file)  {
+        Long userId = this.getCurrentUserId();
+        //用户头像不需要存储资源表
+        String filePath = resourcesHandler.storePicture(file,null,null);
+        //更新数据库
+        authService.updateAvatar(userId, filePath);
+        return callback(filePath);
     }
 
-    /**
-     * 编码文件名
-     */
-    private String extractFilename(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        String extension = getExtension(file);
-        fileName = DateUtil.getFormatDate(new Date(), "yyyyMMdd") + "/" + StringUtil.genUUID() + "." + extension;
-        return "/" + fileName;
-    }
-
-    /**
-     * 获取文件名的后缀
-     *
-     * @param file 表单文件
-     * @return 后缀名
-     */
-    private String getExtension(MultipartFile file) {
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (StringUtil.isEmpty(extension)) {
-            extension = MimeTypeUtils.getExtension(file.getContentType());
-        }
-        return extension;
-    }
 
     /**
      * 获取微信账号

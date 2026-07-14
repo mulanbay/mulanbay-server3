@@ -139,13 +139,18 @@ public class ControllerHandler {
     private void checkSysLimit(Long userId, SysFunc sf){
         if (sf.getSysLimit() > 0) {
             String key = CacheKey.getKey(CacheKey.REQUEST_SYS_LIMIT,sf.getUrlAddress(),DateUtil.getToday(DateUtil.FormatDay1));
-            long count = cacheHandler.incre(key, 1);
-            if (count == 1) {
-                cacheHandler.set(key, count, DAY_SECONDS);
-            }
-            if (count > sf.getSysLimit()) {
-                logger.warn("用户ID={},在当天请求{}过于频繁",userId,sf.getUrlAddress());
-                throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
+            //请求限制
+            Integer s = cacheHandler.get(key, Integer.class);
+            if (s != null) {
+                if (s.intValue() < sf.getSysLimit()) {
+                    s = s + 1;
+                    cacheHandler.set(key, s,  DAY_SECONDS);
+                } else {
+                    logger.warn("用户ID={},在当天请求{}过于频繁",userId,sf.getUrlAddress());
+                    throw new ApplicationException(PmsCode.USER_FUNCTION_TOO_FREQ);
+                }
+            } else {
+                cacheHandler.set(key, 1, DAY_SECONDS);
             }
         }
     }

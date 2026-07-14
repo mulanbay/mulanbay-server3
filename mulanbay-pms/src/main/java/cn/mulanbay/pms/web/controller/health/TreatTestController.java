@@ -10,8 +10,10 @@ import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.common.PmsCode;
+import cn.mulanbay.pms.handler.ResourcesHandler;
 import cn.mulanbay.pms.persistent.domain.TreatOperation;
 import cn.mulanbay.pms.persistent.domain.TreatTest;
+import cn.mulanbay.pms.persistent.enums.BussSource;
 import cn.mulanbay.pms.persistent.enums.ChartType;
 import cn.mulanbay.pms.persistent.enums.TreatTestResult;
 import cn.mulanbay.pms.persistent.service.TreatService;
@@ -27,6 +29,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,6 +55,9 @@ public class TreatTestController extends BaseController {
 
     @Autowired
     TreatService treatService;
+
+    @Autowired
+    ResourcesHandler resourcesHandler;
 
     /**
      * 获取检测的分类列表
@@ -103,7 +109,7 @@ public class TreatTestController extends BaseController {
         BeanCopy.copy(form, bean);
         TreatOperation operation = baseService.getObject(TreatOperation.class,form.getOperationId());
         bean.setOperation(operation);
-        if ((bean.getMinValue() == null || bean.getMaxValue() == null) && StringUtil.isEmpty(bean.getReferScope())) {
+        if ((bean.getMinValue() == null || bean.getMaxValue() == null) && bean.getResult() == null) {
             return callbackErrorInfo("没有参考范围值时，必须手动设置分析结果");
         } else {
             bean.setResult(getResult(bean));
@@ -186,6 +192,15 @@ public class TreatTestController extends BaseController {
         }
         baseService.saveObjects(testList);
         return callback(null);
+    }
+
+    /**
+     * 报告上传
+     */
+    @RequestMapping(value = "/uploadReport", method = RequestMethod.POST)
+    public ResultBean uploadReport(@RequestParam("files") MultipartFile[] files,@RequestParam("operationId") Long operationId)  {
+        List<String> list = resourcesHandler.storePictures(files,operationId, BussSource.TREAT_OPERATION);
+        return callback(list);
     }
 
     /**

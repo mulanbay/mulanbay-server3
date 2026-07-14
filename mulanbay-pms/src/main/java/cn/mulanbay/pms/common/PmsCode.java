@@ -150,6 +150,8 @@ public class PmsCode {
 
     public static final int AOP_ERROR = 1010012;
 
+    public static final int STORE_FILE_ERROR = 1010013;
+
     /** 通用类 end **/
 
     /**

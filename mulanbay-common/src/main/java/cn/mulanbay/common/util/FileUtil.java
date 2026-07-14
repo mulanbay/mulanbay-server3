@@ -1043,8 +1043,18 @@ public class FileUtil {
      * @return
      */
     public static boolean deleteFile(String filePath) {
-        boolean flag = false;
         File file = new File(filePath);
+        return deleteFile(file);
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param file 文件
+     * @return
+     */
+    public static boolean deleteFile(File file) {
+        boolean flag = false;
         // 路径为文件且不为空则进行删除
         if (file.isFile() && file.exists()) {
             file.delete();
