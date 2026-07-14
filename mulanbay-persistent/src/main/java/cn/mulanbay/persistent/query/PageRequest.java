@@ -132,6 +132,9 @@ public class PageRequest {
 		if (sortList == null) {
 			sortList = new ArrayList<Sort>();
 		}
+		if(s==null){
+			return;
+		}
 		sortList.add(s);
 	}
 

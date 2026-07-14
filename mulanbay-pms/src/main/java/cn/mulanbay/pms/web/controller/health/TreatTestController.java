@@ -99,6 +99,33 @@ public class TreatTestController extends BaseController {
     }
 
     /**
+     * 加载模板
+     *
+     * @return
+     */
+    @RequestMapping(value = "/loadTemplate", method = RequestMethod.GET)
+    public ResultBean loadTemplate(@Valid TreatTesLoadTemplateForm form) {
+        TreatOperation operation = baseService.getObject(TreatOperation.class,form.getOperationId());
+        TreatOperation template = treatService.getNearestOperation(operation.getOperationId(), operation.getOperationName());
+        if(template ==null){
+            return callbackErrorInfo("没有找到对应的检查项目");
+        }
+        TreatTestSH sf = new TreatTestSH();
+        sf.setOperationId(template.getOperationId());
+        //sf.setUserId(form.getUserId());
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        List<TreatTest> testList = baseService.getBeanList(pr);
+        for(TreatTest tt: testList){
+            tt.setTestId(null);
+            tt.setTestTime(null);
+            tt.setCreatedTime(null);
+            tt.setModifyTime(null);
+        }
+        return callback(testList);
+    }
+
+    /**
      * 创建
      *
      * @return
@@ -187,6 +214,7 @@ public class TreatTestController extends BaseController {
             bean.setTestTime(form.getTestTime());
             bean.setOperation(operation);
             bean.setResult(getResult(bean));
+            bean.setTestId(null);
             checkTest(bean);
             testList.add(bean);
         }

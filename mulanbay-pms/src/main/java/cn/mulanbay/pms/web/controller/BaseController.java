@@ -9,7 +9,6 @@ import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.persistent.service.BaseService;
 import cn.mulanbay.pms.handler.TokenHandler;
-import cn.mulanbay.pms.persistent.domain.TreatTest;
 import cn.mulanbay.pms.web.bean.LoginUser;
 import cn.mulanbay.pms.web.bean.res.DataGrid;
 import cn.mulanbay.web.bean.request.PageSearch;

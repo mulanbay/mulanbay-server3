@@ -621,6 +621,24 @@ public class TreatService extends BaseHibernateDao {
     }
 
     /**
+     * 获取最近一次的手术
+     *
+     * @param compareId
+     * @param operationName
+     * @return
+     */
+    public TreatOperation getNearestOperation(Long compareId,String operationName) {
+        try {
+
+            String hql = "from TreatOperation where operationName=?1 and operationId<?2 order by treatDate desc ";
+            return this.getEntity(hql,TreatOperation.class, operationName,compareId);
+        } catch (BaseException e) {
+            throw new PersistentException(ErrorCode.OBJECT_GET_ERROR,
+                    "获取最近一次的手术异常", e);
+        }
+    }
+
+    /**
      * 获取最近一次的药品
      *
      * @param drugName

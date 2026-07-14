@@ -3,10 +3,8 @@ package cn.mulanbay.pms.web.bean.req.system.resources;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.persistent.enums.BussSource;
-import cn.mulanbay.pms.persistent.enums.CommonStatus;
 import cn.mulanbay.pms.persistent.enums.ResourcesType;
 import cn.mulanbay.web.bean.request.PageSearch;
-import jakarta.persistence.Column;
 
 public class ResourcesSH extends PageSearch {
 

@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.health.test;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.pms.common.Constant;
-import cn.mulanbay.pms.persistent.enums.TreatTestResult;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,17 +16,17 @@ public class TreatTestImportForm implements BindUser {
     private Long userId;
 
     @JsonFormat(pattern = Constant.DATE_TIME_FORMAT)
-    @NotNull(message = "采集不能为空")
+    @NotNull(message = "采集时间不能为空")
     private Date testTime;
 
     @NotEmpty(message = "数据不能为空")
     private String testData;
 
-    public @NotNull(message = "手术编号不能为空") Long getOperationId() {
+    public Long getOperationId() {
         return operationId;
     }
 
-    public void setOperationId(@NotNull(message = "手术编号不能为空") Long operationId) {
+    public void setOperationId(Long operationId) {
         this.operationId = operationId;
     }
 
@@ -41,19 +40,19 @@ public class TreatTestImportForm implements BindUser {
         this.userId = userId;
     }
 
-    public @NotNull(message = "采集不能为空") Date getTestTime() {
+    public  Date getTestTime() {
         return testTime;
     }
 
-    public void setTestTime(@NotNull(message = "采集不能为空") Date testTime) {
+    public void setTestTime( Date testTime) {
         this.testTime = testTime;
     }
 
-    public @NotEmpty(message = "数据不能为空") String getTestData() {
+    public String getTestData() {
         return testData;
     }
 
-    public void setTestData(@NotEmpty(message = "数据不能为空") String testData) {
+    public void setTestData( String testData) {
         this.testData = testData;
     }
 }

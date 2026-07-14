@@ -1,32 +1,20 @@
 package cn.mulanbay.pms.web.controller.system;
 
-import cn.mulanbay.common.util.NumberUtil;
 import cn.mulanbay.persistent.query.PageRequest;
 import cn.mulanbay.persistent.query.PageResult;
 import cn.mulanbay.persistent.query.Sort;
 import cn.mulanbay.pms.handler.ResourcesHandler;
-import cn.mulanbay.pms.handler.SystemConfigHandler;
-import cn.mulanbay.pms.persistent.domain.DBClean;
 import cn.mulanbay.pms.persistent.domain.Resources;
-import cn.mulanbay.pms.util.FileUtil;
 import cn.mulanbay.pms.web.bean.req.CommonDeleteForm;
-import cn.mulanbay.pms.web.bean.req.system.backup.BackupFileDeleteForm;
-import cn.mulanbay.pms.web.bean.req.system.dbClean.DBCleanSH;
 import cn.mulanbay.pms.web.bean.req.system.resources.ResourcesSH;
-import cn.mulanbay.pms.web.bean.res.system.backup.FileVo;
 import cn.mulanbay.pms.web.controller.BaseController;
-import cn.mulanbay.web.bean.request.PageSearch;
 import cn.mulanbay.web.bean.response.ResultBean;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.File;
-import java.util.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 资源管理
