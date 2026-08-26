@@ -2,7 +2,6 @@ package cn.mulanbay.pms.web.bean.req.health.operation;
 
 import cn.mulanbay.common.aop.BindUser;
 import cn.mulanbay.common.aop.FullEndDateTime;
-import cn.mulanbay.persistent.query.CrossType;
 import cn.mulanbay.persistent.query.Parameter;
 import cn.mulanbay.persistent.query.Query;
 import cn.mulanbay.pms.common.Constant;
@@ -11,33 +10,21 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class TreatOperationSH extends PageSearch implements BindUser, FullEndDateTime {
+public class TreatOperationReviewSH extends PageSearch implements BindUser, FullEndDateTime {
 
     @Query(fieldName = "operationName", op = Parameter.Operator.LIKE)
     private String name;
 
-    @Query(fieldName = "treat.tags", op = Parameter.Operator.EQ)
-    private String tags;
-
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "treatDate", op = Parameter.Operator.GTE)
+    @Query(fieldName = "reviewDate", op = Parameter.Operator.GTE)
     private Date startDate;
 
     @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "treatDate", op = Parameter.Operator.LTE)
+    @Query(fieldName = "reviewDate", op = Parameter.Operator.LTE)
     private Date endDate;
 
     @Query(fieldName = "userId", op = Parameter.Operator.EQ)
     private Long userId;
-
-    @Query(fieldName = "treat.treatId", op = Parameter.Operator.EQ)
-    private Long treatId;
-
-    @DateTimeFormat(pattern = Constant.DATE_FORMAT)
-    @Query(fieldName = "reviewDate", op = Parameter.Operator.GTE)
-    private Date reviewDate;
-
-    private Boolean needReview;
 
     public String getName() {
         return name;
@@ -45,14 +32,6 @@ public class TreatOperationSH extends PageSearch implements BindUser, FullEndDat
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
     }
 
     public Date getStartDate() {
@@ -81,29 +60,5 @@ public class TreatOperationSH extends PageSearch implements BindUser, FullEndDat
     @Override
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getTreatId() {
-        return treatId;
-    }
-
-    public void setTreatId(Long treatId) {
-        this.treatId = treatId;
-    }
-
-    public Date getReviewDate() {
-        return reviewDate;
-    }
-
-    public void setReviewDate(Date reviewDate) {
-        this.reviewDate = reviewDate;
-    }
-
-    public Boolean getNeedReview() {
-        return needReview;
-    }
-
-    public void setNeedReview(Boolean needReview) {
-        this.needReview = needReview;
     }
 }

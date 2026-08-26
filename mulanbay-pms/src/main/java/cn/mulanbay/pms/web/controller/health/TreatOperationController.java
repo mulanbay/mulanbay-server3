@@ -57,9 +57,27 @@ public class TreatOperationController extends BaseController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResultBean list(TreatOperationSH sf) {
+        if(sf.getNeedReview()!=null&&sf.getNeedReview()){
+            sf.setReviewDate(new Date());
+        }
         PageRequest pr = sf.buildQuery();
         pr.setBeanClass(beanClass);
         Sort s = new Sort("treatDate", Sort.DESC);
+        pr.addSort(s);
+        PageResult<TreatOperation> qr = baseService.getBeanResult(pr);
+        return callbackDataGrid(qr);
+    }
+
+    /**
+     * 获取复查列表数据
+     *
+     * @return
+     */
+    @RequestMapping(value = "/reviewList", method = RequestMethod.GET)
+    public ResultBean reviewList(TreatOperationReviewSH sf) {
+        PageRequest pr = sf.buildQuery();
+        pr.setBeanClass(beanClass);
+        Sort s = new Sort("reviewDate", Sort.DESC);
         pr.addSort(s);
         PageResult<TreatOperation> qr = baseService.getBeanResult(pr);
         return callbackDataGrid(qr);
