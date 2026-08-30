@@ -921,7 +921,7 @@ public class TreatService extends BaseHibernateDao {
                     addNewConsume(treat,us);
                 } else {
                     Consume consume = this.getEntityById(Consume.class,refer.getConsumeId());
-                    if (!NumberUtil.priceEquals(consume.getSoldPrice(), treat.getPdFee())) {
+                    if (!NumberUtil.priceEquals(consume.getTotalPrice(), treat.getPdFee())) {
                         //价格有改变更新
                         consume.setPrice(treat.getPdFee());
                         consume.setTotalPrice(treat.getPdFee());
@@ -968,7 +968,7 @@ public class TreatService extends BaseHibernateDao {
             ConsumeRefer refer = new ConsumeRefer();
             refer.setConsumeId(consume.getConsumeId());
             refer.setReferId(treat.getTreatId());
-            refer.setType(BussType.INCOME);
+            refer.setType(BussType.TREAT);
             this.saveEntity(refer);
         } catch (BaseException e) {
             throw new PersistentException(ErrorCode.OBJECT_ADD_ERROR,
